@@ -1,263 +1,88 @@
-\documentclass[a4paper, 11pt]{article}
+\documentclass{llncs}
 
-\usepackage{natbib}
-\usepackage{bm}
+\usepackage[usenames,dvipsnames]{color}
+
+\usepackage{latexsym}
+\usepackage{amsxtra} 
+\usepackage{amssymb}
 \usepackage{amsmath}
-\usepackage{appendix}
+\usepackage{pslatex}
+\usepackage{epsfig}
+\usepackage{wrapfig}
+\usepackage{paralist}
+\usepackage{graphics}
+\usepackage{stmaryrd}
+\usepackage{txfonts}
+\usepackage{framed}
+\usepackage{makecell}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning, calc}
+\usepackage[inline,shortlabels]{enumitem}
 
-\title{TITLE}
-\author{Radu IOSIF \& Xiao XU \\
-	$from$ CNRS VERIMAG, FRANCE}
-\date{$DATE$} 
+\usepackage{proof}
 
-% ====================
-\begin{document} 
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
 
-% Title
+\usepackage[draft]{commenting}
+
+\pagestyle{plain}
+
+\include{commands}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{The Impact of Alternation}
+
+\author{Radu Iosif \and Xiao Xu}
+
+\institute{Verimag/CNRS/Universit\'e de Grenoble Alpes}
+
 \maketitle
 
-% Begin Section{Alternating Data Automata}	
-\section{Alternating Data Automata}
+\begin{abstract}
+\end{abstract}
 
-	% Begin Subsection{Th(D)}
-	\subsection{$Th(\mathcal{D})$}
+\section{Introduction}
 
-	Given a possibly infinite data domain $\mathcal{D}$, we denote by $Th(\mathcal{D}) = \langle \mathcal{D}, f_1, f_2, ..., f_m \rangle$ the set of syntactically correct first-order formulae with function symbols $f_1, f_2, ..., f_m$.
-	% End Subsection{Th(D)}
-	
-	% Begin Subsection{B^Q}
-	\subsection{$\mathcal{B}^{\mathcal{Q}}$}
-	
-	Denote by the symbol $\mathcal{B}$ the two-element Boolean algebra $\mathcal{B} = (\{ 0, 1 \}, \lor, \land, \lnot, 0, 1)$.\\
-	
-	Let $\mathcal{Q}$ be a set, then $\mathcal{B}^{\mathcal{Q}}$ is the set of all mappings from $\mathcal{Q}$ to $\mathcal{B}$.
-	% End Subsection{B^Q}
+\section{Preliminaries}
 
-	% Begin Subsection{Definition}
-	\subsection{Definition}
+A \emph{signature} $\sig = (\ssorts{\sig},\sfuns{\sig})$ consists of a
+set $\ssorts{\sig}$ of \emph{sort symbols} and a set $\sfuns{\sig}$ of
+sorted \emph{function symbols}. To simplify the presentation, we
+assume w.l.o.g. that $\ssorts{\Sigma}$ consists of two distinct sorts
+$\Data$ and $\Bool$ and each function symbol $f \in \sfuns{\sig}$ has
+$\#(f) \geq 0$ arguments of sort $\Data$ and return value $\sigma(f)
+\in \ssorts{\sig}$. If $n=0$, $f$ is a \emph{constant} of sort
+$\sigma(f)$ and we consider the constants $\top,\bot \in \sfuns{\sig}$
+of sort $\Bool$, denoting the truth values true and false.
 
-	An $Alternating\ Data\ Automaton$ (ADA) is a tuple $\mathcal{A} = \langle \mathcal{D}, \mathcal{X}, \Sigma, \mathcal{Q}, \bm{i}, \mathcal{F}, \bm{g} \rangle$ where \cite{HoFL}:
-	\begin{itemize}
-		\item $\mathcal{D}$ is an initial data domain;
-		\item $\mathcal{X} = \{ x_1, x_2, ..., x_n \}$ is a set of variables;
-		\item $\Sigma$ is a finite alphabet of input events;
-		\item $\mathcal{Q}$ is a finite set of states;
-		\item $\bm{i} \in \mathcal{Q}$ is an initial state;
-		\item $\mathcal{F} \subseteq \mathcal{Q}$ is a set of final states;
-		\item $\bm{g}$ is a function of $\mathcal{Q}$ into the set of all functions of $\Sigma$ into functions $\mathcal{D}^{\mathcal{X}} \times \mathcal{D}^{\mathcal{X}} \to ( \mathcal{B}^{\mathcal{Q}} \to \mathcal{B} )$.\\
-	\end{itemize}
-	
-	We define $\bm{f} \in \mathcal{B}^{\mathcal{Q}}$ by the condition: $\bm{f}(q) = 1$ iff $q \in \mathcal{F}$.
-	% End Subsection{Definition}
-	
-	% Begin Subsection{Function g}
-	\subsection{Function $\bm{g}$}
-	
-	For each $q \in \mathcal{Q}$, $a \in \Sigma$, $v \in \mathcal{D}^{\mathcal{X}}$, $v' \in \mathcal{D}^{\mathcal{X}}$, $u \in \mathcal{B}^{\mathcal{Q}}$, $\bm{g}(q)(a)(v, v')(u)$ is a Boolean combination of $u(q_t)$ and $\phi_t(v, v')$ where $q_t \in \mathcal{Q}$ is the successor of $q$ with symbol $a$ and $\phi_t \in Th(\mathcal{D})$.\\
-	
-	In the cases where $v'$ is not used, we write $\bm{g}(q)(a)(v)(u)$ instead of $\bm{g}(q)(a)(v, v')(u)$.\\
-	
-	For example, we define an ADA $\mathcal{A} = \langle \mathcal{D}_{\mathcal{A}}, \mathcal{X}_{\mathcal{A}}, \Sigma_{\mathcal{A}}, \mathcal{Q}_{\mathcal{A}}, \bm{i}_{\mathcal{A}}, \mathcal{F}_{\mathcal{A}}, \bm{g}_{\mathcal{A}} \rangle$, where:
-	\begin{itemize}
-		\item $\mathcal{D}_{\mathcal{A}} = \mathcal{N}$;
-		\item $\mathcal{X}_{\mathcal{A}} = \{ x \}$;
-		\item $\Sigma_{\mathcal{A}} = \{ a, b \}$;
-		\item $\mathcal{Q}_{\mathcal{A}} = \{ q_0, q_1, q_2, q_3 \}$;
-		\item $\bm{i}_{\mathcal{A}} = q_0$;
-		\item $\mathcal{F}_{\mathcal{A}} = \{ q_0 \}$;
-		\item $\bm{g}_{\mathcal{A}}$ is given by:
-		\begin{tabular}{|c|p{5cm}|l|}
-		\hline  & $a$ & $b$\\
-		\hline $q_0$ & $u(q_1) \land (x > 3 \land x' = x + 1) \lor u(q_2) \land (x < 3 \land x' = x + 1) \lor u(q_3) \land (x < 1 \land x' = x + 1)$ & $0$\\
-		\hline $q_1$ & 0 & $u(q_0) \land x < 5$\\
-		\hline $q_2$ & 0 & $u(q_0) \land x = 3$\\
-		\hline $q_3$ & 0 & $u(q_1) \land x = 0$\\
-		\hline
-		\end{tabular}
-	\end{itemize}
-	
-	\begin{align*}
-		&\qquad\ \bm{g}(q_0)(a)(2, 3)(\bm{f})\\
-		&= \quad \bm{f}(q_1) \land (2 > 3 \land 3 = 2 + 1) \lor \bm{f}(q_2) \land (2 < 3 \land 3 = 2 + 1) \lor \bm{f}(q_3) \land (2 < 1 \land 3 = 2 + 1)\\
-		&= \quad 0 \land 0 \lor 0 \land 1 \lor 0 \land 0\\
-		&= \quad 0 \lor 0 \lor 0\\
-		&= \quad 0 \\
-		\\
-		&\qquad\ \bm{g}(q_1)(b)(4)(\bm{f})\\
-		&=  \quad \bm{f}(q_0) \land 4 < 5\\
-		&=  \quad 1 \land 1\\
-		&=  \quad 1
-	\end{align*}
-	% End Subsection{Function g}
-	
-	% Begin Subsection{Extension of Function g}
-	\subsection{Extension of Function $\bm{g}$}
-	
-	Now we extend $\bm{g}$ to $\mathcal{Q} \to ((\mathcal{D}^{\mathcal{X}} \times \Sigma)^* \times \mathcal{B}^{\mathcal{Q}} \to \mathcal{B})$. Giving $q \in \mathcal{Q}$, $w \in (\mathcal{D}^{\mathcal{X}} \times \Sigma)^*$, $u \in \mathcal{B}^{\mathcal{Q}}$, we have:
-	\begin{itemize}
-		\item If $w = \lambda$, then $\bm{g}(q)(w, u) = u(q)$;
-		\item If $w = \langle v, a \rangle$ with $v \in \mathcal{D}^{\mathcal{X}}$ and $a \in \Sigma$, then $\bm{g}(q)(w, u) = \bm{g}(q)(a)(v)(u)$;
-		\item If $w = \langle v, a \rangle \langle v', b \rangle w'$ with $v, v' \in \mathcal{D}^{\mathcal{X}}$ and $a, b \in \Sigma$ and $w' \in (\mathcal{D}^{\mathcal{X}} \times \Sigma)^*$, then $\bm{g}(q)(w, u) = \bm{g}(q)(a)(v, v')(u)_{[u(q_t) / \bm{g}(q_t)(\langle v', b \rangle w', u)]}$ where $q_t \in \mathcal{Q}$ is the successor of $q$ with symbol $a$.
-	\end{itemize}
-	% End Subsection{Extension of Function g}
-	
-	% Begin Subsection{Acceptance of a Word}
-	\subsection{Acceptance of a Word}
-	
-	Let $\mathcal{A} = \langle \mathcal{D}, \mathcal{X}, \Sigma, \mathcal{Q}, \bm{i}, \mathcal{F}, \bm{g} \rangle$	be an ADA, a word $w \in (\mathcal{D}^{\mathcal{X}} \times \Sigma)^*$ is accepted by $\mathcal{A}$ iff $\bm{g}(\bm{i})(w, \bm{f})$.\\
-	
-	Let's take the example in last page, and we try the following words:
-	\begin{align*}
-		&\qquad\ \bm{g}(q_0)(\langle v_0, a \rangle \langle v_1, b \rangle, \bm{f})\\
-		&= \quad \bm{g}(q_1)(\langle v_1, b \rangle, \bm{f}) \land (v_0 > 3 \land v_1 = v_0 + 1)\\
-			&\quad \lor\ \bm{g}(q_2)(\langle v_1, b \rangle, \bm{f}) \land (v_0 < 3 \land v_1 = v_0 + 1)\\
-			&\quad \lor\ \bm{g}(q_3)(\langle v_1, b \rangle, \bm{f}) \land (v_0 < 1 \land v_1 = v_0 + 1)\\
-		&= \quad \bm{f}(q_0) \land v_1 < 5 \land v_0 > 3 \land v_1 = v_0 + 1\\
-			&\quad \lor\ \bm{f}(q_0) \land v_1 = 3 \land v_0 < 3 \land v_1 = v_0 + 1\\
-			&\quad \lor\ \bm{f}(q_1) \land v_1 = 0 \land v_0 < 1 \land v_1 = v_0 + 1\\
-		&= \quad 1 \land v_1 < 5 \land v_0 > 3 \land v_1 = v_0 + 1\\
-			&\quad \lor\ 1 \land v_1 = 3 \land v_0 < 3 \land v_1 = v_0 + 1\\
-			&\quad \lor\ 0 \land v_1 = 0 \land v_0 < 1 \land v_1 = v_0 + 1\\
-		&= \quad v_1 < 5 \land v_0 > 3 \land v_1 = v_0 + 1 \lor v_1 = 3 \land v_0 < 3 \land v_1 = v_0 + 1\\
-		&= \quad v_1 = 3 \land v_0 < 3 \land v_1 = v_0 + 1\\
-		&= \quad v_0 = 2 \land v_1 = 3
-	\end{align*}
-	
-	Therefore, the automaton $\mathcal{A}$ accepts the word $\langle 2, a \rangle \langle 3, b \rangle$.
-	% End Subsection{Acceptance of a Word}
-	
-	% Begin Subsection{Language}
-	\subsection{Language}
-	
-	The language accepted by an alternating automaton $\mathcal{A} = \langle \mathcal{D}, \mathcal{X}, \Sigma, \mathcal{Q}, \bm{i}, \mathcal{F}, \bm{g} \rangle$ is the set $\mathcal{L}(\mathcal{A}) = \{ w \in (\mathcal{D}^{\mathcal{X}} \times \Sigma)^*\ |\ \bm{g}(\bm{i})(w, \bm{f}) = 1 \}$.
-	% End Subsection{Language}
-	
-	% Begin Subsection{Complementation}
-	\subsection{Complementation}
-	
-	Let $\mathcal{A} = \langle \mathcal{D}, \mathcal{X}, \Sigma, \mathcal{Q}, \bm{i}, \mathcal{F}, \bm{g} \rangle$ be an ADA, we can now construct another ADA $\mathcal{\overline{A}} = \langle \mathcal{D}', \mathcal{X}', \Sigma', \mathcal{Q}', \bm{i}', \mathcal{F}', \bm{g}' \rangle$ such that $\mathcal{L}(\mathcal{\overline{A}}) = \overline{\mathcal{L}(\mathcal{A})}$:
-	\begin{itemize}
-		\item $\mathcal{D}' = \mathcal{D}$;
-		\item $\mathcal{X}' = \mathcal{X}$;
-		\item $\Sigma' = \Sigma$;
-		\item $\mathcal{Q}' = \mathcal{Q}$;
-		\item $\bm{i}' = \bm{i}$;
-		\item $\mathcal{F}' = \mathcal{Q} - \mathcal{F}$ therefore for each state $q \in \mathcal{Q}$, $\bm{f}'(q) = 1$ iff $q \in \mathcal{F}'$;
-		\item For each $q \in \mathcal{Q}$, $a \in \Sigma$, $v \in \mathcal{D}^{\mathcal{X}}$, $v' \in \mathcal{D}^{\mathcal{X}}$, $u \in \mathcal{B}^{\mathcal{Q}}$, $u' \in \mathcal{B}^{\mathcal{Q}}$ and $u'(q) = \overline{u(q)}$, we have $\bm{g}'(q)(a)(v, v')(u') = \overline{\bm{g}(q)(a)(v, v')(u)_{[u(q_t) / \overline{u'(q_t)}]}}$ where $q_t \in \mathcal{Q}$ is the successor of $q$ with symbol $a$.
-		\end{itemize}
-		
-		Hence, for the extension of function $\bm{g}'$, we have:
-		\begin{itemize}
-			\item If $w = \lambda$, then:\\
-			$\bm{g}'(q)(w, u') = u'(q)$;
-			\item If $w = \langle v, a \rangle$ with $v \in \mathcal{D}^{\mathcal{X}}$ and $a \in \Sigma$, then:\\
-			$\bm{g}'(q)(w, u') = \bm{g}'(q)(a)(v)(u') = \overline{\bm{g}(q)(a)(v)(u)_{[u(q_t) / \overline{u'(q_t)}]}}$ where $q_t \in \mathcal{Q}$ is a successor of $q$ with symbol $a$;
-			\item If $w = \langle v, a \rangle \langle v', b \rangle w'$ with $v \in \mathcal{D}^{\mathcal{X}}$, $v' \in \mathcal{D}^{\mathcal{X}}$, $a \in \Sigma$, $b \in \Sigma$ and $w' \in (\mathcal{D}^{\mathcal{X}} \times \Sigma)^*$, then:\\
-			$\bm{g}'(q)(w, u') = \bm{g}'(q)(a)(v, v')(u')_{[u'(q_t) / \bm{g}'(q_t)(\langle v', b \rangle w', u')]} = \overline{\bm{g}(q)(a)(v, v')(u)_{[u(q_t) / \overline{\bm{g}'(q_t)(\langle v', b \rangle w', u')}]}}$ where $q_t \in \mathcal{Q}$ is the successor of $q$ with symbol $a$.
-		\end{itemize}
-		
-		Let's still take the example in previous pages, now we construct the $\mathcal{\overline{A}} = \langle \mathcal{D}', \mathcal{X}', \Sigma', \mathcal{Q}', \bm{i}', \mathcal{F}', \bm{g}' \rangle$ such that $\mathcal{L}(\mathcal{\overline{A}}) = \overline{\mathcal{L}(\mathcal{A})}$:
-		\begin{itemize}
-			\item $\mathcal{D}' = \mathcal{N}$;
-			\item $\mathcal{X}' = \{ x \}$;
-			\item $\Sigma' = \{ a, b \}$;
-			\item $\mathcal{Q}' = \{ q_0, q_1, q_2, q_3 \}$;
-			\item $\bm{i}' = q_0$;
-			\item $\mathcal{F}' = \{ q_1, q_2, q_3 \}$;
-			\item $\bm{g}'$ is given by:
-			\begin{tabular}{|c|p{5cm}|l|}
-				\hline  & $a$ & $b$\\
-				\hline $q_0$ & $(u(q_1) \lor (x \leq 3 \lor x' \neq x + 1)) \land (u(q_2) \lor (x \geq 3 \lor x' \neq x + 1)) \land (u(q_3) \lor (x \geq 1 \lor x' \neq x + 1))$ & $1$\\
-				\hline $q_1$ & 1 & $u(q_0) \lor x \geq 5$\\
-				\hline $q_2$ & 1 & $u(q_0) \lor x \neq 3$\\
-				\hline $q_3$ & 1 & $u(q_1) \lor x \neq 0$\\
-				\hline
-			\end{tabular}
-		\end{itemize}
-		
-		\begin{align*}
-			&\qquad\ \bm{g}'(q_0)(\langle v_0, a \rangle \langle v_1, b \rangle, \bm{f}')\\
-			&= \quad (\bm{g}'(q_1)(\langle v_1, b \rangle, \bm{f}') \lor (v_0 \leq 3 \lor v_1 \neq v_0 + 1))\\
-				&\quad \land\ (\bm{g}'(q_2)(\langle v_1, b \rangle, \bm{f}') \lor (v_0 \geq 3 \lor v_1 \neq v_0 + 1))\\
-				&\quad \land\ (\bm{g}'(q_3)(\langle v_1, b \rangle, \bm{f}') \lor (v_0 \geq 1 \lor v_1 \neq v_0 + 1))\\
-			&= \quad (\bm{f}'(q_0) \lor v_1 \geq 5 \lor v_0 \leq 3 \lor v_1 \neq v_0 + 1)\\
-				&\quad \land\ (\bm{f}'(q_0) \lor v_1 \neq 3 \lor v_0 \geq 3 \lor v_1 \neq v_0 + 1)\\
-				&\quad \land\ (\bm{f}'(q_1) \lor v_1 \neq 0 \lor v_0 \geq 1 \lor v_1 \neq v_0 + 1)\\
-			&= \quad (v_1 \geq 5 \lor v_0 \leq 3 \lor v_1 \neq v_0 + 1) \land (v_1 \neq 3 \lor v_0 \geq 3 \lor v_1 \neq v_0 + 1)\\
-			&= \quad v_1 \geq 5 \lor v_0 \leq 3 \land v_1 \neq 3 \lor v_0 = 3 \lor v_1 \neq v_0 + 1\\
-			&= \quad v_0 \neq 2 \lor v_1 \neq 3
-		\end{align*}
-		
-		Therefore, the automaton $\mathcal{\overline{A}}$ does not accept the word $\langle 2, a \rangle \langle 3, b \rangle$.\\
-		
-		$\bm{g}'(q_0)(\lambda, \bm{f}') = \bm{f}'(q_0) = 0$\\
-		
-		Therefore, the automaton $\mathcal{\overline{A}}$ accepts the empty word.
-		
-	% End Subsection{Complementation}
+We consider an infinite countable set of \emph{variables} $\vars$,
+where each $x \in \vars$ has an associated sort $\sigma(x)$. Terms are
+defined recursively: a term $t$ of sort $S$ is a variable $x \in
+\vars$ where $\sigma(x)=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
+$t_1,\ldots,t_{\#(f)}$ are terms of sort $\Data$ and $\sigma(f)=S$. An
+\emph{atom} is a term of sort $\Bool$ or an equality $t \teq s$
+between two terms of sort $\Data$. A \emph{literal} is an atom or its
+negation. A \emph{formula} is a combination of atoms using disjunction
+$\vee$, conjunction $\wedge$ and negation $\neg$.  A formula is in
+disjunctive normal form (DNF) if it is a disjunction of conjunctions
+of literals $\bigvee_{i=1}^N \bigwedge_{j=1}^{M_i} \ell_{ij}$.
 
-% End Section{Alternating Data Automata}
-
-% References
-\bibliographystyle{plain}
-\bibliography{references}
-
-% Appendix
-\appendix
-
-	% Begin Section{Length of a Word}
-	\section{Length of a Word}
-	
-	The length of a word $w$ is defined as below:\\
-	$length(w) = k$ iff $w \in (\mathcal{D}^{\mathcal{X}} \times \Sigma)^k$\\
-	
-	Hence, $length(\lambda) = 0$.
-	% End Section{Length of a Word}
-
-	% Begin Section{Proof of the Correctness of Complementation}
-	\section{Proof of the Correctness of Complementation}
-
-	It is same to prove $\bm{g}(\bm{i})(w, \bm{f}) = \overline{\bm{g}'(\bm{i})(w, \bm{f}')}$ with $w \in (\mathcal{D}^{\mathcal{X}} \times \Sigma)^*$:
-	\begin{itemize}
-		\item If $w = \lambda$, then for each $q \in \mathcal{Q}$:
-		\begin{align*}
-			&\qquad\ \bm{g}(q)(w, \bm{f})\\
-			&= \quad \bm{f}(q)\\
-			&= \quad q \in \mathcal{F}\\
-			&= \quad \overline{q \in \mathcal{F}'}\\
-			&= \quad \overline{\bm{f}'(q)}\\
-			&= \quad \overline{\bm{g}'(q)(w, \bm{f}')}
-		\end{align*}
-		\item If $w = \langle v, a \rangle$ with $v \in \mathcal{D}^{\mathcal{X}}$ and $a \in \Sigma$, then for each $q \in \mathcal{Q}$:
-		\begin{align*}
-			&\qquad\ \bm{g}(q)(w, \bm{f})\\
-			&= \quad \bm{g}(q)(a)(v)(\bm{f})\\
-			&= \quad \bm{g}(q)(a)(v)(\bm{f})_{[\bm{f}(q_t) / \overline{\bm{f}'(q_t)}]} \quad \diamondsuit\\
-			&= \quad \overline{\overline{\bm{g}(q)(a)(v)(\bm{f})_{[\bm{f}(q_t) / \overline{\bm{f}'(q_t)}]}}}\\
-			&= \quad \overline{\bm{g}'(q)(a)(v)(\bm{f}')}\\
-			&= \quad \overline{\bm{g}'(q)(w, \bm{f}')}
-		\end{align*}
-		$\diamondsuit$ $q_t \in \mathcal{Q}$ is the successor of $q$ with symbol $a$.\\
-	\end{itemize}
-	
-	Now, let's $\bm{suppose}$ that for each $k$-length non-empty($k \geq 1$) word $w' = \langle v', a' \rangle w''$ with $v' \in \mathcal{D}^{\mathcal{X}}$ and $a' \in \Sigma$ and $w'' \in (\mathcal{D}^{\mathcal{X}} \times \Sigma)^{k-1}$, we always have $\bm{g}(q)(w', \bm{f}) = \overline{\bm{g}'(q)(w', \bm{f}')}$, then for any $(k+1)$-length word $w = \langle v, a \rangle w' = \langle v, a \rangle \langle v', a' \rangle w''$ with $v \in \mathcal{D}^{\mathcal{X}}$ and $a \in \Sigma$, we can have:
-	\begin{align*}
-		&\qquad\ \bm{g}(q)(w, \bm{f})\\
-		&= \quad \bm{g}(q)(\langle v, a \rangle \langle v', a' \rangle w'', \bm{f})\\
-		&= \quad \bm{g}(q)(a)(v, v')(\bm{f})_{[\bm{f}(q_t) / \bm{g}(q_t)(\langle v', a' \rangle w'', \bm{f})]} \quad \clubsuit\\
-		&= \quad \bm{g}(q)(a)(v, v')(\bm{f})_{[\bm{f}(q_t) / \bm{g}(q_t)(w', \bm{f})]}\\
-		&= \quad \bm{g}(q)(a)(v, v')(\bm{f})_{[\bm{f}(q_t) / \overline{\bm{g}'(q_t)(w', \bm{f}')}]}\\
-		&= \quad \overline{\overline{\bm{g}(q)(a)(v, v')(\bm{f})_{[\bm{f}(q_t) / \overline{\bm{g}'(q_t)(w', \bm{f}')}]}}}\\
-		&= \quad \overline{\bm{g}'(q)(a)(v, v')(\bm{f}')_{[\bm{f}'(q_t) / \bm{g}'(q_t)(w', \bm{f}')]}}\\
-		&= \quad \overline{\bm{g}'(q)(w, \bm{f}')}
-	\end{align*}
-	$\clubsuit$ $q_t \in \mathcal{Q}$ is the successor of $q$ with symbol $a$.\\
-	
-	We already have $\bm{g}(q)(w, \bm{f}) = \overline{\bm{g}'(q)(w, \bm{f}')}$ when the length is 1. Therefore, we can have it for all the length $k \geq 1$.\\
-	
-	Hence, $\bm{g}(\bm{i})(w, \bm{f}) = \overline{\bm{g}'(\bm{i})(w, \bm{f}')}$ with $w \in (\mathcal{D}^{\mathcal{X}} \times \Sigma)^*$.
-	% End Section{Proof of the Correctness of Complementation}
+An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
+\item the sort $\Data$ into a non-empty set $\Data^\I$, 
+\item the $\Bool$ sort into the set $\Bool^\I$ containing the boolean
+  values, and
+\item each function symbol $f$ into a total function $f^\I :
+  (\Data^\I)^{\#(f)} \rightarrow \sigma(f)^I$, or an element of
+  $\sigma(f)^I$ when $\#(f)=0$.
+\end{inparaenum}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
-% ====================
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
