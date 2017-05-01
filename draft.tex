@@ -58,8 +58,8 @@ assume w.l.o.g. that $\ssorts{\Sigma}$ consists of two distinct sorts
 $\Data$ and $\Bool$ and each function symbol $f \in \sfuns{\sig}$ has
 $\#(f) \geq 0$ arguments of sort $\Data$ and return value $\sigma(f)
 \in \ssorts{\sig}$. If $n=0$, $f$ is a \emph{constant} of sort
-$\sigma(f)$ and we consider the constants $\top,\bot \in \sfuns{\sig}$
-of sort $\Bool$, denoting the truth values true and false.
+$\sigma(f)$. We consider a constant $\mathbf{0}$ of sort $\Data$ and
+$\top,\bot$ of sort $\Bool$, denoting the truth values true and false.
 
 We consider an infinite countable set of \emph{variables} $\vars$,
 where each $x \in \vars$ has an associated sort $\sigma(x)$. Terms are
@@ -71,17 +71,94 @@ between two terms of sort $\Data$. A \emph{literal} is an atom or its
 negation. A \emph{formula} is a combination of atoms using disjunction
 $\vee$, conjunction $\wedge$ and negation $\neg$.  A formula is in
 disjunctive normal form (DNF) if it is a disjunction of conjunctions
-of literals $\bigvee_{i=1}^N \bigwedge_{j=1}^{M_i} \ell_{ij}$.
+of literals $\bigvee_{i=1}^N \bigwedge_{j=1}^{M_i} \ell_{ij}$. We
+denote by $\fv{S}{\phi}$ the set of variables of sort $S$ in $\phi$
+and write $\fv{}{\phi}$ for $\bigcup_{S \in \ssorts{\sig}}
+\fv{S}{\phi}$. 
 
 An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
 \item the sort $\Data$ into a non-empty set $\Data^\I$, 
 \item the $\Bool$ sort into the set $\Bool^\I$ containing the boolean
   values, and
 \item each function symbol $f$ into a total function $f^\I :
-  (\Data^\I)^{\#(f)} \rightarrow \sigma(f)^I$, or an element of
+  \left(\Data^\I\right)^{\#(f)} \rightarrow \sigma(f)^I$, or an element of
   $\sigma(f)^I$ when $\#(f)=0$.
 \end{inparaenum}
+Given an interpretation $\I$, a \emph{valuation} $\nu$ maps each
+variable $x \in \vars$ into an element $\nu(x) \in \sigma(x)^\I$. For
+a term $t$, we denote by $t^\I_\nu$ the value obtained by replacing
+each function symbol $f$ by its interpretation $f^\I$ and each
+variable $x$ by its valuation $\nu(x)$. For a formula $\phi$, we write
+$\I,\nu \models \phi$ if the formula obtained by replacing each term
+$t$ in $\phi$ by the value $t^\I_\nu$ is logically equivalent to true.
+A formula $\phi$ is \emph{satisfiable} in the interpretation $\I$ if
+there exists a valuation $\nu$ such that $\I,\nu \models \phi$. Given
+formulae $\varphi$ and $\psi$, we say that \emph{$\phi$ entails
+  $\psi$}, denoted $\phi \models^\I \psi$ iff $\I,\nu \models \varphi$
+implies $\I,\nu \models \psi$, for each valuation $\nu$. We omit
+mentioning the interpretation when it is clear from the context. 
 
+\section{Alternating Data Automata}
+
+In the rest of this section we fix an interpretation $\I$ and a finite
+alphabet $\Sigma$ of \emph{input events}. Given a finite set $\vec{x}
+\subset \vars$ of variables of sort $\Data$, a \emph{data word} is a
+finite sequence of pairs $(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$
+where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n : \vec{x}
+\rightarrow \Data^\I$ are valuations. We denote by $\vec{x} \mapsto
+\Data^\I$ the set of valuations of the variables $\vec{x}$ and by
+$\left(\Sigma \times (\vec{x} \mapsto \Data^\I)\right)^*$ the set of
+data words over $\vec{x}$. 
+
+Given two sets of variables $B,X \subset \vars$, we denote by
+$\Form^+(B,X)$ the set of formulae $\phi$ such that $\fv{\Bool}{\phi}
+\subseteq B$, $\fv{\Data}{\phi} \subseteq X$ and each variable from
+$B$ occurs under an even number of negations. 
+
+An \emph{alternating data automaton} (ADA) is a tuple $\A =
+\tuple{\vec{x},Q,I,F,\Delta}$, where: \begin{compactitem}
+%
+\item $\vec{x} \subset \vars$ is a finite set of variables of sort
+  $\Data$,
+%
+\item $Q$ is a finite set of variables of sort $\Bool$, also called
+  \emph{states},
+%
+\item $I,F \subseteq Q$ are sets of \emph{initial} and \emph{final}
+  states, and
+%
+\item $\Delta : Q \times \Sigma \rightarrow
+  \Form^+(Q,\overline{\vec{x}}\cup\vec{x})$ is a \emph{transition
+    function}, where $\overline{\vec{x}}$ is the set $\{\overline{x}
+  \mid x \in \vec{x}\}$.
+\end{compactitem}
+Intuitively, $\overline{\vec{x}}$ track the previous and $\vec{x}$ the
+current values of the variables of $\A$. Formally, let $\vec{x}_i =
+\set{x_i \mid x \in \vec{x}}$, $i\geq0$, be a time-stamped set of
+variables. For an input even $a \in \Sigma$ and a formula
+$\phi(\vec{x}_0,\ldots,\vec{x}_i)$ we write $\Delta(\phi,a)$ for the
+formula obtained from $\phi$ by simultaneously replacing each state $q
+\in \fv{\Bool}{\phi}$ by the formula
+$\Delta(q,a)[\vec{x}_i/\overline{\vec{x}},\vec{x}_{i+1}/\vec{x}]$, for
+all $i\geq0$.
+
+Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$, the
+\emph{run} of $\A$ over $w$ is the sequence of formulae
+$\phi_0,\phi_1,\ldots,\phi_n$, where $\phi_0 \equiv \bigwedge_{q \in
+  I} q$ and, for all $i > 0$, we have $\phi_i \equiv
+\Delta(\phi_{i-1},a_i)$. We slightly abuse notation and write
+$\Delta(\phi_0,a_1,\ldots,a_n)$ for
+$\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ in the following. $\A$ 
+\emph{accepts} $w$ iff $\I,\nu \models \phi_n$, where $\nu$ is the
+valuation that maps:\begin{inparaenum}[(1)] 
+\item each $x \in \vec{x}_0$ to $\mathbf{0}$, 
+%
+\item each $x \in \vec{x}_i$ to $\nu_i(x)$, for all $i \in [1,n]$, 
+%
+\item each $q \in \fv{\Bool}{\phi_n} \cap F$ to $\top$, and 
+%
+\item each $q \in \fv{\Bool}{\phi_n} \setminus F$ to $\bot$.
+\end{inparaenum}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
