@@ -57,29 +57,38 @@ sorted \emph{function symbols}. To simplify the presentation, we
 assume w.l.o.g. that $\ssorts{\Sigma}$ consists of two distinct sorts
 $\Data$ and $\Bool$ and each function symbol $f \in \sfuns{\sig}$ has
 $\#(f) \geq 0$ arguments of sort $\Data$ and return value $\sigma(f)
-\in \ssorts{\sig}$. If $n=0$, $f$ is a \emph{constant} of sort
-$\sigma(f)$. We consider a constant $\mathbf{0}$ of sort $\Data$ and
-$\top,\bot$ of sort $\Bool$, denoting the truth values true and false.
+\in \ssorts{\sig}$. If $\#(f)=0$ then $f$ is a \emph{constant}. We
+consider the constants $\mathbf{0}$ of sort $\Data$ and $\top,\bot$ of
+sort $\Bool$, denoting the truth values true and false.
 
 We consider an infinite countable set of \emph{variables} $\vars$,
 where each $x \in \vars$ has an associated sort $\sigma(x)$. Terms are
-defined recursively: a term $t$ of sort $S$ is a variable $x \in
-\vars$ where $\sigma(x)=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
+defined recursively: a term $t$ of sort $\sigma(t)=S$ is a variable $x
+\in \vars$ where $\sigma(x)=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
 $t_1,\ldots,t_{\#(f)}$ are terms of sort $\Data$ and $\sigma(f)=S$. An
 \emph{atom} is a term of sort $\Bool$ or an equality $t \teq s$
 between two terms of sort $\Data$. A \emph{literal} is an atom or its
 negation. A \emph{formula} is a combination of atoms using disjunction
-$\vee$, conjunction $\wedge$ and negation $\neg$.  A formula is in
-disjunctive normal form (DNF) if it is a disjunction of conjunctions
-of literals $\bigvee_{i=1}^N \bigwedge_{j=1}^{M_i} \ell_{ij}$. We
-denote by $\fv{S}{\phi}$ the set of variables of sort $S$ in $\phi$
-and write $\fv{}{\phi}$ for $\bigcup_{S \in \ssorts{\sig}}
-\fv{S}{\phi}$. 
+$\vee$, conjunction $\wedge$ and negation $\neg$. We denote by
+$\fv{S}{\phi}$ the set of variables of sort $S$ in $\phi$ and write
+$\fv{}{\phi}$ for $\bigcup_{S \in \set{\Data,\Bool}}
+\fv{S}{\phi}$. For a variable $x \in \fv{}{\phi}$ and a term $t$ such
+that $\sigma(t) = \sigma(x)$, we denote by $\phi[t/x]$ the result of
+replacing each occurrence of $x$ by $t$. For indexed sets
+$\vec{t}=\set{t_1,\ldots,t_n}$ and $\vec{x}=\set{x_1,\ldots,x_n}$, we
+write $\phi[\vec{t}/\vec{x}]$ for the formula obtained by
+simultaneously replacing $x_i$ with $t_i$ in $\phi$, for all
+$i=1,\ldots,n$. A formula is in positive normal form (PNF) if negation
+occurs only within literals and in disjunctive normal form (DNF) if it
+is a disjunction of conjunctions of literals $\bigvee_{i=1}^N
+\bigwedge_{j=1}^{M_i} \ell_{ij}$.
 
 An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
 \item the sort $\Data$ into a non-empty set $\Data^\I$, 
-\item the $\Bool$ sort into the set $\Bool^\I$ containing the boolean
+%
+\item the sort $\Bool$ into the set $\Bool^\I$ containing the boolean
   values, and
+%
 \item each function symbol $f$ into a total function $f^\I :
   \left(\Data^\I\right)^{\#(f)} \rightarrow \sigma(f)^I$, or an element of
   $\sigma(f)^I$ when $\#(f)=0$.
@@ -95,28 +104,40 @@ A formula $\phi$ is \emph{satisfiable} in the interpretation $\I$ if
 there exists a valuation $\nu$ such that $\I,\nu \models \phi$. Given
 formulae $\varphi$ and $\psi$, we say that \emph{$\phi$ entails
   $\psi$}, denoted $\phi \models^\I \psi$ iff $\I,\nu \models \varphi$
-implies $\I,\nu \models \psi$, for each valuation $\nu$. We omit
-mentioning the interpretation when it is clear from the context. 
+implies $\I,\nu \models \psi$, for each valuation $\nu$, and $\phi
+\eqiff^\I \psi$ iff $\phi \models^\I \psi$ and $\psi \models^\I \phi$.
+We omit mentioning the interpretation $\I$ when it is clear from the
+context.
 
 \section{Alternating Data Automata}
 
 In the rest of this section we fix an interpretation $\I$ and a finite
 alphabet $\Sigma$ of \emph{input events}. Given a finite set $\vec{x}
-\subset \vars$ of variables of sort $\Data$, a \emph{data word} is a
-finite sequence of pairs $(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$
-where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n : \vec{x}
-\rightarrow \Data^\I$ are valuations. We denote by $\vec{x} \mapsto
-\Data^\I$ the set of valuations of the variables $\vec{x}$ and by
-$\left(\Sigma \times (\vec{x} \mapsto \Data^\I)\right)^*$ the set of
-data words over $\vec{x}$. 
+\subset \vars$ of variables of sort $\Data$, let $\vec{x} \mapsto
+\Data^\I$ be the set of valuations of the variables $\vec{x}$ and
+$\Sigma[\vec{x}] = \Sigma \times (\vec{x} \mapsto \Data^\I)$ be the
+set of \emph{data symbols}. A \emph{data word} (or, simply, a word) is
+a finite sequence $(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$ of data
+symbols, where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n :
+\vec{x} \rightarrow \Data^\I$ are valuations. We denote by
+$\Sigma[\vec{x}]^*$ the set of data words over $\vec{x}$. This
+definition extends the classical notion of words from a finite
+alphabet with a possibly infinite alphabet $\Sigma[\vec{x}]$. Clearly,
+when $\Data^\I$ is sufficiently large or infinite, we can map the
+elements of $\Sigma$ into designated elements of $\Data^\I$ and use a
+special variable to encode the input events. However, keeping $\Sigma$
+explicit in the following simplifies several technical points below,
+without cluttering the presentation.
 
-Given two sets of variables $B,X \subset \vars$, we denote by
-$\Form^+(B,X)$ the set of formulae $\phi$ such that $\fv{\Bool}{\phi}
-\subseteq B$, $\fv{\Data}{\phi} \subseteq X$ and each variable from
-$B$ occurs under an even number of negations. 
+Given sets of variables $\vec{b},\vec{x} \subset \vars$ of sort
+$\Bool$ and $\Data$, respectively, we denote by
+$\Form^+(\vec{b},\vec{x})$ the set of formulae $\phi$ such that
+$\fv{\Bool}{\phi} \subseteq \vec{b}$, $\fv{\Data}{\phi} \subseteq
+\vec{x}$ and each variable from $\vec{b}$ occurs under an even number
+of negations. 
 
-An \emph{alternating data automaton} (ADA) is a tuple $\A =
-\tuple{\vec{x},Q,I,F,\Delta}$, where: \begin{compactitem}
+An \emph{alternating data automaton} (or, simply, and automaton) is a
+tuple $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$: \begin{compactitem}
 %
 \item $\vec{x} \subset \vars$ is a finite set of variables of sort
   $\Data$,
@@ -124,8 +145,10 @@ An \emph{alternating data automaton} (ADA) is a tuple $\A =
 \item $Q$ is a finite set of variables of sort $\Bool$, also called
   \emph{states},
 %
-\item $I,F \subseteq Q$ are sets of \emph{initial} and \emph{final}
-  states, and
+\item $\iota \in \Form^+(Q,\emptyset)$ is a formula describing the
+  \emph{initial configurations},
+%
+\item $F \subseteq Q$ is a set of \emph{final} states, and
 %
 \item $\Delta : Q \times \Sigma \rightarrow
   \Form^+(Q,\overline{\vec{x}}\cup\vec{x})$ is a \emph{transition
@@ -133,32 +156,155 @@ An \emph{alternating data automaton} (ADA) is a tuple $\A =
   \mid x \in \vec{x}\}$.
 \end{compactitem}
 Intuitively, $\overline{\vec{x}}$ track the previous and $\vec{x}$ the
-current values of the variables of $\A$. Formally, let $\vec{x}_i =
-\set{x_i \mid x \in \vec{x}}$, $i\geq0$, be a time-stamped set of
-variables. For an input even $a \in \Sigma$ and a formula
-$\phi(\vec{x}_0,\ldots,\vec{x}_i)$ we write $\Delta(\phi,a)$ for the
-formula obtained from $\phi$ by simultaneously replacing each state $q
-\in \fv{\Bool}{\phi}$ by the formula
-$\Delta(q,a)[\vec{x}_i/\overline{\vec{x}},\vec{x}_{i+1}/\vec{x}]$, for
-all $i\geq0$.
+current values of the variables of $\A$. Formally, let $\vec{x}_k =
+\set{x_k \mid x \in \vec{x}}$, $k\geq0$, be a time-stamped set of
+variables. For an input even $a \in \Sigma$ and a formula $\phi$ we
+write $\Delta^k(\phi,a)$ for the formula obtained from $\phi$ by
+simultaneously replacing each state $q \in \fv{\Bool}{\phi}$ by the
+formula
+$\Delta(q,a)[\vec{x}_k/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]$, for
+all $k\geq0$.
 
 Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$, the
 \emph{run} of $\A$ over $w$ is the sequence of formulae
-$\phi_0,\phi_1,\ldots,\phi_n$, where $\phi_0 \equiv \bigwedge_{q \in
-  I} q$ and, for all $i > 0$, we have $\phi_i \equiv
-\Delta(\phi_{i-1},a_i)$. We slightly abuse notation and write
-$\Delta(\phi_0,a_1,\ldots,a_n)$ for
-$\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ in the following. $\A$ 
-\emph{accepts} $w$ iff $\I,\nu \models \phi_n$, where $\nu$ is the
-valuation that maps:\begin{inparaenum}[(1)] 
+$\phi_0,\phi_1,\ldots,\phi_n$, where $\phi_0 \equiv \iota$ and, for
+all $i > 0$, we have $\phi_k \equiv \Delta^k(\phi_{k-1},a_k)$. We
+slightly abuse notation and write $\Delta(\iota,a_1,\ldots,a_n)$ for
+the formula $\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ in the
+following. $\A$ \emph{accepts} $w$ iff $\I,\nu \models \phi_n$, where
+$\nu$ is the valuation that maps:\begin{inparaenum}[(1)]
 \item each $x \in \vec{x}_0$ to $\mathbf{0}$, 
 %
-\item each $x \in \vec{x}_i$ to $\nu_i(x)$, for all $i \in [1,n]$, 
+\item each $x \in \vec{x}_k$ to $\nu_k(x)$, for all $k\in[1,n]$, 
 %
 \item each $q \in \fv{\Bool}{\phi_n} \cap F$ to $\top$, and 
 %
 \item each $q \in \fv{\Bool}{\phi_n} \setminus F$ to $\bot$.
 \end{inparaenum}
+The language of $\A$, denoted as $L(\A)$, is the set of words accepted
+by $\A$. 
+
+In this section we tackle the following problems: \begin{compactitem}
+\item \emph{boolean closure}: given automata $\A_1$ and $\A_2$, both
+  with the same set of variables $\vec{x}$, does there exist automata
+  $\A_\cup$, $\A_\cap$ and $\overline{\A}$ such that $L(\A_\cup) =
+  \A_1 \cup \A_2$, $L(A_\cap) = \A_1 \cap \A_2$ and $L(\overline{\A_1})
+  = \Sigma[\vec{x}]^* \setminus L(\A_1)$ ?
+%
+\item \emph{emptiness}: given an automaton $\A$, is it the case that
+  $L(\A) = \emptyset$ ?
+\end{compactitem}
+
+It is well known that other problems, such as \emph{universality}
+(given an automaton $\A$ with variables $\vec{x}$, does $L(\A) =
+\Sigma[\vec{x}]^*$) and \emph{inclusion} (given automata $\A_1$ and
+$\A_2$ with the same set of variables, does $L(\A_1) \subseteq
+L(\A_2)$ ?) can be reduced to the above problems. Observe furthermore
+that we do not consider cases in which the sets of variables in the
+two automata differ. An interesting problem in this case is: given
+automata $\A_1$ and $\A_2$, with variables $\vec{x}_1$ and
+$\vec{x}_2$, respectively, such that $\vec{x}_1 \subseteq \vec{x}_2$,
+does $L(\A_1) \subseteq \proj{L(\A_2)}{\vec{x}_1}$, where
+$\proj{L(\A_2)}{\vec{x}_1}$ is the projection of the set of words
+$L(\A_2)$ onto the variables $\vec{x}_1$? This problem is considered
+as future work.
+
+\subsection{Boolean Closure}
+
+For a formula $\phi \in \Form^+(Q,\vec{x})$, with no negated
+occurrences of the boolean variables in $Q$, we define the
+formula $\overline{\phi} \in \Form^+(Q,\vec{x})$ recursively on
+the structure of $\phi$:
+\[\begin{array}{lclclclc}
+\overline{\phi_1 \vee \phi_2} & \equiv & \overline{\phi_1} \wedge \overline{\phi_2} && 
+\overline{\phi_1 \wedge \phi_2} & \equiv & \overline{\phi_1} \vee \overline{\phi_2} \\
+\overline{\phi} & \equiv & \phi & \text{ if $\phi \in Q$}\hspace*{1cm} &
+\overline{\phi} & \equiv & \neg\phi & \text{if $\phi \not\in Q$ is an atom}
+\end{array}\]
+If $\phi$ does not contain variables from $Q$, then $\overline{\phi}$
+and $\neg\phi$ are equivalent, and in general:
+
+\begin{proposition}\label{prop:overline}
+  Given a formula $\phi \in \Form^+(Q,\vec{x})$ and a valuation $\nu$
+  mapping each $q \in Q$ a value $\nu(q) \in \Bool^\I$ and each $x \in
+  \vec{x}$ to a value $\nu(x) \in \Data^\I$, let $\nu'$ be the
+  valuation that assigns each $q \in Q$ the value $\neg\nu(q)$ and
+  each $x \in \vec{x}$ the value $\nu(x)$. Then we have 
+  $\I,\nu \models \phi \iff \I,\nu' \not\models \overline{\phi}$. 
+\end{proposition}
+\proof{Immediate, by induction on the structure of $\phi$. \qed}
+
+In the following let $\A_1 = \tuple{\vec{x},Q_1,\iota_1,F_1,\Delta_1}$
+and $\A_2 = \tuple{\vec{x},Q_2,\iota_2,F_2,\Delta_2}$, where
+w.l.o.g. we assume that $Q_1 \cap Q_2 = \emptyset$. We define $\A_\cup
+= \tuple{\vec{x},Q_1\cup Q_2,\iota_1 \vee \iota_2,F_1\cup
+  F_2,\Delta_1\cup\Delta_2}$, $\A_\cap = \tuple{\vec{x},Q_1\cup
+  Q_2,\iota_1 \wedge \iota_2, F_1\cup F_2, \Delta_1\cup\Delta_2}$ and
+$\overline{\A_1} = \langle \vec{x},Q_1,\iota_1,Q_1\setminus
+F_1,\overline{\Delta_1} \rangle$, where $\overline{\Delta_1}(q,a)
+\equiv \overline{\Delta_1(q,a)}$, for all $q \in Q_1$ and $a \in
+\Sigma$. The following lemma shows the correctness of these
+definitions: 
+
+\begin{lemma}\label{lemma:closure}
+  For any automata $\A_1 = \tuple{\vec{x},Q_1,\iota_1,F_1,\Delta_1}$
+  and $\A_2 = \tuple{\vec{x},Q_2,\iota_2,F_2,\Delta_2}$ such that $Q_1
+  \cap Q_2 = \emptyset$, we have $L(\A_\cup) = L(\A_1) \cup L(\A_2)$,
+  $L(\A_\cap) = L(\A_1) \cap L(\A_2)$ and $L(\overline{\A_1}) =
+  \Sigma[\vec{x}]^* \setminus L(\A_1)$.
+\end{lemma}
+\proof{ We prove $L(\A_\cup) = L(\A_1) \cup L(\A_2)$ first, the proof
+  for $\A_\cap$ being analogous. Let $w = (a_1,\nu_1) \ldots
+  (a_n,\nu_n) \in L(\A_\cup)$ be a word, where $n=0$ corresponds to
+  the empty word. We prove by induction on $n\geq0$ that
+  $\Delta(\iota_1 \vee \iota_2,a_1\ldots a_n) \eqiff
+  \Delta(\iota_1,a_1\ldots a_n) \vee \Delta(\iota_2,a_1\ldots
+  a_n)$. The case $n=0$ follows from the definition of the initial
+  configuration of $\A_\cup$. For the inductive step $n>0$,
+  $\Delta(\iota_1 \vee \iota_2,a_1\ldots a_n)$ is obtained from
+  $\Delta(\iota_1 \vee \iota_2,a_1\ldots a_{n-1})$ by replacing each
+  variable $q \in \fv{\Bool}{\Delta(\iota_1 \vee \iota_2,a_1\ldots
+    a_{n-1})}$ with
+  $\Delta(q,a_n)[\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]$,
+  denoted $\Delta^n(\Delta(\iota_1 \vee \iota_2,a_1\ldots
+  a_{n-1}),a_n)$. Since by induction hypothesis, $\Delta(\iota_1 \vee
+  \iota_2,a_1\ldots a_{n-1}) \eqiff \Delta(\iota_1,a_1\ldots a_{n-1})
+  \vee \Delta(\iota_2,a_1\ldots a_{n-1})$, we obtain: 
+  \[\begin{array}{rcl}
+  \Delta^n(\Delta(\iota_1 \vee \iota_2,a_1\ldots a_{n-1}),a_n) & \iff & 
+  \Delta^n(\Delta(\iota_1,a_1\ldots a_{n-1}),a_n) \vee
+  \Delta^n(\Delta(\iota_2,a_1\ldots a_{n-1}),a_n) \\
+  & \iff & \Delta(\iota_1,a_1\ldots a_{n}) \vee \Delta(\iota_2,a_1\ldots
+  a_{n}) \enspace.
+  \end{array}\] 
+  To prove $L(\overline{\A_1}) = \Sigma[\vec{x}]^* \setminus L(\A_1)$,
+  let $w = (a_1,\nu_1) \ldots (a_n,\nu_n)$ be a word and show that
+  $\overline{\Delta}(\iota_1,a_1 \ldots a_n) =
+  \overline{\Delta(\iota_1,a_1 \ldots a_n)}$ by induction on
+  $n\geq0$. The case $n=0$ is immediate, because $\fv{}{\iota_1}
+  \subseteq Q$ and thus $\overline{\iota_1} = \iota_1$. For the case
+  $n>0$, we compute:
+  \[\begin{array}{rcll}
+  \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \eqiff & \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \text{ by induction hypothesis} \\
+  & \eqiff & \overline{\Delta(\iota_1,a_1\ldots,a_n)} & \text{ by the definition of $\overline{\phi}$ .}
+  \end{array}\]
+  Let $\nu,\nu' : Q \cup \bigcup_{i=0}^n\vec{x}_i$ be two valuations
+  such that: \begin{compactitem}
+  \item $\nu(q) = \top$ and $\nu'(q) = \bot$, for each $q \in F$, 
+    %
+  \item $\nu(q) = \bot$ and $\nu'(q) = \top$, for each $q \in Q \setminus F$, 
+    %
+  \item $\nu(x) = \nu'(x) = \mathbf{0}$, for each $x \in \vec{x}_0$, 
+    %
+  \item $\nu(x) = \nu'(x) = \nu_i(x)$, for each $x \in \vec{x}_i$ and each $i
+    \in [1,n]$.
+  \end{compactitem}
+  By Proposition \ref{prop:overline}, we have $\I,\nu \models
+  \Delta(\iota_1,a_1 \ldots a_n) \iff \I,\nu' \not\models
+  \overline{\Delta(\iota_1,a_1 \ldots a_n)} \iff \I,\nu' \not\models
+  \overline{\Delta}(\iota_1,a_1 \ldots a_n)$. Thus $w \in L(\A_1) \iff
+  w \not\in L(\overline{\A_1})$, i.e. $L(\overline{\A_1}) =
+  \Sigma[\vec{x}]^* \setminus L(\A_1)$. \qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
