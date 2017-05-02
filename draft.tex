@@ -306,6 +306,33 @@ definitions:
   w \not\in L(\overline{\A_1})$, i.e. $L(\overline{\A_1}) =
   \Sigma[\vec{x}]^* \setminus L(\A_1)$. \qed}
 
+\section{Predicate Abstraction for Emptiness}
+
+Unlike the boolean closure properties, showed to be effectively
+decidable (Lemma \ref{lemma:closure}), the emptiness problem is
+undecidable, even in very simple cases. For instance, if $\Data^\I$ is
+the set of positive integers, an ADA can simulate an Alternating
+Vector Addition System with States (AVASS) \cite{LazicSchmitz14} using
+only atoms $x = \overline{x} + k$, for $k \in \nat$ and $x \teq 0$,
+with the classical interpretation of function symbols on
+integers. Since reachability of a configuration $(q,\nu)$, where $q$
+is a control state and $\nu$ a valuation of the variables, is
+undecidable, the emptiness problem is undecidable for ADA, in general. 
+
+We thus turn to semi-algorithms for this problem and develop methods
+that are supposed to be both: \begin{compactenum}
+\item \emph{sound}: given an automaton $\A$, if $L(\A) \neq\emptyset$,
+  the procedure will terminate and return a word $w \in L(\A)$), and
+%
+\item \emph{complete relative to termination}: if the procedure terminates
+  without returning such a word, then $L(\A) = \emptyset$. 
+\end{compactenum}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{abbrv} \bibliography{refs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
