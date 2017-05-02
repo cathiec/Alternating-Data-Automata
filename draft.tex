@@ -81,7 +81,8 @@ simultaneously replacing $x_i$ with $t_i$ in $\phi$, for all
 $i=1,\ldots,n$. A formula is in positive normal form (PNF) if negation
 occurs only within literals and in disjunctive normal form (DNF) if it
 is a disjunction of conjunctions of literals $\bigvee_{i=1}^N
-\bigwedge_{j=1}^{M_i} \ell_{ij}$.
+\bigwedge_{j=1}^{M_i} \ell_{ij}$. The size of a formula $\phi$,
+denoted $\len{\phi}$ is the number of symbols occuring in it.
 
 An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
 \item the sort $\Data$ into a non-empty set $\Data^\I$, 
@@ -163,7 +164,8 @@ write $\Delta^k(\phi,a)$ for the formula obtained from $\phi$ by
 simultaneously replacing each state $q \in \fv{\Bool}{\phi}$ by the
 formula
 $\Delta(q,a)[\vec{x}_k/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]$, for
-all $k\geq0$.
+all $k\geq0$. The size of $\A$ is defined as $\len{\A} = \len{\iota} +
+\sum_{(q,a) \in Q\times\Sigma}\len{\Delta(q,a)}$.
 
 Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$, the
 \emph{run} of $\A$ over $w$ is the sequence of formulae
@@ -211,18 +213,21 @@ as future work.
 
 \subsection{Boolean Closure}
 
-For a formula $\phi \in \Form^+(Q,\vec{x})$, with no negated
-occurrences of the boolean variables in $Q$, we define the
-formula $\overline{\phi} \in \Form^+(Q,\vec{x})$ recursively on
-the structure of $\phi$:
+Given a set $Q$ of boolean variables and a set $\vec{x}$ of variables
+of sort $\Data$, for a formula $\phi \in \Form^+(Q,\vec{x})$, with no
+negated occurrences of the boolean variables, we define the formula
+$\overline{\phi} \in \Form^+(Q,\vec{x})$ recursively on the structure
+of $\phi$:
 \[\begin{array}{lclclclc}
 \overline{\phi_1 \vee \phi_2} & \equiv & \overline{\phi_1} \wedge \overline{\phi_2} && 
 \overline{\phi_1 \wedge \phi_2} & \equiv & \overline{\phi_1} \vee \overline{\phi_2} \\
 \overline{\phi} & \equiv & \phi & \text{ if $\phi \in Q$}\hspace*{1cm} &
 \overline{\phi} & \equiv & \neg\phi & \text{if $\phi \not\in Q$ is an atom}
 \end{array}\]
-If $\phi$ does not contain variables from $Q$, then $\overline{\phi}$
-and $\neg\phi$ are equivalent, and in general:
+It is easy to check that $\len{\overline{\phi}} = \len{\phi}$, for
+every formula $\phi \in \Form^+(Q,\vec{x})$. If $\phi$ does not
+contain boolean variables, then $\overline{\phi}$ and $\neg\phi$ are
+equivalent, and in general:
 
 \begin{proposition}\label{prop:overline}
   Given a formula $\phi \in \Form^+(Q,\vec{x})$ and a valuation $\nu$
@@ -285,7 +290,8 @@ definitions:
   \subseteq Q$ and thus $\overline{\iota_1} = \iota_1$. For the case
   $n>0$, we compute:
   \[\begin{array}{rcll}
-  \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \eqiff & \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \text{ by induction hypothesis} \\
+  \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \eqiff & 
+  \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \text{ by induction hypothesis} \\
   & \eqiff & \overline{\Delta(\iota_1,a_1\ldots,a_n)} & \text{ by the definition of $\overline{\phi}$ .}
   \end{array}\]
   Let $\nu,\nu' : Q \cup \bigcup_{i=0}^n\vec{x}_i$ be two valuations
@@ -306,6 +312,13 @@ definitions:
   w \not\in L(\overline{\A_1})$, i.e. $L(\overline{\A_1}) =
   \Sigma[\vec{x}]^* \setminus L(\A_1)$. \qed}
 
+It is easy to see that $\len{\A_\cup} = \len{\A_\cap} = \len{\A_1} +
+\len{\A_2}$ and $\len{\overline{\A}} = \len{\A}$, thus the automata
+for the boolean operations, including complementation, can be
+implemented in linear time. This is not very surprising, since linear
+time intersection and complementation are possible for alternating
+automata over finite alphabets \cite{ChandraKozenStockmeyer81}.
+
 \section{Predicate Abstraction for Emptiness}
 
 Unlike the boolean closure properties, showed to be effectively
@@ -319,14 +332,22 @@ integers. Since reachability of a configuration $(q,\nu)$, where $q$
 is a control state and $\nu$ a valuation of the variables, is
 undecidable, the emptiness problem is undecidable for ADA, in general. 
 
-We thus turn to semi-algorithms for this problem and develop methods
-that are supposed to be both: \begin{compactenum}
+Consequently, we give up on the guarantee for termination and develop
+semi-algorithmic methods that are supposed to be
+both: \begin{compactenum}
 \item \emph{sound}: given an automaton $\A$, if $L(\A) \neq\emptyset$,
   the procedure will terminate and return a word $w \in L(\A)$), and
 %
 \item \emph{complete relative to termination}: if the procedure terminates
   without returning such a word, then $L(\A) = \emptyset$. 
 \end{compactenum}
+
+Let us fix an automaton $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$ whose
+finite input alphabet is $\Sigma$, for the rest of this section. Given
+a finite sequence $u = a_1\ldots a_n \in \Sigma^*$ of input events and
+$\phi \in \Form^+(Q,\vec{x})$, we define $\Post(\phi,u) \equiv \exists
+\vec{x}_0 \ldots \exists \vec{x}_{n-1} ~.~
+\Delta(\phi,u)[\vec{x}/\vec{x}_n]$. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
