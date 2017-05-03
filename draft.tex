@@ -69,9 +69,11 @@ $t_1,\ldots,t_{\#(f)}$ are terms of sort $\Data$ and $\sigma(f)=S$. An
 \emph{atom} is a term of sort $\Bool$ or an equality $t \teq s$
 between two terms of sort $\Data$. A \emph{literal} is an atom or its
 negation. A \emph{formula} is a combination of atoms using disjunction
-$\vee$, conjunction $\wedge$ and negation $\neg$. We denote by
-$\fv{S}{\phi}$ the set of variables of sort $S$ in $\phi$ and write
-$\fv{}{\phi}$ for $\bigcup_{S \in \set{\Data,\Bool}}
+$\vee$, conjunction $\wedge$ and negation $\neg$ and we write $\phi
+\rightarrow \psi$ for $\neg\phi \vee \psi$.
+
+We denote by $\fv{S}{\phi}$ the set of variables of sort $S$ in $\phi$
+and write $\fv{}{\phi}$ for $\bigcup_{S \in \set{\Data,\Bool}}
 \fv{S}{\phi}$. For a variable $x \in \fv{}{\phi}$ and a term $t$ such
 that $\sigma(t) = \sigma(x)$, we denote by $\phi[t/x]$ the result of
 replacing each occurrence of $x$ by $t$. For indexed sets
@@ -87,8 +89,8 @@ denoted $\len{\phi}$ is the number of symbols occuring in it.
 An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
 \item the sort $\Data$ into a non-empty set $\Data^\I$, 
 %
-\item the sort $\Bool$ into the set $\Bool^\I$ containing the boolean
-  values, and
+\item the sort $\Bool$ into the set $\booli = \set{\true,\false}$, where
+  $\top^\I = \true$, $\bot^\I = \false$, and
 %
 \item each function symbol $f$ into a total function $f^\I :
   \left(\Data^\I\right)^{\#(f)} \rightarrow \sigma(f)^I$, or an element of
@@ -121,14 +123,15 @@ set of \emph{data symbols}. A \emph{data word} (or, simply, a word) is
 a finite sequence $(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$ of data
 symbols, where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n :
 \vec{x} \rightarrow \Data^\I$ are valuations. We denote by
-$\Sigma[\vec{x}]^*$ the set of data words over $\vec{x}$. This
-definition extends the classical notion of words from a finite
-alphabet with a possibly infinite alphabet $\Sigma[\vec{x}]$. Clearly,
-when $\Data^\I$ is sufficiently large or infinite, we can map the
-elements of $\Sigma$ into designated elements of $\Data^\I$ and use a
-special variable to encode the input events. However, keeping $\Sigma$
-explicit in the following simplifies several technical points below,
-without cluttering the presentation.
+$\varepsilon$ the empty sequence, by $\Sigma^*$ the set of finite
+sequences of input events and by $\Sigma[\vec{x}]^*$ the set of data
+words over $\vec{x}$. This definition extends the classical notion of
+words from a finite alphabet with a possibly infinite alphabet
+$\Sigma[\vec{x}]$. Clearly, when $\Data^\I$ is sufficiently large or
+infinite, we can map the elements of $\Sigma$ into designated elements
+of $\Data^\I$ and use a special variable to encode the input
+events. However, keeping $\Sigma$ explicit in the following simplifies
+several technical points below, without cluttering the presentation.
 
 Given sets of variables $\vec{b},\vec{x} \subset \vars$ of sort
 $\Bool$ and $\Data$, respectively, we denote by
@@ -186,7 +189,7 @@ $\nu$ is the valuation that maps:\begin{inparaenum}[(1)]
 The language of $\A$, denoted as $L(\A)$, is the set of words accepted
 by $\A$. 
 
-In this section we tackle the following problems: \begin{compactitem}
+In this section we tackle the following problems: \begin{compactenum}
 \item \emph{boolean closure}: given automata $\A_1$ and $\A_2$, both
   with the same set of variables $\vec{x}$, does there exist automata
   $\A_\cup$, $\A_\cap$ and $\overline{\A}$ such that $L(\A_\cup) =
@@ -195,7 +198,7 @@ In this section we tackle the following problems: \begin{compactitem}
 %
 \item \emph{emptiness}: given an automaton $\A$, is it the case that
   $L(\A) = \emptyset$ ?
-\end{compactitem}
+\end{compactenum}
 
 It is well known that other problems, such as \emph{universality}
 (given an automaton $\A$ with variables $\vec{x}$, does $L(\A) =
@@ -231,7 +234,7 @@ equivalent, and in general:
 
 \begin{proposition}\label{prop:overline}
   Given a formula $\phi \in \Form^+(Q,\vec{x})$ and a valuation $\nu$
-  mapping each $q \in Q$ a value $\nu(q) \in \Bool^\I$ and each $x \in
+  mapping each $q \in Q$ a value $\nu(q) \in \booli$ and each $x \in
   \vec{x}$ to a value $\nu(x) \in \Data^\I$, let $\nu'$ be the
   valuation that assigns each $q \in Q$ the value $\neg\nu(q)$ and
   each $x \in \vec{x}$ the value $\nu(x)$. Then we have 
@@ -319,7 +322,7 @@ implemented in linear time. This is not very surprising, since linear
 time intersection and complementation are possible for alternating
 automata over finite alphabets \cite{ChandraKozenStockmeyer81}.
 
-\section{Predicate Abstraction for Emptiness}
+\section{Antichains for Emptiness}
 
 Unlike the boolean closure properties, showed to be effectively
 decidable (Lemma \ref{lemma:closure}), the emptiness problem is
@@ -343,12 +346,54 @@ both: \begin{compactenum}
 \end{compactenum}
 
 Let us fix an automaton $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$ whose
-finite input alphabet is $\Sigma$, for the rest of this section. Given
-a finite sequence $u = a_1\ldots a_n \in \Sigma^*$ of input events and
-$\phi \in \Form^+(Q,\vec{x})$, we define $\Post(\phi,u) \equiv \exists
-\vec{x}_0 \ldots \exists \vec{x}_{n-1} ~.~
-\Delta(\phi,u)[\vec{x}/\vec{x}_n]$. 
+(finite) input event alphabet is $\Sigma$, for the rest of this
+section. Given a formula $\phi \in \Form^+(Q,\vec{x})$ and an input
+event $a \in \Sigma$, we define $\Post{\A}(\phi,a) \equiv \exists
+\overline{\vec{x}} ~.~ \Delta(\phi[\overline{\vec{x}}/\vec{x}], a) \in
+\Form^+(Q,\vec{x})$. We generalize $\Post{\A}$ to finite sequences of
+input events: $\Post{\A}(\phi,\varepsilon) \equiv \phi$ and
+$\Post{\A}(\phi,ua) \equiv \Post{\A}(\Post{\A}(\phi,u),a)$, for any $u
+\in \Sigma^*$. Then the emptiness problem for $\A$ becomes: does there
+exist a sequence $u \in \Sigma^*$ such that the formula $\Accept{\A}(u)
+\equiv \Post{\A}(\iota,u) \wedge \bigwedge_{q \in F} \top \rightarrow
+q \wedge \bigwedge_{q \in Q \setminus F} q \rightarrow \bot$ is
+satisfiable ? A na\"ive semi-algorithm then enumerates all finite
+sequences and checks for the satisfiability of $\Accept{\A}(u)$ for
+each $u \in \Sigma^*$.
 
+Since no boolean variable from $Q$ occurs under negation in $\phi$, it
+is easy to prove the following monotonicity property: given two
+formulae $\phi,\psi \in \Form^+(Q,\vec{x})$ if $\phi \models \psi$
+then $\Post{\A}(\phi,u) \models \Post{\A}(\psi,u)$, for any $u \in
+\Sigma^*$. This suggest an improvement of the above semi-algorithm,
+that enumerates and stores only a set $U \subseteq \Sigma^*$ for which
+$\set{\Post{\A}(\phi,u) \mid u \in U}$ forms an
+antichain\footnote{Given a partial order $(D,\preceq)$ an antichain is
+  a set $A \subseteq D$ such that $a \not\preceq b$ for any $a,b \in
+  A$.} w.r.t. the entailment partial order. This is because, for any
+$u,v \in \Sigma^*$, if $\Post{\A}(\iota,u) \models \Post{\A}(\iota,v)$
+and $\Accept{\A}(uw)$ is satisfiable, then $\Accept{\A}(vw)$ is
+satisfiable as well, and there is no need to store
+$\Post{\A}(\iota,u)$, since the non-emptiness of $\A$ can be proved
+using $v$ alone. However, in practice, the semi-algorithm using
+antichains diverges in a large number of cases, because, in many
+interpretations, there exist infinite antichains\footnote{For
+  instance, when $\Data^\I = \nat$, an infinite antichain is $q \wedge x \teq
+  0, q \wedge x \teq 1, \ldots$} $\set{\Post{\A}(\phi,u) \mid u \in U}$, where
+$U$ is an infinite subset of $\Sigma^*$.
+
+A \emph{safety invariant} for $\A$ is a function $I : (Q \mapsto
+\booli) \rightarrow 2^{\vec{x} \mapsto \Data^\I}$ such that, for every
+boolean valuation $\beta : Q \rightarrow \booli$, the following
+hold: \begin{compactitem}
+\item if $\beta \models \iota$ then $\nu \in I(\beta)$ iff
+  $\nu(x)=\mathbf{0}$ for all $x \in \vec{x}$,
+%
+\item for each $u \in \Sigma^*$, if $\beta \cup \nu \models
+  \Post{\A}(\iota,u)$ then $\nu \in I(\beta)$, and
+%
+\item 
+\end{compactitem} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
