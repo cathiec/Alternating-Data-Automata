@@ -125,13 +125,15 @@ symbols, where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n :
 \vec{x} \rightarrow \Data^\I$ are valuations. We denote by
 $\varepsilon$ the empty sequence, by $\Sigma^*$ the set of finite
 sequences of input events and by $\Sigma[\vec{x}]^*$ the set of data
-words over $\vec{x}$. This definition extends the classical notion of
-words from a finite alphabet with a possibly infinite alphabet
-$\Sigma[\vec{x}]$. Clearly, when $\Data^\I$ is sufficiently large or
-infinite, we can map the elements of $\Sigma$ into designated elements
-of $\Data^\I$ and use a special variable to encode the input
-events. However, keeping $\Sigma$ explicit in the following simplifies
-several technical points below, without cluttering the presentation.
+words over $\vec{x}$.
+
+This definition extends the classical notion of words from a finite
+alphabet with a possibly infinite alphabet $\Sigma[\vec{x}]$. Clearly,
+when $\Data^\I$ is sufficiently large or infinite, we can map the
+elements of $\Sigma$ into designated elements of $\Data^\I$ and use a
+special variable to encode the input events. However, keeping $\Sigma$
+explicit in the following simplifies several technical points below,
+without cluttering the presentation.
 
 Given sets of variables $\vec{b},\vec{x} \subset \vars$ of sort
 $\Bool$ and $\Data$, respectively, we denote by
@@ -317,12 +319,12 @@ definitions:
 
 It is easy to see that $\len{\A_\cup} = \len{\A_\cap} = \len{\A_1} +
 \len{\A_2}$ and $\len{\overline{\A}} = \len{\A}$, thus the automata
-for the boolean operations, including complementation, can be
-implemented in linear time. This is not very surprising, since linear
-time intersection and complementation are possible for alternating
+for the boolean operations, including complementation, can be built in
+linear time. This is not very surprising, since linear time
+intersection and complementation are also possible for alternating
 automata over finite alphabets \cite{ChandraKozenStockmeyer81}.
 
-\section{Antichains for Emptiness}
+\section{Antichains and Abstraction Refinement for Emptiness}
 
 Unlike the boolean closure properties, showed to be effectively
 decidable (Lemma \ref{lemma:closure}), the emptiness problem is
@@ -368,32 +370,63 @@ then $\Post{\A}(\phi,u) \models \Post{\A}(\psi,u)$, for any $u \in
 \Sigma^*$. This suggest an improvement of the above semi-algorithm,
 that enumerates and stores only a set $U \subseteq \Sigma^*$ for which
 $\set{\Post{\A}(\phi,u) \mid u \in U}$ forms an
-antichain\footnote{Given a partial order $(D,\preceq)$ an antichain is
-  a set $A \subseteq D$ such that $a \not\preceq b$ for any $a,b \in
-  A$.} w.r.t. the entailment partial order. This is because, for any
-$u,v \in \Sigma^*$, if $\Post{\A}(\iota,u) \models \Post{\A}(\iota,v)$
-and $\Accept{\A}(uw)$ is satisfiable, then $\Accept{\A}(vw)$ is
-satisfiable as well, and there is no need to store
-$\Post{\A}(\iota,u)$, since the non-emptiness of $\A$ can be proved
-using $v$ alone. However, in practice, the semi-algorithm using
+\emph{antichain}\footnote{Given a partial order $(D,\preceq)$ an
+  antichain is a set $A \subseteq D$ such that $a \not\preceq b$ for
+  any $a,b \in A$.} w.r.t. the entailment partial order. This is
+because, for any $u,v \in \Sigma^*$, if $\Post{\A}(\iota,u) \models
+\Post{\A}(\iota,v)$ and $\Accept{\A}(uw)$ is satisfiable, then
+$\Accept{\A}(vw)$ is satisfiable as well, and there is no need to
+store $\Post{\A}(\iota,u)$, since the non-emptiness of $\A$ can be
+proved using $v$ alone. However, in practice, the semi-algorithm using
 antichains diverges in a large number of cases, because, in many
 interpretations, there exist infinite antichains\footnote{For
-  instance, when $\Data^\I = \nat$, an infinite antichain is $q \wedge x \teq
-  0, q \wedge x \teq 1, \ldots$} $\set{\Post{\A}(\phi,u) \mid u \in U}$, where
-$U$ is an infinite subset of $\Sigma^*$.
+  instance, when $\Data^\I = \nat$, an infinite antichain is $q \wedge
+  x \teq 0, q \wedge x \teq 1, \ldots$} $\set{\Post{\A}(\phi,u_i) \mid
+  u_1,u_2, \ldots \in \Sigma^*}$.
 
-A \emph{safety invariant} for $\A$ is a function $I : (Q \mapsto
+A \emph{safety invariant} for $\A$ is a function $\Inv : (Q \mapsto
 \booli) \rightarrow 2^{\vec{x} \mapsto \Data^\I}$ such that, for every
-boolean valuation $\beta : Q \rightarrow \booli$, the following
-hold: \begin{compactitem}
-\item if $\beta \models \iota$ then $\nu \in I(\beta)$ iff
-  $\nu(x)=\mathbf{0}$ for all $x \in \vec{x}$,
+boolean valuation $\beta : Q \rightarrow \booli$, every valuation
+$\nu : \vec{x} \mapsto \Data^\I$ of the data
+variables and every finite sequence $u \in \Sigma^*$ of input events: \begin{compactitem}
+%% \item $\beta \models \iota \Rightarrow \nu_0 \in \Inv(\beta)$, where
+%%   $\nu_0(x) = \mathbf{0}$, for all $x \in \vec{x}$.
 %
-\item for each $u \in \Sigma^*$, if $\beta \cup \nu \models
-  \Post{\A}(\iota,u)$ then $\nu \in I(\beta)$, and
+\item $\beta \cup \nu \models \Post{\A}(\iota,u) \Rightarrow \nu \in
+  \Inv(\beta)$, and
 %
-\item 
-\end{compactitem} 
+\item $\nu \in \Inv(\beta) \Rightarrow \beta \cup \nu \not\models
+  \Accept{\A}(u)$.
+\end{compactitem}
+Intuitively, a safety invariant maps every boolean valuation into a
+set of data valuations, that contains the initial configuration (in
+which all data variables are assumed to be $\mathbf{0}\in\Data^\I$),
+over-approximates the set of reachable valuations and excludes those
+valuations that satisfying the acceptance condition. 
+
+\begin{lemma}\label{lemma:safety-invariant}
+  For any automaton $\A$, we have $L(\A)
+= \emptyset$ iff $\A$ has a safety invariant. 
+\end{lemma}
+\proof{ Let $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$ in the following.
+  ``$\Leftarrow$'' This direction is trivial. ``$\Rightarrow$'' We
+  define a function $\Inv : (Q \mapsto \booli) \rightarrow 2^{\vec{x}
+    \mapsto \Data^\I}$ as: for each $\beta : Q \rightarrow \booli$,
+  let $\Inv(\beta) = \{\nu : \vec{x} \rightarrow \Data^\I \mid \exists
+  u \in \Sigma^* ~.~ \beta\cup\nu \models
+  \Post{\A}(\iota,u)\}$. Checking that $\Inv$ is indeed a safety
+  invariant is straightforward. \qed}
+
+Turning back to the issue of divergence of language emptiness
+semi-algorithms in the case $L(\A) = \emptyset$, we can observe that
+an enumeration of input sequences $u_1,u_2,\ldots \in \Sigma^*$ can
+stop at step $k$ as soon as $\bigvee_{i=1}^k \Post(\iota,u_i)$ defines
+a safety invariant for $\A$. Although this condition can be
+effectively checked using a decision procedure for the quantifier-free
+first order theory $\theory(\sig,\I)$, of signature $\sig$ and
+interpretation $\I$, there is no guarantee that this check will ever
+succeed.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
