@@ -54,12 +54,12 @@
 A \emph{signature} $\sig = (\ssorts{\sig},\sfuns{\sig})$ consists of a
 set $\ssorts{\sig}$ of \emph{sort symbols} and a set $\sfuns{\sig}$ of
 sorted \emph{function symbols}. To simplify the presentation, we
-assume w.l.o.g. that $\ssorts{\Sigma}$ consists of two distinct sorts
+assume w.l.o.g. that $\ssorts{\sig}$ consists of two distinct sorts
 $\Data$ and $\Bool$ and each function symbol $f \in \sfuns{\sig}$ has
 $\#(f) \geq 0$ arguments of sort $\Data$ and return value $\sigma(f)
 \in \ssorts{\sig}$. If $\#(f)=0$ then $f$ is a \emph{constant}. We
 consider the constants $\mathbf{0}$ of sort $\Data$ and $\top,\bot$ of
-sort $\Bool$, denoting the truth values true and false.
+sort $\Bool$.
 
 We consider an infinite countable set of \emph{variables} $\vars$,
 where each $x \in \vars$ has an associated sort $\sigma(x)$. Terms are
@@ -93,7 +93,7 @@ An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
   $\top^\I = \true$, $\bot^\I = \false$, and
 %
 \item each function symbol $f$ into a total function $f^\I :
-  \left(\Data^\I\right)^{\#(f)} \rightarrow \sigma(f)^I$, or an element of
+  (\Data^\I)^{\#(f)} \rightarrow \sigma(f)^I$, or an element of
   $\sigma(f)^I$ when $\#(f)=0$.
 \end{inparaenum}
 Given an interpretation $\I$, a \emph{valuation} $\nu$ maps each
@@ -104,8 +104,11 @@ variable $x$ by its valuation $\nu(x)$. For a formula $\phi$, we write
 $\I,\nu \models \phi$ if the formula obtained by replacing each term
 $t$ in $\phi$ by the value $t^\I_\nu$ is logically equivalent to true.
 A formula $\phi$ is \emph{satisfiable} in the interpretation $\I$ if
-there exists a valuation $\nu$ such that $\I,\nu \models \phi$. Given
-formulae $\varphi$ and $\psi$, we say that \emph{$\phi$ entails
+there exists a valuation $\nu$ such that $\I,\nu \models \phi$. The
+\emph{theory} $\theory(\sig,\I)$ is the set of satisfiable formulae
+written in the signature $\sig$, with the interpretation $\I$. 
+
+Given formulae $\varphi$ and $\psi$, we say that \emph{$\phi$ entails
   $\psi$}, denoted $\phi \models^\I \psi$ iff $\I,\nu \models \varphi$
 implies $\I,\nu \models \psi$, for each valuation $\nu$, and $\phi
 \eqiff^\I \psi$ iff $\phi \models^\I \psi$ and $\psi \models^\I \phi$.
@@ -127,13 +130,13 @@ $\varepsilon$ the empty sequence, by $\Sigma^*$ the set of finite
 sequences of input events and by $\Sigma[\vec{x}]^*$ the set of data
 words over $\vec{x}$.
 
-This definition extends the classical notion of words from a finite
-alphabet with a possibly infinite alphabet $\Sigma[\vec{x}]$. Clearly,
-when $\Data^\I$ is sufficiently large or infinite, we can map the
-elements of $\Sigma$ into designated elements of $\Data^\I$ and use a
-special variable to encode the input events. However, keeping $\Sigma$
-explicit in the following simplifies several technical points below,
-without cluttering the presentation.
+This definition generalizes the classical notion of words from a
+finite alphabet to using a possibly infinite alphabet
+$\Sigma[\vec{x}]$. Clearly, when $\Data^\I$ is sufficiently large or
+infinite, we can map the elements of $\Sigma$ into designated elements
+of $\Data^\I$ and use a special variable to encode the input
+events. However, keeping $\Sigma$ explicit in the following simplifies
+several technical points below, without cluttering the presentation.
 
 Given sets of variables $\vec{b},\vec{x} \subset \vars$ of sort
 $\Bool$ and $\Data$, respectively, we denote by
@@ -193,10 +196,10 @@ by $\A$.
 
 In this section we tackle the following problems: \begin{compactenum}
 \item \emph{boolean closure}: given automata $\A_1$ and $\A_2$, both
-  with the same set of variables $\vec{x}$, does there exist automata
+  with the same set of variables $\vec{x}$, do there exist automata
   $\A_\cup$, $\A_\cap$ and $\overline{\A}$ such that $L(\A_\cup) =
-  \A_1 \cup \A_2$, $L(A_\cap) = \A_1 \cap \A_2$ and $L(\overline{\A_1})
-  = \Sigma[\vec{x}]^* \setminus L(\A_1)$ ?
+  \A_1 \cup \A_2$, $L(A_\cap) = \A_1 \cap \A_2$ and
+  $L(\overline{\A_1}) = \Sigma[\vec{x}]^* \setminus L(\A_1)$ ?
 %
 \item \emph{emptiness}: given an automaton $\A$, is it the case that
   $L(\A) = \emptyset$ ?
@@ -223,11 +226,12 @@ of sort $\Data$, for a formula $\phi \in \Form^+(Q,\vec{x})$, with no
 negated occurrences of the boolean variables, we define the formula
 $\overline{\phi} \in \Form^+(Q,\vec{x})$ recursively on the structure
 of $\phi$:
-\[\begin{array}{lclclclc}
+\[\begin{array}{lclclclclcl}
 \overline{\phi_1 \vee \phi_2} & \equiv & \overline{\phi_1} \wedge \overline{\phi_2} && 
-\overline{\phi_1 \wedge \phi_2} & \equiv & \overline{\phi_1} \vee \overline{\phi_2} \\
-\overline{\phi} & \equiv & \phi & \text{ if $\phi \in Q$}\hspace*{1cm} &
-\overline{\phi} & \equiv & \neg\phi & \text{if $\phi \not\in Q$ is an atom}
+\overline{\phi_1 \wedge \phi_2} & \equiv & \overline{\phi_1} \vee \overline{\phi_2} && 
+\overline{\neg\phi} & \equiv & \neg \overline{\phi} \text{ if $\phi$ is not an atom} \\
+\overline{\phi} & \equiv & \phi \text{  if $\phi \in Q$}\hspace*{1cm} &&
+\overline{\phi} & \equiv & \neg\phi \text{  if $\phi \not\in Q$ is an atom}
 \end{array}\]
 It is easy to check that $\len{\overline{\phi}} = \len{\phi}$, for
 every formula $\phi \in \Form^+(Q,\vec{x})$. If $\phi$ does not
@@ -265,21 +269,20 @@ definitions:
 \end{lemma}
 \proof{ We prove $L(\A_\cup) = L(\A_1) \cup L(\A_2)$ first, the proof
   for $\A_\cap$ being analogous. Let $w = (a_1,\nu_1) \ldots
-  (a_n,\nu_n) \in L(\A_\cup)$ be a word, where $n=0$ corresponds to
-  the empty word. We prove by induction on $n\geq0$ that
-  $\Delta(\iota_1 \vee \iota_2,a_1\ldots a_n) \eqiff
-  \Delta(\iota_1,a_1\ldots a_n) \vee \Delta(\iota_2,a_1\ldots
-  a_n)$. The case $n=0$ follows from the definition of the initial
-  configuration of $\A_\cup$. For the inductive step $n>0$,
-  $\Delta(\iota_1 \vee \iota_2,a_1\ldots a_n)$ is obtained from
-  $\Delta(\iota_1 \vee \iota_2,a_1\ldots a_{n-1})$ by replacing each
-  variable $q \in \fv{\Bool}{\Delta(\iota_1 \vee \iota_2,a_1\ldots
-    a_{n-1})}$ with
+  (a_n,\nu_n)$ be a word, where $n=0$ corresponds to the empty
+  word. We prove by induction on $n\geq0$ that $\Delta(\iota_1 \vee
+  \iota_2,a_1\ldots a_n) \eqiff \Delta(\iota_1,a_1\ldots a_n) \vee
+  \Delta(\iota_2,a_1\ldots a_n)$. The case $n=0$ follows from the
+  definition of the initial configuration of $\A_\cup$. For the
+  inductive step $n>0$, $\Delta(\iota_1 \vee \iota_2,a_1\ldots a_n)$
+  is obtained from $\Delta(\iota_1 \vee \iota_2,a_1\ldots a_{n-1})$ by
+  replacing each variable $q \in \fv{\Bool}{\Delta(\iota_1 \vee
+    \iota_2,a_1\ldots a_{n-1})}$ with
   $\Delta(q,a_n)[\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]$,
   denoted $\Delta^n(\Delta(\iota_1 \vee \iota_2,a_1\ldots
   a_{n-1}),a_n)$. Since by induction hypothesis, $\Delta(\iota_1 \vee
   \iota_2,a_1\ldots a_{n-1}) \eqiff \Delta(\iota_1,a_1\ldots a_{n-1})
-  \vee \Delta(\iota_2,a_1\ldots a_{n-1})$, we obtain: 
+  \vee \Delta(\iota_2,a_1\ldots a_{n-1})$, we obtain:
   \[\begin{array}{rcl}
   \Delta^n(\Delta(\iota_1 \vee \iota_2,a_1\ldots a_{n-1}),a_n) & \iff & 
   \Delta^n(\Delta(\iota_1,a_1\ldots a_{n-1}),a_n) \vee
@@ -324,7 +327,7 @@ linear time. This is not very surprising, since linear time
 intersection and complementation are also possible for alternating
 automata over finite alphabets \cite{ChandraKozenStockmeyer81}.
 
-\section{Antichains and Abstraction Refinement for Emptiness}
+\section{Antichains and Interpolants for Emptiness}
 
 Unlike the boolean closure properties, showed to be effectively
 decidable (Lemma \ref{lemma:closure}), the emptiness problem is
@@ -333,11 +336,10 @@ the set of positive integers, an ADA can simulate an Alternating
 Vector Addition System with States (AVASS) \cite{LazicSchmitz14} using
 only atoms $x = \overline{x} + k$, for $k \in \nat$ and $x \teq 0$,
 with the classical interpretation of function symbols on
-integers. Since reachability of a configuration $(q,\nu)$, where $q$
-is a control state and $\nu$ a valuation of the variables, is
-undecidable, the emptiness problem is undecidable for ADA, in general. 
+integers. Since reachability of a control state is undecidable for
+AVASS, the emptiness problem is undecidable for ADA.
 
-Consequently, we give up on the guarantee for termination and develop
+Consequently, we give up on the termination guarantee and develop
 semi-algorithmic methods that are supposed to be
 both: \begin{compactenum}
 \item \emph{sound}: given an automaton $\A$, if $L(\A) \neq\emptyset$,
@@ -350,18 +352,22 @@ both: \begin{compactenum}
 Let us fix an automaton $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$ whose
 (finite) input event alphabet is $\Sigma$, for the rest of this
 section. Given a formula $\phi \in \Form^+(Q,\vec{x})$ and an input
-event $a \in \Sigma$, we define $\Post{\A}(\phi,a) \equiv \exists
-\overline{\vec{x}} ~.~ \Delta(\phi[\overline{\vec{x}}/\vec{x}], a) \in
-\Form^+(Q,\vec{x})$. We generalize $\Post{\A}$ to finite sequences of
-input events: $\Post{\A}(\phi,\varepsilon) \equiv \phi$ and
+event $a \in \Sigma$, we define the \emph{post-image} function
+$\Post{\A}(\phi,a) \equiv \exists \overline{\vec{x}} ~.~
+\Delta(\phi[\overline{\vec{x}}/\vec{x}], a)$, mapping each formula in
+$\Form^+(Q,\vec{x})$ to a formula, also in $\Form^+(Q,\vec{x})$, that
+defines the effect of firing a transition with input event $a$. 
+
+We generalize the post-image function to finite sequences of input
+events, as follows: $\Post{\A}(\phi,\varepsilon) \equiv \phi$ and
 $\Post{\A}(\phi,ua) \equiv \Post{\A}(\Post{\A}(\phi,u),a)$, for any $u
 \in \Sigma^*$. Then the emptiness problem for $\A$ becomes: does there
-exist a sequence $u \in \Sigma^*$ such that the formula $\Accept{\A}(u)
-\equiv \Post{\A}(\iota,u) \wedge \bigwedge_{q \in F} \top \rightarrow
-q \wedge \bigwedge_{q \in Q \setminus F} q \rightarrow \bot$ is
-satisfiable ? A na\"ive semi-algorithm then enumerates all finite
-sequences and checks for the satisfiability of $\Accept{\A}(u)$ for
-each $u \in \Sigma^*$.
+exist $u \in \Sigma^*$ such that the formula $\Accept{\A}(u) \equiv
+\Post{\A}(\iota,u) \wedge \bigwedge_{q \in Q \setminus F} (q
+\rightarrow \bot)$ is satisfiable ? A na\"ive semi-algorithm
+enumerates all finite sequences and checks the satisfiability of
+$\Accept{\A}(u)$ for each $u \in \Sigma^*$, using a decision procedure
+for the theory $\theory(\sig,\I)$.
 
 Since no boolean variable from $Q$ occurs under negation in $\phi$, it
 is easy to prove the following monotonicity property: given two
@@ -375,34 +381,36 @@ $\set{\Post{\A}(\phi,u) \mid u \in U}$ forms an
   any $a,b \in A$.} w.r.t. the entailment partial order. This is
 because, for any $u,v \in \Sigma^*$, if $\Post{\A}(\iota,u) \models
 \Post{\A}(\iota,v)$ and $\Accept{\A}(uw)$ is satisfiable, then
-$\Accept{\A}(vw)$ is satisfiable as well, and there is no need to
-store $\Post{\A}(\iota,u)$, since the non-emptiness of $\A$ can be
-proved using $v$ alone. However, in practice, the semi-algorithm using
-antichains diverges in a large number of cases, because, in many
-interpretations, there exist infinite antichains\footnote{For
-  instance, when $\Data^\I = \nat$, an infinite antichain is $q \wedge
-  x \teq 0, q \wedge x \teq 1, \ldots$} $\set{\Post{\A}(\phi,u_i) \mid
-  u_1,u_2, \ldots \in \Sigma^*}$.
+$\Post{\A}(\iota,uw) \models \Post{\A}(\iota,vw)$, thus
+$\Accept{\A}(vw)$ is satisfiable as well, and there is no need for
+$u$, since the non-emptiness of $\A$ can be proved using $v$
+alone. However, in practice, the antichain based semi-algorithm
+diverges in a large number of cases, since, in many interpretations,
+there exist infinite antichains\footnote{For instance, when $\Data^\I
+  = \nat$, an infinite antichain is $q \wedge x \teq 0, q \wedge x
+  \teq 1, \ldots$}.
 
 A \emph{safety invariant} for $\A$ is a function $\Inv : (Q \mapsto
 \booli) \rightarrow 2^{\vec{x} \mapsto \Data^\I}$ such that, for every
 boolean valuation $\beta : Q \rightarrow \booli$, every valuation
 $\nu : \vec{x} \mapsto \Data^\I$ of the data
-variables and every finite sequence $u \in \Sigma^*$ of input events: \begin{compactitem}
+variables and every finite sequence $u \in \Sigma^*$ of input events: \begin{compactenum}
 %% \item $\beta \models \iota \Rightarrow \nu_0 \in \Inv(\beta)$, where
 %%   $\nu_0(x) = \mathbf{0}$, for all $x \in \vec{x}$.
 %
-\item $\beta \cup \nu \models \Post{\A}(\iota,u) \Rightarrow \nu \in
-  \Inv(\beta)$, and
+\item\label{it1:inv} $\beta \cup \nu \models \Post{\A}(\iota,u)
+  \Rightarrow \nu \in \Inv(\beta)$, and
 %
-\item $\nu \in \Inv(\beta) \Rightarrow \beta \cup \nu \not\models
-  \Accept{\A}(u)$.
-\end{compactitem}
-Intuitively, a safety invariant maps every boolean valuation into a
-set of data valuations, that contains the initial configuration (in
-which all data variables are assumed to be $\mathbf{0}\in\Data^\I$),
-over-approximates the set of reachable valuations and excludes those
-valuations that satisfying the acceptance condition. 
+\item\label{it2:inv} $\nu \in \Inv(\beta) \Rightarrow \beta \cup \nu
+  \not\models \Accept{\A}(u)$.
+\end{compactenum}
+If $\Inv$ satisfies only the first point above, we call it an
+invariant. Intuitively, a safety invariant maps every boolean
+valuation into a set of data valuations, that contains the initial
+configuration (in which all data variables are assumed to be
+$\mathbf{0}\in\Data^\I$), over-approximates the set of reachable
+valuations and excludes those valuations that satisfying the
+acceptance condition.
 
 \begin{lemma}\label{lemma:safety-invariant}
   For any automaton $\A$, we have $L(\A)
@@ -420,13 +428,96 @@ valuations that satisfying the acceptance condition.
 Turning back to the issue of divergence of language emptiness
 semi-algorithms in the case $L(\A) = \emptyset$, we can observe that
 an enumeration of input sequences $u_1,u_2,\ldots \in \Sigma^*$ can
-stop at step $k$ as soon as $\bigvee_{i=1}^k \Post(\iota,u_i)$ defines
-a safety invariant for $\A$. Although this condition can be
-effectively checked using a decision procedure for the quantifier-free
-first order theory $\theory(\sig,\I)$, of signature $\sig$ and
-interpretation $\I$, there is no guarantee that this check will ever
-succeed.
+stop at step $k$ as soon as $\bigvee_{i=1}^k \Post{\A}(\iota,u_i)$
+defines\footnote{ A formula $\phi(Q,\vec{x})$ defines $\Inv$ iff for
+  all $\beta: Q \rightarrow \booli$ and $\nu : \vec{x} \rightarrow
+  \Data^\I$: $\beta\cup\nu \models \phi \iff \nu \in \Inv(\beta)$. } a
+safety invariant for $\A$. Although this condition can be effectively
+checked using a decision procedure for the theory $\theory(\sig,\I)$,
+there is no guarantee that this check will ever succeed.
 
+The solution we adopt is the use of \emph{abstraction} to ensure
+termination of invariant computations. However, it is worth pointing
+out from the start that abstraction will allow us to build invariants
+which are not necessarily safety invariants. To converge towards
+meeting the latter condition, we shall resort to \emph{counterexample
+  guided abstraction refinement} (CEGAR). 
+
+Formally, let $\preds$ be a finite set of formulae with variables from
+$Q \cup \vec{x}$, such that $\bot \in \preds$ and the variables in $Q$
+can occur negated in some $\phi \in \preds$. We assume that $\preds$
+is fixed for now, and refer to these formulae as \emph{predicates}.
+Given a formula $\phi$, we denote by $\abs{\phi} \equiv \bigwedge
+\set{\pi \in \preds \mid \phi \models \pi}$ the abstraction of $\phi$
+w.r.t. the predicates in $\preds$. The abstract version of the
+post-image and acceptance formulae are defined as follows:
+{\footnotesize\[
+\abs{\Post{\A}}(\phi,\varepsilon) \equiv \phi 
+\hspace*{2mm}
+\abs{\Post{\A}}(\phi,ua) \equiv \abs{(\Post{\A}(\abs{\Post{\A}}(\phi,u),a))} 
+\hspace*{2mm}
+\abs{\Accept{\A}}(u) \equiv \abs{\Post{\A}}(\iota,u) \wedge \bigwedge_{q \in Q \setminus F} (q \rightarrow \bot)
+\]}
+\begin{lemma}\label{lemma:abstract-invariant}
+  For any bijection $\mu : \nat \rightarrow \Sigma^*$, there exists
+  $k>0$ such that $\bigvee_{i=1}^k \abs{\Post{\A}}(\iota,\mu(i))$ defines
+  an invariant for $\A$. 
+\end{lemma}
+\proof{ It is sufficient to show that there exists $k>0$ such that for
+  all $u \in \Sigma^*$ there exists $i \in [1,k]$ such that
+  $\Post{\A}(\iota,u) \models \abs{\Post{\A}}(\iota,\mu(i))$. We have
+  $\Post{\A}(\iota,u) \models \abs{\Post{\A}}(\iota,u)$ for all $u \in
+  \Sigma^*$. But since $\preds$ is a finite set, also the set
+  $\{\abs{\Post{\A}}(\iota,u) \mid u \in \Sigma^*\}$ is finite. Thus
+  there exists $k > 0$ such that, for all $u \in \Sigma^*$ there
+  exists $i \in [1,k]$ such that $\abs{\Post{\A}}(\iota,u) \eqiff
+  \abs{\Post{\A}}(\iota,\mu(i))$, which concludes the proof. \qed}
+
+We are left with fulfilling the second point from the definition of a
+safety invariant. To this end, suppose that, for a given set $\preds$
+of predicates, the invariant $\abs{\Inv}$, defined by the previous
+lemma, meets point (\ref{it1:inv}) but not point (\ref{it2:inv}) from
+the definition of invariants, where $\Post{\A}$ and $\Accept{\A}$
+replace $\abs{\Post{\A}}$ and $\abs{\Accept{\A}}$, respectively. In
+other words, there exists a finite sequence $u \in \Sigma^*$ such that
+$\nu \in \abs{\Inv}(\beta)$ and $\beta\cup\nu \models
+\abs{\Accept{\A}}(u)$, for some boolean $\beta : Q \rightarrow \booli$
+and data $\nu : \vec{x} \rightarrow \Data^\I$ valuations. Such
+a $u\in\Sigma^*$ is called a \emph{counterexample}.
+
+Once a counterexample $u$ is discovered, there are two
+possibilities. Either\begin{inparaenum}[(i)]
+\item $\Accept{\A}(u)$ is satisfiable, in which case $L(\A) \neq \emptyset$, or
+\item $\Accept{\A}(u)$ is unsatisfiable, in which case $u$ is called
+  \emph{spurious}.
+\end{inparaenum}
+In the first case, our semi-algorithm stops and returns a witness for
+non-emptiness, obtained from the satisfying valuation of
+$\Accept{\A}(u)$ and in the second case, we must strenghten the
+invariant by excluding from $\abs{\Inv}$ all pairs $(\beta,\nu)$ such
+that $\beta\cup\nu \models \abs{\Accept{\A}}(u)$. This strenghtening
+is carried out by adding to $\preds$ predicates sufficient to exclude
+the spurious counterexample.
+
+In general, given an unsatisfiable conjunction $\pi \equiv
+\phi_1(X_0,X_1) \wedge \phi_2(X_1,X_2) \wedge \ldots \wedge
+\phi_n(X_{n-1},X_n)$ of time-stamped variables $X_i = \set{x_i \mid x
+  \in X}$ of any sort, an \emph{interpolant} for $\pi$ is a tuple
+$\tuple{I_0(X), I_1(X), \ldots, I_n(X)}$ such
+that:\begin{inparaenum}[(i)]
+\item $I_0 \equiv \top$,  
+%
+\item $I_{i-1}[X_{i-1}/X] \wedge \phi_i(X_{i-1},X_i) \models
+  I_i[X_i/X]$, for all $i \in [1,n]$, and
+%
+\item $I_n \equiv \bot$. 
+\end{inparaenum}
+A classical method for abstraction refinement is to add the elements
+of the interpolant obtained from a proof of spuriousness to the set of
+predicates. This guarantees progress, meaning that the particular
+spurious counterexample, from which the interpolant was generated,
+will never be revisited in the future. In many practical test cases,
+this progress property eventually yields a safety invariant. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
