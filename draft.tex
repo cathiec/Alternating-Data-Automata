@@ -458,36 +458,36 @@ Given a formula $\phi$, we denote by $\abs{\phi} \equiv \bigwedge
 \set{\pi \in \preds \mid \phi \models \pi}$ the abstraction of $\phi$
 w.r.t. the predicates in $\preds$. The abstract version of the
 post-image and acceptance condition are defined as follows:
-{\footnotesize\[ \abs{\Post{\A}}(\phi,\varepsilon) \equiv \phi
+{\footnotesize\[ \AbsPost{\A}(\phi,\varepsilon) \equiv \phi
 \hspace*{2mm}
-\abs{\Post{\A}}(\phi,ua) \equiv \abs{(\Post{\A}(\abs{\Post{\A}}(\phi,u),a))} 
+\AbsPost{\A}(\phi,ua) \equiv \abs{(\Post{\A}(\AbsPost{\A}(\phi,u),a))} 
 \hspace*{2mm}
-\abs{\Accept{\A}}(u) \equiv \abs{\Post{\A}}(\iota,u) \wedge\!\!\!\bigwedge_{q \in Q \setminus F} 
+\AbsAccept{\A}(u) \equiv \AbsPost{\A}(\iota,u) \wedge\!\!\!\bigwedge_{q \in Q \setminus F} 
 (q \rightarrow \bot)\]}
 \begin{lemma}\label{lemma:abstract-invariant}
   For any bijection $\mu : \nat \rightarrow \Sigma^*$, there exists
-  $k>0$ such that $\bigvee_{i=1}^k \abs{\Post{\A}}(\iota,\mu(i))$ defines
+  $k>0$ such that $\bigvee_{i=1}^k \AbsPost{\A}(\iota,\mu(i))$ defines
   an invariant for $\A$. 
 \end{lemma}
 \proof{ It is sufficient to show that there exists $k\geq0$ such that for
   all $u \in \Sigma^*$ there exists $i \in [0,k]$ such that
-  $\Post{\A}(\iota,u) \models \abs{\Post{\A}}(\iota,\mu(i))$. We have
-  $\Post{\A}(\iota,u) \models \abs{\Post{\A}}(\iota,u)$ for all $u \in
+  $\Post{\A}(\iota,u) \models \AbsPost{\A}(\iota,\mu(i))$. We have
+  $\Post{\A}(\iota,u) \models \AbsPost{\A}(\iota,u)$ for all $u \in
   \Sigma^*$. But since $\preds$ is a finite set, also the set
-  $\{\abs{\Post{\A}}(\iota,u) \mid u \in \Sigma^*\}$ is finite. Thus
+  $\{\AbsPost{\A}(\iota,u) \mid u \in \Sigma^*\}$ is finite. Thus
   there exists $k \geq 0$ such that, for all $u \in \Sigma^*$ there
-  exists $i \in [0,k]$ such that $\abs{\Post{\A}}(\iota,u) \eqiff
-  \abs{\Post{\A}}(\iota,\mu(i))$, which concludes the proof. \qed}
+  exists $i \in [0,k]$ such that $\AbsPost{\A}(\iota,u) \eqiff
+  \AbsPost{\A}(\iota,\mu(i))$, which concludes the proof. \qed}
 
 We are left with fulfilling the second point from the definition of a
 safety invariant. To this end, suppose that, for a given set $\preds$
 of predicates, the invariant $\abs{\Inv}$, defined by the previous
 lemma, meets point (\ref{it1:inv}) but not point (\ref{it2:inv}) from
 the definition of invariants, where $\Post{\A}$ and $\Accept{\A}$
-replace $\abs{\Post{\A}}$ and $\abs{\Accept{\A}}$, respectively. In
+replace $\AbsPost{\A}$ and $\AbsAccept{\A}$, respectively. In
 other words, there exists a finite sequence $u \in \Sigma^*$ such that
 $\nu \in \abs{\Inv}(\beta)$ and $\beta\cup\nu \models
-\abs{\Accept{\A}}(u)$, for some boolean $\beta : Q \rightarrow \booli$
+\AbsAccept{\A}(u)$, for some boolean $\beta : Q \rightarrow \booli$
 and data $\nu : \vec{x} \rightarrow \Data^\I$ valuations. Such
 a $u\in\Sigma^*$ is called a \emph{counterexample}.
 
@@ -501,7 +501,7 @@ In the first case, our semi-algorithm stops and returns a witness for
 non-emptiness, obtained from the satisfying valuation of
 $\Accept{\A}(u)$ and in the second case, we must strenghten the
 invariant by excluding from $\abs{\Inv}$ all pairs $(\beta,\nu)$ such
-that $\beta\cup\nu \models \abs{\Accept{\A}}(u)$. This strenghtening
+that $\beta\cup\nu \models \AbsAccept{\A}(u)$. This strenghtening
 is carried out by adding to $\preds$ several predicates that are
 sufficient to exclude the spurious counterexample.
 
@@ -585,7 +585,7 @@ $\preds$ of predicates suffices to exclude $u$ from future searches.
     %
   \item\label{it2:progress} if $\tuple{\top,I_1,\dots,I_n,\bot}$ is an
     interpolant for $\pi(u)$ and $I_i \in \preds$, for all
-    $i\in[1,n]$, then $\abs{\Accept{\A}}(u)$ is unsatisfiable.
+    $i\in[1,n]$, then $\AbsAccept{\A}(u)$ is unsatisfiable.
   \end{compactenum}
 \end{lemma}
 \proof{
