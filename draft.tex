@@ -68,23 +68,28 @@ defined recursively: a term $t$ of sort $\sigma(t)=S$ is a variable $x
 $t_1,\ldots,t_{\#(f)}$ are terms of sort $\Data$ and $\sigma(f)=S$. An
 \emph{atom} is a term of sort $\Bool$ or an equality $t \teq s$
 between two terms of sort $\Data$. A \emph{literal} is an atom or its
-negation. A \emph{formula} is a combination of atoms using disjunction
-$\vee$, conjunction $\wedge$ and negation $\neg$ and we write $\phi
-\rightarrow \psi$ for $\neg\phi \vee \psi$.
+negation. A \emph{formula} is an existentially quantified combination
+of atoms using disjunction $\vee$, conjunction $\wedge$ and negation
+$\neg$ and we write $\phi \rightarrow \psi$ for $\neg\phi \vee \psi$.
 
-We denote by $\fv{S}{\phi}$ the set of variables of sort $S$ in $\phi$
-and write $\fv{}{\phi}$ for $\bigcup_{S \in \set{\Data,\Bool}}
+We denote by $\fv{S}{\phi}$ the set of free (i.e.\ not under the scope
+of an existential quantifier) variables of sort $S$ in $\phi$ and
+write $\fv{}{\phi}$ for $\bigcup_{S \in \set{\Data,\Bool}}
 \fv{S}{\phi}$. For a variable $x \in \fv{}{\phi}$ and a term $t$ such
-that $\sigma(t) = \sigma(x)$, we denote by $\phi[t/x]$ the result of
+that $\sigma(t) = \sigma(x)$, let $\phi[t/x]$ be the result of
 replacing each occurrence of $x$ by $t$. For indexed sets
 $\vec{t}=\set{t_1,\ldots,t_n}$ and $\vec{x}=\set{x_1,\ldots,x_n}$, we
 write $\phi[\vec{t}/\vec{x}]$ for the formula obtained by
 simultaneously replacing $x_i$ with $t_i$ in $\phi$, for all
-$i=1,\ldots,n$. A formula is in positive normal form (PNF) if negation
-occurs only within literals and in disjunctive normal form (DNF) if it
-is a disjunction of conjunctions of literals $\bigvee_{i=1}^N
-\bigwedge_{j=1}^{M_i} \ell_{ij}$. The size of a formula $\phi$,
-denoted $\len{\phi}$ is the number of symbols occuring in it.
+$i=1,\ldots,n$.
+%
+%% A formula is in positive normal form (PNF) if negation occurs only
+%% within literals and in disjunctive normal form (DNF) if it is a
+%% disjunction of conjunctions of literals $\bigvee_{i=1}^N
+%% \bigwedge_{j=1}^{M_i} \ell_{ij}$.
+%
+The size of a formula $\phi$, denoted $\len{\phi}$ is the number of
+symbols occuring in it.
 
 An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
 \item the sort $\Data$ into a non-empty set $\Data^\I$, 
@@ -164,26 +169,29 @@ tuple $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$: \begin{compactitem}
     function}, where $\overline{\vec{x}}$ is the set $\{\overline{x}
   \mid x \in \vec{x}\}$.
 \end{compactitem}
-Intuitively, $\overline{\vec{x}}$ track the previous and $\vec{x}$ the
-current values of the variables of $\A$. Formally, let $\vec{x}_k =
-\set{x_k \mid x \in \vec{x}}$, $k\geq0$, be a time-stamped set of
-variables. For an input even $a \in \Sigma$ and a formula $\phi$ we
-write $\Delta^k(\phi,a)$ for the formula obtained from $\phi$ by
-simultaneously replacing each state $q \in \fv{\Bool}{\phi}$ by the
-formula
-$\Delta(q,a)[\vec{x}_k/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]$, for
-all $k\geq0$. The size of $\A$ is defined as $\len{\A} = \len{\iota} +
-\sum_{(q,a) \in Q\times\Sigma}\len{\Delta(q,a)}$.
+Intuitively, in each formula describing a transition rule,
+$\overline{\vec{x}}$ track the previous and $\vec{x}$ the current
+values of the variables of $\A$. Observe further, that the initial
+values of the variables are left unconstrained, because the initial
+configuration does not contain free data variables. The size of $\A$
+is defined as $\len{\A} = \len{\iota} + \sum_{(q,a) \in
+  Q\times\Sigma}\len{\Delta(q,a)}$.
 
-Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$, the
-\emph{run} of $\A$ over $w$ is the sequence of formulae
-$\phi_0,\phi_1,\ldots,\phi_n$, where $\phi_0 \equiv \iota$ and, for
-all $i > 0$, we have $\phi_k \equiv \Delta^k(\phi_{k-1},a_k)$. We
-slightly abuse notation and write $\Delta(\iota,a_1,\ldots,a_n)$ for
-the formula $\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ in the
-following. $\A$ \emph{accepts} $w$ iff $\I,\nu \models \phi_n$, where
-$\nu$ is the valuation that maps:\begin{inparaenum}[(1)]
-\item each $x \in \vec{x}_0$ to $\mathbf{0}$, 
+Formally, let $\vec{x}_k = \set{x_k \mid x \in \vec{x}}$, $k\geq0$, be
+a time-stamped set of variables. For an input even $a \in \Sigma$ and
+a formula $\phi$ we write $\Delta^k(\phi,a)$ for the formula obtained
+from $\phi$ by simultaneously replacing each state $q \in
+\fv{\Bool}{\phi}$ by the formula
+$\Delta(q,a)[\vec{x}_k/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]$, for
+all $k\geq0$. Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots
+(a_n,\nu_n)$, the \emph{run} of $\A$ over $w$ is the sequence of
+formulae $\phi_0,\phi_1,\ldots,\phi_n$, where $\phi_0 \equiv \iota$
+and, for all $k > 0$, we have $\phi_k \equiv
+\Delta^k(\phi_{k-1},a_k)$. We slightly abuse notation and write
+$\Delta(\iota,a_1,\ldots,a_n)$ for the formula
+$\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ in the following. We say that
+$\A$ \emph{accepts} $w$ iff $\I,\nu \models \phi_n$, where $\nu$ is
+some valuation that maps:\begin{inparaenum}[(1)]
 %
 \item each $x \in \vec{x}_k$ to $\nu_k(x)$, for all $k\in[1,n]$, 
 %
@@ -191,8 +199,7 @@ $\nu$ is the valuation that maps:\begin{inparaenum}[(1)]
 %
 \item each $q \in \fv{\Bool}{\phi_n} \setminus F$ to $\bot$.
 \end{inparaenum}
-The language of $\A$, denoted as $L(\A)$, is the set of words accepted
-by $\A$. 
+The language of $\A$ is the set $L(\A)$ of words accepted by $\A$.
 
 In this section we tackle the following problems: \begin{compactenum}
 \item \emph{boolean closure}: given automata $\A_1$ and $\A_2$, both
@@ -302,13 +309,13 @@ definitions:
   \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \text{ by induction hypothesis} \\
   & \eqiff & \overline{\Delta(\iota_1,a_1\ldots,a_n)} & \text{ by the definition of $\overline{\phi}$ .}
   \end{array}\]
-  Let $\nu,\nu' : Q \cup \bigcup_{i=0}^n\vec{x}_i$ be two valuations
-  such that: \begin{compactitem}
+  Let $\nu,\nu' : (Q \cup \bigcup_{i=0}^n\vec{x}_i) \rightarrow (\booli
+  \cup \Data^\I)$ be two valuations such that: \begin{compactitem}
   \item $\nu(q) = \top$ and $\nu'(q) = \bot$, for each $q \in F$, 
     %
   \item $\nu(q) = \bot$ and $\nu'(q) = \top$, for each $q \in Q \setminus F$, 
     %
-  \item $\nu(x) = \nu'(x) = \mathbf{0}$, for each $x \in \vec{x}_0$, 
+  \item $\nu(x) = \nu'(x)$, for each $x \in \vec{x}_0$, 
     %
   \item $\nu(x) = \nu'(x) = \nu_i(x)$, for each $x \in \vec{x}_i$ and each $i
     \in [1,n]$.
@@ -334,12 +341,12 @@ decidable (Lemma \ref{lemma:closure}), the emptiness problem is
 undecidable, even in very simple cases. For instance, if $\Data^\I$ is
 the set of positive integers, an ADA can simulate an Alternating
 Vector Addition System with States (AVASS) \cite{LazicSchmitz14} using
-only atoms $x = \overline{x} + k$, for $k \in \nat$ and $x \teq 0$,
-with the classical interpretation of function symbols on
+only atoms $x \geq 0$ and $x = \overline{x} + k$, for $k \in \zed$,
+with the classical interpretation of the function symbols on
 integers. Since reachability of a control state is undecidable for
 AVASS, the emptiness problem is undecidable for ADA.
 
-Consequently, we give up on the termination guarantee and develop
+Consequently, we give up on the guarantee for termination and develop
 semi-algorithmic methods that are supposed to be
 both: \begin{compactenum}
 \item \emph{sound}: given an automaton $\A$, if $L(\A) \neq\emptyset$,
@@ -354,9 +361,9 @@ Let us fix an automaton $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$ whose
 section. Given a formula $\phi \in \Form^+(Q,\vec{x})$ and an input
 event $a \in \Sigma$, we define the \emph{post-image} function
 $\Post{\A}(\phi,a) \equiv \exists \overline{\vec{x}} ~.~
-\Delta(\phi[\overline{\vec{x}}/\vec{x}], a)$, mapping each formula in
-$\Form^+(Q,\vec{x})$ to a formula, also in $\Form^+(Q,\vec{x})$, that
-defines the effect of firing a transition with input event $a$. 
+\Delta(\phi[\overline{\vec{x}}/\vec{x}], a) \in \Form^+(Q,\vec{x})$,
+mapping each formula in $\Form^+(Q,\vec{x})$ to a formula defining the
+effect of reading $a \in \Sigma$.
 
 We generalize the post-image function to finite sequences of input
 events, as follows: $\Post{\A}(\phi,\varepsilon) \equiv \phi$ and
@@ -386,9 +393,9 @@ $\Accept{\A}(vw)$ is satisfiable as well, and there is no need for
 $u$, since the non-emptiness of $\A$ can be proved using $v$
 alone. However, in practice, the antichain based semi-algorithm
 diverges in a large number of cases, since, in many interpretations,
-there exist infinite antichains\footnote{For instance, when $\Data^\I
-  = \nat$, an infinite antichain is $q \wedge x \teq 0, q \wedge x
-  \teq 1, \ldots$}.
+there exist infinite antichains of formulae\footnote{For instance,
+  when $\Data^\I = \nat$, an infinite antichain is $q \wedge x \teq 0,
+  q \wedge x \teq 1, \ldots$}.
 
 A \emph{safety invariant} for $\A$ is a function $\Inv : (Q \mapsto
 \booli) \rightarrow 2^{\vec{x} \mapsto \Data^\I}$ such that, for every
@@ -404,13 +411,13 @@ variables and every finite sequence $u \in \Sigma^*$ of input events: \begin{com
 \item\label{it2:inv} $\nu \in \Inv(\beta) \Rightarrow \beta \cup \nu
   \not\models \Accept{\A}(u)$.
 \end{compactenum}
-If $\Inv$ satisfies only the first point above, we call it an
-invariant. Intuitively, a safety invariant maps every boolean
+If $\Inv$ satisfies only the first point above, we call it simply an
+\emph{invariant}. Intuitively, a safety invariant maps every boolean
 valuation into a set of data valuations, that contains the initial
-configuration (in which all data variables are assumed to be
-$\mathbf{0}\in\Data^\I$), over-approximates the set of reachable
-valuations and excludes those valuations that satisfying the
-acceptance condition.
+configuration $\iota$, in which the data variables are unconstrained
+and over-approximates the set of reachable valuations (\ref{it1:inv}),
+while excluding those valuations that satisfying the acceptance
+condition (\ref{it2:inv}).
 
 \begin{lemma}\label{lemma:safety-invariant}
   For any automaton $\A$, we have $L(\A)
@@ -418,12 +425,12 @@ acceptance condition.
 \end{lemma}
 \proof{ Let $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$ in the following.
   ``$\Leftarrow$'' This direction is trivial. ``$\Rightarrow$'' We
-  define a function $\Inv : (Q \mapsto \booli) \rightarrow 2^{\vec{x}
-    \mapsto \Data^\I}$ as: for each $\beta : Q \rightarrow \booli$,
+  define $\Inv : (Q \mapsto \booli) \rightarrow 2^{\vec{x} \mapsto
+    \Data^\I}$ as follows. For each $\beta : Q \rightarrow \booli$,
   let $\Inv(\beta) = \{\nu : \vec{x} \rightarrow \Data^\I \mid \exists
   u \in \Sigma^* ~.~ \beta\cup\nu \models
-  \Post{\A}(\iota,u)\}$. Checking that $\Inv$ is indeed a safety
-  invariant is straightforward. \qed}
+  \Post{\A}(\iota,u)\}$. Checking that $\Inv$ is a safety invariant is
+  straightforward. \qed}
 
 Turning back to the issue of divergence of language emptiness
 semi-algorithms in the case $L(\A) = \emptyset$, we can observe that
@@ -450,27 +457,26 @@ is fixed for now, and refer to these formulae as \emph{predicates}.
 Given a formula $\phi$, we denote by $\abs{\phi} \equiv \bigwedge
 \set{\pi \in \preds \mid \phi \models \pi}$ the abstraction of $\phi$
 w.r.t. the predicates in $\preds$. The abstract version of the
-post-image and acceptance formulae are defined as follows:
-{\footnotesize\[
-\abs{\Post{\A}}(\phi,\varepsilon) \equiv \phi 
+post-image and acceptance condition are defined as follows:
+{\footnotesize\[ \abs{\Post{\A}}(\phi,\varepsilon) \equiv \phi
 \hspace*{2mm}
 \abs{\Post{\A}}(\phi,ua) \equiv \abs{(\Post{\A}(\abs{\Post{\A}}(\phi,u),a))} 
 \hspace*{2mm}
-\abs{\Accept{\A}}(u) \equiv \abs{\Post{\A}}(\iota,u) \wedge \bigwedge_{q \in Q \setminus F} (q \rightarrow \bot)
-\]}
+\abs{\Accept{\A}}(u) \equiv \abs{\Post{\A}}(\iota,u) \wedge\!\!\!\bigwedge_{q \in Q \setminus F} 
+(q \rightarrow \bot)\]}
 \begin{lemma}\label{lemma:abstract-invariant}
   For any bijection $\mu : \nat \rightarrow \Sigma^*$, there exists
   $k>0$ such that $\bigvee_{i=1}^k \abs{\Post{\A}}(\iota,\mu(i))$ defines
   an invariant for $\A$. 
 \end{lemma}
-\proof{ It is sufficient to show that there exists $k>0$ such that for
-  all $u \in \Sigma^*$ there exists $i \in [1,k]$ such that
+\proof{ It is sufficient to show that there exists $k\geq0$ such that for
+  all $u \in \Sigma^*$ there exists $i \in [0,k]$ such that
   $\Post{\A}(\iota,u) \models \abs{\Post{\A}}(\iota,\mu(i))$. We have
   $\Post{\A}(\iota,u) \models \abs{\Post{\A}}(\iota,u)$ for all $u \in
   \Sigma^*$. But since $\preds$ is a finite set, also the set
   $\{\abs{\Post{\A}}(\iota,u) \mid u \in \Sigma^*\}$ is finite. Thus
-  there exists $k > 0$ such that, for all $u \in \Sigma^*$ there
-  exists $i \in [1,k]$ such that $\abs{\Post{\A}}(\iota,u) \eqiff
+  there exists $k \geq 0$ such that, for all $u \in \Sigma^*$ there
+  exists $i \in [0,k]$ such that $\abs{\Post{\A}}(\iota,u) \eqiff
   \abs{\Post{\A}}(\iota,\mu(i))$, which concludes the proof. \qed}
 
 We are left with fulfilling the second point from the definition of a
@@ -496,15 +502,15 @@ non-emptiness, obtained from the satisfying valuation of
 $\Accept{\A}(u)$ and in the second case, we must strenghten the
 invariant by excluding from $\abs{\Inv}$ all pairs $(\beta,\nu)$ such
 that $\beta\cup\nu \models \abs{\Accept{\A}}(u)$. This strenghtening
-is carried out by adding to $\preds$ predicates sufficient to exclude
-the spurious counterexample.
+is carried out by adding to $\preds$ several predicates that are
+sufficient to exclude the spurious counterexample.
 
 In general, given an unsatisfiable conjunction $\pi \equiv
 \phi_1(X_0,X_1) \wedge \phi_2(X_1,X_2) \wedge \ldots \wedge
 \phi_n(X_{n-1},X_n)$ of time-stamped variables $X_i = \set{x_i \mid x
-  \in X}$ of any sort, an \emph{interpolant} for $\pi$ is a tuple
-$\tuple{I_0(X), I_1(X), \ldots, I_n(X)}$ such
-that:\begin{inparaenum}[(i)]
+  \in X}$ of any sort, a solution of the \emph{interpolation problem}
+$\pi$, simply called an \emph{interpolant}, is a tuple $\tuple{I_0(X),
+  I_1(X), \ldots, I_n(X)}$ such that:\begin{inparaenum}[(i)]
 \item $I_0 \equiv \top$,  
 %
 \item $I_{i-1}[X_{i-1}/X] \wedge \phi_i(X_{i-1},X_i) \models
@@ -518,6 +524,73 @@ predicates. This guarantees progress, meaning that the particular
 spurious counterexample, from which the interpolant was generated,
 will never be revisited in the future. In many practical test cases,
 this progress property eventually yields a safety invariant. 
+
+Given a non-empty spurious counterexample $u = a_1\ldots a_n$, where
+$n>0$, we consider the following interpolation problem: \[\pi(u)
+\equiv \theta_0(Q_0) \wedge \theta_1(Q_0 \cup Q_1,\vec{x}_0 \cup
+\vec{x}_1) \wedge \ldots \wedge \theta_n(Q_{n-1} \cup
+Q_n,\vec{x}_{n-1} \cup \vec{x}_n) \wedge \theta_{n+1}(Q_n)\] where
+$Q_k = \set{q_k \mid q \in Q}$, $k \in [0,n]$ are time-stamped sets of
+boolean variables corresponding to the set $Q$ of states of $\A$. The
+first conjunct $\theta_0(Q_0) \equiv \iota[Q_0/Q]$ is the initial
+configuration of $\A$, with every $q \in \fv{\Bool}{\iota}$ replaced
+by $q_0$. The definition of $\theta_k$, $k\in[1,n]$ uses
+\emph{replacement sets} $R_\ell \in Q_\ell$, $\ell\in [0,n]$, which
+are defined inductively below: \begin{compactitem}
+\item $R_0 = \fv{\Bool}{\iota(Q_0)}$, 
+%
+\item for each $\ell\in[1,n]$: $\theta_\ell \equiv
+  \bigwedge_{q_{\ell-1}\in R_{\ell-1}} (q_{\ell-1} \rightarrow
+  \Delta(q,a_\ell)[Q_\ell/Q,\vec{x}_{\ell-1}/\overline{\vec{x}},\vec{x}_\ell/\vec{x}])$
+  and $R_\ell = \fv{\Bool}{\theta_\ell} \cap Q_\ell$.
+\end{compactitem}
+Finally, we set $\theta_{n+1}(Q_n) \equiv \bigwedge_{q \in Q \setminus
+  F} (q_n \rightarrow \bot)$. The intuition is that $\theta_0, \ldots,
+\theta_n$ simulates the run of $\A$ over $u$ and $\theta_{n+1}$ is the
+part of the acceptance condition which forces the last remaining
+non-final states to be false. 
+
+We recall that a run of $\A$ over $u$ is a sequence $\phi_0(Q),
+\phi_1(Q,\vec{x}_0\cup\vec{x}_1), \ldots,
+\phi_n(Q,\vec{x}_0\cup\ldots\cup\vec{x}_n)$, where $\phi_0$ is the
+initial configuration $\iota$ and for each $k>0$, $\phi_k$ is obtained
+from $\phi_{k-1}$ by replacing each state $q \in
+\fv{\Bool}{\phi_{k-1}}$ by the formula $\Delta(q,a_k)$ given by the
+transition function of $\A$. The main reason behind the above
+definition of the interpolation problem is that we would like to
+obtain an interpolant $\tuple{\top,I_1(Q), I_2(Q,\vec{x}), \ldots,
+  I_{n}(Q,\vec{x}),\bot}$ whose formulae \emph{combine states with
+  the data constraints that must hold locally}, whenever the control
+reaches a certain boolean configuration. This association of states
+with data valuations is tantamount to defining efficient
+semi-algorithms, based on lazy abstraction \cite{HJMS02}. Observe
+that, because the states are replaced with transition formulae when
+moving one step in a run, the formulae thus produced lose track of the
+control history and are not directly suitable to producing
+interpolants that can be applied locally. Moreover, the abstraction
+defined by the interpolants generated in this way can
+\emph{over-approximate the control structure} of an automaton, in
+addition to the sets of data values encountered throughout its runs.
+
+The correctness of this interpolation-based abstraction refinement
+setup is captured by the progress property below, which guarantees
+that adding the formulae of an interpolant for $\pi(u)$ to the set
+$\preds$ of predicates suffices to exclude $u$ from future searches.
+
+\begin{lemma}\label{lemma:progress}
+  Given a non-empty sequence of input events $u \in \Sigma^*$ such
+  that $\Accept{\A}(u)$ is unsatisfiable, then the following
+  hold: \begin{compactenum}
+  \item\label{it1:progress} $\pi(u)$ is unsatisfiable, and
+    %
+  \item\label{it2:progress} if $\tuple{\top,I_1,\dots,I_n,\bot}$ is an
+    interpolant for $\pi(u)$ and $I_i \in \preds$, for all
+    $i\in[1,n]$, then $\abs{\Accept{\A}}(u)$ is unsatisfiable.
+  \end{compactenum}
+\end{lemma}
+\proof{
+  
+\qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
