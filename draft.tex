@@ -1,4 +1,5 @@
-\documentclass{llncs}
+% \documentclass{llncs}
+\documentclass[10pt,conference,letterpaper,twocolumn]{IEEEtran}
 
 \usepackage[usenames,dvipsnames]{color}
 
@@ -38,9 +39,9 @@
 
 \title{The Impact of Alternation}
 
-\author{Radu Iosif \and Xiao Xu}
-
-\institute{Verimag/CNRS/Universit\'e de Grenoble Alpes}
+\author{Radu Iosif and Xiao Xu \\
+Verimag/CNRS/Universit\'e de Grenoble Alpes\\
+Email: \{Radu.Iosif,Xiao.Xu\}@univ-grenoble-alpes.fr}
 
 \maketitle
 
@@ -233,12 +234,12 @@ of sort $\Data$, for a formula $\phi \in \Form^+(Q,\vec{x})$, with no
 negated occurrences of the boolean variables, we define the formula
 $\overline{\phi} \in \Form^+(Q,\vec{x})$ recursively on the structure
 of $\phi$:
-\[\begin{array}{lclclclclcl}
+\[\begin{array}{lclclcl}
 \overline{\phi_1 \vee \phi_2} & \equiv & \overline{\phi_1} \wedge \overline{\phi_2} && 
-\overline{\phi_1 \wedge \phi_2} & \equiv & \overline{\phi_1} \vee \overline{\phi_2} && 
-\overline{\neg\phi} & \equiv & \neg \overline{\phi} \text{ if $\phi$ is not an atom} \\
-\overline{\phi} & \equiv & \phi \text{  if $\phi \in Q$}\hspace*{1cm} &&
-\overline{\phi} & \equiv & \neg\phi \text{  if $\phi \not\in Q$ is an atom}
+\overline{\phi_1 \wedge \phi_2} & \equiv & \overline{\phi_1} \vee \overline{\phi_2} \\ 
+\overline{\neg\phi} & \equiv & \neg \overline{\phi} \text{ if $\phi$ not atom} &&
+\overline{\phi} & \equiv & \phi \text{ if $\phi \in Q$} \\
+\overline{\phi} & \equiv & \neg\phi \text{ if $\phi \not\in Q$ atom}
 \end{array}\]
 It is easy to check that $\len{\overline{\phi}} = \len{\phi}$, for
 every formula $\phi \in \Form^+(Q,\vec{x})$. If $\phi$ does not
@@ -268,11 +269,11 @@ F_1,\overline{\Delta_1} \rangle$, where $\overline{\Delta_1}(q,a)
 definitions: 
 
 \begin{lemma}\label{lemma:closure}
-  For any automata $\A_1 = \tuple{\vec{x},Q_1,\iota_1,F_1,\Delta_1}$
-  and $\A_2 = \tuple{\vec{x},Q_2,\iota_2,F_2,\Delta_2}$ such that $Q_1
-  \cap Q_2 = \emptyset$, we have $L(\A_\cup) = L(\A_1) \cup L(\A_2)$,
-  $L(\A_\cap) = L(\A_1) \cap L(\A_2)$ and $L(\overline{\A_1}) =
-  \Sigma[\vec{x}]^* \setminus L(\A_1)$.
+  Given automata $\A_i = \tuple{\vec{x},Q_i,\iota_i,F_i,\Delta_i}$,
+  for $i=1,2$, such that $Q_1 \cap Q_2 = \emptyset$, we have
+  $L(\A_\cup) = L(\A_1) \cup L(\A_2)$, $L(\A_\cap) = L(\A_1) \cap
+  L(\A_2)$ and $L(\overline{\A_1}) = \Sigma[\vec{x}]^* \setminus
+  L(\A_1)$.
 \end{lemma}
 \proof{ We prove $L(\A_\cup) = L(\A_1) \cup L(\A_2)$ first, the proof
   for $\A_\cap$ being analogous. Let $w = (a_1,\nu_1) \ldots
@@ -290,12 +291,10 @@ definitions:
   a_{n-1}),a_n)$. Since by induction hypothesis, $\Delta(\iota_1 \vee
   \iota_2,a_1\ldots a_{n-1}) \eqiff \Delta(\iota_1,a_1\ldots a_{n-1})
   \vee \Delta(\iota_2,a_1\ldots a_{n-1})$, we obtain:
-  \[\begin{array}{rcl}
-  \Delta^n(\Delta(\iota_1 \vee \iota_2,a_1\ldots a_{n-1}),a_n) & \iff & 
-  \Delta^n(\Delta(\iota_1,a_1\ldots a_{n-1}),a_n) \vee
-  \Delta^n(\Delta(\iota_2,a_1\ldots a_{n-1}),a_n) \\
-  & \iff & \Delta(\iota_1,a_1\ldots a_{n}) \vee \Delta(\iota_2,a_1\ldots
-  a_{n}) \enspace.
+  \[\begin{array}{ll}
+  \Delta^n(\Delta(\iota_1 \vee \iota_2,a_1\ldots a_{n-1}),a_n) & \eqiff \\
+  \Delta^n(\Delta(\iota_1,a_1\ldots a_{n-1}),a_n) \vee \Delta^n(\Delta(\iota_2,a_1\ldots a_{n-1}),a_n) & \eqiff \\
+  \Delta(\iota_1,a_1\ldots a_{n}) \vee \Delta(\iota_2,a_1\ldots a_{n}) \enspace.
   \end{array}\] 
   To prove $L(\overline{\A_1}) = \Sigma[\vec{x}]^* \setminus L(\A_1)$,
   let $w = (a_1,\nu_1) \ldots (a_n,\nu_n)$ be a word and show that
@@ -304,13 +303,13 @@ definitions:
   $n\geq0$. The case $n=0$ is immediate, because $\fv{}{\iota_1}
   \subseteq Q$ and thus $\overline{\iota_1} = \iota_1$. For the case
   $n>0$, we compute:
-  \[\begin{array}{rcll}
-  \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \eqiff & 
-  \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \text{ by induction hypothesis} \\
-  & \eqiff & \overline{\Delta(\iota_1,a_1\ldots,a_n)} & \text{ by the definition of $\overline{\phi}$ .}
+  \[\begin{array}{lcl}
+  \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \eqiff & \text{ by induction hypothesis} \\
+  \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \eqiff & \text{ by the definition of $\overline{\phi}$} \\
+  \overline{\Delta(\iota_1,a_1\ldots,a_n)}
   \end{array}\]
   Let $\nu,\nu' : (Q \cup \bigcup_{i=0}^n\vec{x}_i) \rightarrow (\booli
-  \cup \Data^\I)$ be two valuations such that: \begin{compactitem}
+  \cup \Data^\I)$ be valuations such that: \begin{compactitem}
   \item $\nu(q) = \top$ and $\nu'(q) = \bot$, for each $q \in F$, 
     %
   \item $\nu(q) = \bot$ and $\nu'(q) = \top$, for each $q \in Q \setminus F$, 
@@ -330,9 +329,9 @@ definitions:
 It is easy to see that $\len{\A_\cup} = \len{\A_\cap} = \len{\A_1} +
 \len{\A_2}$ and $\len{\overline{\A}} = \len{\A}$, thus the automata
 for the boolean operations, including complementation, can be built in
-linear time. This is not very surprising, since linear time
-intersection and complementation are also possible for alternating
-automata over finite alphabets \cite{ChandraKozenStockmeyer81}.
+linear time. This is not surprising, as linear time intersection and
+complementation are also possible for alternating automata over finite
+alphabets \cite{ChandraKozenStockmeyer81}.
 
 \section{Antichains and Interpolants for Emptiness}
 
@@ -347,8 +346,7 @@ integers. Since reachability of a control state is undecidable for
 AVASS, the emptiness problem is undecidable for ADA.
 
 Consequently, we give up on the guarantee for termination and develop
-semi-algorithmic methods that are supposed to be
-both: \begin{compactenum}
+semi-algorithms that are supposed to be: \begin{compactenum}
 \item \emph{sound}: given an automaton $\A$, if $L(\A) \neq\emptyset$,
   the procedure will terminate and return a word $w \in L(\A)$), and
 %
@@ -447,12 +445,11 @@ effectively checked using a decision procedure for the theory
 $\theory(\sig,\I)$, there is no guarantee that this check will ever
 succeed.
 
-The solution we adopt is the use of \emph{abstraction} to ensure
-termination of invariant computations. However, it is worth pointing
-out from the start that abstraction will allow us to build invariants
-which are not necessarily safety invariants. To meet the latter
-condition, we resort to \emph{counterexample guided abstraction
-  refinement} (CEGAR).
+The solution we adopt is the use of abstraction to ensure termination
+of invariant computations. However, it is worth pointing out from the
+start that abstraction will allow us to build invariants which are not
+necessarily safety invariants. To meet the latter condition, we resort
+to counterexample guided abstraction refinement (CEGAR).
 
 Formally, let $\preds$ be a finite set of formulae with variables from
 $Q \cup \vec{x}$, such that $\bot \in \preds$ and the variables in $Q$
@@ -462,12 +459,13 @@ Given a formula $\phi$, we denote by $\abs{\phi} \equiv \bigwedge
 \set{\pi \in \preds \mid \phi \models \pi}$ the abstraction of $\phi$
 w.r.t. the predicates in $\preds$. The abstract version of the
 post-image and acceptance condition are defined as follows:
-{\footnotesize\[ \AbsPost{\A}(\phi,\varepsilon) \equiv \phi
-\hspace*{2mm}
-\AbsPost{\A}(\phi,ua) \equiv \abs{(\Post{\A}(\AbsPost{\A}(\phi,u),a))} 
-\hspace*{2mm}
-\AbsAccept{\A}(u) \equiv \AbsPost{\A}(\iota,u) \wedge\!\!\!\bigwedge_{q \in Q \setminus F} 
-(q \rightarrow \bot)\]}
+\[\begin{array}{llcl}
+\AbsPost{\A}(\phi,\varepsilon) \equiv \phi & 
+\AbsPost{\A}(\phi,ua) & \equiv & \abs{(\Post{\A}(\AbsPost{\A}(\phi,u),a))} \\
+&
+\AbsAccept{\A}(u) & \equiv & \AbsPost{\A}(\iota,u) \wedge\!\!\!\bigwedge_{q \in Q \setminus F} 
+(q \rightarrow \bot)
+\end{array}\]
 \begin{lemma}\label{lemma:abstract-invariant}
   For any bijection $\mu : \nat \rightarrow \Sigma^*$, there exists
   $k>0$ such that $\bigvee_{i=1}^k \AbsPost{\A}(\iota,\mu(i))$ defines
@@ -532,11 +530,11 @@ invariant.
 
 Given a non-empty spurious counterexample $u = a_1\ldots a_n$, where
 $n>0$, we consider the following interpolation problem: 
-\begin{equation}\label{eq:interpolation-problem}
-\pi(u) \equiv \theta_0(Q_0) \wedge \theta_1(Q_0 \cup Q_1,\vec{x}_0
-\cup \vec{x}_1) \wedge \ldots \wedge \theta_n(Q_{n-1} \cup
-Q_n,\vec{x}_{n-1} \cup \vec{x}_n) \wedge \theta_{n+1}(Q_n)
-\end{equation} 
+\begin{eqnarray}\label{eq:interpolation-problem}
+\pi(u) & \equiv & \theta_0(Q_0) \wedge \theta_1(Q_0 \cup Q_1,\vec{x}_0
+\cup \vec{x}_1) \wedge \ldots \\ 
+&& \wedge~ \theta_n(Q_{n-1} \cup Q_n,\vec{x}_{n-1} \cup \vec{x}_n) \wedge \theta_{n+1}(Q_n) \nonumber
+\end{eqnarray}
 where $Q_k = \set{q_k \mid q \in Q}$, $k \in [0,n]$ are time-stamped
 sets of boolean variables corresponding to the set $Q$ of states of
 $\A$. The first conjunct $\theta_0(Q_0) \equiv \iota[Q_0/Q]$ is the
@@ -546,10 +544,11 @@ replaced by $q_0$. The definition of $\theta_k$, $k\in[1,n]$ uses
 which are defined inductively below: \begin{compactitem}
 \item $R_0 = \fv{\Bool}{\theta_0}$, 
 %
-\item for each $\ell\in[1,n]$: $\theta_\ell \equiv
-  \bigwedge_{q_{\ell-1}\in R_{\ell-1}} (q_{\ell-1} \rightarrow
+\item $\theta_\ell \equiv \bigwedge_{q_{\ell-1}\in R_{\ell-1}}
+  (q_{\ell-1} \rightarrow
   \Delta(q,a_\ell)[Q_\ell/Q,\vec{x}_{\ell-1}/\overline{\vec{x}},\vec{x}_\ell/\vec{x}])$
-  and $R_\ell = \fv{\Bool}{\theta_\ell} \cap Q_\ell$.
+  and $R_\ell = \fv{\Bool}{\theta_\ell} \cap Q_\ell$, for each
+  $\ell\in[1,n]$.
 \end{compactitem}
 Finally, we set $\theta_{n+1}(Q_n) \equiv \bigwedge_{q \in Q \setminus
   F} (q_n \rightarrow \bot)$. The intuition is that $\theta_0, \ldots,
@@ -616,7 +615,7 @@ $u$ from future searches.
   $\phi_{n-1}(Q,\vec{x}_0\cup\ldots\vec{x}_{n-1})$ has the model
   $\beta \cup \nu_0 \cup \ldots \nu_{n-1}$, where $\beta(q) =
   \beta_{n-1}(q_{n-1})$, for all $q \in Q$. By the definition of
-  $\pi(u)$, we have: \[\theta_n \equiv \bigwedge_{q_{n-1} \in
+  $\pi(u)$: \[\theta_n \equiv \bigwedge_{q_{n-1} \in
     \fv{\Bool}{\theta_{n-1}} \cap Q_{n-1}} \left(q_{n-1} \rightarrow
   \Delta(q,a_n)[Q_n/Q,\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]\right)\]
 
@@ -644,7 +643,7 @@ $u$ from future searches.
     interpolant for $\pi(u)$, the following entailments hold: \begin{compactitem}
     \item $\theta_0 \models I_1[Q_0/Q]$, 
       %
-    \item $I_k[Q_{k-1}/Q,\vec{x}_{k-1}/\vec{x}] \wedge \theta_k \models I_{k+1}[Q_k/Q,\vec{x}_k/\vec{x}]$, for all $k\in[1,n]$. 
+    \item $I_k[Q_{k-1}/Q,\vec{x}_{k-1}/\vec{x}] \wedge \theta_k \models I_{k+1}[Q_k/Q,\vec{x}_k/\vec{x}]$, $\forall k\in[1,n]$. 
       %
     \item $I_{n+1}[Q_{n+1}/Q] \wedge \theta_{n+1} \models \bot$. 
     \end{compactitem}
@@ -656,11 +655,12 @@ $u$ from future searches.
     have $\AbsPost{\A}(\iota,\varepsilon) \equiv \iota \equiv
     \theta_0[Q/Q_0] \models I_1$. For the induction step $n>0$, we
     compute:
-    \[\begin{array}{rcll}
-    \AbsPost{\A}(\iota,a_1\ldots a_n)[Q_n/Q] & \equiv & \exists \vec{x}_{n-1} ~.~ \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_n/Q] & \text{ def. of $\AbsPost{\A}$} \\
-    & \models & \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n & \text{ ($\Asterisk$)} \\
-    & \models & \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n & \text{ by ind. hyp.} \\ 
-    & \models & I_n[Q_n/Q] & \hfill\text{\qed}
+    \[\begin{array}{lcl}
+    \AbsPost{\A}(\iota,a_1\ldots a_n)[Q_n/Q] & \equiv & \text{ def. of $\AbsPost{\A}$} \\
+    \exists \vec{x}_{n-1} ~.~ \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_n/Q] & \models \\
+    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n & \models & \text{ ($\Asterisk$)} \\
+    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n & \models & \text{ ind. hyp.} \\ 
+    I_n[Q_n/Q] & \hfill\text{\qed}
     \end{array}\]
     We prove the final point ($\Asterisk$). If
     $\beta_n\cup\nu_{n-1}\cup\nu_n \models
@@ -696,15 +696,15 @@ and recomputing the subtree of the ART rooted in the initial node of
 $v$.
 
 \begin{algorithm}[t!]
-\begin{algorithmic}[0]
+{\scriptsize\begin{algorithmic}[0]
 \State {\bf input}: an ADA $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$
 over the alphabet $\Sigma$ of input events
 
 \State {\bf output}: $\true$ if $L(\A)=\emptyset$ and a data word $w
 \in L(\A)$ otherwise
-\end{algorithmic}
+\end{algorithmic}}
 
-\begin{algorithmic}[1]
+{\scriptsize\begin{algorithmic}[1]
   \State $\preds \leftarrow \set{\bot}$, $\worklist \leftarrow
   \tuple{\rootNode}$, $\Art = \tuple{N,E,\Lambda,\lhd}$, where $N \leftarrow
   \emptyset$, $E \leftarrow \emptyset$, $\Lambda \leftarrow
@@ -769,8 +769,8 @@ over the alphabet $\Sigma$ of input events
 
   \Else
 
-  \State let $s \leftarrow \Call{NewNode}{}$ and $\Lambda \leftarrow
-  \Lambda \cup \set{(s,\phi)}$
+  \State let $s$ be a fresh node and $\Lambda \leftarrow \Lambda \cup
+  \set{(s,\phi)}$
 
   \State $R \leftarrow \set{m \in \worklist \mid \Lambda(m) \models
     \phi}$ \Comment{worklist nodes covered by $s$}
@@ -804,8 +804,8 @@ over the alphabet $\Sigma$ of input events
   \EndWhile
 
   \State {\bf return} $\true$
-\end{algorithmic}
-\caption{Lazy Predicate Abstraction for Checking Emptiness of ADA}
+\end{algorithmic}}
+\caption{Lazy Predicate Abstraction for ADA Emptiness}
 \label{alg:predabs}
 \end{algorithm}
 
@@ -821,7 +821,7 @@ events. The least unfeasible suffix of $u$ is the smallest sequence $v
 the formula (\ref{eq:pivot}) below is unsatisfiable. The \emph{pivot}
 of $u$ is the node $p$ corresponding to the start of $v$ in $u$.
 \begin{equation}\label{eq:pivot}
-  \overline{\pi}(a_1\ldots a_k) \equiv \Lambda(p)[Q_0/Q] \wedge
+  \overline{\pi}(v) \equiv \Lambda(p)[Q_0/Q] \wedge
   \theta_1(Q_0 \cup Q_1,\vec{x}_0 \cup \vec{x}_1) \wedge \ldots \wedge
   \theta_{k+1}(Q_k)
 \end{equation}
