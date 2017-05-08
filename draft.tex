@@ -46,6 +46,22 @@ Email: \{Radu.Iosif,Xiao.Xu\}@univ-grenoble-alpes.fr}
 \maketitle
 
 \begin{abstract}
+Alternating automata have been widely used to model and verify systems
+that handle data from finite domains, such as communication protocols
+or hardware. The main advantage of the alternating model of
+computation is that complementation is possible in linear time, thus
+allowing to concisely encode trace inclusion problems that occur often
+in verification. In this paper we consider alternating automata over
+infinite alphabets, whose transition rules are formulae in a combined
+theory of booleans and some infinite data domain, that relate past and
+current values of the data variables. The data theory is not fixed,
+but rather it is a parameter of the class. We show that union,
+intersection and complementation are possible in linear time in this
+model and, though the emptiness problem is undecidable, we provide two
+efficient semi-algorithms, inspired by two state-of-the-art
+abstraction refinement model checking methods: lazy predicate
+abstraction and the IMPACT algorithm. We have implemented both methods
+and report the results of an experimental comparison.
 \end{abstract}
 
 \section{Introduction}
