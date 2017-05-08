@@ -89,8 +89,8 @@ $i=1,\ldots,n$.
 %% disjunction of conjunctions of literals $\bigvee_{i=1}^N
 %% \bigwedge_{j=1}^{M_i} \ell_{ij}$.
 %
-The size of a formula $\phi$, denoted $\len{\phi}$ is the number of
-symbols occuring in it.
+The size of a formula $\phi$, denoted as $\len{\phi}$, is the number
+of symbols occuring in it.
 
 An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
 \item the sort $\Data$ into a non-empty set $\Data^\I$, 
@@ -110,9 +110,10 @@ variable $x$ by its valuation $\nu(x)$. For a formula $\phi$, we write
 $\I,\nu \models \phi$ if the formula obtained by replacing each term
 $t$ in $\phi$ by the value $t^\I_\nu$ is logically equivalent to true.
 A formula $\phi$ is \emph{satisfiable} in the interpretation $\I$ if
-there exists a valuation $\nu$ such that $\I,\nu \models \phi$. The
-\emph{theory} $\theory(\sig,\I)$ is the set of satisfiable formulae
-written in the signature $\sig$, with the interpretation $\I$. 
+there exists a valuation $\nu$ such that $\I,\nu \models \phi$, and
+\emph{valid} if $\I,\nu \models \phi$ for all valuations $\nu$.  The
+\emph{theory} $\theory(\sig,\I)$ is the set of valid formulae written
+in the signature $\sig$, with the interpretation $\I$.
 
 Given formulae $\varphi$ and $\psi$, we say that \emph{$\phi$ entails
   $\psi$}, denoted $\phi \models^\I \psi$ iff $\I,\nu \models \varphi$
@@ -137,7 +138,7 @@ sequences of input events and by $\Sigma[\vec{x}]^*$ the set of data
 words over $\vec{x}$.
 
 This definition generalizes the classical notion of words from a
-finite alphabet to using a possibly infinite alphabet
+finite alphabet to the possibly infinite alphabet
 $\Sigma[\vec{x}]$. Clearly, when $\Data^\I$ is sufficiently large or
 infinite, we can map the elements of $\Sigma$ into designated elements
 of $\Data^\I$ and use a special variable to encode the input
@@ -151,36 +152,37 @@ $\fv{\Bool}{\phi} \subseteq \vec{b}$, $\fv{\Data}{\phi} \subseteq
 \vec{x}$ and each variable from $\vec{b}$ occurs under an even number
 of negations. 
 
-An \emph{alternating data automaton} (or, simply, and automaton) is a
-tuple $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$: \begin{compactitem}
+An \emph{alternating data automaton} (ADA) or, simply, an automaton,
+is a tuple $\A =
+\tuple{\vec{x},Q,\iota,F,\Delta}$, where: \begin{compactitem}
 %
 \item $\vec{x} \subset \vars$ is a finite set of variables of sort
   $\Data$,
 %
-\item $Q$ is a finite set of variables of sort $\Bool$, also called
+\item $Q$ is a finite set of variables of sort $\Bool$, called
   \emph{states},
 %
-\item $\iota \in \Form^+(Q,\emptyset)$ is a formula describing the
-  \emph{initial configurations},
+\item $\iota \in \Form^+(Q,\emptyset)$ is positive boolean combination
+  of states defining the \emph{initial configurations},
 %
-\item $F \subseteq Q$ is a set of \emph{final} states, and
+\item $F \subseteq Q$ is a set of \emph{final states}, and
 %
 \item $\Delta : Q \times \Sigma \rightarrow
   \Form^+(Q,\overline{\vec{x}}\cup\vec{x})$ is a \emph{transition
     function}, where $\overline{\vec{x}}$ is the set $\{\overline{x}
   \mid x \in \vec{x}\}$.
 \end{compactitem}
-Intuitively, in each formula describing a transition rule,
-$\overline{\vec{x}}$ track the previous and $\vec{x}$ the current
-values of the variables of $\A$. Observe further, that the initial
-values of the variables are left unconstrained, because the initial
-configuration does not contain free data variables. The size of $\A$
-is defined as $\len{\A} = \len{\iota} + \sum_{(q,a) \in
-  Q\times\Sigma}\len{\Delta(q,a)}$.
+Intuitively, in each formula $\Delta(q,a)$ describing a transition
+rule, the variables $\overline{\vec{x}}$ track the previous and
+$\vec{x}$ the current values of the variables of $\A$. Observe
+further, that the initial values of the variables are left
+unconstrained, as the initial configuration does not contain free
+data variables. The size of $\A$ is defined as $\len{\A} = \len{\iota}
++ \sum_{(q,a) \in Q\times\Sigma}\len{\Delta(q,a)}$.
 
 Formally, let $\vec{x}_k = \set{x_k \mid x \in \vec{x}}$, $k\geq0$, be
-a time-stamped set of variables. For an input even $a \in \Sigma$ and
-a formula $\phi$ we write $\Delta^k(\phi,a)$ for the formula obtained
+a set of time-stamped variables. For an input event $a \in \Sigma$ and
+a formula $\phi$, we write $\Delta^k(\phi,a)$ for the formula obtained
 from $\phi$ by simultaneously replacing each state $q \in
 \fv{\Bool}{\phi}$ by the formula
 $\Delta(q,a)[\vec{x}_k/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]$, for
@@ -188,24 +190,24 @@ all $k\geq0$. Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots
 (a_n,\nu_n)$, the \emph{run} of $\A$ over $w$ is the sequence of
 formulae $\phi_0,\phi_1,\ldots,\phi_n$, where $\phi_0 \equiv \iota$
 and, for all $k > 0$, we have $\phi_k \equiv
-\Delta^k(\phi_{k-1},a_k)$. We slightly abuse notation and write
+\Delta^k(\phi_{k-1},a_k)$. Next, we slightly abuse notation and write
 $\Delta(\iota,a_1,\ldots,a_n)$ for the formula
-$\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ in the following. We say that
-$\A$ \emph{accepts} $w$ iff $\I,\nu \models \phi_n$, where $\nu$ is
-some valuation that maps:\begin{inparaenum}[(1)]
+$\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ above. We say that $\A$
+\emph{accepts} $w$ iff $\I,\nu \models \Delta(\iota,a_1,\ldots,a_n)$,
+where $\nu$ is some valuation that maps:\begin{inparaenum}[(1)]
 %
 \item each $x \in \vec{x}_k$ to $\nu_k(x)$, for all $k\in[1,n]$, 
 %
-\item each $q \in \fv{\Bool}{\phi_n} \cap F$ to $\top$, and 
+\item each $q \in \fv{\Bool}{\phi_n} \cap F$ to $\top$ and 
 %
 \item each $q \in \fv{\Bool}{\phi_n} \setminus F$ to $\bot$.
 \end{inparaenum}
 The language of $\A$ is the set $L(\A)$ of words accepted by $\A$.
 
-In this section we tackle the following problems: \begin{compactenum}
+In this paper we tackle the following problems: \begin{compactenum}
 \item \emph{boolean closure}: given automata $\A_1$ and $\A_2$, both
   with the same set of variables $\vec{x}$, do there exist automata
-  $\A_\cup$, $\A_\cap$ and $\overline{\A}$ such that $L(\A_\cup) =
+  $\A_\cup$, $\A_\cap$ and $\overline{\A_1}$ such that $L(\A_\cup) =
   \A_1 \cup \A_2$, $L(A_\cap) = \A_1 \cap \A_2$ and
   $L(\overline{\A_1}) = \Sigma[\vec{x}]^* \setminus L(\A_1)$ ?
 %
@@ -214,12 +216,12 @@ In this section we tackle the following problems: \begin{compactenum}
 \end{compactenum}
 
 It is well known that other problems, such as \emph{universality}
-(given an automaton $\A$ with variables $\vec{x}$, does $L(\A) =
-\Sigma[\vec{x}]^*$) and \emph{inclusion} (given automata $\A_1$ and
+(given automaton $\A$ with variables $\vec{x}$, does $L(\A) =
+\Sigma[\vec{x}]^*$?) and \emph{inclusion} (given automata $\A_1$ and
 $\A_2$ with the same set of variables, does $L(\A_1) \subseteq
-L(\A_2)$ ?) can be reduced to the above problems. Observe furthermore
+L(\A_2)$?) can be reduced to the above problems. Observe furthermore
 that we do not consider cases in which the sets of variables in the
-two automata differ. An interesting problem in this case is: given
+two automata differ. An interesting problem in this case would be: given
 automata $\A_1$ and $\A_2$, with variables $\vec{x}_1$ and
 $\vec{x}_2$, respectively, such that $\vec{x}_1 \subseteq \vec{x}_2$,
 does $L(\A_1) \subseteq \proj{L(\A_2)}{\vec{x}_1}$, where
@@ -248,25 +250,25 @@ equivalent, and in general:
 
 \begin{proposition}\label{prop:overline}
   Given a formula $\phi \in \Form^+(Q,\vec{x})$ and a valuation $\nu$
-  mapping each $q \in Q$ a value $\nu(q) \in \booli$ and each $x \in
+  mapping each $q \in Q$ to a value $\nu(q) \in \booli$ and each $x \in
   \vec{x}$ to a value $\nu(x) \in \Data^\I$, let $\nu'$ be the
   valuation that assigns each $q \in Q$ the value $\neg\nu(q)$ and
   each $x \in \vec{x}$ the value $\nu(x)$. Then we have 
-  $\I,\nu \models \phi \iff \I,\nu' \not\models \overline{\phi}$. 
+  $\I,\nu \models \phi$ if and only if $\I,\nu' \not\models \overline{\phi}$. 
 \end{proposition}
 \proof{Immediate, by induction on the structure of $\phi$. \qed}
 
-In the following let $\A_1 = \tuple{\vec{x},Q_1,\iota_1,F_1,\Delta_1}$
-and $\A_2 = \tuple{\vec{x},Q_2,\iota_2,F_2,\Delta_2}$, where
-w.l.o.g. we assume that $Q_1 \cap Q_2 = \emptyset$. We define $\A_\cup
-= \tuple{\vec{x},Q_1\cup Q_2,\iota_1 \vee \iota_2,F_1\cup
-  F_2,\Delta_1\cup\Delta_2}$, $\A_\cap = \tuple{\vec{x},Q_1\cup
-  Q_2,\iota_1 \wedge \iota_2, F_1\cup F_2, \Delta_1\cup\Delta_2}$ and
-$\overline{\A_1} = \langle \vec{x},Q_1,\iota_1,Q_1\setminus
-F_1,\overline{\Delta_1} \rangle$, where $\overline{\Delta_1}(q,a)
-\equiv \overline{\Delta_1(q,a)}$, for all $q \in Q_1$ and $a \in
-\Sigma$. The following lemma shows the correctness of these
-definitions: 
+In the following let $\A_i =
+\tuple{\vec{x},Q_i,\iota_i,F_i,\Delta_i}$, for $i=1,2$, where
+w.l.o.g. we assume that $Q_1 \cap Q_2 = \emptyset$. We define: 
+\[\begin{array}{rcl}
+\A_\cup & = & \tuple{\vec{x},Q_1\cup Q_2,\iota_1 \vee \iota_2,F_1\cup F_2,\Delta_1\cup\Delta_2} \\ 
+\A_\cap & = & \tuple{\vec{x},Q_1\cup Q_2,\iota_1 \wedge \iota_2, F_1\cup F_2, \Delta_1\cup\Delta_2} \\ 
+\overline{\A_1} & = & \langle \vec{x},Q_1,\iota_1,Q_1\setminus F_1,\overline{\Delta_1} \rangle
+\end{array}\] 
+where $\overline{\Delta_1}(q,a) \equiv \overline{\Delta_1(q,a)}$, for
+all $q \in Q_1$ and $a \in \Sigma$. The following lemma shows the
+correctness of the above definitions:
 
 \begin{lemma}\label{lemma:closure}
   Given automata $\A_i = \tuple{\vec{x},Q_i,\iota_i,F_i,\Delta_i}$,
@@ -343,12 +345,12 @@ Vector Addition System with States (AVASS) \cite{LazicSchmitz14} using
 only atoms $x \geq k$ and $x = \overline{x} + k$, for $k \in \zed$,
 with the classical interpretation of the function symbols on
 integers. Since reachability of a control state is undecidable for
-AVASS, the emptiness problem is undecidable for ADA.
+AVASS \cite{LINCOLN92}, the emptiness problem is undecidable for ADA.
 
 Consequently, we give up on the guarantee for termination and develop
 semi-algorithms that are supposed to be: \begin{compactenum}
 \item \emph{sound}: given an automaton $\A$, if $L(\A) \neq\emptyset$,
-  the procedure will terminate and return a word $w \in L(\A)$), and
+  the procedure will terminate and return a word $w \in L(\A)$, and
 %
 \item \emph{complete relative to termination}: if the procedure terminates
   without returning such a word, then $L(\A) = \emptyset$. 
@@ -364,19 +366,20 @@ mapping each formula in $\Form^+(Q,\vec{x})$ to a formula defining the
 effect of reading the event $a$.
 
 We generalize the post-image function to finite sequences of input
-events, as follows: $\Post{\A}(\phi,\varepsilon) \equiv \phi$ and
-$\Post{\A}(\phi,ua) \equiv \Post{\A}(\Post{\A}(\phi,u),a)$, for any $u
-\in \Sigma^*$. Then the emptiness problem for $\A$ becomes: does there
-exist $u \in \Sigma^*$ such that the formula $\Accept{\A}(u) \equiv
-\Post{\A}(\iota,u) \wedge \bigwedge_{q \in Q \setminus F} (q
-\rightarrow \bot)$ is satisfiable ?  Observe that, since we ask a
-satisfiability query, the final states of $\A$ need not be
-constrained\footnote{ Since each state occurs positively in
-  $\Accept{\A}(u)$, this formula has a model iff it has a model with
-  every $q \in F$ set to true.}. A na\"ive semi-algorithm enumerates
-all finite sequences and checks the satisfiability of $\Accept{\A}(u)$
-for each $u \in \Sigma^*$, using a decision procedure for the theory
-$\theory(\sig,\I)$.
+events, as follows, for any $u \in \Sigma^*$:
+\[\begin{array}{l}
+\Post{\A}(\phi,\varepsilon) \equiv \phi \hspace*{5mm} \Post{\A}(\phi,ua) \equiv \Post{\A}(\Post{\A}(\phi,u),a) \\
+\Accept{\A}(u) \equiv \Post{\A}(\iota,u) \wedge \bigwedge_{q \in Q \setminus F} (q \rightarrow \bot)
+\end{array}\]
+Then the emptiness problem for $\A$ becomes: does there exist $u \in
+\Sigma^*$ such that the formula $\Accept{\A}(u)$ is satisfiable?
+Observe that, since we ask a satisfiability query, the final states of
+$\A$ need not be constrained\footnote{ Since each state occurs
+  positively in $\Accept{\A}(u)$, this formula has a model iff it has
+  a model with every $q \in F$ set to true.}. A na\"ive semi-algorithm
+enumerates all finite sequences and checks the satisfiability of
+$\Accept{\A}(u)$ for each $u \in \Sigma^*$, using a decision procedure
+for the theory $\theory(\sig,\I)$.
 
 Since no boolean variable from $Q$ occurs under negation in $\phi$, it
 is easy to prove the following monotonicity property: given two
@@ -393,39 +396,40 @@ because, for any $u,v \in \Sigma^*$, if $\Post{\A}(\iota,u) \models
 $\Post{\A}(\iota,uw) \models \Post{\A}(\iota,vw)$, thus
 $\Accept{\A}(vw)$ is satisfiable as well, and there is no need for
 $u$, since the non-emptiness of $\A$ can be proved using $v$
-alone. However, in practice, the antichain-based semi-algorithm
-diverges in a large number of cases, since, in many interpretations,
-there exist infinite antichains, e.g.\ $q \wedge x \teq 0, q \wedge x
-\teq 1, \ldots$ for $\Data^\I = \nat$.
+alone. However, the antichain-based semi-algorithm diverges in a large
+number of cases, since infinite antichains exist in many
+interpretations, e.g.\ $q \wedge x \teq 0,~ q \wedge x \teq 1, \ldots$
+for $\Data^\I = \nat$.
 
 A \emph{safety invariant} for $\A$ is a function $\Inv : (Q \mapsto
 \booli) \rightarrow 2^{\vec{x} \mapsto \Data^\I}$ such that, for every
-boolean valuation $\beta : Q \rightarrow \booli$, every valuation
-$\nu : \vec{x} \mapsto \Data^\I$ of the data
-variables and every finite sequence $u \in \Sigma^*$ of input events: \begin{compactenum}
+boolean valuation $\beta : Q \rightarrow \booli$, every valuation $\nu
+: \vec{x} \mapsto \Data^\I$ of the data variables and every finite
+sequence $u \in \Sigma^*$ of input events, the following
+hold: \begin{compactenum}
 %% \item $\beta \models \iota \Rightarrow \nu_0 \in \Inv(\beta)$, where
 %%   $\nu_0(x) = \mathbf{0}$, for all $x \in \vec{x}$.
 %
-\item\label{it1:inv} $\beta \cup \nu \models \Post{\A}(\iota,u)
+\item\label{it1:inv} $\I,\beta \cup \nu \models \Post{\A}(\iota,u)
   \Rightarrow \nu \in \Inv(\beta)$, and
 %
-\item\label{it2:inv} $\nu \in \Inv(\beta) \Rightarrow \beta \cup \nu
-  \not\models \Accept{\A}(u)$.
+\item\label{it2:inv} $\nu \in \Inv(\beta) \Rightarrow \I,\beta \cup
+  \nu \not\models \Accept{\A}(u)$.
 \end{compactenum}
 A formula $\phi(Q,\vec{x})$ \emph{defines} $\Inv$ iff for all $\beta:
 Q \rightarrow \booli$ and $\nu : \vec{x} \rightarrow \Data^\I$,
-$\beta\cup\nu \models \phi \iff \nu \in \Inv(\beta)$. If $\Inv$
-satisfies only the first point above, we call it simply an
-\emph{invariant}. Intuitively, a safety invariant maps every boolean
-valuation into a set of data valuations, that contains the initial
-configuration $\iota = \Post{\A}(\iota,\varepsilon)$, in which the
-data variables are unconstrained, and over-approximates the set of
-reachable valuations (\ref{it1:inv}), while excluding those valuations
-which satisfy the acceptance condition (\ref{it2:inv}).
+$\I,\beta\cup\nu \models \phi$ if and only if $\nu \in
+\Inv(\beta)$. If $\Inv$ satisfies only the first point above, we call
+it an \emph{invariant}. Intuitively, a safety invariant maps every
+boolean valuation into a set of data valuations, that contains the
+initial configuration $\iota = \Post{\A}(\iota,\varepsilon)$, whose
+data variables are unconstrained, over-approximates the set of
+reachable valuations (\ref{it1:inv}) and excludes the valuations
+satisfying the acceptance condition (\ref{it2:inv}).
 
 \begin{lemma}\label{lemma:safety-invariant}
-  For any automaton $\A$, we have $L(\A)
-= \emptyset$ iff $\A$ has a safety invariant. 
+  For any automaton $\A$, we have $L(\A) = \emptyset$ if and only if
+  $\A$ has a safety invariant.
 \end{lemma}
 \proof{ Let $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$ in the following.
   ``$\Leftarrow$'' This direction is trivial. ``$\Rightarrow$'' We
@@ -445,25 +449,25 @@ effectively checked using a decision procedure for the theory
 $\theory(\sig,\I)$, there is no guarantee that this check will ever
 succeed.
 
-The solution we adopt is the use of abstraction to ensure termination
-of invariant computations. However, it is worth pointing out from the
+The solution we adopt is abstraction to ensure the termination of
+invariant computations. However, it is worth pointing out from the
 start that abstraction will allow us to build invariants which are not
 necessarily safety invariants. To meet the latter condition, we resort
 to counterexample guided abstraction refinement (CEGAR).
 
 Formally, let $\preds$ be a finite set of formulae with variables from
 $Q \cup \vec{x}$, such that $\bot \in \preds$ and the variables in $Q$
-can occur negated in some $\phi \in \preds$. We assume that $\preds$
-is fixed for now, and refer to these formulae as \emph{predicates}.
-Given a formula $\phi$, we denote by $\abs{\phi} \equiv \bigwedge
-\set{\pi \in \preds \mid \phi \models \pi}$ the abstraction of $\phi$
-w.r.t. the predicates in $\preds$. The abstract version of the
-post-image and acceptance condition are defined as follows:
-\[\begin{array}{llcl}
-\AbsPost{\A}(\phi,\varepsilon) \equiv \phi & 
-\AbsPost{\A}(\phi,ua) & \equiv & \abs{(\Post{\A}(\AbsPost{\A}(\phi,u),a))} \\
-&
-\AbsAccept{\A}(u) & \equiv & \AbsPost{\A}(\iota,u) \wedge\!\!\!\bigwedge_{q \in Q \setminus F} 
+can now occur negated within the formulae $\phi \in \preds$. We fix
+$\preds$ from now on and refer to these formulae as
+\emph{predicates}. Given a formula $\phi$, we denote by $\abs{\phi}
+\equiv \bigwedge \set{\pi \in \preds \mid \phi \models \pi}$ the
+abstraction of $\phi$ w.r.t. the predicates in $\preds$. The abstract
+version of the post-image and acceptance condition are defined as
+follows, for any $u \in \Sigma^*$:
+\[\begin{array}{l}
+\AbsPost{\A}(\phi,\varepsilon) \equiv \phi \hspace*{5mm}
+\AbsPost{\A}(\phi,ua) \equiv \abs{(\Post{\A}(\AbsPost{\A}(\phi,u),a))} \\
+\AbsAccept{\A}(u) \equiv \AbsPost{\A}(\iota,u) \wedge \bigwedge_{q \in Q \setminus F} 
 (q \rightarrow \bot)
 \end{array}\]
 \begin{lemma}\label{lemma:abstract-invariant}
@@ -488,7 +492,7 @@ lemma, meets point (\ref{it1:inv}) but not point (\ref{it2:inv}) from
 the definition of invariants, where $\Post{\A}$ and $\Accept{\A}$
 replace $\AbsPost{\A}$ and $\AbsAccept{\A}$, respectively. In
 other words, there exists a finite sequence $u \in \Sigma^*$ such that
-$\nu \in \abs{\Inv}(\beta)$ and $\beta\cup\nu \models
+$\nu \in \abs{\Inv}(\beta)$ and $\I,\beta\cup\nu \models
 \AbsAccept{\A}(u)$, for some boolean $\beta : Q \rightarrow \booli$
 and data $\nu : \vec{x} \rightarrow \Data^\I$ valuations. Such
 a $u\in\Sigma^*$ is called a \emph{counterexample}.
@@ -503,7 +507,7 @@ In the first case, our semi-algorithm stops and returns a witness for
 non-emptiness, obtained from the satisfying valuation of
 $\Accept{\A}(u)$ and in the second case, we must strenghten the
 invariant by excluding from $\abs{\Inv}$ all pairs $(\beta,\nu)$ such
-that $\beta\cup\nu \models \AbsAccept{\A}(u)$. This strenghtening
+that $\I,\beta\cup\nu \models \AbsAccept{\A}(u)$. This strenghtening
 is carried out by adding to $\preds$ several predicates that are
 sufficient to exclude the spurious counterexample.
 
@@ -542,7 +546,7 @@ initial configuration of $\A$, with every $q \in \fv{\Bool}{\iota}$
 replaced by $q_0$. The definition of $\theta_k$, $k\in[1,n]$ uses
 \emph{replacement sets} $R_\ell \subseteq Q_\ell$, $\ell\in [0,n]$,
 which are defined inductively below: \begin{compactitem}
-\item $R_0 = \fv{\Bool}{\theta_0}$, 
+\item $R_0 = \fv{\Bool}{\theta_0}$ and 
 %
 \item $\theta_\ell \equiv \bigwedge_{q_{\ell-1}\in R_{\ell-1}}
   (q_{\ell-1} \rightarrow
@@ -562,21 +566,23 @@ We recall that a run of $\A$ over $u$ is a sequence $\phi_0(Q),
 initial configuration $\iota$ and for each $k>0$, $\phi_k$ is obtained
 from $\phi_{k-1}$ by replacing each state $q \in
 \fv{\Bool}{\phi_{k-1}}$ by the formula $\Delta(q,a_k)$ given by the
-transition function of $\A$. The main idea behind the above definition
-of the interpolation problem is that we would like to obtain an
-interpolant $\tuple{\top,I_1(Q), I_2(Q,\vec{x}), \ldots,
-  I_{n}(Q,\vec{x}),\bot}$ whose formulae \emph{combine states with the
-  data constraints that must hold locally}, whenever the control
-reaches a certain boolean configuration. This association of states
-with data valuations is tantamount to defining efficient
-semi-algorithms, based on lazy abstraction \cite{HJMS02}. Observe
-that, because the states are replaced with transition formulae when
-moving one step in a run, the formulae thus produced lose track of the
-control history and are not directly suitable to producing
-interpolants that can be applied locally. Furthermore, the abstraction
-defined by the interpolants generated in this way can also
-\emph{over-approximate the control structure} of an automaton, in
-addition to the sets of data values encountered throughout its runs.
+transition function of $\A$. Observe that, because the states are
+replaced with transition formulae when moving one step in a run, the
+formulae thus produced lose track of the control history and are not
+directly suitable to producing interpolants that relates states and
+data.
+
+The main idea behind the above definition of the interpolation problem
+is that we would like to obtain an interpolant $\tuple{\top,I_1(Q),
+  I_2(Q,\vec{x}), \ldots, I_{n}(Q,\vec{x}),\bot}$ whose formulae
+\emph{combine states with the data constraints that must hold
+  locally}, whenever the control reaches a certain boolean
+configuration. This association of states with data valuations is
+tantamount to defining efficient semi-algorithms, based on lazy
+abstraction \cite{HJMS02}. Furthermore, the abstraction defined by the
+interpolants generated in this way can also \emph{over-approximate the
+  control structure} of an automaton, in addition to the sets of data
+values encountered throughout its runs.
 
 The correctness of this interpolation-based abstraction refinement
 setup is captured by the progress property below, which guarantees
@@ -585,8 +591,8 @@ $\preds$ of predicates suffices to exclude the spurious counterexample
 $u$ from future searches.
 
 \begin{lemma}\label{lemma:progress}
-  Given a non-empty sequence of input events $u \in \Sigma^*$ such
-  that $\Accept{\A}(u)$ is unsatisfiable, then the following
+  For any non-empty sequence $u = a_1\ldots a_n \in \Sigma^*$
+  such that $\Accept{\A}(u)$ is unsatisfiable, the following
   hold: \begin{compactenum}
   \item\label{it1:progress} $\pi(u)$ is unsatisfiable, and
     %
@@ -595,16 +601,16 @@ $u$ from future searches.
     \subseteq \preds$ then $\AbsAccept{\A}(u)$ is unsatisfiable.
   \end{compactenum}
 \end{lemma}
-\proof{ Let $u = a_1\ldots a_n$ and  $\pi(u) \equiv \theta_0(Q_0) \wedge
-  \theta_1(Q_0 \cup Q_1,\vec{x}_0 \cup \vec{x}_1) \wedge \ldots \wedge
-  \theta_n(Q_{n-1} \cup Q_n,\vec{x}_{n-1} \cup \vec{x}_n) \wedge
-  \theta_{n+1}(Q_n)$ in the following. 
+\proof{ Let $\pi(u) \equiv \theta_0(Q_0) \wedge \theta_1(Q_0 \cup
+  Q_1,\vec{x}_0 \cup \vec{x}_1) \wedge \ldots \wedge \theta_n(Q_{n-1}
+  \cup Q_n,\vec{x}_{n-1} \cup \vec{x}_n) \wedge \theta_{n+1}(Q_n)$ in
+  the following.
 
   (\ref{it1:progress}) Assume that $\pi(u)$ is satisfiable and let
   $\beta_0,\ldots,\beta_n$ and $\nu_0,\ldots,\nu_n$ be boolean and
   data valuations for $Q_0,\ldots,Q_n$ and
   $\vec{x}_0,\ldots,\vec{x}_n$, respectively, such that
-  $\bigcup_{i=0}^n \beta_i \cup \bigcup_{i=0}^n \nu_i \models
+  $\I,\bigcup_{i=0}^n \beta_i \cup \bigcup_{i=0}^n \nu_i \models
   \pi(u)$. We build a model for $\Accept{\A}(u) \equiv
   \Post{\A}(\iota,u) \wedge \theta_{n+1}[Q/Q_n]$. Let
   $\phi_0,\phi_1,\ldots,\phi_n$ be the run of $\A$ over $u$. We show
@@ -619,20 +625,20 @@ $u$ from future searches.
     \fv{\Bool}{\theta_{n-1}} \cap Q_{n-1}} \left(q_{n-1} \rightarrow
   \Delta(q,a_n)[Q_n/Q,\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]\right)\]
 
-  But since $\beta_{n-1} \cup \beta_n, \nu_{n-1} \cup \nu_n \models
+  But since $\I,\beta_{n-1} \cup \beta_n, \nu_{n-1} \cup \nu_n \models
   \theta_n(Q_{n-1}\cup Q_n, \vec{x}_{n-1} \cup \vec{x}_n)$, we have
-  that $\beta_n,\vec{x}_{n-1} \cup \vec{x}_n \models
+  that $\I,\beta_n,\nu_{n-1} \cup \nu_n \models
   \Delta(q,a_n)[Q_n/Q,\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]$,
   for every $q \in Q$ such that $\beta_{n-1}(q_{n-1}) = \true$. Then
-  we have $\beta,\vec{x}_0\cup\ldots\cup\vec{x}_n \models \phi_n$
+  we have $\I,\beta\cup\bigcup_{i=0}^n\nu_i \models \phi_n$
   where $\beta(q) = \beta_n(q_n)$, for all $q \in Q$ and $\phi_n$ is
   obtained from $\phi_{n-1}$ by replacing each boolean variable $q$ by
   $\Delta(a,q)[\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]$. Observe
   that, because each boolean variable occurs positively in
   $\phi_{n-1}$, the truth value of
   $\Delta(a,q)[\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]$
-  under valuation $\beta\cup\nu_{n-1}\cup\nu_n$ is not important for
-  $q \in Q$ such that $\beta(q) = \false$. We have thus obtained a
+  under the valuation $\beta\cup\nu_{n-1}\cup\nu_n$ is not important for
+  any $q \in Q$ such that $\beta(q) = \false$. We have obtained a
   model for $\phi_n$ and thus for $\Post{\A}(u)$. Since moreover,
   $\theta_{n+1}[Q/Q_n] = \true$ in this model, we obtain a model for
   $\Accept{\A}(u)$. Thus $\pi(u)$ is satisfiable implies that
@@ -655,35 +661,34 @@ $u$ from future searches.
     have $\AbsPost{\A}(\iota,\varepsilon) \equiv \iota \equiv
     \theta_0[Q/Q_0] \models I_1$. For the induction step $n>0$, we
     compute:
-    \[\begin{array}{lcl}
-    \AbsPost{\A}(\iota,a_1\ldots a_n)[Q_n/Q] & \equiv & \text{ def. of $\AbsPost{\A}$} \\
-    \exists \vec{x}_{n-1} ~.~ \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_n/Q] & \models \\
-    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n & \models & \text{ ($\Asterisk$)} \\
-    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n & \models & \text{ ind. hyp.} \\ 
-    I_n[Q_n/Q] & \hfill\text{\qed}
+    \[\begin{array}{l}
+    \AbsPost{\A}(\iota,a_1\ldots a_n)[Q_n/Q] \equiv \text{ (by definition of $\AbsPost{\A}$)} \\
+    \exists \vec{x}_{n-1} ~.~ \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_n/Q] \models \text{ ($\Asterisk$)} \\
+    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n \models \text{ (ind. hyp.) } \\
+    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n \models I_n[Q_n/Q]  \hfill\text{\qed}
     \end{array}\]
-    We prove the final point ($\Asterisk$). If
-    $\beta_n\cup\nu_{n-1}\cup\nu_n \models
-    \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_n/Q]$,
-    for some valuations $\beta_{n-1} : Q_{n-1} \rightarrow \booli$ and
-    $\nu_i : \vec{x}_i \rightarrow \Data^\I$, for $i=n-1,n$, then we
-    build a valuation $\beta_{n-1}$ such that $\beta_{n-1}\cup\beta_n
-    \cup \nu_{n-1}\cup\nu_n \models \AbsPost{\A}(\iota,a_1\ldots
-    a_{n-1})[Q_{n-1}/Q] \wedge \theta_n$, as follows. For each
-    occurrence of a subformula $\Delta(q,a_n)$ in
-    $\AbsPost{\A}(\iota,a_1\ldots a_{n-1})$ we set
-    $\beta_{n-1}(q_{n-1}) = \true$ if $\beta_n\cup\nu_{n-1}\cup\nu_n
-    \models \Delta(q,a_n)[Q_n/Q]$ and $\beta_{n-1}(q_{n-1}) = \false$,
-    otherwise. Since there are no negated occurrences of such
-    subformulae, the definition of $\beta_{n-1}$ is consistent, and
-    the check $\beta_{n-1}\cup\beta_n \cup \nu_{n-1}\cup\nu_n \models
-    \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n$
-    is straightforward. \qed}
+   Let us prove the final point ($\Asterisk$). If
+   $\I,\beta_n\cup\nu_{n-1}\cup\nu_n \models
+   \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_{n}/Q]$,
+   for some valuations $\beta_{n} : Q_{n-1} \rightarrow \booli$ and
+   $\nu_i : \vec{x}_i \rightarrow \Data^\I$, for $i=n-1,n$, then we
+   build a valuation $\beta_{n-1}$ such that
+   $\I,\beta_{n-1}\cup\beta_n \cup \nu_{n-1}\cup\nu_n \models
+   \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n$,
+   as follows. For each occurrence of a subformula $\Delta(q,a_n)$ in
+   $\AbsPost{\A}(\iota,a_1\ldots a_{n-1})$ we set
+   $\beta_{n-1}(q_{n-1}) = \true$ if $\I,\beta_n\cup\nu_{n-1}\cup\nu_n
+   \models \Delta(q,a_n)[Q_n/Q]$ and $\beta_{n-1}(q_{n-1}) = \false$,
+   otherwise. Since there are no negated occurrences of such
+   subformulae, the definition of $\beta_{n-1}$ is consistent, and the
+   check $\I,\beta_{n-1}\cup\beta_n \cup \nu_{n-1}\cup\nu_n \models
+   \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n$
+   is straightforward. \qed}
 
 We have now all the ingredients to describe the first emptiness
 checking semi-algorithm for alternating data
-automata. Algorithm\footnote{Although termination is not guaranteed,
-  we call it an algorithm for conciseness.}  \ref{alg:predabs} builds
+automata. Algorithm\footnote{Though termination is not guaranteed,
+  we call it algorithm for conciseness.}  \ref{alg:predabs} builds
 an \emph{abstract reachability tree} (ART) whose edges are labeled
 with input events and each node $n$ is labeled with the formula
 $\AbsPost{\A}(\iota,u)$, where $u \in \Sigma^*$ is the event trace
@@ -706,11 +711,12 @@ over the alphabet $\Sigma$ of input events
 
 {\scriptsize\begin{algorithmic}[1]
   \State $\preds \leftarrow \set{\bot}$, $\worklist \leftarrow
-  \tuple{\rootNode}$, $\Art = \tuple{N,E,\Lambda,\lhd}$, where $N \leftarrow
+  \tuple{\rootNode}$, $\Art = \tuple{N,E,\Lambda,\lhd}$, $N \leftarrow
   \emptyset$, $E \leftarrow \emptyset$, $\Lambda \leftarrow
-  \set{(\rootNode,\iota)}$ and $\lhd \leftarrow \emptyset$
+  \set{(\rootNode,\iota)}$, $\lhd \leftarrow \emptyset$
 
   \While {$\worklist \neq \emptyset$}
+  \label{ln:while}
   
   \State dequeue $n$ from $\worklist$ 
 
@@ -725,16 +731,16 @@ over the alphabet $\Sigma$ of input events
   \If{$\Accept{\A}(u)$ is satisfiable} \Comment{counterexample is
     real}
 
-  \State let $\beta \cup \nu_1 \cup \ldots \cup \nu_k \models
-  \Accept{\A}(u)$, where $\beta : Q \rightarrow \booli$,
-  $\nu_1,\ldots,\nu_k : \vec{x} \rightarrow \Data^\I$
+  \State get model $\beta : Q \rightarrow \booli$, $\{\nu_i :
+  \vec{x}_i \rightarrow \Data^\I \mid i=0\ldots k\}$ of $\Accept{\A}(u)$
 
   \State {\bf return} $w = (a_1,\nu_1) \ldots (a_k,\nu_k)$
+  \label{ln:cex}
   \Comment{$w \in L(\A)$ by construction}
 
   \Else \Comment{spurious counterexample}
 
-  \State let $p \leftarrow \Call{FindPivot}{u,\Art}$
+  \State $p \leftarrow \Call{FindPivot}{u,\Art}$
 
   \State let $v$ be the label of the path from $p$ to $n$ in $\Art$
   
@@ -752,40 +758,50 @@ over the alphabet $\Sigma$ of input events
   \State remove $\SubArt$ from $\Art$
 
   \State enqueue $p$ into $\worklist$
+  \label{ln:refine}
+  \Comment{recompute the subtree rooted at $p$}
 
   \EndFor
 
   \EndIf
 
+  \Else \label{ln:else}
+
+  \For{$a \in \Sigma$}\label{ln:forall-events}
+
+  \State $\phi \leftarrow \AbsPost{\A}(\Lambda(n),a)$
+
+  \If{exist $m \in N$ such that $\phi \models \Lambda(m)$} \label{ln:covered}
+
+  \State $\lhd \leftarrow \lhd \cup \set{(n,m)}$ \Comment{$m$ covers $n$}
+  \label{ln:direct-cover}
+
   \Else 
 
-  \For{$a \in \Sigma$}
+  \State let $s$ be a fresh node
 
-  \State let $\phi \leftarrow \AbsPost{\A}(\Lambda(n),a)$
+  \State $E \leftarrow E \cup \set{(n,a,s)}$
 
-  \If{exist $m \in N$ such that $\phi \models \Lambda(m)$} 
-
-  \State $\lhd \leftarrow \lhd \cup \set{(n,m)}$ \Comment{$n$ covers $m$}
-
-  \Else
-
-  \State let $s$ be a fresh node and $\Lambda \leftarrow \Lambda \cup
-  \set{(s,\phi)}$
+  \State $\Lambda \leftarrow \Lambda \cup \set{(s,\phi)}$
 
   \State $R \leftarrow \set{m \in \worklist \mid \Lambda(m) \models
     \phi}$ \Comment{worklist nodes covered by $s$}
 
   \For{$r \in R$}
   
-  \For{$m \in N$ such that $(m,r) \in E$}
+  \For{$m \in N$ such that $(m,b,r) \in E$, $b \in \Sigma$}
 
-  \State let $\lhd \leftarrow \lhd \cup \set{(m,s)}$ \Comment{redirect covered children from $R$ into $s$}
+  \State $\lhd \leftarrow \lhd \cup \set{(m,s)}$ 
+  \label{ln:child-cover}
+  \Comment{redirect covered children from $R$ into $s$}
 
   \EndFor
 
   \For{$(m,r) \in \lhd$}
 
-  \State let $\lhd \leftarrow \lhd \cup \set{(m,s)}$ \Comment{redirect covered nodes from $R$ into $s$}
+  \State $\lhd \leftarrow \lhd \cup \set{(m,s)}$ 
+  \label{ln:indirect-cover}
+  \Comment{redirect covered nodes from $R$ into $s$}
 
   \EndFor
 
@@ -793,7 +809,8 @@ over the alphabet $\Sigma$ of input events
 
   \State remove $R$ from $\Art$
 
-  \State enqueue $s$ into $\worklist$ \Comment{recompute the subtree rooted at $s$}
+  \State enqueue $s$ into $\worklist$ 
+  \label{ln:expand}
 
   \EndIf
 
@@ -804,16 +821,17 @@ over the alphabet $\Sigma$ of input events
   \EndWhile
 
   \State {\bf return} $\true$
+  \label{ln:true}
 \end{algorithmic}}
 \caption{Lazy Predicate Abstraction for ADA Emptiness}
 \label{alg:predabs}
 \end{algorithm}
 
-Formally, let $\Art = \tuple{N,E,\Lambda,\lhd}$ be a tree, where $N$
-is a set of nodes, $E \subseteq N \times \Sigma \times N$ is a set of
-edges, $\Lambda : N \rightarrow \Form^+(Q,\vec{x})$ is a labeling of
-the nodes with formulae, and $\lhd \subseteq N \times N$ is a set of
-covering edges. The root of the tree is labeled with the initial
+Formally, an ART $\Art = \tuple{N,E,\Lambda,\lhd}$ is a tree, where
+$N$ is a set of nodes, $E \subseteq N \times \Sigma \times N$ is a set
+of edges, $\Lambda : N \rightarrow \Form^+(Q,\vec{x})$ is a labeling
+of the nodes with formulae and $\lhd \subseteq N \times N$ is a set
+of covering edges. The root of the tree is labeled with the initial
 configuration $\iota$ and each node $n \in N$ corresponds to a unique
 path from the root to $n$, labeled by a sequence $u$ of input
 events. The least unfeasible suffix of $u$ is the smallest sequence $v
@@ -830,7 +848,7 @@ where $\theta_1,\ldots,\theta_{k+1}$ are defined as in
 \Lambda(p)[Q_0/Q]$. 
 
 With these considerations, Algorithm \ref{alg:predabs} uses a worklist
-iteration to build a ART. We keep newly expanded nodes of $\Art$ in a
+iteration to build an ART. We keep newly expanded nodes of $\Art$ in a
 use a queue $\worklist$ to ensure a breadth-first exploration
 strategy, which guarantees that the shortest counterexamples are
 explored first. When the search encounters a counterexample $u$, it is
@@ -848,9 +866,9 @@ given interpolating decision procedure for the combined boolean and
 data theory $\theory(\sig,\I)$ to provide interpolants that yield a
 safety invariant, provided that $L(\A) = \emptyset$. In this case, we
 use the covering relation $\lhd$ to ensure that, when a newly
-generated node is covered by a node in $N$, it is not added to the
-worklist, thus cutting the current branch of the search. Formally, for
-any two nodes $n,m \in N$, we have $n \lhd m$ iff
+generated node is covered by a node already in $N$, it is not added to
+the worklist, thus cutting the current branch of the search. Formally,
+for any two nodes $n,m \in N$, we have $n \lhd m$ iff
 $\AbsPost{\A}(\Lambda(n),a) \models \Lambda(m)$ for some $a \in
 \Sigma$, in other words, if $n$ has a successor whose label entails
 the label of $m$. The soundness and relative completness of Algorithm
@@ -862,6 +880,57 @@ the label of $m$. The soundness and relative completness of Algorithm
   Algorithm \ref{alg:predabs} terminates reporting $\true$, then
   $L(\A) = \emptyset$.
 \end{theorem}
+\proof{To prove the first point, assume w.l.o.g. that $\Sigma =
+  \set{a_1,\ldots,a_{\card{\Sigma}}}$ is a total ordering of the input event
+  alphabet of $\A$ and that the loop at line \ref{ln:forall-events}
+  considers the events in this order. If $L(\A) \neq \emptyset$, let
+  $(a_{i_1},\nu_1) \ldots (a_{i_k},\nu_k) \in L(\A)$ be a word, such
+  that $a_{i_1} \ldots a_{i_k}$ is the lexicographically minimal
+  feasible counterexample for $\A$.  Since Algorithm \ref{alg:predabs}
+  explores $\Sigma^*$ in this lexicographical order, it must encounter
+  $a_{i_1} \ldots a_{i_k}$ and return a word $(a_{i_1},\nu'_1) \ldots
+  (a_{i_k},\nu'_k) \in L(\A)$ at line \ref{ln:cex}.
+
+  For the second point, we prove the following invariant: each time
+  Algorithm \ref{alg:predabs} reaches line \ref{ln:while}, the set $W$
+  of nodes in $\worklist$ contains all the frontier nodes in $\Art =
+  \tuple{N,E,\Lambda,\lhd}$ which are not covered by some node in $N$,
+  namely that $W = \set{n \in N \mid \forall m \in N \forall a \in
+    \Sigma ~.~ (n,a,m) \not\in E ~\wedge~ (n,m) \not\in
+    \lhd}$. Initially, this is the case because $W = \set{\rootNode}$
+  and $E = \lhd = \emptyset$. If the invariant holds previously, at
+  line \ref{ln:while}, it will hold again after line \ref{ln:refine}
+  is executed, because, when the subtree rooted at the pivot $p$ is
+  removed, $p$ becomes a member of the set of uncovered frontier
+  nodes, and is added to $W$ at line \ref{ln:refine}. The last case
+  considers that the invariant holds at line \ref{ln:while} and the
+  control follows the else branch at line \ref{ln:else}. In this case,
+  the newly created frontier node $s$ is added to $W$ only if it is
+  not covered by an existing node in $N$ (line \ref{ln:covered}). 
+
+  We use this invariant in the proof as follows. If Algorithm
+  \ref{alg:predabs} returns at line \ref{ln:true}, then it must be
+  that $W = \emptyset$. Because of the invariant, each node in $N$ is
+  either covered by another node in $N$, or all its successors are in
+  $N$. We prove next that $\bigvee_{n \in N} \Lambda(n)$ defines a
+  safety invariant, which allows to conclude that $L(\A) = \emptyset$,
+  by Lemma \ref{lemma:safety-invariant}. To this end, it is sufficient
+  to prove that, for any $u \in \Sigma^*$, there exists some node $n
+  \in N$ such that $\Post{\A}(\iota,u) \models \Lambda(n)$. Let $u \in
+  \Sigma^*$ be an arbitrary sequence. If $u$ labels the path from
+  $\rootNode$ to some $n \in N$, we have $\Post{\A}(\iota,u) \models
+  \AbsPost{\A}(\iota,u) \models \Lambda(n)$ and we are
+  done. Otherwise, let $v$ be the (possibly empty) prefix of $u$ which
+  labels the path from $\rootNode$ to some $n \in N$, which is covered
+  by another $m \in N$, where $(n,a,m) \in E$, that is $u = vav'$, for
+  some $a \in \Sigma$ and $v'\in\Sigma^*$. Moreover, we have
+  $\Post{\A}(\iota,va) \models \AbsPost{\A}(\iota,va) \models
+  \Lambda(m)$, by the construction of the set $\lhd$ of covering edges
+  --- lines \ref{ln:direct-cover}, \ref{ln:child-cover},
+  \ref{ln:indirect-cover}. Continuing this argument recursively from
+  $m$, since $\len{v'} < \len{u}$, we shall eventually discover a node
+  $p$ such that $\Post{\A}(\iota,u) \models \Lambda(p)$. This
+  concludes the proof. \qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
