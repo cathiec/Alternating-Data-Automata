@@ -60,8 +60,9 @@ intersection and complementation are possible in linear time in this
 model and, though the emptiness problem is undecidable, we provide two
 efficient semi-algorithms, inspired by two state-of-the-art
 abstraction refinement model checking methods: lazy predicate
-abstraction and the IMPACT algorithm. We have implemented both methods
-and report the results of an experimental comparison.
+abstraction \cite{HJMS02} and the \impact~ semi-algorithm
+\cite{mcmillan06}. We have implemented both methods and report the
+results of an experimental comparison.
 \end{abstract}
 
 \section{Introduction}
@@ -144,7 +145,7 @@ alphabet $\Sigma$ of \emph{input events}. Given a finite set $\vec{x}
 \subset \vars$ of variables of sort $\Data$, let $\vec{x} \mapsto
 \Data^\I$ be the set of valuations of the variables $\vec{x}$ and
 $\Sigma[\vec{x}] = \Sigma \times (\vec{x} \mapsto \Data^\I)$ be the
-set of \emph{data symbols}. A \emph{data word} (or, simply, a word) is
+set of \emph{data symbols}. A \emph{data word} (word in the sequel) is
 a finite sequence $(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$ of data
 symbols, where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n :
 \vec{x} \rightarrow \Data^\I$ are valuations. We denote by
@@ -167,9 +168,9 @@ $\fv{\Bool}{\phi} \subseteq \vec{b}$, $\fv{\Data}{\phi} \subseteq
 \vec{x}$ and each variable from $\vec{b}$ occurs under an even number
 of negations. 
 
-An \emph{alternating data automaton} (ADA) or, simply, an automaton,
-is a tuple $\A =
-\tuple{\vec{x},Q,\iota,F,\Delta}$, where: \begin{compactitem}
+An \emph{alternating data automaton} (ADA or automaton in the sequel)
+is a tuple $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$,
+where: \begin{compactitem}
 %
 \item $\vec{x} \subset \vars$ is a finite set of variables of sort
   $\Data$,
@@ -362,13 +363,13 @@ with the classical interpretation of the function symbols on
 integers. Since reachability of a control state is undecidable for
 AVASS \cite{LINCOLN92}, the emptiness problem is undecidable for ADA.
 
-Consequently, we give up on the guarantee for termination and develop
-semi-algorithms that are supposed to be: \begin{compactenum}
-\item \emph{sound}: given an automaton $\A$, if $L(\A) \neq\emptyset$,
-  the procedure will terminate and return a word $w \in L(\A)$, and
+Consequently, we give up on the guarantee for termination and build
+semi-algorithms that meet the requirements below: \begin{compactenum}[(i)]
+\item given an automaton $\A$, if $L(\A) \neq\emptyset$, the procedure
+  will terminate and return a word $w \in L(\A)$, and
 %
-\item \emph{complete relative to termination}: if the procedure terminates
-  without returning such a word, then $L(\A) = \emptyset$. 
+\item if the procedure terminates without returning such a word, then
+  $L(\A) = \emptyset$.
 \end{compactenum}
 
 Let us fix an automaton $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$ whose
@@ -466,9 +467,10 @@ succeed.
 
 The solution we adopt is abstraction to ensure the termination of
 invariant computations. However, it is worth pointing out from the
-start that abstraction will allow us to build invariants which are not
-necessarily safety invariants. To meet the latter condition, we resort
-to counterexample guided abstraction refinement (CEGAR).
+start that abstraction alone will only allow us to build invariants
+that are not necessarily safety invariants. To meet the latter
+condition, we resort to counterexample guided abstraction refinement
+(CEGAR).
 
 Formally, let $\preds$ be a finite set of formulae with variables from
 $Q \cup \vec{x}$, such that $\bot \in \preds$ and the variables in $Q$
@@ -539,6 +541,14 @@ $\pi$, simply called an \emph{interpolant}, is a tuple $\tuple{I_0(X),
 %
 \item $I_n \equiv \bot$. 
 \end{inparaenum}
+
+\paragraph{\em Remark} 
+We deviate from the standard notion of \emph{generalized interpolants}
+\cite{mcmillan06}, which requires $\fv{}{I_i} \subseteq \fv{}{\phi_i}
+\cap \fv{}{\phi_{i+1}}$, for each $i \in [1,n-1]$, and assume further
+that the variables have been already renamed by removing the
+time-stamps. \qed
+
 A classical method for abstraction refinement is to add the elements
 of the interpolant obtained from a proof of spuriousness to the set of
 predicates. This guarantees progress, meaning that the particular
@@ -724,11 +734,13 @@ over the alphabet $\Sigma$ of input events
 \in L(\A)$ otherwise
 \end{algorithmic}}
 
-{\scriptsize\begin{algorithmic}[1]
-  \State $\preds \leftarrow \set{\bot}$, $\worklist \leftarrow
-  \tuple{\rootNode}$, $\Art = \tuple{N,E,\Lambda,\lhd}$, $N \leftarrow
-  \emptyset$, $E \leftarrow \emptyset$, $\Lambda \leftarrow
-  \set{(\rootNode,\iota)}$, $\lhd \leftarrow \emptyset$
+{\scriptsize\begin{algorithmic}[1] 
+
+  \State let $\Art = \tuple{N,E,\Lambda,\lhd}$ be an ART 
+
+  \State initially $N = E = \lhd = \emptyset$, $\Lambda =
+  \set{(\rootNode,\iota)}$, $\preds = \set{\bot}$, $\worklist =
+  \tuple{\rootNode}$,
 
   \While {$\worklist \neq \emptyset$}
   \label{ln:while}
@@ -738,7 +750,7 @@ over the alphabet $\Sigma$ of input events
   \State $N \leftarrow N \cup \set{n}$
 
   \If{$\Lambda(n) \wedge \bigwedge_{q \in Q \setminus F} (q
-    \rightarrow \bot)$ is satisfiable} \Comment{counterexample found}
+    \rightarrow \bot)$ is satisfiable} \Comment{counterexample candidate}
 
   \State let $u = a_1\ldots a_k$ be the label of the path from
   $\rootNode$ to $n$ in $\Art$
@@ -756,11 +768,12 @@ over the alphabet $\Sigma$ of input events
   \Else \Comment{spurious counterexample}
 
   \State $p \leftarrow \Call{FindPivot}{u,\Art}$
+  \label{ln:pivot}
 
   \State let $v$ be the label of the path from $p$ to $n$ in $\Art$
   
   \State $\preds \leftarrow \preds \cup \set{I_1,\ldots,I_\ell}$,
-  where $\tuple{\top,I_1,\ldots,I_\ell,\bot}$ is the interpolant for
+  where $\tuple{\top,I_1,\ldots,I_\ell,\bot}$ is an interpolant for
   $\overline{\pi}(v)$
 
   \State let $\SubArt = \tuple{N',E',\Lambda',\lhd'}$ be the subtree
@@ -783,6 +796,7 @@ over the alphabet $\Sigma$ of input events
   \Else \label{ln:else}
 
   \For{$a \in \Sigma$}\label{ln:forall-events}
+  \Comment{expand $n$}
 
   \State $\phi \leftarrow \AbsPost{\A}(\Lambda(n),a)$
 
@@ -845,14 +859,15 @@ over the alphabet $\Sigma$ of input events
 Formally, an ART $\Art = \tuple{N,E,\Lambda,\lhd}$ is a tree, where
 $N$ is a set of nodes, $E \subseteq N \times \Sigma \times N$ is a set
 of edges, $\Lambda : N \rightarrow \Form^+(Q,\vec{x})$ is a labeling
-of the nodes with formulae and $\lhd \subseteq N \times N$ is a set
-of covering edges. The root of the tree is labeled with the initial
-configuration $\iota$ and each node $n \in N$ corresponds to a unique
-path from the root to $n$, labeled by a sequence $u$ of input
-events. The least unfeasible suffix of $u$ is the smallest sequence $v
-= a_1 \ldots a_k$, such that $u = wv$, for some $w \in \Sigma^*$ and
-the formula (\ref{eq:pivot}) below is unsatisfiable. The \emph{pivot}
-of $u$ is the node $p$ corresponding to the start of $v$ in $u$.
+of the nodes with formulae and $\lhd \subseteq N \times N$ is a set of
+covering edges. We require that $(N,E)$ is a directed tree, rooted at
+$\rootNode \in N$, where $\Lambda(\rootNode) = \iota$. Then each node
+$n \in N$ corresponds to a unique path from the root to $n$, labeled
+by a sequence $u$ of input events. The least unfeasible suffix of $u$
+is the smallest sequence $v = a_1 \ldots a_k$, such that $u = wv$, for
+some $w \in \Sigma^*$ and the formula (\ref{eq:pivot}) below is
+unsatisfiable. The \emph{pivot} of $u$ is the node $p$ corresponding
+to the start of $v$ in $u$.
 \begin{equation}\label{eq:pivot}
   \overline{\pi}(v) \equiv \Lambda(p)[Q_0/Q] \wedge
   \theta_1(Q_0 \cup Q_1,\vec{x}_0 \cup \vec{x}_1) \wedge \ldots \wedge
@@ -871,10 +886,10 @@ checked for spuriousness. If the counterexample is real, the procedure
 returns a data word $w \in L(\A)$, which interleaves the input events
 of $u$ with the data valuations from the model of $\Accept{\A}(u)$
 (since $u$ is feasible, clearly $\Accept{\A}(u)$ is
-satisfiable). Otherwise, if $u$ is spurious, we compute its pivot $p$,
-add the interpolants for the least unfeasible suffix of $u$ to the set
-of predicates $\preds$, remove and recompute the subtree of $\Art$
-rooted at $p$. 
+satisfiable). Otherwise, if $u$ is spurious, we compute its pivot $p$
+(line \ref{ln:pivot}), add the interpolants for the least unfeasible
+suffix of $u$ to the set of predicates $\preds$, remove and recompute
+the subtree of $\Art$ rooted at $p$.
 
 Termination of Algorithm \ref{alg:predabs} depends on the ability of a
 given interpolating decision procedure for the combined boolean and
@@ -886,8 +901,8 @@ the worklist, thus cutting the current branch of the search. Formally,
 for any two nodes $n,m \in N$, we have $n \lhd m$ iff
 $\AbsPost{\A}(\Lambda(n),a) \models \Lambda(m)$ for some $a \in
 \Sigma$, in other words, if $n$ has a successor whose label entails
-the label of $m$. The soundness and relative completness of Algorithm
-\ref{alg:predabs} are proved by the following theorem:
+the label of $m$. The correctness criteria of Algorithm
+\ref{alg:predabs} are showed in the following theorem:
 
 \begin{theorem}\label{thm:predabs}
   Given an automaton $\A$, such that $L(\A) \neq \emptyset$, Algorithm
@@ -946,6 +961,162 @@ the label of $m$. The soundness and relative completness of Algorithm
   $m$, since $\len{v'} < \len{u}$, we shall eventually discover a node
   $p$ such that $\Post{\A}(\iota,u) \models \Lambda(p)$. This
   concludes the proof. \qed}
+
+\section{Checking ADA Emptiness with \impact}
+
+As pointed out by a number of authors (e.g.\ \cite{mcmillan06}) the
+bottleneck of predicate abstraction is the high cost of existential
+quantifier elimination required to compute the $\Post{\A}(\phi,a)$
+function --- we recall that $\Post{\A}(\phi,a)$ is defined by the
+formula $\overline{\vec{x}} ~.~
+\Delta(\phi[\overline{\vec{x}}/\vec{x}],a)$. The main idea of the
+\impact~ procedure is that interpolation can be used instead
+quantifier elimination, because an interpolant over-approximates the
+post-images along the counterexample path in a way that is sufficient
+to prove its spuriousness.
+
+With this in mind, Algorithm \ref{alg:impact} builds an ART for the
+given automaton and uses interpolants, instead of abstract
+post-images, to label its nodes. To speedup the computation we use two
+additional labeling functions for bookkeeping. Formally, the ART
+structure used by Algorithm \ref{alg:impact} is defined as $\Art =
+\tuple{N,E,\Lambda,R,T,\lhd}$, where $N,E,\Lambda$ and $\lhd$ are
+defined as for Algorithm \ref{alg:predabs} and,
+moreover: \begin{compactitem}
+\item $R : N \rightarrow 2^Q$ is a labeling of nodes with replacement
+  sets, such that $R(\rootNode) = \fv{\Bool}{\iota}$, 
+%
+\item $T : E \rightarrow \bigcup_{i=0}^\infty
+  \Form(Q_i,\vec{x}_i,Q_{i+1},\vec{x}_{i+1})$ is labeling of edges
+  with time-stamped formulae, in which $Q_i$ may occur under negation,
+  and
+%
+\item for each edge $e = (n,a,m) \in E$, if $n$ lies at
+  depth\footnote{We consider that the root node has zero depth.}
+  $k\geq0$ in the tree $(N,E)$, then we have:
+  \[\begin{array}{rcl}
+  T(e) & = & \Theta(n,k) \\
+  R(m) & = & \bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)} \text{ where} \\
+  \Theta(n,k) & \equiv & \bigwedge_{q \in R(n)} (q_k \rightarrow
+  \Delta(q,a)[Q_{k+1}/Q,\vec{x}_{k}/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}])
+  \end{array}\]
+\end{compactitem}
+For simplicity, we write $T(n,a,m)$ for $T(e)$, when $e$ is
+$(n,a,m)$. The idea behind this additional bookkeeping is that, given
+a sequence $u = a_1\ldots a_k \in \Sigma^*$ that labels the path
+from the root to a node $n$ in $\Art$, the conjunction: 
+\[\mu(n) \equiv \Lambda(\rootNode) \wedge T(\rootNode,a_1,n_1) \wedge \ldots
+T(n_{k-1},a_k,n_k) \wedge \bigwedge_{q \in R(n_k) \setminus F}(q
+\rightarrow \bot)\] is equivalent to the interpolation problem
+$\pi(u)$. We assume furthermore a total alphabetical order $\prec$ on
+$\Sigma$ and lift it to the total lexicographical order $\prec^*$ on
+$\Sigma^*$. We write $n \prec^* m$ if the sequence labeling the path
+from $\rootNode$ to $n$ is strictly smaller, in the lexicographical
+order, than the sequence labeling the path from $\rootNode$ to $m$. A
+node $n \in N$ is \emph{covered by $m$} if $(n,m) \in \lhd$ and simply
+covered when $m$ is not important. A node $n$ is \emph{closed} if for
+all nodes $m \in N$ such that $m \prec^* n$, either $\Lambda(n)
+\not\models \Lambda(m)$ or $(n,m) \in \lhd$.
+
+\begin{algorithm}[t!]
+{\scriptsize\begin{algorithmic}[0]
+  \State {\bf input}: an ADA $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$
+  over the alphabet $\Sigma$ of input events
+
+  \State {\bf output}: $\true$ if $L(\A)=\emptyset$ and a data word $w
+  \in L(\A)$ otherwise
+\end{algorithmic}}
+
+{\scriptsize\begin{algorithmic}[1] 
+
+  \State let $\Art = \tuple{N,E,\Lambda,R,T,\lhd}$ be an ART 
+
+  \State initially $N = E = T = \lhd = \emptyset$, $\Lambda =
+  \set{(\rootNode,\iota)}$, $R = \fv{\Bool}{\iota[Q_0/Q]}$,
+  $\worklist=\set{\rootNode}$
+  
+  \While{$\worklist \neq \emptyset$}
+
+  \State dequeue $n$ from $\worklist$ 
+
+  \State $N \leftarrow N \cup \set{n}$
+
+  \For{$m \in N$ such that $m \prec^* n$}
+  \Comment{close $n$} 
+
+  \If{$\Lambda(n) \models \Lambda(m)$}
+
+  \State $\lhd \leftarrow \lhd \setminus \set{ (p,q) \in \lhd \mid
+    \text{$q$ is a successor of $n$}}$
+
+  \State $\lhd \leftarrow \lhd \cup \set{(n,m)}$
+
+  \EndIf
+
+  \EndFor
+
+  \If{$n$ is not covered}
+
+  \If{$R(n) \cap F \neq \emptyset$} 
+  \Comment{counterexample candidate}
+
+  \If{$\mu(n)$ is satisfiable} 
+  \Comment{counterexample is real}
+
+  \State get model $\beta : Q_i \rightarrow \booli$, $\{\nu_i :
+  \vec{x}_i \rightarrow \Data^\I \mid i=0\ldots k\}$ of $\mu(n)$
+
+  \State {\bf return} $w = (a_1,\nu_1) \ldots (a_k,\nu_k)$
+  \Comment{$w \in L(\A)$ by construction}
+
+  \Else \Comment{spurious counterexample}
+
+  \State let $\rootNode,n_1,\ldots,n_k$ be the sequence of nodes from $\rootNode$ to $n$
+
+  \State let $\tuple{\top,I_1,\ldots,I_k,I_{k+1}\equiv\bot}$ be an interpolant for $\mu(n)$
+
+  \For{$i=1,\ldots,k+1$}
+
+  \If{$\Lambda(n_i) \not\models I_i$}
+
+  \State $\lhd \leftarrow \lhd \setminus \set{(m,n_i) \in \lhd \mid m \in N}$
+  \Comment{uncover $n_i$}
+
+  \State $\Lambda(n_i) \leftarrow \Lambda(n_i) \wedge I_i$
+  \Comment{strenghten the label of $n_i$}
+
+  \EndIf
+
+  \EndFor
+
+  \EndIf
+
+  \For{$a \in \Sigma$} 
+  \Comment{expand $n$}
+  
+  \State let $s$ be a fresh node and $e \leftarrow (n,a,s)$
+
+  \State $E \leftarrow E \cup \set{e}$
+
+  \State $\Lambda \leftarrow \Lambda \cup \set{(s,\top)}$
+
+  \State $T \leftarrow T \cup \set{(e, \Theta(n,k))}$
+
+  \State $R \leftarrow R \cup \{(s,\bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)})\}$
+
+  \State enqueue $s$ into $\worklist$
+
+  \EndFor
+
+  \EndIf
+
+  \EndIf
+
+  \EndWhile  
+\end{algorithmic}}
+\caption{\impact~ for ADA Emptiness}
+\label{alg:impact}
+\end{algorithm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
