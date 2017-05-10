@@ -163,10 +163,11 @@ several technical points below, without cluttering the presentation.
 
 Given sets of variables $\vec{b},\vec{x} \subset \vars$ of sort
 $\Bool$ and $\Data$, respectively, we denote by
-$\Form^+(\vec{b},\vec{x})$ the set of formulae $\phi$ such that
-$\fv{\Bool}{\phi} \subseteq \vec{b}$, $\fv{\Data}{\phi} \subseteq
-\vec{x}$ and each variable from $\vec{b}$ occurs under an even number
-of negations. 
+$\Form(\vec{b},\vec{x})$ the set of formulae $\phi$ such that
+$\fv{\Bool}{\phi} \subseteq \vec{b}$ and $\fv{\Data}{\phi} \subseteq
+\vec{x}$. By $\Form^+(\vec{b},\vec{x})$ we denote the set of formulae
+from $\Form(\vec{b},\vec{x})$ in which each boolean variable occurs
+under an even number of negations.
 
 An \emph{alternating data automaton} (ADA or automaton in the sequel)
 is a tuple $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$,
@@ -501,6 +502,16 @@ follows, for any $u \in \Sigma^*$:
   there exists $k \geq 0$ such that, for all $u \in \Sigma^*$ there
   exists $i \in [0,k]$ such that $\AbsPost{\A}(\iota,u) \eqiff
   \AbsPost{\A}(\iota,\mu(i))$, which concludes the proof. \qed}
+
+\paragraph{\em Remark}
+While computing the concrete post-image $\Post{\A}$ relies on an
+expensive quantifier elimination, it is common belief that this should
+hold also for $\AbsPost{\A}$. However, the choice of conjoined
+predicates that form $\AbsPost{\A}$ requires only a quantifier-free
+satisfiability query: $\Post{\A}(\phi,a) \models \pi \iff \exists
+\overline{\vec{x}} ~.~ \Delta(\phi[\overline{\vec{x}}/\vec{x}],a)
+\models \pi \iff \Delta(\phi[\overline{\vec{x}}/\vec{x}],a) \wedge
+\neg\pi$ unsatisfiable. \qed
 
 We are left with fulfilling the second point from the definition of a
 safety invariant. To this end, suppose that, for a given set $\preds$
@@ -964,20 +975,21 @@ the label of $m$. The correctness criteria of Algorithm
 
 \section{Checking ADA Emptiness with \impact}
 
-As pointed out by a number of authors (e.g.\ \cite{mcmillan06}) the
-bottleneck of predicate abstraction is the high cost of existential
-quantifier elimination required to compute the $\Post{\A}(\phi,a)$
-function --- we recall that $\Post{\A}(\phi,a)$ is defined by the
-formula $\overline{\vec{x}} ~.~
-\Delta(\phi[\overline{\vec{x}}/\vec{x}],a)$. The main idea of the
-\impact~ procedure is that interpolation can be used instead
-quantifier elimination, because an interpolant over-approximates the
-post-images along the counterexample path in a way that is sufficient
-to prove its spuriousness.
+As pointed out by a number of authors, the bottleneck of predicate
+abstraction is the high cost of reconstructing parts of the ART,
+subsequent to the refinement of the set of predicates. The main idea
+of the \impact~ procedure \cite{mcmillan06} is that this can be
+avoided and the refinement (strenghtening of the node labels of the
+ART) can be performed in-place. This refinement step requires an
+update of the covering relation, because a node that used to cover
+another node might not cover it after the strenghtening of its label.
 
-With this in mind, Algorithm \ref{alg:impact} builds an ART for the
-given automaton and uses interpolants, instead of abstract
-post-images, to label its nodes. To speedup the computation we use two
+The ART built by Algorithm \ref{alg:impact} corresponds to an
+unfolding of the input automaton by enumerating the input event
+sequences in $\Sigma^*$. Each time a new node is created, its label is
+initially $\top$. This label is subject to subsequent strenghtening,
+when a spurious counterexample is encountered. To speedup the
+computation of interpolants for spurious counterexamples, we use two
 additional labeling functions for bookkeeping. Formally, the ART
 structure used by Algorithm \ref{alg:impact} is defined as $\Art =
 \tuple{N,E,\Lambda,R,T,\lhd}$, where $N,E,\Lambda$ and $\lhd$ are
@@ -988,12 +1000,11 @@ moreover: \begin{compactitem}
 %
 \item $T : E \rightarrow \bigcup_{i=0}^\infty
   \Form(Q_i,\vec{x}_i,Q_{i+1},\vec{x}_{i+1})$ is labeling of edges
-  with time-stamped formulae, in which $Q_i$ may occur under negation,
-  and
+  with time-stamped formulae, and
 %
 \item for each edge $e = (n,a,m) \in E$, if $n$ lies at
-  depth\footnote{We consider that the root node has zero depth.}
-  $k\geq0$ in the tree $(N,E)$, then we have:
+  depth\footnote{We consider that the root node has zero depth.}  $k$
+  in the tree $(N,E)$, then we have:
   \[\begin{array}{rcl}
   T(e) & = & \Theta(n,k) \\
   R(m) & = & \bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)} \text{ where} \\
@@ -1002,21 +1013,24 @@ moreover: \begin{compactitem}
   \end{array}\]
 \end{compactitem}
 For simplicity, we write $T(n,a,m)$ for $T(e)$, when $e$ is
-$(n,a,m)$. The idea behind this additional bookkeeping is that, given
-a sequence $u = a_1\ldots a_k \in \Sigma^*$ that labels the path
-from the root to a node $n$ in $\Art$, the conjunction: 
+$(n,a,m)$. This additional bookkeeping is used as follows. Given a
+sequence $u = a_1\ldots a_k \in \Sigma^*$ that labels the path from
+the root to a node $n$ in $\Art$, the conjunction:
 \[\mu(n) \equiv \Lambda(\rootNode) \wedge T(\rootNode,a_1,n_1) \wedge \ldots
 T(n_{k-1},a_k,n_k) \wedge \bigwedge_{q \in R(n_k) \setminus F}(q
-\rightarrow \bot)\] is equivalent to the interpolation problem
-$\pi(u)$. We assume furthermore a total alphabetical order $\prec$ on
-$\Sigma$ and lift it to the total lexicographical order $\prec^*$ on
-$\Sigma^*$. We write $n \prec^* m$ if the sequence labeling the path
-from $\rootNode$ to $n$ is strictly smaller, in the lexicographical
-order, than the sequence labeling the path from $\rootNode$ to $m$. A
-node $n \in N$ is \emph{covered by $m$} if $(n,m) \in \lhd$ and simply
-covered when $m$ is not important. A node $n$ is \emph{closed} if for
-all nodes $m \in N$ such that $m \prec^* n$, either $\Lambda(n)
-\not\models \Lambda(m)$ or $(n,m) \in \lhd$.
+\rightarrow \bot)\] defines the interpolation problem $\pi(u)$. 
+
+We consider a total alphabetical order $\prec$ on $\Sigma$ and lift it
+to the total lexicographical order $\prec^*$ on $\Sigma^*$. We write
+$n \prec^* m$ if the sequence labeling the path from $\rootNode$ to
+$n$ is strictly smaller, in the lexicographical order, than the
+sequence labeling the path from $\rootNode$ to $m$. A node $n \in N$
+is \emph{covered by $m$} if $(n,m) \in \lhd$. We say that $n$ is just
+\emph{covered} when $m$ is not important. A node $n$ is \emph{closed}
+if for all nodes $m \in N$ such that $n \prec^* m$, either $\Lambda(n)
+\not\models \Lambda(m)$ or $(n,m) \in \lhd$ holds. To efficiently
+check that a node is closed, one may keep all the nodes from the ART
+in a list, in preorder.
 
 \begin{algorithm}[t!]
 {\scriptsize\begin{algorithmic}[0]
@@ -1041,7 +1055,7 @@ all nodes $m \in N$ such that $m \prec^* n$, either $\Lambda(n)
 
   \State $N \leftarrow N \cup \set{n}$
 
-  \For{$m \in N$ such that $m \prec^* n$}
+  \For{$m \in N$ such that $n \prec^* m$ and $n$ is not an ancestor of $m$}
   \Comment{close $n$} 
 
   \If{$\Lambda(n) \models \Lambda(m)$}
@@ -1051,11 +1065,14 @@ all nodes $m \in N$ such that $m \prec^* n$, either $\Lambda(n)
 
   \State $\lhd \leftarrow \lhd \cup \set{(n,m)}$
 
+  \State {\bf goto} \ref{ln:not-covered}
+
   \EndIf
 
   \EndFor
 
   \If{$n$ is not covered}
+  \label{ln:not-covered}
 
   \If{$R(n) \cap F \neq \emptyset$} 
   \Comment{counterexample candidate}
@@ -1117,6 +1134,12 @@ all nodes $m \in N$ such that $m \prec^* n$, either $\Lambda(n)
 \caption{\impact~ for ADA Emptiness}
 \label{alg:impact}
 \end{algorithm}
+
+The execution of Algorithm \ref{alg:impact} consists of three
+phases\footnote{These phases correspond to the \textsc{Close},
+  \textsc{Refine} and \textsc{Expand} procedures from the original
+  description of \impact~\cite{mcmillan06}.}: \emph{close},
+\emph{refine} and \emph{expand}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
