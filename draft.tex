@@ -1024,13 +1024,12 @@ We consider a total alphabetical order $\prec$ on $\Sigma$ and lift it
 to the total lexicographical order $\prec^*$ on $\Sigma^*$. We write
 $n \prec^* m$ if the sequence labeling the path from $\rootNode$ to
 $n$ is strictly smaller, in the lexicographical order, than the
-sequence labeling the path from $\rootNode$ to $m$. A node $n \in N$
-is \emph{covered by $m$} if $(n,m) \in \lhd$. We say that $n$ is just
-\emph{covered} when $m$ is not important. A node $n$ is \emph{closed}
-if for all nodes $m \in N$ such that $n \prec^* m$, either $\Lambda(n)
-\not\models \Lambda(m)$ or $(n,m) \in \lhd$ holds. To efficiently
-check that a node is closed, one may keep all the nodes from the ART
-in a list, in preorder.
+sequence labeling the path from $\rootNode$ to $m$. 
+
+A node $n \in N$ is \emph{covered} if it has an ancestor $m$ such that
+$(m,p) \in \lhd$, for some $p \in N$. A node $n$ is \emph{closed} if
+it is covered, or $\Lambda(n) \not\models \Lambda(m)$ for all $m \in
+N$ such that $n \prec^* m$.
 
 \begin{algorithm}[t!]
 {\scriptsize\begin{algorithmic}[0]
@@ -1107,7 +1106,8 @@ in a list, in preorder.
 
   \For{$a \in \Sigma$} 
   \Comment{expand $n$}
-  
+  \label{ln:expand-begin}
+
   \State let $s$ be a fresh node and $e = (n,a,s)$ be a new edge
 
   \State $E \leftarrow E \cup \set{e}$
@@ -1119,6 +1119,7 @@ in a list, in preorder.
   \State $R \leftarrow R \cup \{(s,\bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)})\}$
 
   \State enqueue $s$ into $\worklist$
+  \label{ln:expand-end}
 
   \EndFor
 
@@ -1187,9 +1188,11 @@ the sets of reachable configurations, the covering relation is not
 transitive, as explained in \cite{mcmillan06}. 
 
 Finally, we expand $n$ (lines \ref{ln:expand-begin} -
-\ref{ln:expand-end}) by creating a new node for each successor via an
-input event $a \in \Sigma$ and inserting it into the worklist. The
-label of the 
+\ref{ln:expand-end}) by creating a new node for each successor $s$ via
+an input event $a \in \Sigma$ and inserting it into the worklist. The
+label of the new node is $\top$, its replacement set $R(s)$ is
+computed based on $R(n)$ and the label of the edge $(n,a,s)$ is
+$\Theta(n,k)$, where $k$ is the level of $n$ in $\Art$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
