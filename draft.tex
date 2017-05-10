@@ -747,8 +747,7 @@ over the alphabet $\Sigma$ of input events
 
 {\scriptsize\begin{algorithmic}[1] 
 
-  \State let $\Art = \tuple{N,E,\Lambda,\lhd}$ be an ART with root
-  node $\rootNode$
+  \State let $\Art = \tuple{N,E,\rootNode,\Lambda,\lhd}$ be an ART
 
   \State initially $N = E = \lhd = \emptyset$, $\Lambda =
   \set{(\rootNode,\iota)}$, $\preds = \set{\bot}$, $\worklist =
@@ -788,8 +787,8 @@ over the alphabet $\Sigma$ of input events
   where $\tuple{\top,I_1,\ldots,I_\ell,\bot}$ is an interpolant for
   $\overline{\pi}(v)$
 
-  \State let $\SubArt = \tuple{N',E',\Lambda',\lhd'}$ be the subtree
-  rooted at $p$ in $\Art$
+  \State let $\SubArt = \tuple{N',E',p,\Lambda',\lhd'}$ be the subtree
+  of $\Art$ rooted at $p$
 
   \For{$(m,q) \in \lhd$ such that $q \in N'$}
 
@@ -868,18 +867,18 @@ over the alphabet $\Sigma$ of input events
 \label{alg:predabs}
 \end{algorithm}
 
-Formally, an ART $\Art = \tuple{N,E,\Lambda,\lhd}$ is a tree, where
-$N$ is a set of nodes, $E \subseteq N \times \Sigma \times N$ is a set
-of edges, $\Lambda : N \rightarrow \Form^+(Q,\vec{x})$ is a labeling
-of the nodes with formulae and $\lhd \subseteq N \times N$ is a set of
-covering edges. We require that $(N,E)$ is a directed tree, rooted at
-$\rootNode \in N$, where $\Lambda(\rootNode) = \iota$. Then each node
-$n \in N$ corresponds to a unique path from the root to $n$, labeled
-by a sequence $u$ of input events. The least unfeasible suffix of $u$
-is the smallest sequence $v = a_1 \ldots a_k$, such that $u = wv$, for
-some $w \in \Sigma^*$ and the formula (\ref{eq:pivot}) below is
-unsatisfiable. The \emph{pivot} of $u$ is the node $p$ corresponding
-to the start of $v$ in $u$.
+Formally, an ART $\Art = \tuple{N,E,\rootNode,\Lambda,\lhd}$ is a
+tree, where $N$ is a set of nodes, $E \subseteq N \times \Sigma \times
+N$ is a set of edges, $\rootNode \in N$ is the root of the directed
+tree $(N,E)$, $\Lambda : N \rightarrow \Form^+(Q,\vec{x})$ is a
+labeling of the nodes with formulae, such that $\Lambda(\rootNode) =
+\iota$ and $\lhd \subseteq N \times N$ is a set of covering
+edges. Then each node $n \in N$ corresponds to a unique path from the
+root to $n$, labeled by a sequence $u$ of input events. The least
+unfeasible suffix of $u$ is the smallest sequence $v = a_1 \ldots
+a_k$, such that $u = wv$, for some $w \in \Sigma^*$ and the formula
+(\ref{eq:pivot}) below is unsatisfiable. The \emph{pivot} of $u$ is
+the node $p$ corresponding to the start of $v$ in $u$.
 \begin{equation}\label{eq:pivot}
   \overline{\pi}(v) \equiv \Lambda(p)[Q_0/Q] \wedge
   \theta_1(Q_0 \cup Q_1,\vec{x}_0 \cup \vec{x}_1) \wedge \ldots \wedge
@@ -936,7 +935,7 @@ the label of $m$. The correctness criteria of Algorithm
   For the second point, we prove the following invariant: each time
   Algorithm \ref{alg:predabs} reaches line \ref{ln:while}, the set $W$
   of nodes in $\worklist$ contains all the frontier nodes in the ART
-  $\tuple{N\cup W,E,\Lambda,\lhd}$ which are not covered by some node
+  $\tuple{N\cup W,E,\rootNode,\Lambda,\lhd}$ which are not covered by some node
   in $N$, namely that:
   \begin{equation}\label{inv:predabs}
   W = \set{n \not\in N \mid \forall m \in N~ \forall a \in \Sigma ~.~ (n,a,m)
@@ -996,8 +995,8 @@ when a spurious counterexample is encountered. To speedup the
 computation of interpolants for spurious counterexamples, we use two
 additional labeling functions for bookkeeping. Formally, the ART
 structure used by Algorithm \ref{alg:impact} is defined as $\Art =
-\tuple{N,E,\Lambda,R,T,\lhd}$, where $N,E,\Lambda$ and $\lhd$ are
-defined as for Algorithm \ref{alg:predabs} and,
+\tuple{N,E,\rootNode,\Lambda,R,T,\lhd}$, where $N,E,\Lambda$ and
+$\lhd$ are defined as for Algorithm \ref{alg:predabs} and,
 moreover: \begin{compactitem}
 \item $R : N \rightarrow 2^Q$ is a labeling of nodes with replacement
   sets, such that $R(\rootNode) = \fv{\Bool}{\iota}$, 
@@ -1010,9 +1009,9 @@ moreover: \begin{compactitem}
   depth\footnote{We consider that the root node has zero depth.}  $k$
   in the tree $(N,E)$, then we have:
   \[\begin{array}{rcl}
-  T(e) & = & \Theta(n,k) \\
+  T(e) & = & \Theta(n,a,k) \\
   R(m) & = & \bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)} \text{ where} \\
-  \Theta(n,k) & \equiv & \bigwedge_{q \in R(n)} (q_k \rightarrow
+  \Theta(n,a,k) & \equiv & \bigwedge_{q \in R(n)} (q_k \rightarrow
   \Delta(q,a)[Q_{k+1}/Q,\vec{x}_{k}/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}])
   \end{array}\]
 \end{compactitem}
@@ -1046,8 +1045,7 @@ $n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
 
 {\scriptsize\begin{algorithmic}[1] 
 
-  \State let $\Art = \tuple{N,E,\Lambda,R,T,\lhd}$ be an ART with root
-  node $\rootNode$
+  \State let $\Art = \tuple{N,E,\rootNode,\Lambda,R,T,\lhd}$ be an ART
 
   \State initially $N = E = T = \lhd = \emptyset$, $\Lambda =
   \set{(\rootNode,\iota)}$, $R = \fv{\Bool}{\iota[Q_0/Q]}$,
@@ -1123,7 +1121,7 @@ $n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
 
   \State $\Lambda \leftarrow \Lambda \cup \set{(s,\top)}$
 
-  \State $T \leftarrow T \cup \set{(e, \Theta(n,k))}$
+  \State $T \leftarrow T \cup \set{(e, \Theta(n,a,k))}$
 
   \State $R \leftarrow R \cup \{(s,\bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)})\}$
 
@@ -1187,11 +1185,11 @@ is moreover feasible iff $\mu(n)$ is satisfiable, in which case a
 model of $\mu(n)$ is obtained and a word $w \in L(\A)$ returned.
 
 Otherwise, the counterexample is spurious and the procedure enters the
-refinement phase (lines \ref{ln:refine-begin} -
-\ref{ln:refine-end}). The interpolant for $\mu(n)$ is used to
-strenghten the labels of all the ancestors of $n$, by conjoining the
-formulae of the interpolant to the existing labels. Then $\Lambda(n)$
-becomes equivalent to $\bot$.
+refinement phase (lines
+\ref{ln:refine-begin}-\ref{ln:refine-end}). The interpolant for
+$\mu(n)$ is used to strenghten the labels of all the ancestors of $n$,
+by conjoining the formulae of the interpolant to the existing
+labels. Then $\Lambda(n)$ becomes equivalent to $\bot$.
 
 In this process, the nodes on the path between $\rootNode$ and $n$,
 including $n$, might become eligible for coverage, therefore we
@@ -1206,15 +1204,36 @@ adds a covering edge $(n_i,m)$ to $\lhd$, it does not have to be
 called for the successors of $n_i$ on this path, which is handled via
 the boolean flag $b$.
 
-Finally, we expand $n$ (lines \ref{ln:expand-begin} -
-\ref{ln:expand-end}) by creating a new node for each successor $s$ via
-an input event $a \in \Sigma$ and inserting it into the worklist. The
-label of the new node is $\top$, its replacement set $R(s)$ is
-computed based on $R(n)$ and the label of the edge $(n,a,s)$ is
-$\Theta(n,k)$, where $k$ is the level of $n$ in $\Art$.
+Finally, we expand $n$ (lines
+\ref{ln:expand-begin}-\ref{ln:expand-end}) by creating a new node for
+each successor $s$ via the event $a \in \Sigma$ and inserting it
+into the worklist. The label of the new node is $\top$, its
+replacement set $R(s)$ is computed based on $R(n)$ and the label of
+the edge $(n,a,s)$ is $\Theta(n,a,k)$, where $k$ is the depth of $n$
+in $\Art$.
+
+The following lemma states that Algorithm \ref{alg:impact} builds an
+over-approximation of the concrete runs of $\A$.
+
+\begin{lemma}\label{lemma:impact-interpol}
+  Given an ART $\Art = \tuple{N,E,\rootNode,\Lambda,R,T,\lhd}$ built
+  by Algorithm \ref{alg:impact} and a node $n \in N$, for all $(n,a,m)
+  \in E$, we have $\Post{\A}(\Lambda(n),a) \models \Lambda(m)$.
+\end{lemma}
+\proof{ We distinguish two cases. First, if $(n,a,m)$ occurs on a path
+  in $\Art$ that has never been refined, then $\Lambda(m)=\top$ and
+  the entailment holds trivially. Otherwise, let $(n_0,a_1,n_1),
+  \ldots, (n_{k-1},a_k,n_k)$ be a path, where $n_0 = \rootNode$ and
+  $(n,a,m) = (n_{i-1},a_i,n_i)$, for some $i \in [1,k]$ and, moreover,
+  $a_1\ldots a_k$ was found, at some point, to be a spurious
+  counterexample. Let $\tuple{\top,I_1,\ldots,I_k\equiv\bot}$ be an
+  interpolant for $\mu(n_k) \equiv \Lambda(\rootNode) \wedge
+  \bigwedge_{i=1}^k \Theta(n_{i-1},a,i-1) \wedge \bigwedge_{q \in R(n_k)}
+  (q_k \rightarrow \bot)$. 
+\qed}
 
 The correctness of Algorithm \ref{alg:impact} is proved in the
-following:
+following.
 
 \begin{theorem}\label{thm:impact}
   Given an automaton $\A$, such that $L(\A) \neq \emptyset$, Algorithm
@@ -1264,9 +1283,10 @@ following:
   \end{compactitem}
   We prove that, in this case, $\bigvee_{n \in N} \Lambda(n)$ defines
   a safety invariant and conclude that $L(\A) = \emptyset$, by Lemma
-  \ref{lemma:safety-invariant}. To show that $\bigvee_{n \in N}
-  \Lambda(n)$ defines an invariant, let $u \in \Sigma^*$ be an
-  arbitrary sequence. \qed}
+  \ref{lemma:safety-invariant}. To this end, let $u \in \Sigma^*$ be
+  an arbitrary sequence and let $v_1$ be the largest prefix of $u$
+  that labels a path from $\rootNode$ to some node $n_1 \in N$. 
+\qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
