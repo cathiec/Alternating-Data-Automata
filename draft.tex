@@ -939,7 +939,7 @@ the label of $m$. The correctness criteria of Algorithm
   $\tuple{N\cup W,E,\Lambda,\lhd}$ which are not covered by some node
   in $N$, namely that:
   \begin{equation}\label{inv:predabs}
-  W = \set{n \mid \forall m \in N~ \forall a \in \Sigma ~.~ (n,a,m)
+  W = \set{n \not\in N \mid \forall m \in N~ \forall a \in \Sigma ~.~ (n,a,m)
     \not\in E ~\wedge~ (n,m) \not\in \lhd}
   \end{equation}
   Initially, this is the case because $W = \set{\rootNode}$ and $N = E
@@ -1135,6 +1135,8 @@ $n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
   \EndIf
 
   \EndWhile  
+
+  \State {\bf return} $\true$
 \end{algorithmic}
 
 \begin{algorithmic}[1]
@@ -1234,14 +1236,14 @@ following:
   \item for some $a \in \Sigma$, the edge $(n,a,s)$ is missing from $E$:
   \end{inparaenum}
   \begin{equation}\label{inv:impact}
-  W = \set{n \mid n \text{ is uncovered and } \exists a \in \Sigma~
-    \forall s \in N ~.~ (n,a,s) \not\in E}
+  W = \set{n \not\in N \mid n \text{ uncovered, } \exists a \in
+    \Sigma~ \forall s \in N ~.~ (n,a,s) \not\in E}
   \end{equation}
   Initially, $W = \set{\rootNode}$ and $N=E=\lhd=\emptyset$, thus the
-  invariant holds trivially. Suppose that the invariant holds at some
-  point, when reaching line \ref{ln:impact-while} and some node $n$
-  was removed from $W$ and inserted into $N$. We distinguish two
-  cases, either: \begin{itemize}
+  invariant holds trivially. Suppose that (\ref{inv:impact}) holds at
+  when reaching line \ref{ln:impact-while} and some node $n$ was
+  removed from $W$ and inserted into $N$. We distinguish two cases,
+  either: \begin{itemize}
   \item $n$ is covered at line \ref{ln:close-worklist}, in which case
     $W$ remains unchanged, or
   %
@@ -1251,8 +1253,20 @@ following:
     \ref{ln:edge-insert}). None of these new nodes are covered and
     none of their successors inserted into $E$.
   \end{itemize}
-  Then the condition (\ref{inv:impact}) holds next time the line
-  \ref{ln:impact-while} is reached, thus proving the invariant.  \qed}
+  Then the condition (\ref{inv:impact}) holds next time line
+  \ref{ln:impact-while} is reached, thus it is invariant. If Algorithm
+  \ref{alg:impact} returns $\true$ then $W = \emptyset$ and, by
+  (\ref{inv:impact}), for each node in $n \in N$ one of the following
+  hold: \begin{compactitem}
+  \item $n$ is covered, or
+  \item for each $a \in \Sigma$ there exists $s \in N$ such that
+    $(n,a,s) \in E$. 
+  \end{compactitem}
+  We prove that, in this case, $\bigvee_{n \in N} \Lambda(n)$ defines
+  a safety invariant and conclude that $L(\A) = \emptyset$, by Lemma
+  \ref{lemma:safety-invariant}. To show that $\bigvee_{n \in N}
+  \Lambda(n)$ defines an invariant, let $u \in \Sigma^*$ be an
+  arbitrary sequence. \qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
