@@ -701,7 +701,7 @@ $u$ from future searches.
     \AbsPost{\A}(\iota,a_1\ldots a_n)[Q_n/Q] \equiv \text{ (by definition of $\AbsPost{\A}$)} \\
     \exists \vec{x}_{n-1} ~.~ \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_n/Q] \models \text{ ($\Asterisk$)} \\
     \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n \models \text{ (ind. hyp.) } \\
-    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n \models I_n[Q_n/Q]  \hfill\text{\qed}
+    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n \models I_n[Q_n/Q] 
     \end{array}\]
    Let us prove the final point ($\Asterisk$). If
    $\I,\beta_n\cup\nu_{n-1}\cup\nu_n \models
@@ -747,7 +747,8 @@ over the alphabet $\Sigma$ of input events
 
 {\scriptsize\begin{algorithmic}[1] 
 
-  \State let $\Art = \tuple{N,E,\Lambda,\lhd}$ be an ART 
+  \State let $\Art = \tuple{N,E,\Lambda,\lhd}$ be an ART with root
+  node $\rootNode$
 
   \State initially $N = E = \lhd = \emptyset$, $\Lambda =
   \set{(\rootNode,\iota)}$, $\preds = \set{\bot}$, $\worklist =
@@ -934,20 +935,23 @@ the label of $m$. The correctness criteria of Algorithm
 
   For the second point, we prove the following invariant: each time
   Algorithm \ref{alg:predabs} reaches line \ref{ln:while}, the set $W$
-  of nodes in $\worklist$ contains all the frontier nodes in $\Art =
-  \tuple{N,E,\Lambda,\lhd}$ which are not covered by some node in $N$,
-  namely that $W = \set{n \in N \mid \forall m \in N \forall a \in
-    \Sigma ~.~ (n,a,m) \not\in E ~\wedge~ (n,m) \not\in
-    \lhd}$. Initially, this is the case because $W = \set{\rootNode}$
-  and $E = \lhd = \emptyset$. If the invariant holds previously, at
-  line \ref{ln:while}, it will hold again after line \ref{ln:refine}
-  is executed, because, when the subtree rooted at the pivot $p$ is
+  of nodes in $\worklist$ contains all the frontier nodes in the ART
+  $\tuple{N\cup W,E,\Lambda,\lhd}$ which are not covered by some node
+  in $N$, namely that:
+  \begin{equation}\label{inv:predabs}
+  W = \set{n \mid \forall m \in N~ \forall a \in \Sigma ~.~ (n,a,m)
+    \not\in E ~\wedge~ (n,m) \not\in \lhd}
+  \end{equation}
+  Initially, this is the case because $W = \set{\rootNode}$ and $N = E
+  = \lhd = \emptyset$. If the invariant holds previously, at line
+  \ref{ln:while}, it will hold again after line \ref{ln:refine} is
+  executed, because, when the subtree rooted at the pivot $p$ is
   removed, $p$ becomes a member of the set of uncovered frontier
   nodes, and is added to $W$ at line \ref{ln:refine}. The last case
   considers that the invariant holds at line \ref{ln:while} and the
   control follows the else branch at line \ref{ln:else}. In this case,
   the newly created frontier node $s$ is added to $W$ only if it is
-  not covered by an existing node in $N$ (line \ref{ln:covered}). 
+  not covered by an existing node in $N$ (line \ref{ln:covered}).
 
   We use this invariant in the proof as follows. If Algorithm
   \ref{alg:predabs} returns at line \ref{ln:true}, then it must be
@@ -1017,8 +1021,8 @@ $(n,a,m)$. This additional bookkeeping is used as follows. Given a
 sequence $u = a_1\ldots a_k \in \Sigma^*$ that labels the path from
 the root to a node $n$ in $\Art$, the conjunction:
 \[\mu(n) \equiv \Lambda(\rootNode) \wedge T(\rootNode,a_1,n_1) \wedge \ldots
-T(n_{k-1},a_k,n_k) \wedge \bigwedge_{q \in R(n_k) \setminus F}(q
-\rightarrow \bot)\] defines the interpolation problem $\pi(u)$. 
+T(n_{k-1},a_k,n_k) \wedge \bigwedge_{q \in R(n_k) \setminus F}(q_k
+\rightarrow \bot)\] defines the interpolation problem $\pi(u)$.
 
 We consider a total alphabetical order $\prec$ on $\Sigma$ and lift it
 to the total lexicographical order $\prec^*$ on $\Sigma^*$. We write
@@ -1026,10 +1030,10 @@ $n \prec^* m$ if the sequence labeling the path from $\rootNode$ to
 $n$ is strictly smaller, in the lexicographical order, than the
 sequence labeling the path from $\rootNode$ to $m$. 
 
-A node $n \in N$ is \emph{covered} if it has an ancestor $m$ such that
-$(m,p) \in \lhd$, for some $p \in N$. A node $n$ is \emph{closed} if
-it is covered, or $\Lambda(n) \not\models \Lambda(m)$ for all $m \in
-N$ such that $n \prec^* m$.
+A node $n \in N$ is \emph{covered} if $(n,p) \in \lhd$ or it has an
+ancestor $m$ such that $(m,p) \in \lhd$, for some $p \in N$. A node
+$n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
+\Lambda(m)$ for all $m \in N$ such that $n \prec^* m$.
 
 \begin{algorithm}[t!]
 {\scriptsize\begin{algorithmic}[0]
@@ -1042,13 +1046,15 @@ N$ such that $n \prec^* m$.
 
 {\scriptsize\begin{algorithmic}[1] 
 
-  \State let $\Art = \tuple{N,E,\Lambda,R,T,\lhd}$ be an ART 
+  \State let $\Art = \tuple{N,E,\Lambda,R,T,\lhd}$ be an ART with root
+  node $\rootNode$
 
   \State initially $N = E = T = \lhd = \emptyset$, $\Lambda =
   \set{(\rootNode,\iota)}$, $R = \fv{\Bool}{\iota[Q_0/Q]}$,
   $\worklist=\set{\rootNode}$
   
   \While{$\worklist \neq \emptyset$}
+  \label{ln:impact-while}
 
   \State dequeue $n$ from $\worklist$ 
 
@@ -1058,6 +1064,9 @@ N$ such that $n \prec^* m$.
   \label{ln:close-worklist}
 
   \If{$n$ is not covered}
+
+  \State let $(\rootNode,a_1,n_1),(n_1,a_2,n_2), \ldots,
+  (n_{k-1},a_k,n)$ be the path from $\rootNode$ to $n$
 
   \If{$R(n) \cap F \neq \emptyset$} 
   \label{ln:impact-cex}
@@ -1069,27 +1078,21 @@ N$ such that $n \prec^* m$.
   \State get model $\beta : Q_i \rightarrow \booli$, $\{\nu_i :
   \vec{x}_i \rightarrow \Data^\I \mid i=0\ldots k\}$ of $\mu(n)$
 
-  \State let $a_1 \ldots a_k$ be the label of the path from
-  $\rootNode$ to $n$
-
   \State {\bf return} $w = (a_1,\nu_1) \ldots (a_k,\nu_k)$
   \Comment{$w \in L(\A)$ by construction}
 
   \Else \Comment{spurious counterexample}
 
-  \State let $\rootNode,n_1,\ldots,n_k,n_{k+1}=n$ be the sequence of nodes from $\rootNode$ to $n$
+  \State let $\tuple{\top,I_1,\ldots,I_k \equiv\bot}$ be an interpolant for $\mu(n)$
   \label{ln:refine-begin}
-
-  \State let $\tuple{\top,I_1,\ldots,I_k,I_{k+1}\equiv\bot}$ be an interpolant for $\mu(n)$
 
   \State let $b$ be $\false$
 
-  \For{$i=1,\ldots,k+1$}
+  \For{$i=1,\ldots,k$}
 
   \If{$\Lambda(n_i) \not\models I_i$}
 
   \State $\lhd \leftarrow \lhd \setminus \set{(m,n_i) \in \lhd \mid m \in N}$
-  \Comment{uncover $n_i$}
 
   \State $\Lambda(n_i) \leftarrow \Lambda(n_i) \wedge I_i$
   \Comment{strenghten the label of $n_i$}
@@ -1116,6 +1119,7 @@ N$ such that $n \prec^* m$.
   \State let $s$ be a fresh node and $e = (n,a,s)$ be a new edge
 
   \State $E \leftarrow E \cup \set{e}$
+  \label{ln:edge-insert}
 
   \State $\Lambda \leftarrow \Lambda \cup \set{(s,\top)}$
 
@@ -1141,7 +1145,7 @@ N$ such that $n \prec^* m$.
 \If{$\Lambda(x) \models \Lambda(y)$}
 
 \State $\lhd \leftarrow \left(\lhd \setminus \set{ (p,q) \in \lhd \mid
-  \text{$q$ is a successor of $x$}}\right) \cup \set{(x,y)}$
+  \text{$q$ is $x$ or a successor of $x$}}\right) \cup \set{(x,y)}$
 \label{ln:close-uncover}
 
 \State {\bf return} $\true$ 
@@ -1165,35 +1169,40 @@ phases\footnote{These phases correspond to the \textsc{Close},
 \emph{refine} and \emph{expand}. When a node $n$ is removed from the
 worklist, it is first closed (line \ref{ln:close-worklist}) by finding
 a lexicographically bigger node $m$ such that $\Lambda(n) \models
-\Lambda(m)$, if one exists, and adding $(n,m)$ to $\lhd$. As in
-Algorithm \ref{alg:predabs}, the intuition is that for any feasible
+\Lambda(m)$, if one exists, and adding the pair $(n,m)$ to $\lhd$. As
+in Algorithm \ref{alg:predabs}, the intuition is that for any feasible
 counterexample that can be discovered from $n$ there exists a feasible
 counterexample stemming in $m$, thus we do not need to process $n$
 further.
 
-If $n$ has not been previously covered at line
-\ref{ln:close-worklist}, we check if it is the endpoint of a
+If $n$ is not covered, we check if it is the endpoint of a
 counterexample candidate, which can only be the case when the
 replacement set $R(n)$ contains at least one final state (line
 \ref{ln:cex}). Observe that, if $u$ is the label of the path from
 $\rootNode$ to $n$, then $\Accept{\A}(u)$ is satisfiable only if it
 contains a (positive occurrence of) a final state. The counterexample
-is moreover feasible iff $\mu(n)$ is satisfiable, in which case a model of
-$\mu(n)$ is obtained and a word $w \in L(\A)$ returned. 
+is moreover feasible iff $\mu(n)$ is satisfiable, in which case a
+model of $\mu(n)$ is obtained and a word $w \in L(\A)$ returned.
 
 Otherwise, the counterexample is spurious and the procedure enters the
 refinement phase (lines \ref{ln:refine-begin} -
 \ref{ln:refine-end}). The interpolant for $\mu(n)$ is used to
 strenghten the labels of all the ancestors of $n$, by conjoining the
-formulae of the interpolant to the existing labels. In this process,
-some node might become eligible for coverage, therefore we attempt to
-close each ancestor of $n$ that is impacted by the refinement (line
-\ref{ln:refine-end}). Observe that, in this case the call to
-$\Call{Close}{}$ must uncover each node which is covered by a
+formulae of the interpolant to the existing labels. Then $\Lambda(n)$
+becomes equivalent to $\bot$.
+
+In this process, the nodes on the path between $\rootNode$ and $n$,
+including $n$, might become eligible for coverage, therefore we
+attempt to close each ancestor of $n$ that is impacted by the
+refinement (line \ref{ln:refine-end}). Observe that, in this case the
+call to $\Call{Close}{}$ must uncover each node which is covered by a
 successor of $n$ (line \ref{ln:close-uncover} in the $\Call{Close}{}$
 procedure). This is required because, due to the over-approximation of
 the sets of reachable configurations, the covering relation is not
-transitive, as explained in \cite{mcmillan06}.
+transitive, as explained in \cite{mcmillan06}. If $\Call{Close}{}$
+adds a covering edge $(n_i,m)$ to $\lhd$, it does not have to be
+called for the successors of $n_i$ on this path, which is handled via
+the boolean flag $b$.
 
 Finally, we expand $n$ (lines \ref{ln:expand-begin} -
 \ref{ln:expand-end}) by creating a new node for each successor $s$ via
@@ -1201,6 +1210,49 @@ an input event $a \in \Sigma$ and inserting it into the worklist. The
 label of the new node is $\top$, its replacement set $R(s)$ is
 computed based on $R(n)$ and the label of the edge $(n,a,s)$ is
 $\Theta(n,k)$, where $k$ is the level of $n$ in $\Art$.
+
+The correctness of Algorithm \ref{alg:impact} is proved in the
+following:
+
+\begin{theorem}\label{thm:impact}
+  Given an automaton $\A$, such that $L(\A) \neq \emptyset$, Algorithm
+  \ref{alg:impact} terminates and returns a word $w \in L(\A)$. If
+  Algorithm \ref{alg:impact} terminates reporting $\true$, then
+  $L(\A) = \emptyset$.
+\end{theorem}
+\proof{ The first point is proved along the lines of the first point
+  of Theorem \ref{thm:predabs}. In particular, it is easy to see that
+  each call to $\Call{Close}{}$ terminates, because $N$ is finite at
+  each moment during the execution. 
+
+  For the second point, we prove the following invariant: each time
+  Algorithm \ref{alg:impact} reaches the line \ref{ln:impact-while},
+  the set of nodes $W$ in $\worklist$ contains exactly those nodes in
+  the ART $\tuple{N \cup W,E,\Lambda,R,T,\lhd}$ which are
+  both\begin{inparaenum}[(i)]
+  \item uncovered, and such that
+  \item for some $a \in \Sigma$, the edge $(n,a,s)$ is missing from $E$:
+  \end{inparaenum}
+  \begin{equation}\label{inv:impact}
+  W = \set{n \mid n \text{ is uncovered and } \exists a \in \Sigma~
+    \forall s \in N ~.~ (n,a,s) \not\in E}
+  \end{equation}
+  Initially, $W = \set{\rootNode}$ and $N=E=\lhd=\emptyset$, thus the
+  invariant holds trivially. Suppose that the invariant holds at some
+  point, when reaching line \ref{ln:impact-while} and some node $n$
+  was removed from $W$ and inserted into $N$. We distinguish two
+  cases, either: \begin{itemize}
+  \item $n$ is covered at line \ref{ln:close-worklist}, in which case
+    $W$ remains unchanged, or
+  %
+  \item $n$ is not covered, in which case for each $a \in \Sigma$ a
+    new node $s$ is inserted into $W$ (line \ref{ln:expand-end}) and
+    the edge $(n,a,s)$ is inserted into $E$ (line
+    \ref{ln:edge-insert}). None of these new nodes are covered and
+    none of their successors inserted into $E$.
+  \end{itemize}
+  Then the condition (\ref{inv:impact}) holds next time the line
+  \ref{ln:impact-while} is reached, thus proving the invariant.  \qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
