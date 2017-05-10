@@ -1055,21 +1055,8 @@ in a list, in preorder.
 
   \State $N \leftarrow N \cup \set{n}$
 
-  \For{$m \in N$ such that $n \prec^* m$ and $n$ is not an ancestor of $m$}
-  \Comment{close $n$} 
-
-  \If{$\Lambda(n) \models \Lambda(m)$}
-
-  \State $\lhd \leftarrow \lhd \setminus \set{ (p,q) \in \lhd \mid
-    \text{$q$ is a successor of $n$}}$
-
-  \State $\lhd \leftarrow \lhd \cup \set{(n,m)}$
-
-  \State {\bf goto} \ref{ln:not-covered}
-
-  \EndIf
-
-  \EndFor
+  \State $\Call{Close}{n}$
+  \label{ln:close-worklist}
 
   \If{$n$ is not covered}
   \label{ln:not-covered}
@@ -1088,7 +1075,7 @@ in a list, in preorder.
 
   \Else \Comment{spurious counterexample}
 
-  \State let $\rootNode,n_1,\ldots,n_k,n$ be the sequence of nodes from $\rootNode$ to $n$
+  \State let $\rootNode,n_1,\ldots,n_k,n_{k+1}=n$ be the sequence of nodes from $\rootNode$ to $n$
 
   \State let $\tuple{\top,I_1,\ldots,I_k,I_{k+1}\equiv\bot}$ be an interpolant for $\mu(n)$
 
@@ -1101,6 +1088,8 @@ in a list, in preorder.
 
   \State $\Lambda(n_i) \leftarrow \Lambda(n_i) \wedge I_i$
   \Comment{strenghten the label of $n_i$}
+
+  \State $\Call{Close}{n_i}$
 
   \EndIf
 
@@ -1130,6 +1119,25 @@ in a list, in preorder.
   \EndIf
 
   \EndWhile  
+\end{algorithmic}
+
+\begin{algorithmic}[1]
+\Function{Close}{$x$}
+
+\For{$y \in N$ such that $x \prec^* y$ and $x$ is not an ancestor of $y$}
+
+\If{$\Lambda(x) \models \Lambda(y)$}
+
+\State $\lhd \leftarrow \left(\lhd \setminus \set{ (p,q) \in \lhd \mid
+  \text{$q$ is a successor of $x$}}\right) \cup \set{(x,y)}$
+
+\State {\bf return}
+
+\EndIf
+
+\EndFor
+
+\EndFunction
 \end{algorithmic}}
 \caption{\impact~ for ADA Emptiness}
 \label{alg:impact}
@@ -1139,7 +1147,18 @@ The execution of Algorithm \ref{alg:impact} consists of three
 phases\footnote{These phases correspond to the \textsc{Close},
   \textsc{Refine} and \textsc{Expand} procedures from the original
   description of \impact~\cite{mcmillan06}.}: \emph{close},
-\emph{refine} and \emph{expand}. 
+\emph{refine} and \emph{expand}. When a node $n$ is removed from the
+worklist, it is first closed (line \ref{ln:close-worklist}) by finding
+a lexicographically bigger node $m$ such that $\Lambda(n) \models
+\Lambda(m)$, if one exists, and adding $(n,m)$ to $\lhd$. As in
+Algorithm \ref{alg:predabs}, the intuition is that all successors of
+$n$ are covered by the successors of $m$, thus for any feasible
+counterexample that can be discovered from $n$ there exists a feasible
+counterexample stemming in $m$, and we do not need to process $n$
+further. If $n$ has not been covered in the close phase, we check if
+it is the endpoint of a counterexample candidate, which can only be
+the case 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
