@@ -134,7 +134,7 @@ in the signature $\sig$, with the interpretation $\I$.
 Given formulae $\varphi$ and $\psi$, we say that \emph{$\phi$ entails
   $\psi$}, denoted $\phi \models^\I \psi$ iff $\I,\nu \models \varphi$
 implies $\I,\nu \models \psi$, for each valuation $\nu$, and $\phi
-\eqiff^\I \psi$ iff $\phi \models^\I \psi$ and $\psi \models^\I \phi$.
+\iffeq^\I \psi$ iff $\phi \models^\I \psi$ and $\psi \models^\I \phi$.
 We omit mentioning the interpretation $\I$ when it is clear from the
 context.
 
@@ -199,9 +199,10 @@ data variables. The size of $\A$ is defined as $\len{\A} = \len{\iota}
 
 Formally, let $\vec{x}_k = \set{x_k \mid x \in \vec{x}}$, $k\geq0$, be
 a set of time-stamped variables. For an input event $a \in \Sigma$ and
-a formula $\phi$, we write $\Delta^k(\phi,a)$ for the formula obtained
-from $\phi$ by simultaneously replacing each state $q \in
-\fv{\Bool}{\phi}$ by the formula
+a formula $\phi$, we write $\Delta(\phi)$ and, respectively,
+$\Delta^k(\phi,a)$, for the formula obtained from $\phi$ by
+simultaneously replacing each state $q \in \fv{\Bool}{\phi}$ by the
+formula $\Delta(q,a)$, respectively
 $\Delta(q,a)[\vec{x}_k/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]$, for
 all $k\geq0$. Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots
 (a_n,\nu_n)$, the \emph{run} of $\A$ over $w$ is the sequence of
@@ -298,7 +299,7 @@ correctness of the above definitions:
   for $\A_\cap$ being analogous. Let $w = (a_1,\nu_1) \ldots
   (a_n,\nu_n)$ be a word, where $n=0$ corresponds to the empty
   word. We prove by induction on $n\geq0$ that $\Delta(\iota_1 \vee
-  \iota_2,a_1\ldots a_n) \eqiff \Delta(\iota_1,a_1\ldots a_n) \vee
+  \iota_2,a_1\ldots a_n) \iffeq \Delta(\iota_1,a_1\ldots a_n) \vee
   \Delta(\iota_2,a_1\ldots a_n)$. The case $n=0$ follows from the
   definition of the initial configuration of $\A_\cup$. For the
   inductive step $n>0$, $\Delta(\iota_1 \vee \iota_2,a_1\ldots a_n)$
@@ -308,11 +309,11 @@ correctness of the above definitions:
   $\Delta(q,a_n)[\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]$,
   denoted $\Delta^n(\Delta(\iota_1 \vee \iota_2,a_1\ldots
   a_{n-1}),a_n)$. Since by induction hypothesis, $\Delta(\iota_1 \vee
-  \iota_2,a_1\ldots a_{n-1}) \eqiff \Delta(\iota_1,a_1\ldots a_{n-1})
+  \iota_2,a_1\ldots a_{n-1}) \iffeq \Delta(\iota_1,a_1\ldots a_{n-1})
   \vee \Delta(\iota_2,a_1\ldots a_{n-1})$, we obtain:
   \[\begin{array}{ll}
-  \Delta^n(\Delta(\iota_1 \vee \iota_2,a_1\ldots a_{n-1}),a_n) & \eqiff \\
-  \Delta^n(\Delta(\iota_1,a_1\ldots a_{n-1}),a_n) \vee \Delta^n(\Delta(\iota_2,a_1\ldots a_{n-1}),a_n) & \eqiff \\
+  \Delta^n(\Delta(\iota_1 \vee \iota_2,a_1\ldots a_{n-1}),a_n) & \iffeq \\
+  \Delta^n(\Delta(\iota_1,a_1\ldots a_{n-1}),a_n) \vee \Delta^n(\Delta(\iota_2,a_1\ldots a_{n-1}),a_n) & \iffeq \\
   \Delta(\iota_1,a_1\ldots a_{n}) \vee \Delta(\iota_2,a_1\ldots a_{n}) \enspace.
   \end{array}\] 
   To prove $L(\overline{\A_1}) = \Sigma[\vec{x}]^* \setminus L(\A_1)$,
@@ -323,8 +324,8 @@ correctness of the above definitions:
   \subseteq Q$ and thus $\overline{\iota_1} = \iota_1$. For the case
   $n>0$, we compute:
   \[\begin{array}{lcl}
-  \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \eqiff & \text{ by induction hypothesis} \\
-  \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \eqiff & \text{ by the definition of $\overline{\phi}$} \\
+  \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \iffeq & \text{ by induction hypothesis} \\
+  \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \iffeq & \text{ by the definition of $\overline{\phi}$} \\
   \overline{\Delta(\iota_1,a_1\ldots,a_n)}
   \end{array}\]
   Let $\nu,\nu' : (Q \cup \bigcup_{i=0}^n\vec{x}_i) \rightarrow (\booli
@@ -433,16 +434,16 @@ hold: \begin{compactenum}
 \item\label{it2:inv} $\nu \in \Inv(\beta) \Rightarrow \I,\beta \cup
   \nu \not\models \Accept{\A}(u)$.
 \end{compactenum}
-A formula $\phi(Q,\vec{x})$ \emph{defines} $\Inv$ iff for all $\beta:
-Q \rightarrow \booli$ and $\nu : \vec{x} \rightarrow \Data^\I$,
-$\I,\beta\cup\nu \models \phi$ if and only if $\nu \in
-\Inv(\beta)$. If $\Inv$ satisfies only the first point above, we call
-it an \emph{invariant}. Intuitively, a safety invariant maps every
-boolean valuation into a set of data valuations, that contains the
-initial configuration $\iota = \Post{\A}(\iota,\varepsilon)$, whose
-data variables are unconstrained, over-approximates the set of
-reachable valuations (\ref{it1:inv}) and excludes the valuations
-satisfying the acceptance condition (\ref{it2:inv}).
+If $\Inv$ satisfies only the first point above, we call it an
+\emph{invariant}. Intuitively, a safety invariant maps every boolean
+valuation into a set of data valuations, that contains the initial
+configuration $\iota = \Post{\A}(\iota,\varepsilon)$, whose data
+variables are unconstrained, over-approximates the set of reachable
+valuations (\ref{it1:inv}) and excludes the valuations satisfying the
+acceptance condition (\ref{it2:inv}).  A formula $\phi(Q,\vec{x})$
+\emph{defines} $\Inv$ iff for all $\beta: Q \rightarrow \booli$ and
+$\nu : \vec{x} \rightarrow \Data^\I$, we have $\I,\beta\cup\nu \models
+\phi$ iff $\nu \in \Inv(\beta)$.
 
 \begin{lemma}\label{lemma:safety-invariant}
   For any automaton $\A$, we have $L(\A) = \emptyset$ if and only if
@@ -500,7 +501,7 @@ follows, for any $u \in \Sigma^*$:
   \Sigma^*$. But since $\preds$ is a finite set, also the set
   $\{\AbsPost{\A}(\iota,u) \mid u \in \Sigma^*\}$ is finite. Thus
   there exists $k \geq 0$ such that, for all $u \in \Sigma^*$ there
-  exists $i \in [0,k]$ such that $\AbsPost{\A}(\iota,u) \eqiff
+  exists $i \in [0,k]$ such that $\AbsPost{\A}(\iota,u) \iffeq
   \AbsPost{\A}(\iota,\mu(i))$, which concludes the proof. \qed}
 
 \paragraph{\em Remark}
@@ -596,6 +597,27 @@ Finally, we set $\theta_{n+1}(Q_n) \equiv \bigwedge_{q \in Q \setminus
 acceptance condition, which forces the last remaining non-final states
 to be false. 
 
+\begin{proposition}\label{prop:asterisk}
+  Given a formula $\phi \in \Form^+(Q,\vec{x})$ and $a \in \Sigma$, we
+  have \(\Delta(\phi,a) \iffeq \exists Q' ~.~ \phi[Q'/Q] \wedge
+  \bigwedge_{q \in Q} (q' \rightarrow \Delta(q,a))\).
+\end{proposition}
+\proof{``$\Rightarrow$'' If $\I,\beta\cup\overline\nu\cup\nu \models
+  \Delta^n(\phi,a)$, for some valuations $\beta : Q \rightarrow
+  \booli$ and $\overline\nu : \overline{\vec{x}} \rightarrow
+  \Data^\I$, $\nu : \vec{x} \rightarrow \Data^\I$, then we build a
+  valuation $\beta' : Q' \rightarrow \booli$ such that
+  $\I,\beta'\cup\beta\cup\overline\nu\cup\nu \models \phi[Q'/Q] \wedge
+  \bigwedge_{q \in Q} (q' \rightarrow \Delta(q,a))$. For each
+  occurrence of a formula $\Delta(q,a)$ in $\Delta(\phi,a)$ we set
+  $\beta'(q') = \true$ if $\I,\beta\cup\overline\nu\cup\nu \models
+  \Delta(q,a)$ and $\beta'(q') = \false$, otherwise. Since there are
+  no negated occurrences of such subformulae, the definition of
+  $\beta'$ is consistent, and the check
+  $\I,\beta'\cup\beta\cup\overline\nu\cup\nu \models \phi[Q'/Q] \wedge
+  \bigwedge_{q \in Q} (q' \rightarrow \Delta(q,a))$ is
+  immediate. $''\Leftarrow''$ This direction is an easy check. \qed}
+
 We recall that a run of $\A$ over $u$ is a sequence $\phi_0(Q),
 \phi_1(Q,\vec{x}_0\cup\vec{x}_1), \ldots,
 \phi_n(Q,\vec{x}_0\cup\ldots\cup\vec{x}_n)$, where $\phi_0$ is the
@@ -642,92 +664,42 @@ $u$ from future searches.
   \cup Q_n,\vec{x}_{n-1} \cup \vec{x}_n) \wedge \theta_{n+1}(Q_n)$ in
   the following.
 
-  (\ref{it1:progress}) Assume that $\pi(u)$ is satisfiable and let
-  $\beta_0,\ldots,\beta_n$ and $\nu_0,\ldots,\nu_n$ be boolean and
-  data valuations for $Q_0,\ldots,Q_n$ and
-  $\vec{x}_0,\ldots,\vec{x}_n$, respectively, such that
-  $\I,\bigcup_{i=0}^n \beta_i \cup \bigcup_{i=0}^n \nu_i \models
-  \pi(u)$. We build a model for $\Accept{\A}(u) \equiv
-  \Post{\A}(\iota,u) \wedge \theta_{n+1}[Q/Q_n]$. Let
-  $\phi_0,\phi_1,\ldots,\phi_n$ be the run of $\A$ over $u$. We show
-  that $\phi_n(Q,\vec{x}_0\cup\ldots\cup\vec{x}_n)$ has a model, by
-  induction on $n\geq0$. For the base case $n=0$, $\phi_0 \equiv \iota
-  \equiv \theta_0[Q/Q_0]$ has the model $\beta(q) = \beta_0(q_0)$, for
-  all $q \in Q$. For the induction step $n > 0$, we assume that
-  $\phi_{n-1}(Q,\vec{x}_0\cup\ldots\vec{x}_{n-1})$ has the model
-  $\beta \cup \nu_0 \cup \ldots \nu_{n-1}$, where $\beta(q) =
-  \beta_{n-1}(q_{n-1})$, for all $q \in Q$. By the definition of
-  $\pi(u)$: \[\theta_n \equiv \bigwedge_{q_{n-1} \in
-    \fv{\Bool}{\theta_{n-1}} \cap Q_{n-1}} \left(q_{n-1} \rightarrow
-  \Delta(q,a_n)[Q_n/Q,\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]\right)\]
-
-  But since $\I,\beta_{n-1} \cup \beta_n, \nu_{n-1} \cup \nu_n \models
-  \theta_n(Q_{n-1}\cup Q_n, \vec{x}_{n-1} \cup \vec{x}_n)$, we have
-  that $\I,\beta_n,\nu_{n-1} \cup \nu_n \models
-  \Delta(q,a_n)[Q_n/Q,\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]$,
-  for every $q \in Q$ such that $\beta_{n-1}(q_{n-1}) = \true$. Then
-  we have $\I,\beta\cup\bigcup_{i=0}^n\nu_i \models \phi_n$
-  where $\beta(q) = \beta_n(q_n)$, for all $q \in Q$ and $\phi_n$ is
-  obtained from $\phi_{n-1}$ by replacing each boolean variable $q$ by
-  $\Delta(a,q)[\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]$. Observe
-  that, because each boolean variable occurs positively in
-  $\phi_{n-1}$, the truth value of
-  $\Delta(a,q)[\vec{x}_{n-1}/\overline{\vec{x}},\vec{x}_n/\vec{x}]$
-  under the valuation $\beta\cup\nu_{n-1}\cup\nu_n$ is not important for
-  any $q \in Q$ such that $\beta(q) = \false$. We have obtained a
-  model for $\phi_n$ and thus for $\Post{\A}(u)$. Since moreover,
-  $\theta_{n+1}[Q/Q_n] = \true$ in this model, we obtain a model for
-  $\Accept{\A}(u)$. Thus $\pi(u)$ is satisfiable implies that
-  $\Accept{\A}(u)$ is satisfiable, which proves the statement of point
-  (\ref{it1:progress}).
+  (\ref{it1:progress}) We apply Proposition \ref{prop:asterisk}
+  recursively and get: \[\Post{\A}(\iota,u)[Q_n/Q,\vec{x}_n/\vec{x}]
+  \iff \exists Q_0 \ldots \exists Q_{n-1} \exists \vec{x}_0 \ldots
+  \exists \vec{x}_{n-1} ~.~ \bigwedge_{i=0}^n \theta_i\] Assuming that
+  $\pi(u) \equiv \bigwedge_{i=0}^{n+1} \theta_i$ is satisfiable, we
+  obtain a model for $\Accept{\A}(u) \equiv \Post{\A}(\iota,u) \wedge
+  \theta_{n+1}[Q/Q_n]$.
 
   (\ref{it2:progress}) If $\tuple{\top,I_1,\dots,I_{n+1},\bot}$ is an
-    interpolant for $\pi(u)$, the following entailments hold: \begin{compactitem}
-    \item $\theta_0 \models I_1[Q_0/Q]$, 
-      %
-    \item $I_k[Q_{k-1}/Q,\vec{x}_{k-1}/\vec{x}] \wedge \theta_k \models I_{k+1}[Q_k/Q,\vec{x}_k/\vec{x}]$, $\forall k\in[1,n]$. 
-      %
-    \item $I_{n+1}[Q_{n+1}/Q] \wedge \theta_{n+1} \models \bot$. 
-    \end{compactitem}
-    We prove that $\AbsPost{\A}(\iota,a_1\ldots a_n) \models I_{n+1}$
-    by induction on $n \geq 0$. This is sufficient to conclude because
-    $\AbsAccept{\A}(a_1\ldots a_n) \equiv \AbsPost{\A}(\iota,a_1\ldots
-    a_n) \wedge \theta_{n+1}[Q/Q_n] \models I_{n+1} \wedge
-    \theta_{n+1}[Q/Q_n] \models \bot$. For the base case $n=0$, we
-    have $\AbsPost{\A}(\iota,\varepsilon) \equiv \iota \equiv
-    \theta_0[Q/Q_0] \models I_1$. For the induction step $n>0$, we
-    compute:
-    \[\begin{array}{l}
-    \AbsPost{\A}(\iota,a_1\ldots a_n)[Q_n/Q] \equiv \text{ (by definition of $\AbsPost{\A}$)} \\
-    \exists \vec{x}_{n-1} ~.~ \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_n/Q] \models \text{ ($\Asterisk$)} \\
-    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n \models \text{ (ind. hyp.) } \\
-    \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n \models I_n[Q_n/Q] 
-    \end{array}\]
-   Let us prove the final point ($\Asterisk$). If
-   $\I,\beta_n\cup\nu_{n-1}\cup\nu_n \models
-   \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots
-     a_{n-1}),a_n)}[Q_{n}/Q]$, for some valuations $\beta_{n} : Q_{n}
-   \rightarrow \booli$ and $\nu_i : \vec{x}_i \rightarrow \Data^\I$,
-   for $i=n-1,n$, then we build a valuation $\beta_{n-1} : Q_{n-1}
-   \rightarrow \booli$ such that $\I,\beta_{n-1}\cup\beta_n \cup
-   \nu_{n-1}\cup\nu_n \models \AbsPost{\A}(\iota,a_1\ldots
-   a_{n-1})[Q_{n-1}/Q] \wedge \theta_n$, as follows. For each
-   occurrence of a subformula $\Delta(q,a_n)$ in
-   $\AbsPost{\A}(\iota,a_1\ldots a_{n-1})$ we set
-   $\beta_{n-1}(q_{n-1}) = \true$ if $\I,\beta_n\cup\nu_{n-1}\cup\nu_n
-   \models \Delta(q,a_n)[Q_n/Q]$ and $\beta_{n-1}(q_{n-1}) = \false$,
-   otherwise. Since there are no negated occurrences of such
-   subformulae, the definition of $\beta_{n-1}$ is consistent, and the
-   check $\I,\beta_{n-1}\cup\beta_n \cup \nu_{n-1}\cup\nu_n \models
-   \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n$
-   is straightforward. \qed}
-
+  interpolant for $\pi(u)$, the following entailments
+  hold: \begin{compactitem}
+  \item $\theta_0 \models I_1[Q_0/Q]$,
+    %
+  \item $I_k[Q_{k-1}/Q,\vec{x}_{k-1}/\vec{x}] \wedge \theta_k \models I_{k+1}[Q_k/Q,\vec{x}_k/\vec{x}]$, $\forall k\in[1,n]$. 
+    %
+  \item $I_{n+1}[Q_{n+1}/Q] \wedge \theta_{n+1} \models \bot$. 
+  \end{compactitem}
+  We prove that $\AbsPost{\A}(\iota,a_1\ldots a_n) \models I_{n+1}$ by
+  induction on $n \geq 0$. This is sufficient to conclude because
+  $\AbsAccept{\A}(a_1\ldots a_n) \equiv \AbsPost{\A}(\iota,a_1\ldots
+  a_n) \wedge \theta_{n+1}[Q/Q_n] \models I_{n+1} \wedge
+  \theta_{n+1}[Q/Q_n] \models \bot$. For the base case $n=0$, we have
+  $\AbsPost{\A}(\iota,\varepsilon) \equiv \iota \equiv \theta_0[Q/Q_0]
+  \models I_1$. For the induction step $n>0$, we compute:
+  \[\begin{array}{l}
+  \AbsPost{\A}(\iota,a_1\ldots a_n)[Q_n/Q] \equiv \text{ (by definition of $\AbsPost{\A}$)} \\
+  \exists \vec{x}_{n-1} ~.~ \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_n/Q] \models \text{ (by Prop. \ref{prop:asterisk})} \\
+  \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n \models \text{ (ind. hyp.) } \\
+  \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n \models I_n[Q_n/Q] \hfill\text{\qed}
+  \end{array}\]}
 We have now all the ingredients to describe the first emptiness
 checking semi-algorithm for alternating data
-automata. Algorithm\footnote{Though termination is not guaranteed,
-  we call it algorithm for conciseness.}  \ref{alg:predabs} builds
-an \emph{abstract reachability tree} (ART) whose edges are labeled
-with input events and each node $n$ is labeled with the formula
+automata. Algorithm\footnote{Though termination is not guaranteed, we
+  call it algorithm for conciseness.}  \ref{alg:predabs} builds an
+\emph{abstract reachability tree} (ART) whose edges are labeled with
+input events and each node $n$ is labeled with the formula
 $\AbsPost{\A}(\iota,u)$, where $u \in \Sigma^*$ is the event trace
 labeling the path from the root of the tree to $n$. It uses a covering
 relation $\lhd$ between nodes in order to ensure that the set of
@@ -1009,20 +981,51 @@ moreover: \begin{compactitem}
 \item for each edge $e = (n,a,m) \in E$, if $n$ lies at
   depth\footnote{We consider that the root node has zero depth.}  $k$
   in the tree $(N,E)$, then we have:
+\end{compactitem}
   \[\begin{array}{rcl}
   T(e) & = & \Theta(n,a,k) \\
-  R(m) & = & \bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)} \text{ where} \\
+  R(m) & = & \bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)} \text{, where} \\
   \Theta(n,a,k) & \equiv & \bigwedge_{q \in R(n)} (q_k \rightarrow
   \Delta(q,a)[Q_{k+1}/Q,\vec{x}_{k}/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}])
   \end{array}\]
-\end{compactitem}
 For simplicity, we write $T(n,a,m)$ for $T(e)$, when $e$ is
 $(n,a,m)$. This additional bookkeeping is used as follows. Given a
 sequence $u = a_1\ldots a_k \in \Sigma^*$ that labels the path from
 the root to a node $n$ in $\Art$, the conjunction:
 \[\mu(n) \equiv \Lambda(\rootNode) \wedge T(\rootNode,a_1,n_1) \wedge \ldots
 T(n_{k-1},a_k,n_k) \wedge \bigwedge_{q \in R(n_k) \setminus F}(q_k
-\rightarrow \bot)\] defines the interpolation problem $\pi(u)$.
+\rightarrow \bot)\] is equivalent to the interpolation problem
+$\pi(u)$ and can be directly computed by a traversal of the path from
+$\rootNode$ to $n$. In addition, we require that an interpolant
+$\tuple{\top,I_0,\ldots,I_k,\bot}$ for the insatisfiable interpolation
+problem $\mu(n)$ does not have negative occurrences of states,
+i.e.\ $I_i \in \Form^+(Q,\vec{x})$, for all $i \in [0,k]$. Such an
+interpolant can always be built, as showed below:
+
+\begin{proposition}\label{prop:positive-interpol}
+  For any $u = a_1 \ldots a_n \in \Sigma^*$, if $\pi(u)$ is
+  unsatisfiable then one can build an interpolant
+  $\tuple{\top,I_0,\ldots,I_n,\bot}$ for $\pi(u)$, such that $I_i
+  \in \Form^+(Q,\vec{x})$, for all $i \in [0,n]$.
+\end{proposition}
+\proof{ Let $\tuple{\top,I_0,\ldots,I_{n},\bot}$ be an interpolant,
+  and $i \in [0,n]$ be the first index for which $I_i \not\in
+  \Form^+(Q,\vec{x})$. By Proposition \ref{prop:asterisk}, we have
+  that $\Delta^{i-1}(I_{i-1},a_i) \iffeq \exists Q_{i-1} ~.~
+  I_{i-1}[Q_{i-1}/Q] \wedge \theta_i$. Since $I_{i-1} \in
+  \Form^+(Q,\vec{x})$, by the choice of $i$, we have that
+  $\Delta^{i-1}(I_{i-1},a_i) \in \Form^+(Q,\vec{x})$ as well. We
+  replace $I_i$ with $\Delta^{i-1}(I_{i-1},a_i)$. The result is still
+  an interpolant, because: \begin{compactitem}
+  \item $I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \models
+    \Delta^{i-1}(I_{i-1},a_i)$, by Proposition \ref{prop:asterisk}, and
+    %
+  \item $\Delta^{i-1}(I_{i-1},a_i) \wedge \theta_{i+1} \models \exists
+    Q_{i-1} ~.~ I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \wedge \theta_{i+1}
+    \models I_i[Q_i/Q] \wedge \theta_{i+1} \models I_{i+1}[Q_{i+1}/Q]$.
+  \end{compactitem}
+  We proceed with these replacements until there are no more formulae
+  $I_i \not\in \Form^+(Q,\vec{x})$ left. \qed}
 
 We consider a total alphabetical order $\prec$ on $\Sigma$ and lift it
 to the total lexicographical order $\prec^*$ on $\Sigma^*$. We write
@@ -1059,17 +1062,8 @@ $n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
 
   \State $N \leftarrow N \cup \set{n}$
 
-  \State $\Call{Close}{n}$
-  \label{ln:close-worklist}
-
-  \If{$n$ is not covered}
-
   \State let $(\rootNode,a_1,n_1),(n_1,a_2,n_2), \ldots,
   (n_{k-1},a_k,n)$ be the path from $\rootNode$ to $n$
-
-  \If{$R(n) \cap F \neq \emptyset$} 
-  \label{ln:impact-cex}
-  \Comment{counterexample candidate}
 
   \If{$\mu(n)$ is satisfiable} 
   \Comment{counterexample is feasible}
@@ -1082,12 +1076,14 @@ $n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
 
   \Else \Comment{spurious counterexample}
 
-  \State let $\tuple{\top,I_1,\ldots,I_k \equiv\bot}$ be an interpolant for $\mu(n)$
+  \State let $\tuple{\top,I_0,\ldots,I_k,\bot}$ be an
+  interpolant for $\mu(n)$ with $I_0,\ldots,I_k \in
+  \Form^+(Q,\vec{x})$
   \label{ln:refine-begin}
 
   \State let $b$ be $\false$
 
-  \For{$i=1,\ldots,k$}
+  \For{$i=0,\ldots,k$}
 
   \If{$\Lambda(n_i) \not\models I_i$}
 
@@ -1101,15 +1097,15 @@ $n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
   \State $b \leftarrow \Call{Close}{n_i}$
   \label{ln:refine-end}
 
-  \EndIf
+  \EndIf % $\neg b$
 
-  \EndIf
+  \EndIf % $\Lambda(n_i) \not\models I_i$
 
-  \EndFor
+  \EndFor 
 
-  \EndIf
+  \EndIf % $\mu(n)$ is satisfiable
 
-  \EndIf
+  \If{$n$ is not covered}
 
   \For{$a \in \Sigma$} 
   \Comment{expand $n$}
@@ -1131,7 +1127,7 @@ $n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
 
   \EndFor
 
-  \EndIf
+  \EndIf % $n$ is not covered
 
   \EndWhile  
 
@@ -1141,7 +1137,7 @@ $n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
 \begin{algorithmic}[1]
 \Function{Close}{$x$} {\bf returns} $\Bool$
 
-\For{$y \in N$ such that $x \prec^* y$ and $x$ is not an ancestor of $y$}
+\For{$y \in N$ such that $y \prec^* x$}
 
 \If{$\Lambda(x) \models \Lambda(y)$}
 
@@ -1167,30 +1163,38 @@ The execution of Algorithm \ref{alg:impact} consists of three
 phases\footnote{These phases correspond to the \textsc{Close},
   \textsc{Refine} and \textsc{Expand} procedures from the original
   description of \impact~\cite{mcmillan06}.}: \emph{close},
-\emph{refine} and \emph{expand}. When a node $n$ is removed from the
-worklist, it is first closed (line \ref{ln:close-worklist}) by finding
-a lexicographically bigger node $m$ such that $\Lambda(n) \models
-\Lambda(m)$, if one exists, and adding the pair $(n,m)$ to $\lhd$. As
-in Algorithm \ref{alg:predabs}, the intuition is that for any feasible
-counterexample that can be discovered from $n$ there exists a feasible
-counterexample stemming in $m$, thus we do not need to process $n$
-further.
-
-If $n$ is not covered, we check if it is the endpoint of a
-counterexample candidate, which can only be the case when the
-replacement set $R(n)$ contains at least one final state (line
-\ref{ln:cex}). Observe that, if $u$ is the label of the path from
-$\rootNode$ to $n$, then $\Accept{\A}(u)$ is satisfiable only if it
-contains a (positive occurrence of) a final state. The counterexample
-is moreover feasible iff $\mu(n)$ is satisfiable, in which case a
-model of $\mu(n)$ is obtained and a word $w \in L(\A)$ returned.
-
-Otherwise, the counterexample is spurious and the procedure enters the
-refinement phase (lines
+\emph{refine} and \emph{expand}. 
+%
+%% When a node $n$ is removed from the worklist, it is first closed (line
+%% \ref{ln:close-worklist}) by finding a lexicographically bigger node
+%% $m$ such that $\Lambda(n) \models \Lambda(m)$, if one exists, and
+%% adding the pair $(n,m)$ to $\lhd$. As in Algorithm \ref{alg:predabs},
+%% the intuition is that for any feasible counterexample that can be
+%% discovered from $n$ there exists a feasible counterexample stemming in
+%% $m$, thus we do not need to process $n$ further.
+%
+%% If $n$ is not covered, we check if it is the endpoint of a
+%% counterexample candidate, which can only be the case when the
+%% replacement set $R(n)$ contains at least one final state (line
+%% \ref{ln:cex}). Observe that, if $u$ is the label of the path from
+%% $\rootNode$ to $n$, then $\Accept{\A}(u)$ is satisfiable only if it
+%% contains a (positive occurrence of) a final state. The counterexample
+%% is moreover feasible iff $\mu(n)$ is satisfiable, in which case a
+%% model of $\mu(n)$ is obtained and a word $w \in L(\A)$ returned.
+%
+Let $u$ be the label of the path from the root node $\rootNode$ to
+$n$. If $\mu(n)$ is satisfiable, then $u$ is a feasible
+counterexample, in which case a model of $\mu(n)$ is obtained and a
+word $w \in L(\A)$ returned. Otherwise, $u$ is a spurious
+counterexample and the procedure enters the refinement phase (lines
 \ref{ln:refine-begin}-\ref{ln:refine-end}). The interpolant for
 $\mu(n)$ is used to strenghten the labels of all the ancestors of $n$,
 by conjoining the formulae of the interpolant to the existing
-labels. Then $\Lambda(n)$ becomes equivalent to $\bot$.
+labels. For technical reasons, related to proving the correctness of
+Algorithm \ref{alg:impact}, we assume that all formulae from the
+interpolant for $\mu(n)$ have only positive occurrences of the
+states\footnote{According to Proposition \ref{prop:positive-interpol},
+  building such an interpolant is always possible} in $Q$.
 
 In this process, the nodes on the path between $\rootNode$ and $n$,
 including $n$, might become eligible for coverage, therefore we
@@ -1205,33 +1209,47 @@ adds a covering edge $(n_i,m)$ to $\lhd$, it does not have to be
 called for the successors of $n_i$ on this path, which is handled via
 the boolean flag $b$.
 
-Finally, we expand $n$ (lines
+Finally, if $n$ is still uncovered (i.e.\ it has not been previously
+covered during the refinement phase) we expand $n$ (lines
 \ref{ln:expand-begin}-\ref{ln:expand-end}) by creating a new node for
-each successor $s$ via the event $a \in \Sigma$ and inserting it
-into the worklist. The label of the new node is $\top$, its
-replacement set $R(s)$ is computed based on $R(n)$ and the label of
-the edge $(n,a,s)$ is $\Theta(n,a,k)$, where $k$ is the depth of $n$
-in $\Art$.
+each successor $s$ via the event $a \in \Sigma$ and inserting it into
+the worklist. The label of the new node is $\top$, its replacement set
+$R(s)$ is computed based on $R(n)$ and the label of the edge $(n,a,s)$
+is $\Theta(n,a,k)$, where $k$ is the depth of $n$ in $\Art$.
 
-The following lemma states that Algorithm \ref{alg:impact} builds an
-over-approximation of the concrete runs of $\A$.
+The following lemma states that the labeling of the nodes in an ART
+built by Algorithm \ref{alg:impact} is consistent with the semantics
+of the transition function of $\A$.
 
-\begin{lemma}\label{lemma:impact-interpol}
+\begin{lemma}\label{lemma:well-labeled}
   Given an ART $\Art = \tuple{N,E,\rootNode,\Lambda,R,T,\lhd}$ built
-  by Algorithm \ref{alg:impact} and a node $n \in N$, for all $(n,a,m)
-  \in E$, we have $\Post{\A}(\Lambda(n),a) \models \Lambda(m)$.
+  by Algorithm \ref{alg:impact}, $\Post{\A}(\Lambda(n),a) \models
+  \Lambda(m)$, for all $(n,a,m) \in E$.
 \end{lemma}
 \proof{ We distinguish two cases. First, if $(n,a,m)$ occurs on a path
   in $\Art$ that has never been refined, then $\Lambda(m)=\top$ and
-  the entailment holds trivially. Otherwise, let $(n_0,a_1,n_1),
-  \ldots, (n_{k-1},a_k,n_k)$ be a path, where $n_0 = \rootNode$ and
-  $(n,a,m) = (n_{i-1},a_i,n_i)$, for some $i \in [1,k]$ and, moreover,
-  $a_1\ldots a_k$ was found, at some point, to be a spurious
-  counterexample. Let $\tuple{\top,I_1,\ldots,I_k\equiv\bot}$ be an
+  the entailment holds trivially. Otherwise, let $\Omega$ be the set
+  of paths $\omega = (n_0,a_1,n_1), \ldots, (n_{k-1},a_k,n_k)$, where
+  $n_0 = \rootNode$ and $(n,a,m) = (n_{i-1},a_i,n_i)$, for some $i \in
+  [1,k]$ and, moreover, $a_1\ldots a_k$ was found, at some point, to
+  be a spurious counterexample. Let
+  $\langle\top,I^\omega_1,\ldots,I^\omega_k\equiv\bot\rangle$ be an
   interpolant for $\mu(n_k) \equiv \Lambda(\rootNode) \wedge
-  \bigwedge_{i=1}^k \Theta(n_{i-1},a,i-1) \wedge \bigwedge_{q \in R(n_k)}
-  (q_k \rightarrow \bot)$. 
-\qed}
+  \bigwedge_{i=1}^k \Theta(n_{i-1},a,i-1) \wedge \bigwedge_{q \in
+    R(n_k)} (q_k \rightarrow \bot)$, such that $I^\omega_i \in
+  \Form^+(Q,\vec{x})$, for all $i \in [1,k]$. According to Proposition
+  \ref{prop:positive-interpol}, it is always possible to build such an
+  interpolant, when $\mu(n_k)$ is unsatisfiable. By Proposition
+  \ref{prop:asterisk}, we obtain $\Delta^i(I^\omega_{i-1},a_i)[Q_i/Q]
+  \iffeq \exists Q_{i-1} ~.~
+  I^\omega_{i-1}[Q_{i-1}/Q,\vec{x}_{i-1}/\vec{x}] \wedge \theta_i$
+  and, since $I^\omega_{i-1}[Q_{i-1}/Q,\vec{x}_{i-1}/\vec{x}] \wedge
+  \theta_i \models I^\omega_i[Q_i/Q,\vec{x}_i/\vec{x}]$, we obtain
+  that $\Delta^i(I^\omega_{i-1},a_i)[Q_i/Q] \models
+  I^\omega_i[Q_i/Q,\vec{x}_i/\vec{x}]$. Since $\Lambda(n_{i-1}) =
+  \bigwedge_{\omega \in \Omega} I^\omega_{i-1}$ and $\Lambda(n_{i}) =
+  \bigwedge_{\omega \in \Omega} I^\omega_{i}$, we obtain
+  $\Post{\A}(\Lambda(n_{i-1}),a_i) \models \Lambda(n_i)$. \qed}
 
 The correctness of Algorithm \ref{alg:impact} is proved in the
 following.
@@ -1245,33 +1263,25 @@ following.
 \proof{ The first point is proved along the lines of the first point
   of Theorem \ref{thm:predabs}. In particular, it is easy to see that
   each call to $\Call{Close}{}$ terminates, because $N$ is finite at
-  each moment during the execution. 
-
-  For the second point, we prove the following invariant: each time
-  Algorithm \ref{alg:impact} reaches the line \ref{ln:impact-while},
-  the set of nodes $W$ in $\worklist$ contains exactly those nodes in
-  the ART $\tuple{N \cup W,E,\Lambda,R,T,\lhd}$ which are
-  both\begin{inparaenum}[(i)]
-  \item uncovered, and such that
-  \item for some $a \in \Sigma$, the edge $(n,a,s)$ is missing from $E$:
-  \end{inparaenum}
+  each moment during the execution. For the second point, we prove
+  that each time Algorithm \ref{alg:impact} reaches the line
+  \ref{ln:impact-while}, we have:
   \begin{equation}\label{inv:impact}
   W = \set{n \not\in N \mid n \text{ uncovered, } \exists a \in
     \Sigma~ \forall s \in N ~.~ (n,a,s) \not\in E}
   \end{equation}
-  Initially, $W = \set{\rootNode}$ and $N=E=\lhd=\emptyset$, thus the
-  invariant holds trivially. Suppose that (\ref{inv:impact}) holds at
-  when reaching line \ref{ln:impact-while} and some node $n$ was
-  removed from $W$ and inserted into $N$. We distinguish two cases,
-  either: \begin{itemize}
-  \item $n$ is covered at line \ref{ln:close-worklist}, in which case
-    $W$ remains unchanged, or
+  Initially, $W = \set{\rootNode}$ and $N=E=\lhd=\emptyset$, thus
+  (\ref{inv:impact}) holds trivially. Suppose that (\ref{inv:impact})
+  holds at when reaching line \ref{ln:impact-while} and some node $n$
+  was removed from $W$ and inserted into $N$. We distinguish two
+  cases, either: \begin{itemize}
+  \item $n$ is covered, in which case $W$ becomes $W \setminus
+    \set{n}$, or
   %
-  \item $n$ is not covered, in which case for each $a \in \Sigma$ a
-    new node $s$ is inserted into $W$ (line \ref{ln:expand-end}) and
-    the edge $(n,a,s)$ is inserted into $E$ (line
-    \ref{ln:edge-insert}). None of these new nodes are covered and
-    none of their successors inserted into $E$.
+  \item $n$ is not covered, in which case $W$ becomes $(W \setminus
+    \set{n}) \cup S$, where $S = \set{s \not\in N \mid (n,a,s) \in E,
+      a \in \Sigma}$ is the set of fresh successors of $n$. But then
+    no node $s \in S$ is covered and has successors in $E$.
   \end{itemize}
   Then the condition (\ref{inv:impact}) holds next time line
   \ref{ln:impact-while} is reached, thus it is invariant. If Algorithm
@@ -1284,9 +1294,31 @@ following.
   \end{compactitem}
   We prove that, in this case, $\bigvee_{n \in N} \Lambda(n)$ defines
   a safety invariant and conclude that $L(\A) = \emptyset$, by Lemma
-  \ref{lemma:safety-invariant}. To this end, let $u \in \Sigma^*$ be
-  an arbitrary sequence and let $v_1$ be the largest prefix of $u$
-  that labels a path from $\rootNode$ to some node $n_1 \in N$. 
+  \ref{lemma:safety-invariant}. To this end, let $u = a_1 \ldots a_k
+  \in \Sigma^*$ be an arbitrary sequence and let $v_1$ be the largest
+  prefix of $u$ that labels a path from $\rootNode$ to some node $n_1
+  \in N$. If $v_1 = u$ we are done. Otherwise, by the choice of $v_1$,
+  it must be the case that a successor of $n_1$ is missing from
+  $(N,E)$, thus $n_1$ must be covered. Let $n'_1$ be the closest
+  ancestor of $n_1$ such that $(n'_1,n''_1) \in \lhd$, for some $n''_1
+  \in N$, and let $v'_1$ be the prefix of $v_1$ leading to $n'_1$. By
+  the construction of $\lhd$ (line \ref{ln:close-uncover} in function
+  $\Call{Close}{}$), we have $\Lambda(n'_1) \models
+  \Lambda(n''_1)$. Applying Lemma \ref{lemma:well-labeled} inductively
+  on $v'_1$, we obtain that $\Post{\A}(\iota,v'_1) \models
+  \Lambda(n'_1)$, thus $\Post{\A}(\iota,v'_1) \models \Lambda(n''_1)$.
+  Continuing inductively from $n''_1$, we exhibit a sequence of
+  strings $v'_1,\ldots,v'_\ell \in \Sigma^*$ and nodes $\rootNode =
+  m_0,m_1,\ldots,m_\ell$ such that, for all $i \in
+  [1,\ell]$: \begin{compactitem}
+  \item $v'_i$ labels the path between $m_{i-1}$ and $m_i$ in $(N,E)$,    
+    %
+  \item $\Post{\A}(\iota,v'_1\ldots v'_i) \models \Lambda(m_i)$.
+  \end{compactitem}
+  Moreover, we have $u = v'_1 \ldots v'_\ell$, thus $\Post{\A}(\iota,u)
+  \models \Lambda(m_\ell)$ and we are done showing that $\bigvee_{n\in
+    N} \Lambda(n)$ is an invariant. To prove that it is, moreover, a
+  safety invariant, 
 \qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
