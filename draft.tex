@@ -705,13 +705,14 @@ $u$ from future searches.
     \end{array}\]
    Let us prove the final point ($\Asterisk$). If
    $\I,\beta_n\cup\nu_{n-1}\cup\nu_n \models
-   \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_{n}/Q]$,
-   for some valuations $\beta_{n} : Q_{n-1} \rightarrow \booli$ and
-   $\nu_i : \vec{x}_i \rightarrow \Data^\I$, for $i=n-1,n$, then we
-   build a valuation $\beta_{n-1}$ such that
-   $\I,\beta_{n-1}\cup\beta_n \cup \nu_{n-1}\cup\nu_n \models
-   \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n$,
-   as follows. For each occurrence of a subformula $\Delta(q,a_n)$ in
+   \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots
+     a_{n-1}),a_n)}[Q_{n}/Q]$, for some valuations $\beta_{n} : Q_{n}
+   \rightarrow \booli$ and $\nu_i : \vec{x}_i \rightarrow \Data^\I$,
+   for $i=n-1,n$, then we build a valuation $\beta_{n-1} : Q_{n-1}
+   \rightarrow \booli$ such that $\I,\beta_{n-1}\cup\beta_n \cup
+   \nu_{n-1}\cup\nu_n \models \AbsPost{\A}(\iota,a_1\ldots
+   a_{n-1})[Q_{n-1}/Q] \wedge \theta_n$, as follows. For each
+   occurrence of a subformula $\Delta(q,a_n)$ in
    $\AbsPost{\A}(\iota,a_1\ldots a_{n-1})$ we set
    $\beta_{n-1}(q_{n-1}) = \true$ if $\I,\beta_n\cup\nu_{n-1}\cup\nu_n
    \models \Delta(q,a_n)[Q_n/Q]$ and $\beta_{n-1}(q_{n-1}) = \false$,
