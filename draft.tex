@@ -1135,20 +1135,22 @@ remove and recompute the subtree of $\Art$ rooted at $p$.
 Consider the automaton given in Figure \ref{fig:ex}. First, Algorithm
 \ref{alg:predabs} fires the sequence $a$, and since there are no other
 formulae than $\bot$ in $\preds$, the successor of $\iota \equiv q_0$
-is $\top$ (a). The pivot of $a$ is the root of the ART and the
-spuriousness check results in the predicates $\set{q_0,q_1}$, which
-are added to $\preds$ and the $\top$ node is deleted. The next time
-$a$ is fired, it creates a node labeled $q_1$ and the next sequence
-$aa$ creates another node $q_1$ which is covered by the first,
-depicted with a dashed arrow (b). The third sequence is $ab$, which
-results in a new node $\top$ and triggers a spuriousness check. The
-new predicate is $x\leq0\wedge q_2 \wedge y\geq0$ and the pivot is
-again the root. Then the entire ART is rebuild with the new predicates
-and the sequence $aab$ results in an uncovered node $\top$ (c). The
-new pivot is the endpoint of $a$ and the new predicates are $q_1\wedge
-q_2$ and $y>x-1 \wedge q_2$. Finally, the ART is rebuilt from the
-pivot node and the result is a tree in which all nodes are covered,
-thus proving the emptiness of the automaton. \qed
+is $\top$, in Figure \ref{fig:pa} (a). The pivot of $a$ is the root of
+the ART and the spuriousness check yields the predicates $q_0$ and
+$q_1$, which are added to $\preds$ and the $\top$ node is removed. The
+next time $a$ is fired, it creates a node labeled $q_1$ and the
+sequence $aa$ creates another node $q_1$, which is covered by the
+first, depicted with a dashed arrow, in Figure \ref{fig:pa} (b). The
+third sequence is $ab$, which results in a new uncovered node $\top$
+and triggers a spuriousness check. The new predicate obtained from
+this check is $x\leq0\wedge q_2 \wedge y\geq0$ and the pivot is again
+the root. Then the entire ART is rebuild with the new predicates and
+the sequence $aab$ results in an uncovered node $\top$, in Figure
+\ref{fig:pa} (c). The new pivot is the endpoint of $a$ and the new
+predicates are $q_1\wedge q_2$ and $y>x-1 \wedge q_2$. Finally, the
+ART is rebuilt from the pivot node and the result is a tree in which
+all nodes are covered, thus proving the emptiness of the automaton, in
+Figure \ref{fig:pa} (d). \qed
 
 Termination of Algorithm \ref{alg:predabs} depends on the ability of a
 given interpolating decision procedure for the combined boolean and
@@ -1469,6 +1471,44 @@ during the refinement phase) we expand $n$ (lines
 \ref{ln:expand-begin}-\ref{ln:expand-end}) by creating a new node for
 each successor $s$ via the event $a \in \Sigma$ and inserting it into
 the worklist.
+
+\begin{figure}[htb]
+\begin{tabular}{cc}
+\includegraphics[scale=0.42]{figures/IM1.pdf} & \includegraphics[scale=0.42]{figures/IM2.pdf} \\
+\footnotesize{(a)} & \footnotesize{(b)} \\
+\\
+\includegraphics[scale=0.42]{figures/IM3.pdf} & \includegraphics[scale=0.42]{figures/IM4.pdf} \\
+\footnotesize{(c)} & \footnotesize{(d)}
+\end{tabular}
+\caption{Proving Emptiness of the Automaton from Fig. \ref{fig:ex} using Algorithm \ref{alg:impact}}
+\label{fig:im}
+\end{figure}
+
+\paragraph{\em Example}
+We show the execution of Algorithm \ref{alg:impact} on the automaton
+from Figure \ref{fig:ex}.  Initially, the procedure fires the sequence
+$a$, whose endpoint it labeled with $\top$, in Figure \ref{fig:im}
+(a). Since this node is uncovered, it checks the spuriousness of the
+counterexample $a$ and refines the label of the node to $q_1$. Since
+the node is still uncovered, two successors, labeled with $\top$ are
+computed, corresponding to the sequences $aa$ and $ab$, in Figure
+\ref{fig:im} (b). The spuriousness check for $aa$ yields the
+interpolant $\tuple{q_0,x\leq0\wedge q_2 \wedge y\geq0}$ which
+strenghtens the label of the endpoint of $a$ from $q_1$ to $q_1\wedge
+x\leq0\wedge q_2\wedge y\geq0$. The sequence $ab$ is also found to be
+spurious, which changes the label of its endpoint from $\top$ to
+$\bot$, and also covers it. Since the endpoint of $aa$ is not covered,
+it is expanded in Figure \ref{fig:im} (c). Both sequences $aaa$ and
+$aab$ are found to be spurious, and the enpoint of $aab$, whose label
+has changed from $\top$ to $\bot$, is now covered. In the process, the
+label of $aa$ has also changed from $q_1$ to $q_1 \wedge y>x-1 \wedge
+q_2$, due to the strenghtening with the interpolant from $aab$.
+Finally, the only uncovered node is expanded to $aaaa$ and $aaab$,
+both found to be spurious, in Figure \ref{fig:im} (d). The refinement
+of $aaab$ causes the label of $aaa$ to change from $q_1$ to $q_1
+\wedge y>x-1 \wedge q_2$ and this node is now covered by $aa$. Since
+its successors are also covered, there are no uncovered nodes and the
+procedure returns $\true$. \qed
 
 The following lemma states that the labeling of the nodes in an ART
 built by Algorithm \ref{alg:impact} is consistent with the semantics
