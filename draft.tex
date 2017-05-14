@@ -141,8 +141,8 @@ to be paid is that emptiness becomes undecidable, for which reason we
 provide two efficient semi-algorithms for emptiness, based on lazy
 predicate abstraction \cite{blast} and the \impact~method
 \cite{mcmillan06}.  These algorithms are proven to terminate and
-return a word from the language, if the language is not empty, but
-termination is not guaranteed when the language is empty. 
+return a word from the language of the automaton, if one exists, but
+termination is not guaranteed when the language is empty.
 
 %% Finally, we prove termination in the empty case, when the transition
 %% formulae\begin{inparaenum}[(i)]
@@ -154,10 +154,10 @@ termination is not guaranteed when the language is empty.
 %% \end{inparaenum}
 
 We have implemented the boolean operations and emptiness checking
-semi-algorithms in a prototype tool and carried out experiments with
-examples taken from array logics \cite{cav09}, timed automata
+semi-algorithms and carried out experiments with examples taken from
+array logics \cite{cav09}, timed automata
 \cite{henzinger:RealTimeSystems}, communication protocols \cite{abp}
-and hardware verification \cite{smrcka}. 
+and hardware verification \cite{smrcka}.
 
 \paragraph{Related Work}
 Data languages and automata have been defined previously, in a
@@ -169,24 +169,23 @@ languages recognized by timed automata \cite{AlurDill94}, these
 languages, called quasi-regular, are not closed under complement, but
 their emptiness is decidable. The impossibility of complementation
 here is caused by the use of hidden variables, which we do not
-allow. Even though closed under complement, emptiness is undecidable
-in our case, mainly because counting (incrementing and comparing to a
-constant) data values is allowed, in many data theories.
+allow. Emptiness is however undecidable in our case, mainly because
+counting (incrementing and comparing to a constant) data values is
+allowed, in many data theories.
 
-Other approaches to defining notions of data automata
-\cite{Bojanczyk:2011:TLD,BouyerPetitTherien03} are different from ours
-mainly because these automata are controlled by equivalence relations
-of finite index, whereas in our case, the transitions are defined by
-unrestricted formulae in the first-order theory of the data domain. As
-in \cite{Kaminski94,AlurDill94}, the emptiness problem is decidable
-for these classes.
+%% Other approaches to defining classes of data automata
+%% \cite{Bojanczyk:2011:TLD,BouyerPetitTherien03} are different from ours
+%% mainly because these automata are controlled by equivalence relations
+%% of finite index, whereas in our case, the transitions are defined by
+%% unrestricted formulae in the first-order theory of the data domain. As
+%% in \cite{Kaminski94,AlurDill94}, the emptiness problem is decidable
+%% for these classes.
 
-Another related model is that of predicate automata
-\cite{Farzan15,Farzan16}, which recognize languages over integer data
-by labeling the words with conjunctions of uninterpreted
-predicates. We intend to explore further the connection with our model
-of alternating data automata, in order to apply our method to the
-verification of parallel programs.
+Another related model is that of predicate automata \cite{Farzan15},
+which recognize languages over integer data by labeling the words with
+conjunctions of uninterpreted predicates. We intend to explore further
+the connection with our model of alternating data automata, in order
+to apply our method to the verification of parallel programs.
 
 The model presented in this paper stems from the language inclusion
 problem considered in \cite{Tacas16}. There we provide a
@@ -199,21 +198,22 @@ of booleans and data. Since determinisation is not needed and
 complementation is possible in linear time, the bulk of the work is
 shipped to the decision procedure.
 
-The emptiness check is implemented by adapting similar semi-algorithms
-for nondeterministic infinite-state programs to the alternating model
-of computation. In particular, we considered the state-of-the-art
-\impact~ procedure \cite{mcmillan06} that is shown to outperform lazy
-predicate abstraction in the nondeterministic case, and generalized it
-to cope with alternation. More recent approaches for interpolant-based
-abstraction refinement \cite{McMillan14,Hoder12} target Horn systems,
-used to encode recursive and concurrent programs
+The emptiness check for alternating data automata adapts similar
+semi-algorithms for nondeterministic infinite-state programs to the
+alternating model of computation. In particular, we considered the
+state-of-the-art \impact~ procedure \cite{mcmillan06} that is shown to
+outperform lazy predicate abstraction \cite{blast} in the
+nondeterministic case, and generalized it to cope with
+alternation. More recent approaches for interpolant-based abstraction
+refinement target Horn systems \cite{McMillan14,Hoder12}, used to
+encode recursive and concurrent programs
 \cite{Grebenshchikov12}. However, the emptiness of alternating word
 automata cannot be directly encoded using Horn clauses, because all
 the branches of the computation synchronize on the same input, which
-does not seem to be easily encoded using a finite number of local
-(equality) constraints. We believe that the lazy annotation techniques
-for Horn clauses are suited for branching computations, which we
-intend to consider in a future tree automata setting.
+cannot be encoded by a finite number of local (equality)
+constraints. We believe that the lazy annotation techniques for Horn
+clauses are suited for branching computations, which we intend to
+consider in a future tree automata setting.
 
 \section{Preliminaries}
 
@@ -229,27 +229,26 @@ $\#(f)=0$ then $f$ is a \emph{constant}. We consider the constants
 $\top$ and $\bot$ of sort $\Bool$.
 
 We consider an infinite countable set of \emph{variables} $\vars$,
-where each $x \in \vars$ has an associated sort $\sigma(x)$. Terms are
-defined recursively: a term $t$ of sort $\sigma(t)=S$ is a variable $x
-\in \vars$ where $\sigma(x)=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
+where each $x \in \vars$ has an associated sort $\sigma(x)$. A
+\emph{term} $t$ of sort $\sigma(t)=S$ is a variable $x \in \vars$
+where $\sigma(x)=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
 $t_1,\ldots,t_{\#(f)}$ are terms of sort $\Data$ and $\sigma(f)=S$. An
 \emph{atom} is a term of sort $\Bool$ or an equality $t \teq s$
-between two terms of sort $\Data$. A \emph{literal} is an atom or its
-negation. A \emph{formula} is an existentially quantified combination
-of atoms using disjunction $\vee$, conjunction $\wedge$ and negation
-$\neg$ and we write $\phi \rightarrow \psi$ for $\neg\phi \vee \psi$.
+between two terms of sort $\Data$. A \emph{formula} is an
+existentially quantified combination of atoms using disjunction
+$\vee$, conjunction $\wedge$ and negation $\neg$ and we write $\phi
+\rightarrow \psi$ for $\neg\phi \vee \psi$.
 
-We denote by $\fv{\sigma}{\phi}$ the set of free (not under the scope
-of an existential quantifier) variables of sort $\sigma$ in $\phi$ and
-write $\fv{}{\phi}$ for $\bigcup_{\sigma \in \ssorts{\sig}}
-\fv{\sigma}{\phi}$. For a variable $x \in \fv{}{\phi}$ and a term $t$
-such that $\sigma(t) = \sigma(x)$, let $\phi[t/x]$ be the result of
-replacing each occurrence of $x$ by $t$. For indexed sets
-$\vec{t}=\set{t_1,\ldots,t_n}$ and $\vec{x}=\set{x_1,\ldots,x_n}$, we
-write $\phi[\vec{t}/\vec{x}]$ for the formula obtained by
-simultaneously replacing $x_i$ with $t_i$ in $\phi$, for all
-$i\in[1,n]$. The size $\len{\phi}$ is the number of symbols occuring
-in $\phi$.
+We denote by $\fv{\sigma}{\phi}$ the set of free variables of sort
+$\sigma$ in $\phi$ and write $\fv{}{\phi}$ for $\bigcup_{\sigma \in
+  \ssorts{\sig}} \fv{\sigma}{\phi}$. For a variable $x \in
+\fv{}{\phi}$ and a term $t$ such that $\sigma(t) = \sigma(x)$, let
+$\phi[t/x]$ be the result of replacing each occurrence of $x$ by
+$t$. For indexed sets $\vec{t}=\set{t_1,\ldots,t_n}$ and
+$\vec{x}=\set{x_1,\ldots,x_n}$, we write $\phi[\vec{t}/\vec{x}]$ for
+the formula obtained by simultaneously replacing $x_i$ with $t_i$ in
+$\phi$, for all $i\in[1,n]$. The size $\len{\phi}$ is the number of
+symbols occuring in $\phi$.
 
 An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
 \item the sort $\Data$ into a non-empty set $\Data^\I$, 
@@ -268,6 +267,7 @@ each function symbol $f$ by its interpretation $f^\I$ and each
 variable $x$ by its valuation $\nu(x)$. For a formula $\phi$, we write
 $\I,\nu \models \phi$ if the formula obtained by replacing each term
 $t$ in $\phi$ by the value $t^\I_\nu$ is logically equivalent to true.
+
 A formula $\phi$ is \emph{satisfiable} in the interpretation $\I$ if
 there exists a valuation $\nu$ such that $\I,\nu \models \phi$, and
 \emph{valid} if $\I,\nu \models \phi$ for all valuations $\nu$.  The
@@ -332,16 +332,16 @@ where: \begin{compactitem}
 %
 \item $\Delta : Q \times \Sigma \rightarrow
   \Form^+(Q,\overline{\vec{x}}\cup\vec{x})$ is a \emph{transition
-    function}, where $\overline{\vec{x}}$ is the set $\{\overline{x}
-  \mid x \in \vec{x}\}$.
+    function},
 \end{compactitem}
-Intuitively, in each formula $\Delta(q,a)$ describing a transition
-rule, the variables $\overline{\vec{x}}$ track the previous and
-$\vec{x}$ the current values of the variables of $\A$. Observe
-further, that the initial values of the variables are left
-unconstrained, as the initial configuration does not contain free
-data variables. The size of $\A$ is defined as $\len{\A} = \len{\iota}
-+ \sum_{(q,a) \in Q\times\Sigma}\len{\Delta(q,a)}$. 
+where $\overline{\vec{x}}=\{\overline{x} \mid x \in \vec{x}\}$. In
+each formula $\Delta(q,a)$ describing a transition rule, the variables
+$\overline{\vec{x}}$ track the previous and $\vec{x}$ the current
+values of the variables of $\A$. Observe that the initial values of
+the variables are left unconstrained, as the initial configuration
+does not contain free data variables. The size of $\A$ is defined as
+$\len{\A} = \len{\iota} + \sum_{(q,a) \in
+  Q\times\Sigma}\len{\Delta(q,a)}$.
 
 \begin{figure}[htb]
 \centerline{\includegraphics[scale=0.8]{figures/Example.pdf}}
@@ -350,10 +350,10 @@ data variables. The size of $\A$ is defined as $\len{\A} = \len{\iota}
 \end{figure}
 
 \paragraph{\em Example}
-Figure \ref{fig:ex} depicts an alternating data automaton, with input
-alphabet $\Sigma = \set{a,b}$, variables $\vec{x} = \set{x,y}$, states
-$Q = \set{q_0,q_1,q_2,q_3,q_4}$, initial configuration $q_0$, final
-states $F=\set{q_3,q_4}$ and transitions:
+Figure \ref{fig:ex} depicts an ADA with input alphabet $\Sigma =
+\set{a,b}$, variables $\vec{x} = \set{x,y}$, states $Q =
+\set{q_0,q_1,q_2,q_3,q_4}$, initial configuration $q_0$, final states
+$F=\set{q_3,q_4}$ and transitions:
 \[\begin{array}{rcl}
 \Delta(q_0,a) & \equiv & q_1 \wedge q_2 \wedge x=0 \wedge y=0 \\
 \Delta(q_1,a) & \equiv & q_1 \wedge q_3 \wedge x=\overline{y}+1 \wedge y=\overline{x}+1 \\
@@ -361,26 +361,27 @@ states $F=\set{q_3,q_4}$ and transitions:
 \Delta(q_2,a) & \equiv & q_2 \wedge x > \overline{x} \wedge y > \overline{y} \\
 \Delta(q_2,b) & \equiv & q_4 \wedge \overline{x}>\overline{y}
 \end{array}\]
-The missing transition rules are assumed to be $\false$. Rules
-$\Delta(q_0,a)$ and $\Delta(q_1,a)$ are universal and there are no
-existential nondeterministic rules. Rules $\Delta(q_1,a)$ and
-$\Delta(q_2,b)$ compare past ($\overline{x},\overline{y}$) with present
-($x,y$) values, $\Delta(q_0,a)$ constrains the present and
+The missing rules, such as $\Delta(q_0,b)$, are assumed to be
+$\bot$. Rules $\Delta(q_0,a)$ and $\Delta(q_1,a)$ are universal and
+there are no existential nondeterministic rules. Rules $\Delta(q_1,a)$
+and $\Delta(q_2,a)$ compare past ($\overline{x},\overline{y}$) with
+present ($x,y$) values, $\Delta(q_0,a)$ constrains the present and
 $\Delta(q_1,b)$, $\Delta(q_2,b)$ the past values, respectively. \qed
 
 Formally, let $\vec{x}_k = \set{x_k \mid x \in \vec{x}}$, $k\geq0$, be
 a set of time-stamped variables. For an input event $a \in \Sigma$ and
-a formula $\phi$, we write $\Delta(\phi,a)$ (respectively,
+a formula $\phi$, we write $\Delta(\phi,a)$ (respectively
 $\Delta^k(\phi,a)$) for the formula obtained from $\phi$ by
 simultaneously replacing each state $q \in \fv{\Bool}{\phi}$ by the
 formula $\Delta(q,a)$ (respectively
 $\Delta(q,a)[\vec{x}_k/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]$, for
 all $k\geq0$). Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots
 (a_n,\nu_n)$, the \emph{run} of $\A$ over $w$ is the sequence of
-formulae $\phi_0,\phi_1,\ldots,\phi_n$, where $\phi_0 \equiv \iota$
-and, for all $k\in[1,n]$, we have $\phi_k \equiv
-\Delta^k(\phi_{k-1},a_k)$. Next, we slightly abuse notation and write
-$\Delta(\iota,a_1,\ldots,a_n)$ for the formula
+formulae: \[\phi_0(Q) \Rightarrow \phi_1(Q,\vec{x}_0 \cup \vec{x}_1)
+\Rightarrow \ldots \Rightarrow \phi_n(Q,\vec{x}_0 \cup \ldots
+\vec{x}_n)\] where $\phi_0 \equiv \iota$ and, for all $k\in[1,n]$, we
+have $\phi_k \equiv \Delta^k(\phi_{k-1},a_k)$. Next, we slightly abuse
+notation and write $\Delta(\iota,a_1,\ldots,a_n)$ for the formula
 $\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ above. We say that $\A$
 \emph{accepts} $w$ iff $\I,\nu \models \Delta(\iota,a_1,\ldots,a_n)$,
 where $\nu$ is some valuation that maps:\begin{inparaenum}[(1)]
@@ -447,8 +448,8 @@ of $\phi$:
 \overline{\phi} & \equiv & \phi \text{ if $\phi \in Q$} \\
 \overline{\phi} & \equiv & \neg\phi \text{ if $\phi \not\in Q$ atom}
 \end{array}\]
-It is easy to check that $\len{\overline{\phi}} = \len{\phi}$, for
-every formula $\phi \in \Form^+(Q,\vec{x})$.
+We have $\len{\overline{\phi}} = \len{\phi}$, for every formula $\phi
+\in \Form^+(Q,\vec{x})$.
 
 In the following let $\A_i =
 \tuple{\vec{x},Q_i,\iota_i,F_i,\Delta_i}$, for $i=1,2$, where
@@ -473,9 +474,9 @@ correctness of the above definitions:
 It is easy to see that $\len{\A_\cup} = \len{\A_\cap} = \len{\A_1} +
 \len{\A_2}$ and $\len{\overline{\A}} = \len{\A}$, thus the automata
 for the boolean operations, including complementation, can be built in
-linear time. This is not surprising, as linear time intersection and
-complementation are also possible for alternating automata over finite
-alphabets \cite{ChandraKozenStockmeyer81}.
+linear time. This matches the linear-time bounds for intersection and
+complementation of alternating automata over finite alphabets
+\cite{ChandraKozenStockmeyer81}.
 
 \section{Antichains and Interpolants for Emptiness}
 
@@ -508,10 +509,10 @@ mapping each formula in $\Form^+(Q,\vec{x})$ to a formula defining the
 effect of reading the event $a$.
 
 We generalize the post-image function to finite sequences of input
-events, as follows, for any $u \in \Sigma^*$:
+events, as follows:
 \[\begin{array}{l}
 \Post{\A}(\phi,\varepsilon) \equiv \phi \hspace*{5mm} \Post{\A}(\phi,ua) \equiv \Post{\A}(\Post{\A}(\phi,u),a) \\
-\Accept{\A}(u) \equiv \Post{\A}(\iota,u) \wedge \bigwedge_{q \in Q \setminus F} (q \rightarrow \bot)
+\Accept{\A}(u) \equiv \Post{\A}(\iota,u) \wedge \bigwedge_{q \in Q \setminus F} (q \rightarrow \bot)\text{, for any $u \in \Sigma^*$}
 \end{array}\]
 Then the emptiness problem for $\A$ becomes: does there exist $u \in
 \Sigma^*$ such that the formula $\Accept{\A}(u)$ is satisfiable?
@@ -596,18 +597,18 @@ formulae as \emph{predicates}. Given a formula $\phi$, we denote by
 $\abs{\phi} \equiv \bigwedge \set{\pi \in \preds \mid \phi \models
   \pi}$ the abstraction of $\phi$ w.r.t. the predicates in
 $\preds$. The abstract versions of the post-image and acceptance
-condition are defined as follows, for any $u \in \Sigma^*$:
+condition are defined as follows:
 \[\begin{array}{l}
 \AbsPost{\A}(\phi,\varepsilon) \equiv \phi \hspace*{5mm}
 \AbsPost{\A}(\phi,ua) \equiv \abs{(\Post{\A}(\AbsPost{\A}(\phi,u),a))} \\
 \AbsAccept{\A}(u) \equiv \AbsPost{\A}(\iota,u) \wedge \bigwedge_{q \in Q \setminus F} 
-(q \rightarrow \bot)
+(q \rightarrow \bot)\text{, for any $u \in \Sigma^*$}
 \end{array}\]
 
 \begin{lemma}\label{lemma:abstract-invariant}
   For any bijection $\mu : \nat \rightarrow \Sigma^*$, there exists
   $k>0$ such that $\bigvee_{i=0}^k \AbsPost{\A}(\iota,\mu(i))$ defines
-  an invariant for $\A$. 
+  an invariant $\abs{\Inv}$ for $\A$. 
 \end{lemma}
 
 \paragraph{\em Remark}
@@ -690,22 +691,24 @@ where $Q_k = \set{q_k \mid q \in Q}$, $k \in [0,n]$ are time-stamped
 sets of boolean variables corresponding to the set $Q$ of states of
 $\A$. The first conjunct $\theta_0(Q_0) \equiv \iota[Q_0/Q]$ is the
 initial configuration of $\A$, with every $q \in \fv{\Bool}{\iota}$
-replaced by $q_0$. The definition of $\theta_k$, $k\in[1,n]$ uses
-\emph{replacement sets} $R_\ell \subseteq Q_\ell$, $\ell\in [0,n]$,
-which are defined inductively below: \begin{compactitem}
-\item $R_0 = \fv{\Bool}{\theta_0}$ and 
+replaced by $q_0$. The definition of $\theta_k$, for all $k\in[1,n]$,
+uses \emph{replacement sets} $R_\ell \subseteq Q_\ell$, $\ell\in
+[0,n]$, which are defined inductively below: \begin{compactitem}
+\item $R_0 = \fv{\Bool}{\theta_0}$,
 %
 \item $\theta_\ell \equiv \bigwedge_{q_{\ell-1}\in R_{\ell-1}}
   (q_{\ell-1} \rightarrow
   \Delta(q,a_\ell)[Q_\ell/Q,\vec{x}_{\ell-1}/\overline{\vec{x}},\vec{x}_\ell/\vec{x}])$
   and $R_\ell = \fv{\Bool}{\theta_\ell} \cap Q_\ell$, for each
   $\ell\in[1,n]$.
+%
+\item $\theta_{n+1}(Q_n) \equiv \bigwedge_{q \in Q \setminus F} (q_n
+  \rightarrow \bot)$.
 \end{compactitem}
-Finally, we set $\theta_{n+1}(Q_n) \equiv \bigwedge_{q \in Q \setminus
-  F} (q_n \rightarrow \bot)$. The intuition is that $\theta_0, \ldots,
-\theta_n$ encode the run of $\A$ over $u$ and $\theta_{n+1}$ is the
-acceptance condition, which forces the last remaining non-final states
-to be false. 
+The intuition is that $R_0,\ldots,R_n$ are the sets of states replaced,
+$\theta_0, \ldots, \theta_n$ are the transition rules fired on the run
+of $\A$ over $u$ and $\theta_{n+1}$ is the acceptance condition, which
+forces the last remaining non-final states to be false.
 
 Moreover, we require that an interpolant
 $\tuple{\top,I_0,\ldots,I_n,\bot}$ for the interpolation problem
@@ -714,24 +717,24 @@ $\Theta(u)$ does not have negative occurrences of states, i.e.\ $I_i
 can always be built, as showed below:
 
 \begin{proposition}\label{prop:positive-interpol}
-  For any $u = a_1 \ldots a_n \in \Sigma^*$, if $\pi(u)$ is
-  unsatisfiable then one can build an interpolant
-  $\tuple{\top,I_0,\ldots,I_n,\bot}$ for $\pi(u)$, such that $I_i \in
-  \Form^+(Q,\vec{x})$, for all $i \in [0,n]$.
+  If $\Theta(a_1 \ldots a_n)$ is unsatisfiable then one can build an
+  interpolant $\tuple{\top,I_0,\ldots,I_n,\bot}$ for $\Theta(a_1\ldots
+  a_n)$, such that $I_i \in \Form^+(Q,\vec{x})$, for all $i \in
+  [0,n]$.
 \end{proposition}
 
-We recall that a run of $\A$ over $u$ is a sequence $\phi_0(Q),
-\phi_1(Q,\vec{x}_0\cup\vec{x}_1), \ldots,
-\phi_n(Q,\vec{x}_0\cup\ldots\cup\vec{x}_n)$, where $\phi_0$ is the
-initial configuration $\iota$ and for each $k>0$, $\phi_k$ is obtained
-from $\phi_{k-1}$ by replacing each state $q \in
+We recall that a run of $\A$ over $u$ is a sequence: \[\phi_0(Q)
+\Rightarrow \phi_1(Q,\vec{x}_0\cup\vec{x}_1) \Rightarrow \ldots
+\Rightarrow \phi_n(Q,\vec{x}_0\cup\ldots\cup\vec{x}_n)\] where
+$\phi_0$ is the initial configuration $\iota$ and for each $k>0$,
+$\phi_k$ is obtained from $\phi_{k-1}$ by replacing each state $q \in
 \fv{\Bool}{\phi_{k-1}}$ by the formula
 $\Delta(q,a_k)[\vec{x}_{k-1}/\overline{\vec{x}},\vec{x}_k/\vec{x}]$,
 given by the transition function of $\A$. Observe that, because the
 states are replaced with transition formulae when moving one step in a
 run, the formulae thus produced lose track of the control history and
-are not directly suitable to producing interpolants that relates
-states and data.
+are not directly suitable to producing interpolants that relate states
+and data.
 
 The main idea behind the above definition of the interpolation problem
 is that we would like to obtain an interpolant $\tuple{\top,I_0(Q),
@@ -747,7 +750,7 @@ values encountered throughout its runs.
 
 The correctness of this interpolation-based abstraction refinement
 setup is captured by the progress property below, which guarantees
-that adding the formulae of an interpolant for $\pi(u)$ to the set
+that adding the formulae of an interpolant for $\Theta(u)$ to the set
 $\preds$ of predicates suffices to exclude the spurious counterexample
 $u$ from future searches.
 
@@ -765,13 +768,13 @@ $u$ from future searches.
 \end{lemma}
 
 We have now all the ingredients to describe the first emptiness
-semi-algorithm for alternating data
+checking semi-algorithm for alternating data
 automata. Algorithm\footnote{Though termination is not guaranteed, we
   call it algorithm for conciseness.} \ref{alg:predabs} builds an
 \emph{abstract reachability tree} (ART) whose nodes are labeled with
-formulae over-approximating the concrete sets of configurations, which
-uses a covering relation between nodes in order to ensure that the set
-of formulae labeling the nodes in the ART forms an antichain. Any
+formulae over-approximating the concrete sets of configurations, and a
+covering relation between nodes in order to ensure that the set of
+formulae labeling the nodes in the ART forms an antichain. Any
 spurious counterexample is eliminated by computing an interpolant and
 adding its formulae to the set of predicates.
 
@@ -920,28 +923,29 @@ tree $(N,E)$,
 \item $\Lambda : N \rightarrow \Form(Q,\vec{x})$ is a labeling of the
   nodes with formulae, such that $\Lambda(\rootNode) = \iota$,
 %
-\item $R : N \rightarrow 2^Q$ is a labeling of nodes with
-\emph{replacement sets}, such that $R(\rootNode) = \fv{\Bool}{\iota}$,
+\item $R : N \rightarrow 2^Q$ is a labeling of nodes with replacement
+  sets, such that $R(\rootNode) = \fv{\Bool}{\iota}$,
 %
 \item $T : E \rightarrow \bigcup_{i=0}^\infty
-\Form(Q_i,\vec{x}_i,Q_{i+1},\vec{x}_{i+1})$ is labeling of edges with
-time-stamped formulae, and 
+  \Form(Q_i,\vec{x}_i,Q_{i+1},\vec{x}_{i+1})$ is a labeling of edges
+  with time-stamped formulae, and
 %
 \item $\lhd \subseteq N \times N$ is a set of
 \emph{covering edges}. 
 \end{compactitem}
-For simplicity, we write $T(n,a,m)$ for $T(e)$, when $e$ is $(n,a,m)$.
-The replacement sets and time-stamped edge labels are defined below,
-for each edge $e = (n,a,m) \in E$, if $n$ lies at depth\footnote{We
-  consider that the root node has zero depth.} $k$ in the tree
-$(N,E)$ then we have:
-\[\begin{array}{rcl}
-T(e) & = & \bigwedge_{q \in R(n)} (q_k \rightarrow \Delta(q,a)[Q_{k+1}/Q,\vec{x}_{k}/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]) \\
-R(m) & = & \bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)}
-\end{array}\]
+%% For simplicity, we write $T(n,a,m)$ for $T(e)$, when $e$ is $(n,a,m)$.
+%% The replacement sets and time-stamped edge labels are defined below,
+%% for each edge $e = (n,a,m) \in E$, if $n$ lies at depth\footnote{We
+%%   consider that the root node has zero depth.} $k$ in the tree
+%% $(N,E)$ then we have:
+%% \[\begin{array}{rcl}
+%% T(e) & = & \bigwedge_{q \in R(n)} (q_k \rightarrow \Delta(q,a)[Q_{k+1}/Q,\vec{x}_{k}/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]) \\
+%% R(m) & = & \bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)}
+%% \end{array}\]
+
 Each node $n \in N$ corresponds to a unique path from the root to $n$,
 labeled by a sequence $\lambda(n) \in \Sigma^*$ of input events. The
-least unfeasible suffix of $\lambda(n)$ is the smallest sequence $v =
+least infeasible suffix of $\lambda(n)$ is the smallest sequence $v =
 a_1 \ldots a_k$, such that $\lambda(n) = wv$, for some $w \in
 \Sigma^*$ and the formula (\ref{eq:pivot}) below is unsatisfiable. The
 \emph{pivot} of $n$ is the node $p$ corresponding to the start of $v$
@@ -988,14 +992,14 @@ formulae than $\bot$ in $\preds$, the successor of $\iota \equiv q_0$
 is $\top$, in Figure \ref{fig:pa} (a). The pivot of $a$ is the root of
 the ART and the spuriousness check yields the predicates $q_0$ and
 $q_1$, which are added to $\preds$ and the $\top$ node is removed. The
-next time $a$ is fired, it creates a node labeled $q_1$ and the
-sequence $aa$ creates another node $q_1$, which is covered by the
+next time $a$ is fired, it creates a node labeled $q_1$ and the next
+sequence $aa$ creates a successor node $q_1$, which is covered by the
 first, depicted with a dashed arrow, in Figure \ref{fig:pa} (b). The
 third sequence is $ab$, which results in a new uncovered node $\top$
 and triggers a spuriousness check. The new predicate obtained from
 this check is $x\leq0\wedge q_2 \wedge y\geq0$ and the pivot is again
-the root. Then the entire ART is rebuild with the new predicates and
-the sequence $aab$ results in an uncovered node $\top$, in Figure
+the root. Then the ART is rebuilt with the new predicates and
+the sequence $aab$ yields an uncovered node $\top$, in Figure
 \ref{fig:pa} (c). The new pivot is the endpoint of $a$ and the new
 predicates are $q_1\wedge q_2$ and $y>x-1 \wedge q_2$. Finally, the
 ART is rebuilt from the pivot node and the result is a tree in which
@@ -1013,7 +1017,7 @@ for any two nodes $n,m \in N$, we have $n \lhd m$ iff
 $\AbsPost{\A}(\Lambda(n),a) \models \Lambda(m)$ for some $a \in
 \Sigma$, in other words, if $n$ has a successor whose label entails
 the label of $m$. The correctness criteria of Algorithm
-\ref{alg:predabs} are showed in the following theorem:
+\ref{alg:predabs} are stated by the following theorem:
 
 \begin{theorem}\label{thm:predabs}
   Given an automaton $\A$, such that $L(\A) \neq \emptyset$, Algorithm
@@ -1080,7 +1084,7 @@ sequence labeling the path from $\rootNode$ to $m$.
 A node $n \in N$ is \emph{covered} if $(n,p) \in \lhd$ or it has an
 ancestor $m$ such that $(m,p) \in \lhd$, for some $p \in N$. A node
 $n$ is \emph{closed} if it is covered, or $\Lambda(n) \not\models
-\Lambda(m)$ for all $m \in N$ such that $n \prec^* m$.
+\Lambda(m)$ for all $m \in N$ such that $m \prec^* n$.
 
 \begin{algorithm}[t!]
 {\scriptsize\begin{algorithmic}[0]
