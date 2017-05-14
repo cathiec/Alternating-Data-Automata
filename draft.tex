@@ -67,6 +67,154 @@ results of an experimental comparison.
 
 \section{Introduction}
 
+The language inclusion problem is recognized as being central to
+verification of hardware, communication protocols and software
+systems. A property is a specification of the correct executions of a
+system, given as a set $\mathcal{P}$ of executions, and the
+verification problem asks if the set $\mathcal{S}$ of executions of
+the system under consideration is contained within $\mathcal{P}$.
+
+This problem is at the core of widespread verification techniques,
+such as automata-theoretic model checking \cite{VARDI94}, where
+systems are specified as finite-state automata and properties defined
+using Linear Temporal Logic \cite{Pnueli77}. However the bottleneck of
+this and other related verification techniques is the intractability
+of language inclusion (PSPACE-complete for finite-state automata on
+finite words over finite alphabets).
+
+Alternation \cite{ChandraKozenStockmeyer81} was introduced as a
+generalization of nondeterminism, introducing universal, in addition
+to existential transitions. For automata over finite alphabets, the
+language inclusion problem can be encoded as the emptiness problem of
+an alternating automaton of linear size. Moreover, efficient
+exploration techniques based on antichains are shown to perform well
+for alternating automata over finite alphabets \cite{DeWulf08}.
+
+Using finite alphabets for the specification of properties and models
+is however very restrictive, when dealing with real-life computer
+systems, mostly because of the following reasons. On one hand,
+programs handle data from very large domains, that can be assumed to
+be infinite (64-bit integers, floating point numbers, strings of
+characters, etc.) and their correctness must be specified in terms of
+the data values. On the other hand, systems must respond to strict
+deadlines, which requires temporal specifications as timed
+languages \cite{AlurDill94}.
+
+Although being convenient specification tools, automata over infinite
+alphabets lack the decidability properties ensured by finite
+alphabets. In general, when considering infinite data as part of the
+input alphabet, language inclusion is undecidable and, even
+complementation becomes impossible, for instance, for timed automata
+\cite{AlurDill94} or finite-memory register automata
+\cite{Kaminski94}. In some cases, one can recover theoretical
+decidability, by restricting the number of variables (clocks) in timed
+automata to one \cite{OuaknineWorrell04}, or forbidding relations
+between current and past/future values, as with symbolic automata
+\cite{symbTransd:POPL12}. In such cases, the emptiness problem for the
+alternating versions becomes decidable \cite{Lasota05,DAntoniKW16}.
+
+In this paper, we present a new model of alternating automata over
+infinite alphabets consisting of pairs $(a,\nu)$ where $a$ is an input
+event from a finite set and $\nu$ is a valuation of a finite set
+$\vec{x}$ of variables that range over an infinite domain. We assume
+that, at all times, the successive values taken by the variables in
+$\vec{x}$ are an observable part of the language, in other words,
+there are no hidden variables in our model. The transition rules are
+specified by a set of formulae, in a combined first-order theory of
+boolean control states and data, that relate past with present values
+of the variables. We do not fix the data theory a~priori, but rather
+consider it to be a parameter of the class.
+
+A run over an input word $(a_1,\nu_1) \ldots (a_n,\nu_n)$ is a
+sequence $\phi_0(\vec{x}_0) \Rightarrow \phi_1(\vec{x}_0,\vec{x}_1)
+\Rightarrow \ldots \Rightarrow \phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ of
+rewritings of the initial formula by substituting boolean states with
+time-stamped transition rules. The word is accepted if the final
+formula $\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ holds, when all
+time-stamped variables $\vec{x}_1,\ldots,\vec{x}_n$ are substituted by
+their values in $\nu_1,\ldots,\nu_n$, all non-final states replaced by
+false and all final states by true.
+
+The boolean operations of union, intersection and complement can be
+implemented in linear time in this model, thus matching the complexity
+of performing these operations in the finite-alphabet case. The price
+to be paid is that emptiness becomes undecidable, for which reason we
+provide two efficient semi-algorithms for emptiness, based on lazy
+predicate abstraction \cite{blast} and the \impact~method
+\cite{mcmillan06}. These algorithms are proven to terminate and return
+a word from the language, if the language is not empty, but
+termination is not guaranteed when the language is empty. Finally, we
+prove termination in the empty case, when the transition
+formulae\begin{inparaenum}[(i)]
+\item contain only constants of the data sort and boolean functions of
+  any arity, or they
+%
+\item constrain only the current but not the past values on the input,
+  as in the case of symbolic automata \cite{symbTransd:POPL12,DAntoniKW16}.
+\end{inparaenum}
+
+We have implemented the boolean operations and emptiness checking
+semi-algorithms in a prototype tool and carried out experiments with
+examples taken from array logics \cite{cav09}, timed automata
+\cite{henzinger:RealTimeSystems}, communication protocols \cite{abp}
+and hardware verification \cite{smrcka}. 
+
+\paragraph{Related Work}
+Data languages and automata have been defined previously, in a
+classical nondeterministic setting. For instance, Kaminski and Francez
+\cite{Kaminski94} consider languages, over an infinite alphabet of
+data, recognized by automata with a finite number of registers, that
+store the input data and compare it using equality. Just as the timed
+languages recognized by timed automata \cite{AlurDill94}, these
+languages, called quasi-regular, are not closed under complement, but
+their emptiness is decidable. The impossibility of complementation
+here is caused by the use of hidden variables, which we do not
+allow. Even though closed under complement, emptiness is undecidable
+in our case, mainly because counting (incrementing and comparing to a
+constant) data values is allowed, in many data theories.
+
+Other approaches to defining notions of data automata
+\cite{Bojanczyk:2011:TLD,BouyerPetitTherien03} are different from ours
+mainly because these automata are controlled by equivalence relations
+of finite index, whereas in our case, the transitions are defined by
+unrestricted formulae in the first-order theory of the data domain. As
+in \cite{Kaminski94,AlurDill94}, the emptiness problem is decidable
+for these classes.
+
+Another related model is that of predicate automata
+\cite{Farzan15,Farzan16}, which recognize languages over integer data
+by labeling the words with conjunctions of uninterpreted
+predicates. We intend to explore further the connection with our model
+of alternating data automata, in order to apply our method to the
+verification of parallel programs.
+
+The model presented in this paper stems from the language inclusion
+problem considered in \cite{Tacas16}. There we provide a
+semi-algorithm for inclusion of data languages, based on an
+exponential determinization procedure and an abstraction refinement
+loop using lazy predicate abstraction \cite{blast}. In this work we
+consider the full model of alternation and rely entirely on the
+ability of SMT solvers to produce interpolants in the combined theory
+of booleans and data. Since determinisation is not needed and
+complementation is possible in linear time, the bulk of the work is
+shipped to the decision procedure.
+
+The emptiness check is implemented by adapting similar semi-algorithms
+for nondeterministic infinite-state programs to the alternating model
+of computation. In particular, we considered the state-of-the-art
+\impact~ procedure \cite{mcmillan06} that is shown to outperform lazy
+predicate abstraction in the nondeterministic case, and generalized it
+to cope with alternation. More recent approaches for interpolant-based
+abstraction refinement \cite{McMillan14,Hoder12} target Horn systems,
+used to encode recursive and concurrent programs
+\cite{Grebenshchikov12}. However, the emptiness of alternating word
+automata cannot be directly encoded using Horn clauses, because all
+the branches of the computation synchronize on the same input, which
+does not seem to be easily encoded using a finite number of local
+(equality) constraints. We believe that the lazy annotation techniques
+for Horn clauses are suited for branching computations, which we
+intend to consider in a future tree automata setting.
+
 \section{Preliminaries}
 
 A \emph{signature} $\sig = (\ssorts{\sig},\sfuns{\sig})$ consists of a
