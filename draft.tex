@@ -11,7 +11,6 @@
 \usepackage{epsfig}
 \usepackage{wrapfig}
 \usepackage{paralist}
-\usepackage{graphics}
 \usepackage{stmaryrd}
 \usepackage{txfonts}
 \usepackage{framed}
@@ -341,7 +340,32 @@ $\vec{x}$ the current values of the variables of $\A$. Observe
 further, that the initial values of the variables are left
 unconstrained, as the initial configuration does not contain free
 data variables. The size of $\A$ is defined as $\len{\A} = \len{\iota}
-+ \sum_{(q,a) \in Q\times\Sigma}\len{\Delta(q,a)}$.
++ \sum_{(q,a) \in Q\times\Sigma}\len{\Delta(q,a)}$. 
+
+\begin{figure}[htb]
+\centerline{\includegraphics[scale=0.8]{figures/Example.pdf}}
+\caption{Alternating Data Automaton Example}
+\label{fig:ex}
+\end{figure}
+
+\paragraph{\em Example}
+Figure \ref{fig:ex} depicts an alternating data automaton, with input
+alphabet $\Sigma = \set{a,b}$, variables $\vec{x} = \set{x,y}$, states
+$Q = \set{q_0,q_1,q_2,q_3,q_4}$, initial configuration $q_0$, final
+states $F=\set{q_3,q_4}$ and transitions:
+\[\begin{array}{rcl}
+\Delta(q_0,a) & \equiv & q_1 \wedge q_2 \wedge x=0 \wedge y=0 \\
+\Delta(q_1,a) & \equiv & q_1 \wedge q_3 \wedge x=\overline{y}+1 \wedge y=\overline{x}+1 \\
+\Delta(q_1,b) & \equiv & q_3 \wedge \overline{x} \geq \overline{y} \\
+\Delta(q_2,a) & \equiv & q_2 \wedge x > \overline{x} \wedge y > \overline{y} \\
+\Delta(q_2,b) & \equiv & q_4 \wedge \overline{x}>\overline{y}
+\end{array}\]
+The missing transition rules are assumed to be $\false$. Rules
+$\Delta(q_0,a)$ and $\Delta(q_1,a)$ are universal and there are no
+existential nondeterministic rules. Rules $\Delta(q_1,a)$ and
+$\Delta(q_2,b)$ compare past ($\overline{x},\overline{y}$) with present
+($x,y$) values, $\Delta(q_0,a)$ constrains the present and
+$\Delta(q_1,b)$, $\Delta(q_2,b)$ the past values, respectively. \qed
 
 Formally, let $\vec{x}_k = \set{x_k \mid x \in \vec{x}}$, $k\geq0$, be
 a set of time-stamped variables. For an input event $a \in \Sigma$ and
@@ -368,7 +392,21 @@ where $\nu$ is some valuation that maps:\begin{inparaenum}[(1)]
 \end{inparaenum}
 The language of $\A$ is the set $L(\A)$ of words from
 $\Sigma[\vec{x}]^*$ accepted by $\A$.
-%
+
+\paragraph{\em Example} 
+The following sequence is a non-accepting run of the ADA from Figure
+\ref{fig:ex} on the word
+$(a,\tuple{0,0}),(a,\tuple{1,1}),(b,\tuple{2,1})$: 
+\[\begin{array}{l}
+q_0 \stackrel{(a,\tuple{0,0})}{\Longrightarrow} 
+q_1 \wedge q_2 \wedge x_1=0 \wedge y_1=0 \stackrel{(a,\tuple{1,1})}{\Longrightarrow} \\ 
+(q_1 \wedge q_2 \wedge x_2=y_1+1 \wedge y_2=x_1+1) ~\wedge \\[-2mm]
+(q_2 \wedge x_2>x_1 \wedge y_2>y_1) \wedge x_1=0 \wedge y_1=0 \stackrel{(b,\tuple{2,1})}{\Longrightarrow} \\
+(q_3 \wedge x_2\geq y_2) \wedge (q_4 \wedge x_2>y_2) \wedge x_2=y_1+1 \wedge y_2=x_1+1 \\ 
+\wedge~ (q_4 \wedge x_2>y_2) \wedge x_2>x_1 \wedge y_2>y_1 \wedge x_1=0 \wedge y_1=0 
+\rightarrow \bot~ \hfill\text{\qed}
+\end{array}\]
+
 In this paper we tackle the following problems: \begin{compactenum}
 \item \emph{boolean closure}: given automata $\A_1$ and $\A_2$, both
   with the same set of variables $\vec{x}$, do there exist automata
@@ -1080,6 +1118,37 @@ $\Accept{\A}(u)$ is satisfiable). Otherwise, if $u$ is spurious, we
 compute its pivot $p$ (line \ref{ln:pivot}), add the interpolants for
 the least unfeasible suffix of $u$ to the set of predicates $\preds$,
 remove and recompute the subtree of $\Art$ rooted at $p$.
+
+\begin{figure}[htb]
+\begin{tabular}{cc}
+\includegraphics[scale=0.5]{figures/PA1.pdf} & \includegraphics[scale=0.5]{figures/PA2.pdf} \\
+\footnotesize{(a)} & \footnotesize{(b)} \\
+\\
+\includegraphics[scale=0.5]{figures/PA3.pdf} & \includegraphics[scale=0.5]{figures/PA4.pdf} \\
+\footnotesize{(c)} & \footnotesize{(d)}
+\end{tabular}
+\caption{Proving Emptiness of the Automaton from Fig. \ref{fig:ex} using Algorithm \ref{alg:predabs}}
+\label{fig:pa}
+\end{figure}
+
+\paragraph{\em Example}
+Consider the automaton given in Figure \ref{fig:ex}. First, Algorithm
+\ref{alg:predabs} fires the sequence $a$, and since there are no other
+formulae than $\bot$ in $\preds$, the successor of $\iota \equiv q_0$
+is $\top$ (a). The pivot of $a$ is the root of the ART and the
+spuriousness check results in the predicates $\set{q_0,q_1}$, which
+are added to $\preds$ and the $\top$ node is deleted. The next time
+$a$ is fired, it creates a node labeled $q_1$ and the next sequence
+$aa$ creates another node $q_1$ which is covered by the first,
+depicted with a dashed arrow (b). The third sequence is $ab$, which
+results in a new node $\top$ and triggers a spuriousness check. The
+new predicate is $x\leq0\wedge q_2 \wedge y\geq0$ and the pivot is
+again the root. Then the entire ART is rebuild with the new predicates
+and the sequence $aab$ results in an uncovered node $\top$ (c). The
+new pivot is the endpoint of $a$ and the new predicates are $q_1\wedge
+q_2$ and $y>x-1 \wedge q_2$. Finally, the ART is rebuilt from the
+pivot node and the result is a tree in which all nodes are covered,
+thus proving the emptiness of the automaton. \qed
 
 Termination of Algorithm \ref{alg:predabs} depends on the ability of a
 given interpolating decision procedure for the combined boolean and
