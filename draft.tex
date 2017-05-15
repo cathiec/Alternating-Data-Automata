@@ -1179,9 +1179,8 @@ than in Algorithm \ref{alg:predabs}.
 \end{algorithm}
 
 The execution of Algorithm \ref{alg:impact} consists of three
-phases\footnote{These phases correspond to the \textsc{Close},
-  \textsc{Refine} and \textsc{Expand} procedures from the original
-  description of \impact~\cite{mcmillan06}.}: \emph{close},
+phases\footnote{Corresponding to the \textsc{Close}, \textsc{Refine}
+  and \textsc{Expand} in \cite{mcmillan06}.}: \emph{close},
 \emph{refine} and \emph{expand}. Let $n$ be a node removed from the
 worklist at line \ref{ln:impact-dequeue}. If $\Accept{\A}(\lambda(n))$
 is satisfiable, the counterexample $\lambda(n)$ is feasible, in which
@@ -1215,7 +1214,7 @@ into the worklist.
 \begin{figure}[htb]
 \vspace*{-\baselineskip}
 \begin{tabular}{c}
-\includegraphics[scale=0.65]{figures/IM1.pdf} \\[-2mm]
+\includegraphics[scale=0.65]{figures/IM1.pdf} \\
 \tiny{(a)} \\
 \includegraphics[scale=0.65]{figures/IM2.pdf} \\[-2mm]
 \tiny{(b)} \\
@@ -1226,6 +1225,7 @@ into the worklist.
 \caption{Proving Emptiness of the Automaton from Fig. \ref{fig:ex}
   by Algorithm \ref{alg:impact} (1/2)}
 \label{fig:im1}
+\vspace*{-\baselineskip}
 \end{figure}
 
 \begin{figure}[htb]
@@ -1263,9 +1263,6 @@ q_2$ and this node is now covered by $aa$. Since its successors are
 also covered, there are no uncovered nodes and the procedure returns
 $\true$. \qed
 
-The correctness of Algorithm \ref{alg:impact} is proved in the
-following:
-
 \begin{theorem}\label{thm:impact}
   Given an automaton $\A$, such that $L(\A) \neq \emptyset$, Algorithm
   \ref{alg:impact} terminates and returns a word $w \in L(\A)$. If
@@ -1276,32 +1273,33 @@ following:
 \section{Experimental Evaluation}
 
 We have implemented both Algorithm \ref{alg:predabs} and
-\ref{alg:impact} in a prototype
-tool\footnote{\url{https://github.com/cathiec/AltImpact}} that uses
-the Z3 SMT solver\footnote{\url{https://github.com/Z3Prover/z3}} to
-check satisfiability queries and generate interpolants in the theory
-of linear integer arithmetic variables (LIA). We compared both
-algorithms with a previous implementation of trace inclusion
+\ref{alg:impact} in a prototype tool\footnote{The implementation is
+  available at \url{https://github.com/cathiec/AltImpact}} that uses
+the Z3 SMT solver\footnote{\url{https://github.com/Z3Prover/z3}} for
+the satisfiability queries and interpolant generation, in the theory
+of linear integer arithmetic (LIA) combined with booleans. We compared
+both algorithms with a previous implementation of a trace inclusion
 procedure, called
 \textsc{Includer}\footnote{\url{http://www.fit.vutbr.cz/research/groups/verifit/tools/includer/}},
 that uses on-the-fly determinisation and lazy predicate abstraction
-with interpolant-based refinement \cite{Tacas16}.
+with interpolant-based refinement \cite{Tacas16} in the LIA theory,
+without booleans.
 
 The results of the experiments are given in Table
-\ref{tab:experiments}. We applied the tool on several array logic
-entailments, which occur as verification conditions for imperative
-programs with arrays \cite{cav09} (Array shift, Array rotation 1+2,
-Array split) available online \cite{ntslib}. Then, we applied it on
-proving safety properties of hardware circuits (HW Counter 1+2)
-\cite{smrcka}. Finally, we considered two timed communication
-protocols, consisting of systems that are asynchronous compositions of
-timed automata, whom correctness specification are given by timed
-automata monitors: two versions (correct and faulty) of the timed
-Alternating Bit Protocol \cite{abp} and a~controller of a railroad
-crossing \cite{henzinger:RealTimeSystems}. All results were obtained
-on an Intel(R) Core(TM) i7-4650U CPU @ 1.70GHz with 8GB of RAM. The
-sizes of the automata are in bytes and the execution times are given
-in seconds.
+\ref{tab:experiments}. We applied the tool first to several array
+logic entailments, which occur as verification conditions for
+imperative programs with arrays \cite{cav09} (array\_shift,
+array\_simple, array\_rotation 1+2) available online
+\cite{ntslib}. Next, we applied it on proving safety properties of
+hardware circuits (hw1+2) \cite{smrcka}. Finally, we considered two
+timed communication protocols, consisting of systems that are
+asynchronous compositions of timed automata, whom correctness
+specifications are given by timed automata monitors: a timed version of
+the Alternating Bit Protocol (abp) \cite{abp} and a~controller of a
+railroad crossing (train) \cite{henzinger:RealTimeSystems}. All
+results were obtained on an Intel(R) Core(TM) i7-4650U CPU @ 1.70GHz
+with 8GB of RAM. The automata sizes are in bytes and the execution
+times are in seconds.
 
 \begin{table}[htb]
 \begin{center}
@@ -1324,7 +1322,7 @@ array\_rotation1 & 1834 & yes & 6.827 & 0.865 & 0.114\\
 \hline
 array\_rotation2 & 15182 & yes & timeout & timeout & 23.056\\
 \hline
-abp\_error & 6909 & no & 8.292 & 1.410 & 1.715\\
+abp & 6909 & no & 8.292 & 1.410 & 1.715\\
 \hline
 train & 1823 & yes & 16.989 & 2.738 & 0.308\\
 \hline
@@ -1338,6 +1336,15 @@ hw2 & 674 & yes & 22.914 & 0.552 & 0.419\\
 \end{center}
 \end{table}
 
+As in the non-deterministic case \cite{mcmillan06}, \impact~
+outperforms lazy predicate abstraction for checking emptiness by at
+least one order of magnitude. However, both our implementations are
+slower than \textsc{Includer}, on average (except for the abp
+example). The reason for this is currently under investigation, one
+possible bottleneck being the hardness of the combined (LIA+booleans)
+interpolation problems, as opposed to converting the entire formula
+into DNF, eliminating the boolean variables and using interpolation in
+the pure LIA theory.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
