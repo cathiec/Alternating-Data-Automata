@@ -39,7 +39,7 @@
 \title{The Impact of Alternation}
 
 \author{Radu Iosif and Xiao Xu \\
-Verimag/CNRS/Universit\'e de Grenoble Alpes\\
+CNRS, Verimag, Universit\'e de Grenoble Alpes \\
 Email: \{Radu.Iosif,Xiao.Xu\}@univ-grenoble-alpes.fr}
 
 \maketitle
@@ -615,15 +615,15 @@ condition are defined as follows:
   an invariant $\abs{\Inv}$ for $\A$. 
 \end{lemma}
 
-\paragraph{\em Remark}
-While computing the concrete post-image $\Post{\A}$ relies on an
-expensive quantifier elimination, it is common belief that this should
-hold also for $\AbsPost{\A}$. However, chosing the conjoined
-predicates that form $\AbsPost{\A}$ requires only a quantifier-free
-satisfiability query: $\Post{\A}(\phi,a) \models \pi$ iff $\exists
-\overline{\vec{x}} ~.~ \Delta(\phi[\overline{\vec{x}}/\vec{x}],a)
-\models \pi$ iff $\Delta(\phi[\overline{\vec{x}}/\vec{x}],a) \wedge
-\neg\pi$ is unsatisfiable. \qed
+%% \paragraph{\em Remark}
+%% While computing the concrete post-image $\Post{\A}$ relies on an
+%% expensive quantifier elimination, it is common belief that this should
+%% hold also for $\AbsPost{\A}$. However, chosing the conjoined
+%% predicates that form $\AbsPost{\A}$ requires only a quantifier-free
+%% satisfiability query: $\Post{\A}(\phi,a) \models \pi$ iff $\exists
+%% \overline{\vec{x}} ~.~ \Delta(\phi[\overline{\vec{x}}/\vec{x}],a)
+%% \models \pi$ iff $\Delta(\phi[\overline{\vec{x}}/\vec{x}],a) \wedge
+%% \neg\pi$ is unsatisfiable. \qed
 
 We are left with fulfilling point (\ref{it2:inv}) from the definition
 of a safety invariant. To this end, suppose that, for a given set
@@ -669,12 +669,12 @@ $\Phi$, simply called an \emph{interpolant}, is a tuple $\tuple{I_0(X),
 In the following, we shall assume the existence of an interpolating
 decision procedure for $\theory(\sig,\I)$.
 
-\paragraph{\em Remark} 
-We deviate w.l.o.g. from the standard notion of \emph{generalized
-  interpolants} \cite{mcmillan06}, which requires $\fv{}{I_i}
-\subseteq \fv{}{\phi_i} \cap \fv{}{\phi_{i+1}}$, for each $i \in
-          [1,n-1]$, and assume further that the variables have been
-          renamed by removing the time stamps. \qed
+%% \paragraph{\em Remark} 
+%% We deviate w.l.o.g. from the standard notion of \emph{generalized
+%%   interpolants} \cite{mcmillan06}, which requires $\fv{}{I_i}
+%% \subseteq \fv{}{\phi_i} \cap \fv{}{\phi_{i+1}}$, for each $i \in
+%%           [1,n-1]$, and assume further that the variables have been
+%%           renamed by removing the time stamps. \qed
 
 A classical method for abstraction refinement is to add the elements
 of the interpolant obtained from a proof of spuriousness to the set of
@@ -980,18 +980,6 @@ compute its pivot $p$ (line \ref{ln:pivot}), add the interpolants for
 the least unfeasible suffix of $u$ to the set of predicates $\preds$,
 remove and recompute the subtree of $\Art$ rooted at $p$.
 
-\begin{figure}[htb]
-\begin{tabular}{cc}
-\includegraphics[scale=0.52]{figures/PA1.pdf} & \includegraphics[scale=0.52]{figures/PA2.pdf} \\
-\footnotesize{(a)} & \footnotesize{(b)} \\
-\\
-\includegraphics[scale=0.52]{figures/PA3.pdf} & \includegraphics[scale=0.52]{figures/PA4.pdf} \\
-\footnotesize{(c)} & \footnotesize{(d)}
-\end{tabular}
-\caption{Proving Emptiness of the Automaton from Fig. \ref{fig:ex} using Algorithm \ref{alg:predabs}}
-\label{fig:pa}
-\end{figure}
-
 Termination of Algorithm \ref{alg:predabs} depends on the ability of a
 given interpolating decision procedure for the combined boolean and
 data theory $\theory(\sig,\I)$ to provide interpolants that yield a
@@ -1004,6 +992,19 @@ Formally, for any two nodes $n,m \in N$, we have $n \lhd m$ iff
 $\AbsPost{\A}(\Lambda(n),a) \models \Lambda(m)$ for some $a \in
 \Sigma$, in other words, if $n$ has a successor whose label entails
 the label of $m$.
+
+\begin{figure}[t!]
+\begin{tabular}{cc}
+\includegraphics[scale=0.5]{figures/PA1.pdf} & \includegraphics[scale=0.5]{figures/PA2.pdf} \\[-2mm]
+\tiny{(a)} & \tiny{(b)} \\
+\\
+\includegraphics[scale=0.5]{figures/PA3.pdf} & \includegraphics[scale=0.5]{figures/PA4.pdf} \\[-2mm]
+\tiny{(c)} & \tiny{(d)}
+\end{tabular}
+\vspace*{-\baselineskip}
+\caption{Proving Emptiness of the Automaton from Fig. \ref{fig:ex} by Algorithm \ref{alg:predabs}}
+\label{fig:pa}
+\end{figure}
 
 \paragraph{\em Example}
 Consider the automaton given in Figure \ref{fig:ex}. First, Algorithm
@@ -1045,44 +1046,6 @@ avoided and the refinement (strenghtening of the node labels of the
 ART) can be performed in-place. This refinement step requires an
 update of the covering relation, because a node that used to cover
 another node might not cover it after the strenghtening of its label.
-
-%% The ART built by Algorithm \ref{alg:impact} corresponds to an
-%% unfolding of the input automaton by enumerating the input event
-%% sequences in $\Sigma^*$. Each time a new node is created, its label is
-%% initially $\top$. This label is subject to subsequent strenghtening,
-%% when a spurious counterexample is encountered. To speedup the
-%% computation of interpolants for spurious counterexamples, we use two
-%% additional labeling functions for bookkeeping. Formally, the ART
-%% structure used by Algorithm \ref{alg:impact} is defined as $\Art =
-%% \tuple{N,E,\rootNode,\Lambda,R,T,\lhd}$, where $N,E,\Lambda$ and
-%% $\lhd$ are defined as for Algorithm \ref{alg:predabs} and,
-%% moreover: \begin{compactitem}
-%% \item $R : N \rightarrow 2^Q$ is a labeling of nodes with replacement
-%%   sets, such that $R(\rootNode) = \fv{\Bool}{\iota}$, 
-%% %
-%% \item $T : E \rightarrow \bigcup_{i=0}^\infty
-%%   \Form(Q_i,\vec{x}_i,Q_{i+1},\vec{x}_{i+1})$ is labeling of edges
-%%   with time-stamped formulae, and
-%% %
-%% \item for each edge $e = (n,a,m) \in E$, if $n$ lies at
-%%   depth\footnote{We consider that the root node has zero depth.}  $k$
-%%   in the tree $(N,E)$, then we have:
-%% \end{compactitem}
-%%   \[\begin{array}{rcl}
-%%   T(e) & = & \Theta(n,a,k) \\
-%%   R(m) & = & \bigcup_{q \in R(n)}\fv{\Bool}{\Delta(q,a)} \text{, where} \\
-%%   \Theta(n,a,k) & \equiv & \bigwedge_{q \in R(n)} (q_k \rightarrow
-%%   \Delta(q,a)[Q_{k+1}/Q,\vec{x}_{k}/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}])
-%%   \end{array}\]
-%% For simplicity, we write $T(n,a,m)$ for $T(e)$, when $e$ is
-%% $(n,a,m)$. This additional bookkeeping is used as follows. Given a
-%% sequence $u = a_1\ldots a_k \in \Sigma^*$ that labels the path from
-%% the root to a node $n$ in $\Art$, the conjunction:
-%% \[\mu(n) \equiv \Lambda(\rootNode) \wedge T(\rootNode,a_1,n_1) \wedge \ldots
-%% T(n_{k-1},a_k,n_k) \wedge \bigwedge_{q \in R(n_k) \setminus F}(q_k
-%% \rightarrow \bot)\] is equivalent to the interpolation problem
-%% $\pi(u)$ and can be directly computed by a traversal of the path from
-%% $\rootNode$ to $n$. 
 
 We consider a total alphabetical order $\prec$ on $\Sigma$ and lift it
 to the total lexicographical order $\prec^*$ on $\Sigma^*$. A node $n
@@ -1249,54 +1212,56 @@ during the refinement phase) we expand $n$ (lines
 each successor $s$ via the input event $a \in \Sigma$ and inserting it
 into the worklist.
 
-\begin{figure}[t!]
-\begin{tabular}{cc}
-\includegraphics[scale=0.42]{figures/IM1.pdf} & \includegraphics[scale=0.42]{figures/IM2.pdf} \\
-\footnotesize{(a)} & \footnotesize{(b)} \\
-\\
-\includegraphics[scale=0.42]{figures/IM3.pdf} & \includegraphics[scale=0.42]{figures/IM4.pdf} \\
-\footnotesize{(c)} & \footnotesize{(d)}
+\begin{figure}[htb]
+\vspace*{-\baselineskip}
+\begin{tabular}{c}
+\includegraphics[scale=0.65]{figures/IM1.pdf} \\[-2mm]
+\tiny{(a)} \\
+\includegraphics[scale=0.65]{figures/IM2.pdf} \\[-2mm]
+\tiny{(b)} \\
+\includegraphics[scale=0.65]{figures/IM3.pdf} \\[-2mm]
+\tiny{(c)}
 \end{tabular}
-\caption{Proving Emptiness of the Automaton from Fig. \ref{fig:ex} using Algorithm \ref{alg:impact}}
-\label{fig:im}
+\vspace*{-0.5\baselineskip}
+\caption{Proving Emptiness of the Automaton from Fig. \ref{fig:ex}
+  by Algorithm \ref{alg:impact} (1/2)}
+\label{fig:im1}
+\end{figure}
+
+\begin{figure}[htb]
+\centerline{\includegraphics[scale=0.65]{figures/IM4.pdf}}
+\vspace*{-\baselineskip}
+\caption{Proving Emptiness of the Automaton from Fig. \ref{fig:ex}
+  by Algorithm \ref{alg:impact} (2/2)}
+\label{fig:im2}
 \end{figure}
 
 \paragraph{\em Example}
 We show the execution of Algorithm \ref{alg:impact} on the automaton
 from Figure \ref{fig:ex}.  Initially, the procedure fires the sequence
-$a$, whose endpoint is labeled with $\top$, in Figure \ref{fig:im}
+$a$, whose endpoint is labeled with $\top$, in Figure \ref{fig:im1}
 (a). Since this node is uncovered, we check the spuriousness of the
 counterexample $a$ and refine the label of the node to $q_1$. Since
 the node is still uncovered, two successors, labeled with $\top$ are
 computed, corresponding to the sequences $aa$ and $ab$, in Figure
-\ref{fig:im} (b). The spuriousness check for $aa$ yields the
+\ref{fig:im1} (b). The spuriousness check for $aa$ yields the
 interpolant $\tuple{q_0,x\leq0\wedge q_2 \wedge y\geq0}$ which
 strenghtens the label of the endpoint of $a$ from $q_1$ to $q_1\wedge
 x\leq0\wedge q_2\wedge y\geq0$. The sequence $ab$ is also found to be
 spurious, which changes the label of its endpoint from $\top$ to
 $\bot$, and also covers it (depicted with a dashed edge). Since the
 endpoint of $aa$ is not covered, it is expanded to $aaa$ and $aab$, in
-Figure \ref{fig:im} (c). Both sequences $aaa$ and $aab$ are found to
+Figure \ref{fig:im1} (c). Both sequences $aaa$ and $aab$ are found to
 be spurious, and the enpoint of $aab$, whose label has changed from
 $\top$ to $\bot$, is now covered. In the process, the label of $aa$
 has also changed from $q_1$ to $q_1 \wedge y>x-1 \wedge q_2$, due to
 the strenghtening with the interpolant from $aab$.  Finally, the only
 uncovered node $aaa$ is expanded to $aaaa$ and $aaab$, both found to be
-spurious, in Figure \ref{fig:im} (d). The refinement of $aaab$ causes
+spurious, in Figure \ref{fig:im2}. The refinement of $aaab$ causes
 the label of $aaa$ to change from $q_1$ to $q_1 \wedge y>x-1 \wedge
 q_2$ and this node is now covered by $aa$. Since its successors are
 also covered, there are no uncovered nodes and the procedure returns
 $\true$. \qed
-
-The following lemma states that the labeling of the nodes in an ART
-built by Algorithm \ref{alg:impact} is consistent with the semantics
-of the transition function of $\A$.
-
-\begin{lemma}\label{lemma:well-labeled}
-  Given an ART $\Art = \tuple{N,E,\rootNode,\Lambda,R,T,\lhd}$ built
-  by Algorithm \ref{alg:impact}, $\Post{\A}(\Lambda(n),a) \models
-  \Lambda(m)$, for all $(n,a,m) \in E$.
-\end{lemma}
 
 The correctness of Algorithm \ref{alg:impact} is proved in the
 following:
@@ -1309,6 +1274,8 @@ following:
 \end{theorem}
 
 \section{Experimental Evaluation}
+
+xxx
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
@@ -1555,8 +1522,13 @@ following:
   $w$ at line \ref{ln:feasible}. Then Algorithm \ref{alg:predabs}
   terminates returning $w \in L(\A)$. \qed}
 
-\subsection{Proof of Lemma \ref{lemma:well-labeled}}
+\subsection{Proof of Theorem \ref{thm:impact}}
 
+\begin{lemma}\label{lemma:well-labeled}
+  Given an ART $\Art = \tuple{N,E,\rootNode,\Lambda,R,T,\lhd}$ built
+  by Algorithm \ref{alg:impact}, $\Post{\A}(\Lambda(n),a) \models
+  \Lambda(m)$, for all $(n,a,m) \in E$.
+\end{lemma}
 \proof{ We distinguish two cases. First, if $(n,a,m)$ occurs on a path
   in $\Art$ that has never been refined, then $\Lambda(m)=\top$ and
   the entailment holds trivially. Otherwise, let $\Omega$ be the set
@@ -1582,8 +1554,7 @@ following:
   \bigwedge_{\omega \in \Omega} I^\omega_{i}$, we obtain
   $\Post{\A}(\Lambda(n_{i-1}),a_i) \models \Lambda(n_i)$. \qed}
 
-\subsection{Proof of Theorem \ref{thm:impact}}
-
+\vspace*{\baselineskip}
 \proof{ We prove first that, each time Algorithm \ref{alg:impact}
   reaches the line \ref{ln:impact-while}, we have:
   \begin{equation}\label{inv:impact}
