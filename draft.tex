@@ -139,7 +139,7 @@ implemented in linear time in this model, thus matching the complexity
 of performing these operations in the finite-alphabet case. The price
 to be paid is that emptiness becomes undecidable, for which reason we
 provide two efficient semi-algorithms for emptiness, based on lazy
-predicate abstraction \cite{blast} and the \impact~method
+predicate abstraction \cite{HJMS02} and the \impact~method
 \cite{mcmillan06}.  These algorithms are proven to terminate and
 return a word from the language of the automaton, if one exists, but
 termination is not guaranteed when the language is empty.
@@ -191,7 +191,7 @@ The model presented in this paper stems from the language inclusion
 problem considered in \cite{Tacas16}. There we provide a
 semi-algorithm for inclusion of data languages, based on an
 exponential determinization procedure and an abstraction refinement
-loop using lazy predicate abstraction \cite{blast}. In this work we
+loop using lazy predicate abstraction \cite{HJMS02}. In this work we
 consider the full model of alternation and rely entirely on the
 ability of SMT solvers to produce interpolants in the combined theory
 of booleans and data. Since determinisation is not needed and
@@ -202,7 +202,7 @@ The emptiness check for alternating data automata adapts similar
 semi-algorithms for nondeterministic infinite-state programs to the
 alternating model of computation. In particular, we considered the
 state-of-the-art \impact~ procedure \cite{mcmillan06} that is shown to
-outperform lazy predicate abstraction \cite{blast} in the
+outperform lazy predicate abstraction \cite{HJMS02} in the
 nondeterministic case, and generalized it to cope with
 alternation. More recent approaches for interpolant-based abstraction
 refinement target Horn systems \cite{McMillan14,Hoder12}, used to
@@ -488,11 +488,11 @@ Unlike the boolean closure properties, showed to be effectively
 decidable (Lemma \ref{lemma:closure}), the emptiness problem is
 undecidable, even in very simple cases. For instance, if $\Data^\I$ is
 the set of positive integers, an ADA can simulate an Alternating
-Vector Addition System with States (AVASS) \cite{LazicSchmitz14} using
-only atoms $x \geq k$ and $x = \overline{x} + k$, for $k \in \zed$,
-with the classical interpretation of the function symbols on
-integers. Since reachability of a control state is undecidable for
-AVASS \cite{LINCOLN92}, the emptiness problem is undecidable for ADA.
+Vector Addition System with States (AVASS) using only atoms $x \geq k$
+and $x = \overline{x} + k$, for $k \in \zed$, with the classical
+interpretation of the function symbols on integers. Since reachability
+of a control state is undecidable for AVASS \cite{LINCOLN92}, the
+emptiness problem is undecidable for ADA.
 
 Consequently, we give up on the guarantee for termination and build
 semi-algorithms that meet the requirements below: \begin{compactenum}[(i)]
@@ -1090,8 +1090,8 @@ to the total lexicographical order $\prec^*$ on $\Sigma^*$. A node $n
 such that $(m,p) \in \lhd$, for some $p \in N$. A node $n$ is
 \emph{closed} if it is covered, or $\Lambda(n) \not\models \Lambda(m)$
 for all $m \in N$ such that $\lambda(m) \prec^* \lambda(n)$. Observe
-that we use the coverage here with a different meaning than in
-Algorithm \ref{alg:predabs}.
+that we use the coverage relation $\lhd$ here with a different meaning
+than in Algorithm \ref{alg:predabs}.
 
 \begin{algorithm}[t!]
 {\scriptsize\begin{algorithmic}[0]
@@ -1330,6 +1330,7 @@ following:
 \end{proposition}
 \proof{Immediate, by induction on the structure of $\phi$. \qed}
 
+\vspace*{\baselineskip}
 \proof{ We prove $L(\A_\cup) = L(\A_1) \cup L(\A_2)$ first, the proof
   for $\A_\cap$ being analogous. Let $w = (a_1,\nu_1) \ldots
   (a_n,\nu_n)$ be a word, where $n=0$ corresponds to the empty
@@ -1361,7 +1362,7 @@ following:
   \[\begin{array}{lcl}
   \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \iffeq & \text{ (by ind. hyp.)} \\
   \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \iffeq & \text{ (by the def. of $\overline{\phi}$)} \\
-  \overline{\Delta(\iota_1,a_1\ldots,a_n)}
+  \overline{\Delta(\iota_1,a_1\ldots,a_n)} \enspace.
   \end{array}\]
   Let $\nu,\nu' : (Q \cup \bigcup_{i=0}^n\vec{x}_i) \rightarrow (\booli
   \cup \Data^\I)$ be valuations such that: \begin{compactitem}
@@ -1379,8 +1380,7 @@ following:
   \overline{\Delta(\iota_1,a_1 \ldots a_n)} \iff \I,\nu' \not\models
   \overline{\Delta}(\iota_1,a_1 \ldots a_n)$. Thus for all $w \in
   \Sigma[\vec{x}]^*$, we have $w \in L(\A_1) \iff w \not\in
-  L(\overline{\A_1})$, i.e. $L(\overline{\A_1}) = \Sigma[\vec{x}]^*
-  \setminus L(\A_1)$. \qed}
+  L(\overline{\A_1})$. \qed}
 
 \subsection{Proof of Lemma \ref{lemma:safety-invariant}}
 
@@ -1407,27 +1407,6 @@ following:
 
 \subsection{Proof of Proposition \ref{prop:positive-interpol}}
 
-\proof{ Let $\tuple{\top,I_0,\ldots,I_{n},\bot}$ be an interpolant,
-  and $i \in [0,n]$ be the first index for which $I_i \not\in
-  \Form^+(Q,\vec{x})$. By Proposition \ref{prop:asterisk}, we have
-  that $\Delta^{i-1}(I_{i-1},a_i) \iffeq \exists Q_{i-1} ~.~
-  I_{i-1}[Q_{i-1}/Q] \wedge \theta_i$. Since $I_{i-1} \in
-  \Form^+(Q,\vec{x})$, by the choice of $i$, we have that
-  $\Delta^{i-1}(I_{i-1},a_i) \in \Form^+(Q,\vec{x})$ as well. We
-  replace $I_i$ with $\Delta^{i-1}(I_{i-1},a_i)$. The result is still
-  an interpolant, because: \begin{compactitem}
-  \item $I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \models
-    \Delta^{i-1}(I_{i-1},a_i)$, by Proposition \ref{prop:asterisk}, and
-    %
-  \item $\Delta^{i-1}(I_{i-1},a_i) \wedge \theta_{i+1} \models \exists
-    Q_{i-1} ~.~ I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \wedge \theta_{i+1}
-    \models I_i[Q_i/Q] \wedge \theta_{i+1} \models I_{i+1}[Q_{i+1}/Q]$.
-  \end{compactitem}
-  We proceed with these replacements until there are no more formulae
-  $I_i \not\in \Form^+(Q,\vec{x})$ left. \qed}
-
-\subsection{Proof of Lemma \ref{lemma:progress}}
-
 \begin{proposition}\label{prop:asterisk}
   Given a formula $\phi \in \Form^+(Q,\vec{x})$ and $a \in \Sigma$, we
   have \(\Delta(\phi,a) \iffeq \exists Q' ~.~ \phi[Q'/Q] \wedge
@@ -1449,6 +1428,30 @@ following:
   \bigwedge_{q \in Q} (q' \rightarrow \Delta(q,a))$ is
   immediate. $''\Leftarrow''$ This direction is an easy check. \qed}
 
+\vspace*{\baselineskip} \proof{ Let
+  $\tuple{\top,I_0,\ldots,I_{n},\bot}$ be an interpolant, and $i \in
+  [0,n]$ be the first index for which $I_i \not\in
+  \Form^+(Q,\vec{x})$. If $i=0$, we replace $I_0$ with $\iota \in
+  \Form^+(Q,\vec{x})$ and verify that the result is still an
+  interpolant. If $i>0$, by Proposition \ref{prop:asterisk}, we have
+  that $\Delta^{i-1}(I_{i-1},a_i) \iffeq \exists Q_{i-1} ~.~
+  I_{i-1}[Q_{i-1}/Q] \wedge \theta_i$. Since $I_{i-1} \in
+  \Form^+(Q,\vec{x})$, by the choice of $i$, we have that
+  $\Delta^{i-1}(I_{i-1},a_i) \in \Form^+(Q,\vec{x})$ as well. We
+  replace $I_i$ with $\Delta^{i-1}(I_{i-1},a_i)$. The result is still
+  an interpolant, because: \begin{compactitem}
+  \item $I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \models
+    \Delta^{i-1}(I_{i-1},a_i)$, by Proposition \ref{prop:asterisk}, and
+    %
+  \item $\Delta^{i-1}(I_{i-1},a_i) \wedge \theta_{i+1} \models \exists
+    Q_{i-1} ~.~ I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \wedge \theta_{i+1}
+    \models I_i[Q_i/Q] \wedge \theta_{i+1} \models I_{i+1}[Q_{i+1}/Q]$.
+  \end{compactitem}
+  We proceed with these replacements until there are no more formulae
+  $I_i \not\in \Form^+(Q,\vec{x})$ left. \qed}
+
+\subsection{Proof of Lemma \ref{lemma:progress}}
+
 \proof{ Let $\Theta(u) \equiv \theta_0(Q_0) \wedge \theta_1(Q_0 \cup
   Q_1,\vec{x}_0 \cup \vec{x}_1) \wedge \ldots \wedge \theta_n(Q_{n-1}
   \cup Q_n,\vec{x}_{n-1} \cup \vec{x}_n) \wedge \theta_{n+1}(Q_n)$ in
@@ -1462,7 +1465,7 @@ following:
   \equiv \Post{\A}(\iota,u) \wedge \theta_{n+1}[Q/Q_n]$.
 
   (\ref{it2:progress}) If $\tuple{\top,I_0,\dots,I_n,\bot}$ is an
-  interpolant for $\pi(u)$, the following entailments
+  interpolant for $\Theta(u)$, the following entailments
   hold: \begin{compactitem}
   \item $\theta_0 \models I_0[Q_0/Q]$,
     %
@@ -1481,9 +1484,8 @@ following:
   \AbsPost{\A}(\iota,a_1\ldots a_n)[Q_n/Q] \equiv \text{ (by def. of $\AbsPost{\A}$)} \\
   \exists \vec{x}_{n-1} ~.~ \abs{\Delta^n(\AbsPost{\A}(\iota,a_1\ldots a_{n-1}),a_n)}[Q_n/Q] \models \text{ (by Prop. \ref{prop:asterisk})} \\
   \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ \AbsPost{\A}(\iota,a_1\ldots a_{n-1})[Q_{n-1}/Q] \wedge \theta_n \models \text{ (ind. hyp.) } \\
-  \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n \models I_n[Q_n/Q]
-  \end{array}\]
-\qed}
+  \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n \models I_n[Q_n/Q] \hfill\text{\qed}
+  \end{array}\]}
 
 \subsection{Proof of Theorem \ref{thm:predabs}}
 
@@ -1493,19 +1495,19 @@ following:
   $\tuple{N\cup W,E,\rootNode,\Lambda,\lhd}$ which are not covered by
   some node in $N$, namely that:
   \begin{equation}\label{inv:predabs}
-  W = \set{n \not\in N \mid \forall m \in N~ \forall a \in \Sigma ~.~ (n,a,m)
+  W = \set{n \mid \forall m \in N~ \forall a \in \Sigma ~.~ (n,a,m)
     \not\in E ~\wedge~ (n,m) \not\in \lhd}
   \end{equation}
-  Initially, this is the case because $W = \set{\rootNode}$ and $N = E
-  = \lhd = \emptyset$. If the invariant holds previously, at line
+  Initially, this is the case because $W = \set{\rootNode}$ and $E =
+  \lhd = \emptyset$. If the invariant holds previously, at line
   \ref{ln:while}, it will hold again after line \ref{ln:refine} is
   executed, because, when the subtree rooted at the pivot $p$ is
   removed, $p$ becomes a member of the set of uncovered frontier
-  nodes, and is added to $W$ at line \ref{ln:refine}. The last case
-  considers that the invariant holds at line \ref{ln:while} and the
-  control follows the else branch at line \ref{ln:else}. In this case,
-  the newly created frontier node $s$ is added to $W$ only if it is
-  not covered by an existing node in $N$ (line \ref{ln:covered}).
+  nodes, and is added to $W$ at line \ref{ln:refine}. Otherwise, the
+  invariant holds at line \ref{ln:while} and the control follows the
+  else branch at line \ref{ln:else}. In this case, the newly created
+  frontier node $s$ is added to $W$ only if it is not covered by an
+  existing node in $N$ (line \ref{ln:covered}).
 
   Next we prove that, if Algorithm \ref{alg:predabs} returns $\true$,
   then $\bigvee_{n \in N} \Lambda(n)$ defines a safety
@@ -1541,17 +1543,17 @@ following:
   \ref{alg:predabs} would have returned a counterexample,
   contradicting the assumption that it returns $\true$. This concludes
   the proof that $\bigvee_{n\in N} \Lambda(n)$ is a safety invariant,
-  thus $L(\A) = \emptyset$, by Lemma \ref{lemma:safety-invariant}.
+  thus $L(\A) = \emptyset$, by Lemma \ref{lemma:safety-invariant}. We
+  have then proved the second point of the statement.
 
-  We have then proved the second point of the statement. For the first
-  point, assume that $L(\A) \neq 0$ and let $w = (a_1,\nu_1) \ldots
-  (a_k,\nu_k) \in L(\A)$ be a word. By the above, Algorithm
-  \ref{alg:predabs} cannot return $\true$. Suppose, by contradiction
-  that it does not terminate. Since the sequences from $\Sigma^*$ are
-  explored in breadth-first order, every sequence of length $k$ is
-  eventually explored, which leads to the discovery of $w$ at line
-  \ref{ln:feasible}. Then Algorithm \ref{alg:predabs} terminates
-  returning $w \in L(\A)$. \qed}
+  For the first point, assume that $L(\A) \neq 0$ and let $w =
+  (a_1,\nu_1) \ldots (a_k,\nu_k) \in L(\A)$ be a word. By the above,
+  Algorithm \ref{alg:predabs} cannot return $\true$. Suppose, by
+  contradiction that it does not terminate. Since the sequences from
+  $\Sigma^*$ are explored in breadth-first order, every sequence of
+  length $k$ is eventually explored, which leads to the discovery of
+  $w$ at line \ref{ln:feasible}. Then Algorithm \ref{alg:predabs}
+  terminates returning $w \in L(\A)$. \qed}
 
 \subsection{Proof of Lemma \ref{lemma:well-labeled}}
 
@@ -1562,7 +1564,7 @@ following:
   $n_0 = \rootNode$ and $(n,a,m) = (n_{i-1},a_i,n_i)$, for some $i \in
   [1,k]$ and, moreover, $a_1\ldots a_k$ was found, at some point, to
   be a spurious counterexample. Let
-  $\langle\top,I^\omega_0,\ldots,I^\omega_k\equiv\bot\rangle$ be an
+  $\langle\top,I^\omega_0,\ldots,I^\omega_k,\bot\rangle$ be an
   interpolant for $\Phi(a_1 \ldots a_k) \equiv \Lambda(\rootNode)
   \wedge \bigwedge_{i=1}^k \theta_i \wedge \bigwedge_{q \in R(n_k)}
   (q_k \rightarrow \bot)$, such that $I^\omega_i \in
@@ -1585,21 +1587,22 @@ following:
 \proof{ We prove first that, each time Algorithm \ref{alg:impact}
   reaches the line \ref{ln:impact-while}, we have:
   \begin{equation}\label{inv:impact}
-  W = \set{n \not\in N \mid n \text{ uncovered, } \exists a \in
-    \Sigma~ \forall s \in N ~.~ (n,a,s) \not\in E}
+  W = \set{n \mid n \text{ uncovered, } \exists a \in \Sigma~ \forall
+    s \in N ~.~ (n,a,s) \not\in E}
   \end{equation}
-  Initially, $W = \set{\rootNode}$ and $N=E=\lhd=\emptyset$, thus
+  Initially, $W = \set{\rootNode}$ and $E=\lhd=\emptyset$, thus
   (\ref{inv:impact}) holds trivially. Suppose that (\ref{inv:impact})
   holds at when reaching line \ref{ln:impact-while} and some node $n$
   was removed from $W$ and inserted into $N$. We distinguish two
   cases, either: \begin{itemize}
   \item $n$ is covered, in which case $W$ becomes $W \setminus
-    \set{n}$, or
+    \set{n}$ and (\ref{inv:impact}) holds, or
   %
   \item $n$ is not covered, in which case $W$ becomes $(W \setminus
     \set{n}) \cup S$, where $S = \set{s \not\in N \mid (n,a,s) \in E,
       a \in \Sigma}$ is the set of fresh successors of $n$. But then
-    no node $s \in S$ is covered and has successors in $E$.
+    no node $s \in S$ is covered and has successors in $E$, thus
+    (\ref{inv:impact}) holds.
   \end{itemize}
   Then the condition (\ref{inv:impact}) holds next time line
   \ref{ln:impact-while} is reached, thus it is invariant. 
@@ -1618,10 +1621,11 @@ following:
   prefix of $u$ that labels a path from $\rootNode$ to some node $n_1
   \in N$. If $v_1 = u$ we are done. Otherwise, by the choice of $v_1$,
   it must be the case that a successor of $n_1$ is missing from
-  $(N,E)$, thus $n_1$ must be covered. Let $n'_1$ be the closest
-  ancestor of $n_1$ such that $(n'_1,n''_1) \in \lhd$, for some $n''_1
-  \in N$, and let $v'_1$ be the prefix of $v_1$ leading to $n'_1$. By
-  the construction of $\lhd$ (line \ref{ln:close-uncover} in function
+  $(N,E)$, thus $n_1$ must be covered, by (\ref{inv:impact}) and the
+  fact that $W=\emptyset$. Let $n'_1$ be the closest ancestor of $n_1$
+  such that $(n'_1,n''_1) \in \lhd$, for some $n''_1 \in N$, and let
+  $v'_1$ be the prefix of $v_1$ leading to $n'_1$. By the construction
+  of $\lhd$ (line \ref{ln:close-uncover} in function
   $\Call{Close}{}$), we have $\Lambda(n'_1) \models
   \Lambda(n''_1)$. Applying Lemma \ref{lemma:well-labeled} inductively
   on $v'_1$, we obtain that $\Post{\A}(\iota,v'_1) \models
