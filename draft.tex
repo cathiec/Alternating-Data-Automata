@@ -1275,15 +1275,51 @@ following:
 
 \section{Experimental Evaluation}
 
-xxx
+We have implemented both Algorithm \ref{alg:predabs} and
+\ref{alg:impact} in a prototype tool\footnote{\url{XXXX}} that uses
+the Z3 SMT solver\footnote{\url{https://github.com/Z3Prover/z3}} to
+check satisfiability queries and generate interpolants in the theory
+of linear integer arithmetic variables (LIA). We compared both
+algorithms with a previous implementation of trace inclusion
+procedure, called
+\textsc{Includer}\footnote{\url{http://www.fit.vutbr.cz/research/groups/verifit/tools/includer/}},
+that uses on-the-fly determinisation and lazy predicate abstraction
+with interpolant-based refinement \cite{Tacas16}.
+
+The results of the experiments are given in Table
+\ref{tab:experiments}. We applied the tool on several array logic
+entailments, which occur as verification conditions for imperative
+programs with arrays \cite{cav09} (Array shift, Array rotation 1+2,
+Array split) available online \cite{ntslib}. Then, we applied it on
+proving safety properties of hardware circuits (HW Counter 1+2)
+\cite{smrcka}. Finally, we considered two timed communication
+protocols, consisting of systems that are asynchronous compositions of
+timed automata, whom correctness specification are given by timed
+automata monitors: two versions (correct and faulty) of the timed
+Alternating Bit Protocol \cite{abp} and a~controller of a railroad
+crossing \cite{henzinger:RealTimeSystems}. All results were obtained
+on an XXXX CPU @ YYYY GHz machine with ZZZZ GB of RAM. Execution times
+are given in seconds.
+
+\begin{table}[htb]
+\begin{center}
+{\fontsize{8}{9}\selectfont
+\begin{tabular}{||l|c|c|c|c|c||}
+\hline
+Example & $\len{\A}$ & $L(\A)=\emptyset$ ? & Algorithm \ref{alg:predabs} & Algorithm \ref{alg:impact} & \textsc{Includer} \\
+\hline 
+\hline
+\end{tabular}
+}
+\caption{}\label{tab:experiments}
+\end{center}
+\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \appendix
-
-\section{Proofs}
 
 \subsection{Proof of Lemma \ref{lemma:closure}}
 
