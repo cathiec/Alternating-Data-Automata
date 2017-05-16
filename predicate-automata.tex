@@ -1,0 +1,66 @@
+\documentclass{llncs}
+
+\usepackage[usenames,dvipsnames]{color}
+
+\usepackage{latexsym}
+\usepackage{amsxtra} 
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{pslatex}
+% \usepackage{epsfig}
+\usepackage{wrapfig}
+\usepackage{paralist}
+\usepackage{stmaryrd}
+\usepackage{txfonts}
+\usepackage{framed}
+\usepackage{makecell}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning, calc}
+\usepackage[inline,shortlabels]{enumitem}
+
+\usepackage{proof}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+\usepackage[draft]{commenting}
+
+\pagestyle{plain}
+
+\include{commands}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{From Predicate Automata to Alternating Data Automata}
+
+\author{Radu Iosif}
+\institute{CNRS, Verimag \\
+Radu.Iosif@univ-grenoble-alpes.fr}
+
+\maketitle
+
+\section{Definitions}
+
+Let $Q$ be a finite set of predicates, where for each $q \in Q$, we
+denote by $\#(q)\geq0$ its arity. We denote by $Q_0$ the subset of $Q$
+consisting of predicates of arity zero. By $\Sigma$ we denote a
+finite set of symbols, called alphabet.
+
+We consider an infinite countable set $\vars$ of first-order
+variables, ranging over $\nat$, and we associate each predicate $q \in
+Q$ a tuple of arguments $\vec{x}_q = \tuple{x_{q,1}, \ldots,
+  x_{q,\#(q)}}$ such that, for any two $p,q \in Q$, $\vec{x}_p$ and
+$\vec{x}_q$ have no elements in common, when $p \neq q$.
+
+\section{Translation of PA into ADA}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
