@@ -40,36 +40,206 @@
 \author{Radu Iosif}
 \institute{CNRS, Verimag \\
 Radu.Iosif@univ-grenoble-alpes.fr}
-
 \maketitle
 
 \section{Definitions}
 
 Let $Q$ be a finite set of predicates, where for each $q \in Q$, we
 denote by $\#(q)\geq0$ its arity. We denote by $Q_0$ the subset of $Q$
-consisting of predicates of arity zero. By $\Sigma$ we denote a finite
-set of symbols, disjoint from $Q$, called an alphabet.
-
-We consider an infinite countable set $\vars$ of first-order
-variables, ranging over $\nat$. For a tuple of variables $\vec{x} =
-\tuple{x_1,\ldots,x_n}$, we define a one-to-one corresponding tuple
-$\overline{\vec{x}} = \tuple{\overline{x_1},\ldots,\vec{x_n}}$. We
-associate each predicate $q \in Q$ a tuple of arguments $\vec{x}_q =
-\tuple{x_{q,1}, \ldots, x_{q,\#(q)}}$ such that, for any two $p,q \in
-Q$, if $p \neq q$ then any two of $\vec{x}_p$, $\overline{\vec{x}}_p$,
-$\vec{x}_q$ and $\overline{\vec{x}}_q$ have no elements in common,
-respectively.
+consisting of predicates of arity zero. We consider an infinite
+countable set $\vars$ of first-order variables, ranging over
+$\nat$. For a tuple of variables $\vec{x} = \tuple{x_1,\ldots,x_n}$,
+we define a one-to-one corresponding tuple $\overline{\vec{x}} =
+\tuple{\overline{x_1},\ldots,\vec{x_n}}$. We associate each predicate
+$q \in Q$ a tuple of variables $\vec{x}_q = \tuple{x_{q,1}, \ldots,
+  x_{q,\#(q)}}$, called \emph{arguments}, such that, for any two $p,q
+\in Q$, if $p \neq q$ then any two of $\vec{x}_p$,
+$\overline{\vec{x}}_p$, $\vec{x}_q$ and $\overline{\vec{x}}_q$ have no
+elements in common, respectively.
 
 An \emph{atom} is a predicate $q(\vec{x}_q)$,
 $q(\overline{\vec{x}}_q)$, $x \teq y$ or $x \not\teq y$, for $x,y \in
 \vars$ and a \emph{formula} is a positive boolean combination of
 atoms. We denote by $\Form(Q,\vec{x})$ the set of formulae with
-predicates from $Q$ and variables from $\vec{x}$.
+predicates from $Q$ and free variables from $\vec{x}$. A \emph{ground
+  formula} is a formula in which each predicate occurs as
+$q(n_1,\ldots,n_{\#(q)})$, for some $n_1,\ldots,n_{\#(q)} \in \nat$. 
 
-\begin{definition}[Predicate Automata]
+\subsection{Predicate Automata}
+
+We denote by $\varepsilon$ the empty sequence and by $\Sigma^*$ the
+set of finite sequences of input symbols.
+
+\begin{definition}
+  A predicate automaton (PA) is a tuple $\A =
+  \tuple{\Sigma,Q,\iota,F,\Delta}$, where: \begin{compactitem}
+  \item $\Sigma$ is a finite input alphabet,
+  \item $Q$ is the set of predicates,
+  \item $\iota \in \Form(Q,\emptyset)$ is a ground formula describing
+    the initial configurations,
+  \item $F \subseteq Q$ is a set of accepting predicates,
+  \item $\Delta : Q \times \Sigma \rightarrow
+    \Form(Q,\vec{x}\cup\overline{\vec{x}})$ is a transition function.
+  \end{compactitem}
 \end{definition}
+We write transition rules as follows: 
+\[q(\vec{x}_q) \arrow{\alpha,x_0}{} \Delta(q,\alpha) 
+\text{, where $\fv{}{\Delta(q,\alpha)} \subseteq \bigcup \{\vec{x}_p
+  \mid p \text{ occurs in } \Delta(q,\alpha)\} \cup
+  \overline{\vec{x}}_q \cup \set{x_0}$}\] Intuitively, $\vec{x}_p$
+denotes the current values of the arguments $\vec{x}_p$ of $p$, where
+$p$ is any predicate that occurs in $\Delta(q,\alpha)$, $x_0$ is the
+input value associated with the symbol $\alpha$ read by the automaton
+and $\overline{\vec{x}}_q$ are the past values of the arguments of
+$q$. We denote by $\Delta(\phi,\alpha)$ the formula obtained from
+$\phi$ by replacing each occurrence of $q(\vec{x}_q)$ in $\phi$ by
+$\Delta(q,\alpha)$.
+
+\begin{example}
+For example, instead of \(q(i,j) \arrow{\alpha,k}{} i = k \wedge j
+\neq k \wedge p(k,j) \wedge q(i,k)\), we write: \[q(x_{q,1},x_{q,2})
+\arrow{\alpha,x_0}{} \overline{x}_{q,1} = x_0 \wedge
+\overline{x}_{q,2} \neq x_0 \wedge x_{p,1} = x_0 \wedge x_{p,2} =
+\overline{x}_{q,2} \wedge p(x_{p,1},x_{p,2}) \wedge x_{q,1} =
+\overline{x}_{q,1} \wedge x_{q,2} = x_0 \wedge q(x_{q,1},x_{q,2})\] We
+assume that this preprocessing is already done for PA. \hfill\qed
+\end{example}
+
+A \emph{configuration} of $\A$ is a ground formula. We abuse notation
+and blur the distinction between the terms denoting natural numbers
+and their interpretations. The transition relation is a subset of
+$\Form(Q,\emptyset) \times \Sigma \times \Form(Q,\emptyset)$ denoted
+as \(C \stackrel{\alpha,n}{\Longrightarrow} C'\),
+where: \begin{compactitem}
+\item $C = \phi\sigma$, for a formula $\phi \in \Form(Q,\vec{x})$ and
+  a substitution $\sigma : \vec{x} \rightarrow \nat$, and
+%
+\item $C' = \Delta(q,\alpha)\sigma'$, where $\sigma' :
+  \fv{}{\Delta(q,\alpha)} \rightarrow \nat$ is a substitution defined
+  as follows:
+  \[\sigma'(y) = \left\{\begin{array}{ll}
+  \sigma(x) & \text{if $y = \overline{x}$} \\
+  n & \text{if $y = x_0$} \\
+  \text{arbitrary $m \in \nat$} & \text{otherwise}
+  \end{array}\right.\]
+\end{compactitem}
+Observe that, because of the arbitrary choices of current values for
+the arguments, a configuration can have infinitely many outgoing
+transitions. However, since we identify configurations that are
+logically equivalent, a false configuration is a sink with only false
+successors, for any pair $(\alpha,n) \in \Sigma \times \nat$. 
+
+A word $w = (\alpha_1,n_1) \ldots (\alpha_k,n_k) \in (\Sigma \times
+\nat)^*$ is \emph{accepted} by $\A$ iff there exists a sequence of
+configurations $C_k, \ldots, C_0$ such that $C_k = \iota$, $C_{i+1}
+\stackrel{\alpha_i,n_i}{\Longrightarrow} C_i$ for all $i \in [0,n-1]$
+and $C_0 \in \Form(F,\emptyset)$ contains only accepting
+predicates. The language of $\A$ is the set $L(\A)$ of accepted words.
+
+\subsection{Alternating Data Automata}
+
+Given a finite set $\vec{x} \subset \vars$ of variables, let $\vec{x}
+\mapsto \nat$ be the set of valuations of the variables $\vec{x}$ and
+$\Sigma[\vec{x}] = \Sigma \times (\vec{x} \mapsto \nat)$ be the set of
+\emph{data symbols}. A \emph{data word} (word in the sequel) is a
+finite sequence $(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$ of data
+symbols, where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n :
+\vec{x} \rightarrow \nat$ are valuations. We denote by
+$\Sigma[\vec{x}]^*$ the set of data words over $\vec{x}$.
+
+\begin{definition}
+  An alternating data automaton (ADA) is a tuple $\A =
+  \tuple{\Sigma,\vec{x},Q_0,\iota,F,\Delta}$,
+  where: \begin{compactitem}
+    \item $\Sigma$ is a finite input alphabet,
+    \item $\vec{x}$ is a finite set of variables, ranging over $\nat$,
+    \item $Q_0$ is a set of predicates of arity zero, called \emph{states}
+    \item $\iota \in \Form(Q_0,\emptyset)$ is a boolean combination of states,
+    \item $F \subseteq Q_0$ is a set of final states,
+    \item $\Delta : Q_0 \times \Sigma \rightarrow
+      \Form(Q_0,\vec{x}\cup\overline{\vec{x}})$ is a transition function.
+  \end{compactitem}
+\end{definition}
+In each formula $\Delta(q,a)$ describing a transition rule, the
+variables $\overline{\vec{x}}$ track the previous and $\vec{x}$ the
+current values of the variables of $\A$. Observe that the initial
+values of the variables are left unconstrained, as the initial
+configuration does not contain free data variables.
+
+Let $\vec{x}_k = \set{x_k \mid x \in \vec{x}}$, for any $k\geq0$, be a
+set of time-stamped variables. For an input symbol $\alpha \in \Sigma$
+and a formula $\phi \in \Form(Q_0,\vec{x}\cup\overline{\vec{x}})$, we
+write $\Delta^k(\phi,a)$ for the formula obtained from $\phi$ by
+simultaneously replacing each $q \in Q_0$ occurring in $\phi$ by the
+formula
+$\Delta(q,a)[\vec{x}_k/\overline{\vec{x}},\vec{x}_{k+1}/\vec{x}]$,
+$k\geq0$. Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots
+(a_n,\nu_n)$, the \emph{run} of $\A$ over $w$ is the sequence of
+formulae: \[\phi_0(Q) \Rightarrow \phi_1(Q,\vec{x}_0 \cup \vec{x}_1)
+\Rightarrow \ldots \Rightarrow \phi_n(Q,\vec{x}_0 \cup \ldots \cup
+\vec{x}_n)\] where $\phi_0 \equiv \iota$ and, for all $k\in[1,n]$, we
+have $\phi_k \equiv \Delta^k(\phi_{k-1},a_k)$. Next, we slightly abuse
+notation and write $\Delta(\iota,a_1,\ldots,a_n)$ for the formula
+$\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ above. We say that $\A$
+\emph{accepts} $w$ iff $\I,\nu \models \Delta(\iota,a_1,\ldots,a_n)$,
+for some valuation $\nu$ that maps:\begin{compactitem}
+%
+\item each $x \in \vec{x}_k$ to $\nu_k(x)$, for all $k\in[1,n]$, 
+%
+\item each $q \in F$ to $\top$ and 
+%
+\item each $q \in Q_0 \setminus F$ to $\bot$.
+\end{compactitem}
+The language of $\A$ is the set $L(\A)$ of words from
+$\Sigma[\vec{x}]^*$ accepted by $\A$.
 
 \section{Translation of PA into ADA}
+
+Given a predicate automaton $\A_\PA = \tuple{\Sigma, Q_\PA, \iota_\PA,
+  F_\PA, \Delta_\PA}$, we define an alternating data automaton
+$\A_\ADA = \tuple{\Sigma, \vec{x}_\ADA, Q_\ADA, \iota_\ADA, F_\ADA,
+  \Delta_\ADA}$ as follows: \begin{compactitem}
+\item $\vec{x}_\ADA = \set{x \in \vars \mid x \in \fv{}{\Delta_\PA(q,\alpha)}, q \in Q_\PA, \alpha \in \Sigma}$, 
+%
+\item $Q_\ADA = \set{\overline{q} \mid q \in Q_\PA}$, where $\#(\overline{q}) = 0$, for all $\overline{q} \in Q_\ADA$,
+%
+\item $\iota_\ADA$ is obtained from $\iota_\PA$ by replacing each
+  occurrence of a ground term $q(n_1,\ldots,n_{\#(q)})$ from
+  $\iota_\PA$ with $\overline{q}$,
+%
+\item $F_\ADA = \set{\overline{q} \mid q \in F_\PA}$, and 
+%
+\item for each transition rule \(q(k_1,\ldots,k_{\#(q)}) \arrow{\alpha,x_0}{}
+  \Delta_\PA(q,\alpha)\) \begin{compactitem}
+  \item if \(k_1,\ldots,k_q\) is the tuple of variables $\vec{x}_q$
+    then \(\Delta_\ADA(q,\alpha)\) is obtained from
+    \(\Delta_\PA(q,\alpha)\) by replacing each occurrence of a
+    predicate $q(\vec{x}_q)$ with $\overline{q}$, and
+  %
+\item else, if \(k_1,\ldots,k_{\#(q)} \in \nat\), we add the
+  conjunction $\bigwedge_{i=1}^{\#(q)} \overline{x}_i = k_i$ to
+  \(\Delta_\ADA(q,\alpha)\).
+  \end{compactitem}
+  Nothing else is in $\Delta_\ADA$. 
+\end{compactitem}
+
+\begin{example}
+The PA transition rule: 
+\[q(x_{q,1},x_{q,2})
+\arrow{\alpha,x_0}{} \overline{x}_{q,1} = x_0 \wedge
+\overline{x}_{q,2} \neq x_0 \wedge x_{p,1} = x_0 \wedge x_{p,2} =
+\overline{x}_{q,2} \wedge p(x_{p,1},x_{p,2}) \wedge x_{q,1} =
+\overline{x}_{q,1} \wedge x_{q,2} = x_0 \wedge q(x_{q,1},x_{q,2})\]
+becomes the following ADA transition rule:
+\[\overline{q} \arrow{\alpha}{} \overline{x}_{q,1} = x_0 \wedge
+\overline{x}_{q,2} \neq x_0 \wedge x_{p,1} = x_0 \wedge x_{p,2} =
+\overline{x}_{q,2} \wedge \overline{p} \wedge x_{q,1} =
+\overline{x}_{q,1} \wedge x_{q,2} = x_0 \wedge \overline{q}\]
+\end{example}
+
+\begin{claim}
+  $L(\A_\PA) \neq \emptyset$ if and only if $L(\A_\ADA) \neq \emptyset$.
+\end{claim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
