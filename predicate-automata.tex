@@ -29,7 +29,7 @@
 
 \pagestyle{plain}
 
-\include{commands}
+\include{commands-lncs}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -47,14 +47,27 @@ Radu.Iosif@univ-grenoble-alpes.fr}
 
 Let $Q$ be a finite set of predicates, where for each $q \in Q$, we
 denote by $\#(q)\geq0$ its arity. We denote by $Q_0$ the subset of $Q$
-consisting of predicates of arity zero. By $\Sigma$ we denote a
-finite set of symbols, called alphabet.
+consisting of predicates of arity zero. By $\Sigma$ we denote a finite
+set of symbols, disjoint from $Q$, called an alphabet.
 
 We consider an infinite countable set $\vars$ of first-order
-variables, ranging over $\nat$, and we associate each predicate $q \in
-Q$ a tuple of arguments $\vec{x}_q = \tuple{x_{q,1}, \ldots,
-  x_{q,\#(q)}}$ such that, for any two $p,q \in Q$, $\vec{x}_p$ and
-$\vec{x}_q$ have no elements in common, when $p \neq q$.
+variables, ranging over $\nat$. For a tuple of variables $\vec{x} =
+\tuple{x_1,\ldots,x_n}$, we define a one-to-one corresponding tuple
+$\overline{\vec{x}} = \tuple{\overline{x_1},\ldots,\vec{x_n}}$. We
+associate each predicate $q \in Q$ a tuple of arguments $\vec{x}_q =
+\tuple{x_{q,1}, \ldots, x_{q,\#(q)}}$ such that, for any two $p,q \in
+Q$, if $p \neq q$ then any two of $\vec{x}_p$, $\overline{\vec{x}}_p$,
+$\vec{x}_q$ and $\overline{\vec{x}}_q$ have no elements in common,
+respectively.
+
+An \emph{atom} is a predicate $q(\vec{x}_q)$,
+$q(\overline{\vec{x}}_q)$, $x \teq y$ or $x \not\teq y$, for $x,y \in
+\vars$ and a \emph{formula} is a positive boolean combination of
+atoms. We denote by $\Form(Q,\vec{x})$ the set of formulae with
+predicates from $Q$ and variables from $\vec{x}$.
+
+\begin{definition}[Predicate Automata]
+\end{definition}
 
 \section{Translation of PA into ADA}
 
