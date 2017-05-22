@@ -57,8 +57,9 @@ assume w.l.o.g. that $\ssorts{\sig} = \set{\Data,\Bool}$\footnote{The
   would unnecessarily clutter the technical presentation.} and each
 function symbol $f \in \sfuns{\sig}$ has $\#(f) \geq 0$ arguments of
 sort $\Data$ and return value $\sigma(f) \in \ssorts{\sig}$. If
-$\#(f)=0$ then $f$ is a \emph{constant}. Let
-$\top$ and $\bot$ be constants of sort $\Bool$.
+$\#(f)=0$ then $f$ is a \emph{constant}. Let $\top$ and $\bot$ be
+constants of sort $\Bool$ and $\mathbf{0}$ be a constant of sort
+$\Data$.
 
 We consider an infinite countable set of \emph{variables} $\vars$,
 where each $x \in \vars$ has an associated sort $\sigma(x)$. A
@@ -165,16 +166,19 @@ in the sequel) is a tuple $\A =
   is a \emph{transition function},
 \end{compactitem}
 where, for a set $X \subseteq \vars$, we denote $\overline{X} =
-\set{\overline{x} \mid x \in X}$. Intuitively, the variables
-$\overline{x}$ from a transition formula $\Delta(q,a)$ refer to past
-values, whereas the other variables refer to the current
-values. Observe that the initial values are unconstrained (since the
-initial configuration is a boolean combination of states without
-variables) and quantification is allowed only over the current local
-variables. In other words, we do not allow quantification over past
-values, which are beyond our control. The size of $\A$ is defined as
+\set{\overline{x} \mid x \in X}$. The size of $\A$ is defined as
 $\len{\A} = \len{\iota} + \sum_{(q,a) \in
   Q\times\Sigma}\len{\Delta(q,a)}$.
+
+Intuitively, the variables $\overline{x}$ from a transition formula
+$\Delta(q,a)$ refer to past values, whereas the other variables refer
+to the current values. Observe that the initial values of the global
+variables are unconstrained (since the initial configuration is a
+boolean combination of states without variables) and quantification is
+allowed only over the current local variables. In other words, we do
+not quantify over global variables which are visible throughout the
+execution and also, we do not quantify over over past values, which
+are beyond our control.
 
 In order to define the semantics of automata, we consider time-stamped
 sets of variables $\stamp{X}{n} = \{\stamp{x}{n} \mid x \in X\}$ for
@@ -187,22 +191,21 @@ $\Delta(\phi,a)[\stamp{G}{n}/\overline{G}, \stamp{G}{n+1}/G,
 
 Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n) \in
 \Sigma[G]^*$ the \emph{run} of $\A$ over $w$ is the sequence of
-formulae: \[\phi_0 \Rightarrow \phi_1(Q,\stamp{G}{0} \cup \stamp{G}{1},
-\stamp{L}{0} \cup \stamp{L}{1}) \Rightarrow \ldots \Rightarrow
-\phi_n(Q,\stamp{G}{0} \cup \ldots \cup \stamp{G}{n}, \stamp{L}{0} \cup
-\ldots \cup \stamp{L}{n})\]
-where: \begin{compactitem}
-\item $\phi_0 \equiv \iota$, 
-%
-\item $\phi_1 \equiv \exists \stamp{L}{0} ~.~ \stamp{\Delta}{0}(\iota,a_1)$, and
+formulae: \[\iota \stackrel{(a_1,\nu_1)}{\Longrightarrow}
+\phi_1(Q,\stamp{G}{1},
+\stamp{L}{1}) \stackrel{(a_2,\nu_2)}{\Longrightarrow} \ldots
+\stackrel{(a_n,\nu_n)}{\Longrightarrow} \phi_n(Q,\stamp{G}{1} \cup
+\ldots \cup \stamp{G}{n}, \stamp{L}{1} \cup \ldots \cup
+\stamp{L}{n})\] where: \begin{compactitem}
+\item $\phi_1 \equiv \stamp{\Delta}{0}(\iota,a_1)[\mathbf{0}/\stamp{G}{0},\mathbf{0}/\stamp{L}{0}]$, and
 %
 \item $\phi_{i+1} \equiv \stamp{\Delta}{i}(\phi_i,a_{i+1})$, for all $i \in [1,n-1]$.
 \end{compactitem}
 We say that $\A$ \emph{accepts} $w$ if $\I,\nu \models
-\phi_n(Q,\stamp{G}{0} \cup \ldots \cup \stamp{G}{n}, \stamp{L}{0} \cup
+\phi_n(Q,\stamp{G}{1} \cup \ldots \cup \stamp{G}{n}, \stamp{L}{1} \cup
 \ldots \cup \stamp{L}{n})$, where $\nu$ is a valuation such
 that: \begin{compactitem}
-\item $\nu(\stamp{g}{i}) = \nu_i(g)$ for each $g \in G$, 
+\item $\nu(\stamp{g}{i}) = \nu_i(g)$ for each $g \in G$ and each $i \in [1,n]$, 
 %
 \item $\nu(q) = \true$ for each $q \in F$, and
 %
@@ -212,10 +215,11 @@ The language of $\A$ is the set $L(\A)$ of words from $\Sigma[G]^*$
 accepted by $\A$. In the following, we ask two
 questions: \begin{compactenum}
 \item given automata $\A_i = \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$,
-  with $L_1 \cap L_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$, do
-  there exist automata $\A_\cap$, $\A_\cup$ and $\overline{\A}_1$ such
-  that $L(\A_\cap) = L(\A_1) \cap L(\A_2)$, $L(\A_\cup) = L(\A_1) \cup
-  L(\A_2)$ and $L(\overline{\A}_1) = \Sigma[G]^* \setminus L(\A_1)$ ?
+  for $i=1,2$, with $L_1 \cap L_2 = \emptyset$ and $Q_1 \cap Q_2 =
+  \emptyset$, do there exist automata $\A_\cap$, $\A_\cup$ and
+  $\overline{\A}_1$ such that $L(\A_\cap) = L(\A_1) \cap L(\A_2)$,
+  $L(\A_\cup) = L(\A_1) \cup L(\A_2)$ and $L(\overline{\A}_1) =
+  \Sigma[G]^* \setminus L(\A_1)$ ?
 %
 \item given an automaton $\A$, is $L(\A) = \emptyset$ ? 
 \end{compactenum}
