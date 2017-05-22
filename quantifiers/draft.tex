@@ -141,7 +141,8 @@ $\phi$ such that $\fv{\Bool}{\phi} = B$, $\fv{\Data}{\phi} = X$ and
 each variable from $Y$ is of sort $\Data$ and occurs under the scope
 of a quantifier. By $\Form^+(B,X,Y)$ we denote the subset of
 $\Form(B,X,Y)$ in which each boolean variable occurs under an even
-number of negations.
+number of negations. We denote by $\phi(B,X,Y)$ any formula from
+$\Form(B,X,Y)$. 
 
 A \emph{first-order alternating data automaton} (fo-ADA or automaton
 in the sequel) is a tuple $\A =
@@ -175,7 +176,49 @@ values, which are beyond our control. The size of $\A$ is defined as
 $\len{\A} = \len{\iota} + \sum_{(q,a) \in
   Q\times\Sigma}\len{\Delta(q,a)}$.
 
+In order to define the semantics of automata, we consider time-stamped
+sets of variables $\stamp{X}{n} = \{\stamp{x}{n} \mid x \in X\}$ for
+any $n\geq0$. For an input event $a \in \Sigma$, some constant
+$n\geq0$ and a formula $\phi$, we write $\stamp{\Delta}{n}(\phi,a)$
+for the formula obtained from $\phi$ by simultaneously replacing each
+state $q \in \fv{\Bool}{\phi}$ with
+$\Delta(\phi,a)[\stamp{G}{n}/\overline{G}, \stamp{G}{n+1}/G,
+  \stamp{L}{n}/\overline{L}, \stamp{L}{n+1}/L]$.
 
+Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n) \in
+\Sigma[G]^*$ the \emph{run} of $\A$ over $w$ is the sequence of
+formulae: \[\phi_0 \Rightarrow \phi_1(Q,\stamp{G}{0} \cup \stamp{G}{1},
+\stamp{L}{0} \cup \stamp{L}{1}) \Rightarrow \ldots \Rightarrow
+\phi_n(Q,\stamp{G}{0} \cup \ldots \cup \stamp{G}{n}, \stamp{L}{0} \cup
+\ldots \cup \stamp{L}{n})\]
+where: \begin{compactitem}
+\item $\phi_0 \equiv \iota$, 
+%
+\item $\phi_1 \equiv \exists \stamp{L}{0} ~.~ \stamp{\Delta}{0}(\iota,a_1)$, and
+%
+\item $\phi_{i+1} \equiv \stamp{\Delta}{i}(\phi_i,a_{i+1})$, for all $i \in [1,n-1]$.
+\end{compactitem}
+We say that $\A$ \emph{accepts} $w$ if $\I,\nu \models
+\phi_n(Q,\stamp{G}{0} \cup \ldots \cup \stamp{G}{n}, \stamp{L}{0} \cup
+\ldots \cup \stamp{L}{n})$, where $\nu$ is a valuation such
+that: \begin{compactitem}
+\item $\nu(\stamp{g}{i}) = \nu_i(g)$ for each $g \in G$, 
+%
+\item $\nu(q) = \true$ for each $q \in F$, and
+%
+\item $\nu(q) = \false$ for each $q \in Q \setminus F$.
+\end{compactitem}
+The language of $\A$ is the set $L(\A)$ of words from $\Sigma[G]^*$
+accepted by $\A$. In the following, we ask two
+questions: \begin{compactenum}
+\item given automata $\A_i = \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$,
+  with $L_1 \cap L_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$, do
+  there exist automata $\A_\cap$, $\A_\cup$ and $\overline{\A}_1$ such
+  that $L(\A_\cap) = L(\A_1) \cap L(\A_2)$, $L(\A_\cup) = L(\A_1) \cup
+  L(\A_2)$ and $L(\overline{\A}_1) = \Sigma[G]^* \setminus L(\A_1)$ ?
+%
+\item given an automaton $\A$, is $L(\A) = \emptyset$ ? 
+\end{compactenum}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
