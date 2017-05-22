@@ -201,9 +201,9 @@ formulae: \[\iota \stackrel{(a_1,\nu_1)}{\Longrightarrow}
 %
 \item $\phi_{i+1} \equiv \stamp{\Delta}{i}(\phi_i,a_{i+1})$, for all $i \in [1,n-1]$.
 \end{compactitem}
-We say that $\A$ \emph{accepts} $w$ if $\I,\nu \models
-\phi_n(Q,\stamp{G}{1} \cup \ldots \cup \stamp{G}{n}, \stamp{L}{1} \cup
-\ldots \cup \stamp{L}{n})$, where $\nu$ is a valuation such
+$\A$ \emph{accepts} $w$ if $\I,\nu \models \phi_n(Q,\stamp{G}{1} \cup
+\ldots \cup \stamp{G}{n}, \stamp{L}{1} \cup \ldots \cup
+\stamp{L}{n})$, where $\nu$ is any valuation such
 that: \begin{compactitem}
 \item $\nu(\stamp{g}{i}) = \nu_i(g)$ for each $g \in G$ and each $i \in [1,n]$, 
 %
@@ -212,8 +212,8 @@ that: \begin{compactitem}
 \item $\nu(q) = \false$ for each $q \in Q \setminus F$.
 \end{compactitem}
 The language of $\A$ is the set $L(\A)$ of words from $\Sigma[G]^*$
-accepted by $\A$. In the following, we ask two
-questions: \begin{compactenum}
+accepted by $\A$. In the following, we ask the two
+questions below: \begin{compactenum}
 \item given automata $\A_i = \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$,
   for $i=1,2$, with $L_1 \cap L_2 = \emptyset$ and $Q_1 \cap Q_2 =
   \emptyset$, do there exist automata $\A_\cap$, $\A_\cup$ and
