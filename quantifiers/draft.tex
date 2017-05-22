@@ -1,0 +1,182 @@
+\documentclass{llncs}
+% \documentclass[10pt,conference,letterpaper,twocolumn]{IEEEtran}
+
+\usepackage[usenames,dvipsnames]{color}
+
+\usepackage{latexsym}
+\usepackage{amsxtra} 
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{pslatex}
+\usepackage{epsfig}
+\usepackage{wrapfig}
+\usepackage{paralist}
+\usepackage{stmaryrd}
+\usepackage{txfonts}
+\usepackage{framed}
+\usepackage{makecell}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning, calc}
+\usepackage[inline,shortlabels]{enumitem}
+
+\usepackage{proof}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+\usepackage[draft]{commenting}
+
+\pagestyle{plain}
+
+\include{commands-lncs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{First Order Alternation}
+
+\author{Radu Iosif and Xiao Xu \\
+CNRS, Verimag, Universit\'e de Grenoble Alpes \\
+Email: \{Radu.Iosif,Xiao.Xu\}@univ-grenoble-alpes.fr}
+
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\section{Preliminaries}
+
+A \emph{signature} $\sig = (\ssorts{\sig},\sfuns{\sig})$ consists of a
+set $\ssorts{\sig}$ of \emph{sort symbols} and a set $\sfuns{\sig}$ of
+sorted \emph{function symbols}. To simplify the presentation, we
+assume w.l.o.g. that $\ssorts{\sig} = \set{\Data,\Bool}$\footnote{The
+  generalization to more than two sorts is without difficulty, but
+  would unnecessarily clutter the technical presentation.} and each
+function symbol $f \in \sfuns{\sig}$ has $\#(f) \geq 0$ arguments of
+sort $\Data$ and return value $\sigma(f) \in \ssorts{\sig}$. If
+$\#(f)=0$ then $f$ is a \emph{constant}. Let
+$\top$ and $\bot$ be constants of sort $\Bool$.
+
+We consider an infinite countable set of \emph{variables} $\vars$,
+where each $x \in \vars$ has an associated sort $\sigma(x)$. A
+\emph{term} $t$ of sort $\sigma(t)=S$ is a variable $x \in \vars$
+where $\sigma(x)=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
+$t_1,\ldots,t_{\#(f)}$ are terms of sort $\Data$ and $\sigma(f)=S$. An
+\emph{atom} is a term of sort $\Bool$ or an equality $t \teq s$
+between two terms of sort $\Data$. A \emph{formula} is a quantified
+boolean combination of atoms, where the quantifiers are as $\exists x
+~.~ \phi$ and $\forall x ~.~ \phi$.
+
+We denote by $\fv{\sigma}{\phi}$ the set of free variables of sort
+$\sigma$ in $\phi$ and write $\fv{}{\phi}$ for $\bigcup_{\sigma \in
+  \ssorts{\sig}} \fv{\sigma}{\phi}$. For a variable $x \in
+\fv{}{\phi}$ and a term $t$ such that $\sigma(t) = \sigma(x)$, let
+$\phi[t/x]$ be the result of replacing each occurrence of $x$ by
+$t$. For indexed sets $T=\set{t_1,\ldots,t_n}$ and
+$X=\set{x_1,\ldots,x_n}$, we write $\phi[T/X]$ for
+the formula obtained by simultaneously replacing $x_i$ with $t_i$ in
+$\phi$, for all $i\in[1,n]$. The size $\len{\phi}$ is the number of
+symbols occuring in $\phi$.
+
+An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
+\item the sort $\Data$ into a non-empty set $\Data^\I$, 
+%
+\item the sort $\Bool$ into the set $\booli = \set{\true,\false}$, where
+  $\top^\I = \true$, $\bot^\I = \false$, and
+%
+\item each function symbol $f$ into a total function $f^\I :
+  (\Data^\I)^{\#(f)} \rightarrow \sigma(f)^I$, or an element of
+  $\sigma(f)^I$ when $\#(f)=0$.
+\end{inparaenum}
+Given an interpretation $\I$, a \emph{valuation} $\nu$ maps each
+variable $x \in \vars$ into an element $\nu(x) \in \sigma(x)^\I$. For
+a term $t$, we denote by $t^\I_\nu$ the value obtained by replacing
+each function symbol $f$ by its interpretation $f^\I$ and each
+variable $x$ by its valuation $\nu(x)$. For a formula $\phi$, we write
+$\I,\nu \models \phi$ if the formula obtained by replacing each term
+$t$ in $\phi$ by the value $t^\I_\nu$ is logically equivalent to true.
+The semantics of quantifiers is given as usual: $\I,\nu \models
+\exists x ~.~ \phi$ ($\forall x ~.~ \phi$) if and only if $\I,\nu[x
+  \leftarrow u] \models \phi$, for some (for all) value(s) $u \in
+\sigma(x)^\I$, where $\nu[x \leftarrow u]$ is the valuation that
+assigns $u$ to $x$ and $\nu(y)$ to all $y \neq x$.
+
+A formula $\phi$ is \emph{satisfiable} in the interpretation $\I$ if
+there exists a valuation $\nu$ such that $\I,\nu \models \phi$, and
+\emph{valid} if $\I,\nu \models \phi$ for all valuations $\nu$.  The
+\emph{first-order theory} $\theory(\sig,\I)$ is the set of valid
+formulae written in the signature $\sig$, with the interpretation
+$\I$. A \emph{decision procedure} for $\theory(\sig,\I)$ is an
+algorithm that takes a formula $\phi$ in the signature $\sig$ and
+returns yes if and only if $\phi \in \theory(\sig,\I)$.
+
+Given formulae $\varphi$ and $\psi$, we say that \emph{$\phi$ entails
+  $\psi$}, denoted $\phi \models^\I \psi$ iff $\I,\nu \models \varphi$
+implies $\I,\nu \models \psi$, for each valuation $\nu$, and $\phi
+\iffeq^\I \psi$ iff $\phi \models^\I \psi$ and $\psi \models^\I \phi$.
+We omit mentioning the interpretation $\I$ when it is clear from the
+context.
+
+\section{First Order Alternating Data Automata}
+
+We fix an interpretation $\I$ and a finite alphabet $\Sigma$ of
+\emph{input events}. Given a finite set $X \subset \vars$ of
+variables of sort $\Data$, let $X \mapsto \Data^\I$ be the set
+of valuations of the variables $X$ and $\Sigma[X] = \Sigma
+\times (X \mapsto \Data^\I)$ be the possibly infinite set of
+\emph{data symbols}. A \emph{data word} (word in the sequel) is a
+finite sequence $(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$ of data
+symbols, where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n :
+X \rightarrow \Data^\I$ are valuations. We denote by
+$\varepsilon$ the empty sequence, by $\Sigma^*$ the set of finite
+sequences of input events and by $\Sigma[X]^*$ the set of data
+words over the variables $X$.
+
+Given sets of variables $B,X \subset \vars$ of sort $\Bool$ and
+$\Data$, respectively, we denote by $\Form(B,X,Y)$ the set of formulae
+$\phi$ such that $\fv{\Bool}{\phi} = B$, $\fv{\Data}{\phi} = X$ and
+each variable from $Y$ is of sort $\Data$ and occurs under the scope
+of a quantifier. By $\Form^+(B,X,Y)$ we denote the subset of
+$\Form(B,X,Y)$ in which each boolean variable occurs under an even
+number of negations.
+
+A \emph{first-order alternating data automaton} (fo-ADA or automaton
+in the sequel) is a tuple $\A =
+\tuple{G,L,Q,\iota,F,\Delta}$, where: \begin{compactitem}
+%
+\item $G \subseteq \vars$ is a finite set of \emph{global
+  variables} of sort $\Data$, 
+%
+\item $L \subseteq \vars$ is a finite set of \emph{local
+  variables} of sort $\Data$,
+%
+\item $Q \subset \vars$ is a finite set of variables of sort $\Bool$
+  (\emph{states}),
+%
+\item $\iota \in \Form^+(Q,\emptyset,\emptyset)$ is the \emph{initial
+  configuration},
+%
+\item $\Delta : Q \times \Sigma \rightarrow
+  \Form^+(Q,\overline{G}\cup G\cup\overline{L},L)$
+  is a \emph{transition function},
+\end{compactitem}
+where, for a set $X \subseteq \vars$, we denote $\overline{X} =
+\set{\overline{x} \mid x \in X}$. Intuitively, the variables
+$\overline{x}$ from a transition formula $\Delta(q,a)$ refer to past
+values, whereas the other variables refer to the current
+values. Observe that the initial values are unconstrained (since the
+initial configuration is a boolean combination of states without
+variables) and quantification is allowed only over the current local
+variables. In other words, we do not allow quantification over past
+values, which are beyond our control. The size of $\A$ is defined as
+$\len{\A} = \len{\iota} + \sum_{(q,a) \in
+  Q\times\Sigma}\len{\Delta(q,a)}$.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
