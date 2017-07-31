@@ -270,7 +270,7 @@ $$\States {\leq n}  \equiv \States {\leq n} \lor \subst{(\exists x,y: \States {n
 
 \newpage
 \subsection{Universality}
-We will snow ketch a basic universality check. 
+We will now sketch a basic universality check. 
 As in the case of emptiness, it is incomplete due to the infinite data domain, but additionally also due to the need of working with unbounded histories. 
 %
 Universality of $T$ corresponds to the validity the formula
@@ -287,7 +287,7 @@ $$
 \Configurations k(\vect x[k],x,y) \fdef \exists \vect y[k]:\Run k \land x = x_k \land y = y_k  
 $$
 be a formula which associates a visible trace $\vect x[k]$ of the length $k$ with the resulting values of $x$ and $y$.
-Fixing a particular trace $\vect \dval [k]$ results in a so called \emph{configuration}, 
+Fixing a particular trace $\vect \dval [k]\in\domain^k$ results in a so called \emph{configuration}, 
 a constraint over $x$ and $y$ with $x$ fixed at the last value $\dval_k$: 
 $$
 \subst{\Configurations k}{\vect x[k]}{\vect \dval[k]}(x,y)\ \ .
@@ -301,11 +301,11 @@ $$
 \equiv
 \bigwedge_{k\geq 0} \forall \vect x[k]\,\exists y:\Configurations k(\vect x[k],x,y) \land \final(x,y) 
 $$
-That is, every configuration must have $y$ to satisfy $\final$.
-Notice that the universality test does not require all but only the smallest (strongest) configurations.
+That is, every configuration must posses $y$ to satisfy $\final$.
+Notice that the universality test does not require to test all but only the smallest (strongest) configurations.
 
-The task is therefore to compute and test all configurations $\subst{\Configurations {k}}{\vect x[k]}{\vect \dval[k]}$. 
-To compute a representation of all configurations, we use the fact that configurations at the distance $k+1$ can be obtained as successors of those at the distance $k$ as follows. 
+The task is therefore to compute and test all smallest configurations $\subst{\Configurations {k}}{\vect x[k]}{\vect \dval[k]}$. 
+To compute a representation of all smallest configurations, we use the fact that configurations at the distance $k+1$ can be obtained as successors of those at the distance $k$ as follows. 
 For every visible trace $\vect \dval [k+1]$,
 $$
 \subst{\Configurations {k+1}}{\vect x[k+1]}{\vect \dval[k+1]} \equiv 
@@ -313,8 +313,9 @@ $$
 $$
 The set of all configurations can be hence computed as the least fixpoint of the transition relation that includes the initial configurations.
 %
-Notice that the lowest configurations at the distance $k+1$ are successors of the lowest configurations at the distance $k+1$.
+Notice that the smallest configurations at the distance $k+1$ are successors of the smallest configurations at the distance $k+1$.
 %
+
 That is, all smallest configurations are found within the distance $k$, i.e.
 $$
 \bigwedge_{\ell\geq 0} \forall \vect x[\ell]:\Configurations {\ell} \rightarrow \bigvee_{m\leq k} \exists \vect x[m]: \Configurations {m}
