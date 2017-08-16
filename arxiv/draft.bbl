@@ -1,0 +1,125 @@
+\begin{thebibliography}{10}
+
+\bibitem{AlurDill94}
+R.~Alur and D.~L. Dill.
+\newblock A theory of timed automata.
+\newblock {\em Theor. Comput. Sci.}, 126(2):183--235, 1994.
+
+\bibitem{cav09}
+M.~Bozga, P.~Habermehl, R.~Iosif, F.~Konecn{\'{y}}, and T.~Vojnar.
+\newblock Automatic verification of integer array programs.
+\newblock In {\em Proc. of CAV'09}, volume 5643 of {\em LNCS}, pages 157--172,
+  2009.
+
+\bibitem{ChandraKozenStockmeyer81}
+A.~K. Chandra, D.~C. Kozen, and L.~J. Stockmeyer.
+\newblock Alternation.
+\newblock {\em J. ACM}, 28(1):114--133, 1981.
+
+\bibitem{DAntoniKW16}
+L.~D'Antoni, Z.~Kincaid, and F.~Wang.
+\newblock A symbolic decision procedure for symbolic alternating finite
+  automata.
+\newblock {\em CoRR}, abs/1610.01722, 2016.
+
+\bibitem{DeWulf08}
+M.~De~Wulf, L.~Doyen, N.~Maquet, and J.~F. Raskin.
+\newblock Antichains: Alternative algorithms for ltl satisfiability and
+  model-checking.
+\newblock In {\em TACAS 2008, Proceedings}, pages 63--77. Springer, 2008.
+
+\bibitem{Farzan15}
+A.~Farzan, Z.~Kincaid, and A.~Podelski.
+\newblock Proof spaces for unbounded parallelism.
+\newblock {\em SIGPLAN Not.}, 50(1):407--420, Jan. 2015.
+
+\bibitem{Grebenshchikov12}
+S.~Grebenshchikov, N.~P. Lopes, C.~Popeea, and A.~Rybalchenko.
+\newblock Synthesizing software verifiers from proof rules.
+\newblock {\em SIGPLAN Not.}, 47(6):405--416, June 2012.
+
+\bibitem{HJMS02}
+T.~A. Henzinger, R.~Jhala, R.~Majumdar, and G.~Sutre.
+\newblock Lazy abstraction.
+\newblock {\em SIGPLAN Not.}, 37(1):58--70, Jan. 2002.
+
+\bibitem{henzinger:RealTimeSystems}
+T.~A. Henzinger, X.~Nicollin, J.~Sifakis, and S.~Yovine.
+\newblock Symbolic model checking for real-time systems.
+\newblock {\em Information and Computation}, 111:394--406, 1992.
+
+\bibitem{Hoder12}
+K.~Hoder and N.~Bj{\o}rner.
+\newblock Generalized property directed reachability.
+\newblock In {\em SAT 2012. Proceedings}, pages 157--171. Springer, 2012.
+
+\bibitem{Tacas16}
+R.~Iosif, A.~Rogalewicz, and T.~Vojnar.
+\newblock Abstraction refinement and antichains for trace inclusion of infinite
+  state systems.
+\newblock In {\em {TACAS} 2016, Proceedings}, pages 71--89, 2016.
+
+\bibitem{Kaminski94}
+M.~Kaminski and N.~Francez.
+\newblock Finite-memory automata.
+\newblock {\em Theor. Comput. Sci.}, 134(2):329--363, Nov. 1994.
+
+\bibitem{Lasota05}
+S.~Lasota and I.~Walukiewicz.
+\newblock Alternating timed automata.
+\newblock In {\em FOSSACS 2005, Proceedings}, pages 250--265. Springer, 2005.
+
+\bibitem{LINCOLN92}
+P.~Lincoln, J.~Mitchell, A.~Scedrov, and N.~Shankar.
+\newblock Decision problems for propositional linear logic.
+\newblock {\em Annals of Pure and Applied Logic}, 56(1):239 -- 311, 1992.
+
+\bibitem{mcmillan06}
+K.~L. McMillan.
+\newblock Lazy abstraction with interpolants.
+\newblock In {\em Proc. of CAV'06}, volume 4144 of {\em LNCS}. Springer, 2006.
+
+\bibitem{McMillan14}
+K.~L. McMillan.
+\newblock Lazy annotation revisited.
+\newblock In {\em CAV2014, Proceedings}, pages 243--259. Springer International
+  Publishing, 2014.
+
+\bibitem{ntslib}
+{Numerical Transition Systems Repository}.
+\newblock \url{http://http://nts.imag.fr/index.php/Flata}, 2012.
+
+\bibitem{OuaknineWorrell04}
+J.~Ouaknine and J.~Worrell.
+\newblock On the language inclusion problem for timed automata: closing a
+  decidability gap.
+\newblock In {\em Proceedings of LICS 2004.}, pages 54--63, 2004.
+
+\bibitem{Pnueli77}
+A.~Pnueli.
+\newblock The temporal logic of programs.
+\newblock In {\em Proceedings of the 18th Annual Symposium on Foundations of
+  Computer Science}, SFCS '77, pages 46--57. IEEE, 1977.
+
+\bibitem{smrcka}
+A.~Smrcka and T.~Vojnar.
+\newblock Verifying parametrised hardware designs via counter automata.
+\newblock In {\em {HVC}'07}, pages 51--68, 2007.
+
+\bibitem{VARDI94}
+M.~Vardi and P.~Wolper.
+\newblock Reasoning about infinite computations.
+\newblock {\em Information and Computation}, 115(1):1 -- 37, 1994.
+
+\bibitem{symbTransd:POPL12}
+M.~Veanes, P.~Hooimeijer, B.~Livshits, D.~Molnar, and N.~Bjorner.
+\newblock Symbolic finite state transducers: Algorithms and applications.
+\newblock In {\em Proc. of POPL'12}. ACM, 2012.
+
+\bibitem{abp}
+A.~Zbrzezny and A.~Polrola.
+\newblock Sat-based reachability checking for timed automata with discrete
+  data.
+\newblock {\em Fundamenta Informaticae}, 79:1--15, 2007.
+
+\end{thebibliography}
