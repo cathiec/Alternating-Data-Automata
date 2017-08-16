@@ -290,14 +290,45 @@ automaton is empty.
 \begin{proposition}\label{prop:substitution}
   Given a formula $Q_1 x_1 \ldots Q_n x_n ~.~ \phi$, where $Q_1 \ldots
   Q_n \in \set{\exists,\forall}$ and $\phi$ is a quantifier-free
-  formula with free variables $\fv{}{\phi} = \set{x_1,\ldots,x_n,q}$,
-  for any formula $\psi$, the following equivalence holds:
+  formula with free variables $\fv{}{\phi} = \set{x_1,\ldots,x_n,q}$
+  in which the boolean variable $q$ occurs positively, for any formula
+  $\psi$, the following equivalence holds:
   \[Q_1 x_1 \ldots Q_n x_n ~.~ \phi[\psi/q] \iff 
   Q_1 x_1 \ldots Q_n x_n \exists q ~.~ \phi \wedge (q \rightarrow \psi)\]
 \end{proposition}
-\proof{
-  
-\qed}
+\proof{ Let $\nu$ be an arbitrary valuation of the variables in
+  $\fv{}{\phi} \cup \fv{}{\psi}$. It is sufficient to prove that $\nu
+  \models \phi[\psi/q]$ if and only if $\nu \models \exists q ~.~ \phi
+  \wedge (q \rightarrow \psi)$.
+
+  ``$\Leftarrow$'' Suppose that $\nu \models \phi[\psi/q]$ and
+  distinguish the following cases: \begin{compactenum}
+  \item if $\nu \models \psi$, since $q$ occurs positively in $\phi$, we
+    obtain that $\nu \models \phi[\top/q]$, thus $\nu \models
+    \phi[\top/q] \wedge (\top \rightarrow \psi)$ and $\nu \models
+    \exists q ~.~ \phi \wedge (q \rightarrow \psi)$ follows.
+    %
+  \item if $\nu \not\models \psi$, since $q$ occurs positively in $\phi$, we
+    obtain that $\nu \models \phi[\bot/q]$, thus $\nu \models
+    \phi[\bot/q] \wedge (\bot \rightarrow \psi)$ and $\nu \models
+    \exists q ~.~ \phi \wedge (q \rightarrow \psi)$ follows.
+  \end{compactenum}
+
+  ``$\Rightarrow$'' Suppose that $\nu \models \exists q ~.~ \phi
+  \wedge (q \rightarrow \psi)$, or equivalently, $\nu \models
+  (\phi[\top/q] \wedge \psi) \vee \phi[\bot/q]$. If $\nu \models
+  \phi[\top/q] \wedge \psi$ then $\nu \models
+  \phi[\psi/q]$. Otherwise, if $\nu \models \phi[\bot/q]$, we
+  distinguish two cases: \begin{compactitem} 
+  \item if $\nu \not\models \psi$ then clearly $\nu \models
+    \phi[\psi/q]$.
+    %
+  \item else, if $\nu \models \psi$, since $q$ occurs positively in
+    $\phi$ and $\nu \models \phi[\bot/q]$ then also $\nu \models
+    \phi[\top/q]$, because $\phi$ is monotone in $q$ in the entailment
+    partial order. But then $\nu \models \phi[\psi/q]$.
+  \end{compactitem}
+  \qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
