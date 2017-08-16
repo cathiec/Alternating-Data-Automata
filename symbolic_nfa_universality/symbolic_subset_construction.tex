@@ -1,197 +1,345 @@
-\documentclass{llncs}
+%\documentclass{llncs}
+\documentclass[acmsmall]{acmart}
 
-\usepackage[usenames,dvipsnames]{color}
+%\usepackage[usenames,dvipsnames]{color}
 
-\let\iint\undefined 
-\let\iiint\undefined 
-\let\iiiint\undefined 
-\let\idotsint\undefined
+%\let\iint\undefined 
+%\let\iiint\undefined 
+%\let\iiiint\undefined 
+%\let\idotsint\undefined
 
 \usepackage{amsmath} 
 \usepackage{amsxtra} 
 \usepackage{amssymb}
-\usepackage{mathabx}
+%\usepackage{mathabx}
 \usepackage{mathtools}
 \usepackage{textcomp}
+\usepackage{xifthen}
+%\usepackage{silence}
+%\WarningsOff
 
 \usepackage{latexsym}
-\usepackage{pslatex}
-\usepackage{epsfig}
-\usepackage{wrapfig}
+%\usepackage{pslatex}
+%\usepackage{epsfig}
+%\usepackage{wrapfig}
 %\usepackage{graphics}
 \usepackage{enumerate}
-\usepackage{cancel}
+%\usepackage{cancel}
 
 \usepackage{paralist}
 
-\usepackage{ listings }
+%\usepackage{ listings }
 
-\usepackage{algorithm}
-\usepackage{algorithmicx}
-\usepackage[noend]{algpseudocode}
-\let\Asterisk\undefined
+%\usepackage{algorithm}
+%\usepackage{algorithmicx}
+%\usepackage[noend]{algpseudocode}
+%\let\Asterisk\undefined
+
+\usepackage{xparse}
+\usepackage{pdfsync}
 
 \pagestyle{empty}
 
-\include{commands}
+%needed macros from the coopy-pasted preliminaries
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\nat}{{\mathbb N}}
+\newcommand{\domain}{\mathcal {D}}
+%\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\true}{\mathtt{true}}
+\newcommand{\false}{\mathtt{false}}
+\newcommand{\tuple}[1]{\left\langle #1 \right\rangle}
+\newcommand{\theo}{\mathsf{Th}}
+\newcommand{\thd}{\theo(\mathcal{D})}
+\newcommand{\modelsthd}{\models_{\thd}}
+\def\proj{\mathbin{\downarrow}}
 
-\newcommand{\Xobs}{\vec{x}}
-\newcommand{\Xinv}{\vec{y}}
-\newcommand{\Xinvz}{\vec{z}}
+\DeclareDocumentCommand\vect{ m o o }{%
+    {% 
+        \IfNoValueT {#2} {\bar #1} 
+        \IfNoValueF {#2} {%
+			\IfNoValueT	{#3} {\bar #1_{#2}}%
+			%\IfNoValueF {#3} {^{(#2,#3)}}%
+			\IfNoValueF {#3} {\bar #1^{(#2,#3)}}%
+		}%
+    }%
+}
 
-\newcommand{\vx}{\vec{x}}
-\newcommand{\vy}{\vec{y}}
-\newcommand{\vz}{\vec{z}}
-\newcommand{\dom}{\mathcal{D}}
+\newcommand{\set}{\vect}
+%\DeclareDocumentCommand\set{ g g }{%
+%    {%	
+%		\IfNoValueT {#2} {\{\bar #1\}}%
+%       	\IfNoValueF {#2} {\{\bar #1_{(#2)}\}}%
+%    }%
+%}
+
+\newcommand{\subst}[3]{#1[#2/#3]}%substitute in #1 occurences of #2 by #3
+\newcommand{\Nonempty}{\mathit{Nonemp}}
+\newcommand{\Universal}{\mathit{Univ}}
+\newcommand{\Nonuniversal}{\mathit{Nonuniv}}
+%\newcommand{\Empty}{\mathit{Emp}}
+\newcommand{\Language}[1]{\mathit{Lang_{#1}}}
+\newcommand{\Path}[1]{\mathit{Path_{#1}}}
+\newcommand{\Run}[1]{\mathit{Run_{#1}}}
+\newcommand{\Prefix}[1]{\mathit{Pref_{#1}}}
+\newcommand{\Suffix}[1]{\mathit{Suff_{#1}}}
+\newcommand{\States}[1]{\mathit{States_{#1}}}
+\newcommand{\Configurations}[1]{\mathit{Confs_{#1}}}
+\newcommand{\Configuration}[1]{\mathit{Conf_{#1}}}
+
+%\newcommand{\arrow}[2]{\xrightarrow{_{_{#1}}}_{{\scriptstyle #2}}}
+\newcommand{\arrow}[2]{\xrightarrow{{\scriptstyle #1}}_{{\scriptstyle #2}}}
+%\newcommand{\arrow}[2]{\rightarrow_{{#1}}^{{\scriptstyle #2}}}
+\def\projobs{\mathbin{\downarrow_{\Xobs}}}
+
+\newcommand{\viz}{x}
+\newcommand{\inviz}{y}
+\newcommand{\lang}{\mathcal {L}}
+\newcommand{\dvalue}{v}
+\newcommand{\dval}{\dvalue}
+
+\newcommand{\Xobs}{\vect{x}}
+\newcommand{\Xinv}{\vect{y}}
+\newcommand{\Xinvz}{\vect{z}}
+
+\newcommand{\vx}{\vect{x}}
+\newcommand{\vy}{\vect{y}}
+\newcommand{\vz}{\vect{z}}
+
+\newcommand{\initial}{I}
+\newcommand{\final}{F}
+\newcommand{\accepting}{F}
+\newcommand{\transition}{\tau}
+
+\newcommand{\fdef}{\mathrel{:=}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\include{commands}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\title{Trace Inclusion of Infinite State Systems with Local Information}
-\title{Predicate Abstraction for Trace Inclusion}
+%\title{Predicate Abstraction for Trace Inclusion}
 
-\author{Luk\'{a}\v{s} Hol\'{i}k\inst{1} \and Radu Iosif\inst{2} \and Adam Rogalewicz\inst{1} \and
-Tom\'{a}\v{s}~Vojnar\inst{1}}
+%\author{Luk\'{a}\v{s} Hol\'{i}k\inst{1} \and Radu Iosif\inst{2} \and Adam Rogalewicz\inst{1} \and
+%Tom\'{a}\v{s}~Vojnar\inst{1}}
   
-\institute{
-  FIT, Brno University of Technology, IT4Innovations Centre of Excellence, 
-  Czech Republic
-  \and 
-  University Grenoble Alpes, CNRS, VERIMAG, Grenoble, France
-}
+%\institute{
+%  FIT, Brno University of Technology, IT4Innovations Centre of Excellence, 
+%  Czech Republic
+%  \and 
+%  University Grenoble Alpes, CNRS, VERIMAG, Grenoble, France
+%}
   
- \maketitle
+% \maketitle
+% \titlepage
 
 
-\begin{abstract}\end{abstract}
+\begin{abstract}
+A sketch of a subset construction for transition systems with hidden variables.
+\end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Introduction}
+%\section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Treansition Syatems}
+\section{Transition Systems}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Let $\nat$ denote the set of non-negative integers including zero. For
-any $k,\ell \in \nat$, $k \leq \ell$, we write $[k,\ell]$ for the set
-$\set{k,k+1,\ldots,\ell}$. We write $\false$ and $\true$ for the
-boolean constants \emph{false} and \emph{true}, respectively. Given a
-possibly infinite data domain $\mathcal{D}$, we denote by
-$\thd=\tuple{\mathcal{D}, p_1,\ldots,p_n, f_1,\ldots,f_m}$ the set of
-syntactically correct first-order formulae with predicate
-symbols $p_1,\ldots,p_n$ and function symbols $f_1,\ldots,f_m$. A variable $x$
-is said to be \emph{free} in a~formula $\phi$, denoted as $\phi(x)$,
+Vectors $x_1,x_2,\ldots,x_k,k\geq 0$ of indexed variables are denoted by $\vect{x}$ and we use $\vect{x}[k]$ to denote the particular vector $x_1,\ldots,x_k$.
+%
+We will sometimes abuse the notation and write $\vect{x}$ to interchangeably denote 
+the vector and also the set $\{x_1,\ldots,x_k\}$ of variables appearing in it.
+%
+The primed variant $x_1',\ldots,x_k'$ of the vector $\vect{x}$ is denoted by $\vect{x}'$.
+%
+%Let $\nat$ denote the set of non-negative integers including zero. 
+%
+%We write $\false$ and $\true$ to denote the two boolean constants. 
+%
+Let $\theo$ denote the set of all syntactically correct formulae of some first order theory. 
+%
+A variable $x$
+is said to be \emph{free} in a~formula $\phi\in\theo$
 iff it does not occur under the scope of a~quantifier.
+We write $\phi(\vect{x})$ to denote that the variables of $\vect{x}$ are free in $\phi$.
+%
+Given a vector $\vect \omega = \vect \omega[k]$ of formulae in $\theo$, 
+we denote by $\subst{\phi}{\vect x}{\vect \omega}$ the formula that arises from $\phi$ by substituting all occurrences of $x_i,1\leq i \leq k$, by the formula $\omega_i$.  
+%
+%Let $\vect{x} = \vect{x}[k]$ and
+%
+Let $\thd$ be an interpretation of the first order theory $\theo$ with a possibly infinite domain $\domain$. 
+%
+A \emph{valuation} $\nu : \set{x} \rightarrow \domain$ is an
+assignment of the variables in a vector $\vect{x}$ with values from
+$\domain$. We denote by $\domain^{\set{x}}$ the set of such
+valuations. 
+%
+For a formula $\phi(\vect{x})\in\theo$, we denote by $\nu
+\modelsthd \phi$ that $\nu$ satisfies $\phi$ under the interpretation $\thd$. 
 
-Let $\vec{x} = \set{x_1,\ldots,x_n}$ be a finite set of variables. A
-\emph{valuation} $\nu : \vec{x} \rightarrow \mathcal{D}$ is an
-assignment of the variables in $\vec{x}$ with values from
-$\mathcal{D}$. We denote by $\mathcal{D}^\vec{x}$ the set of such
-valuations. For a formula $\phi(\vec{x})$, we denote by $\nu
-\modelsthd \phi$ the fact that substituting each variable $x \in
-\vec{x}$ by $\nu(x)$ yields a valid formula in the theory $\thd$. In
-this case, $\nu$ is said to be a~\emph{model} of $\phi$. A formula is
-said to be {\em satisfiable} iff it has a model. For a~formula
-$\phi(\vec{x}, \vec{x'})$ where $\vec{x'} = \set{x' ~|~ x \in
-  \vec{x}}$ and two valuations $\nu,\nu' \in \mathcal{D}^{\vec{x}}$,
-we denote by $(\nu,\nu') \modelsthd \phi$ the fact that the formula
-obtained from $\phi$ by substituting each $x$ with $\nu(x)$ and each
-$x'$ with $\nu'(x')$ is valid in $\thd$.
-
-\newcommand{\initial}{I}
-\newcommand{\accepting}{F}
-\newcommand{\transition}{\tau}
 \paragraph{Transition system.} 
-Let $\mathcal{D}$ be an infinite date domain equipped with a first order theory $\thd$.
 %
-Let $\Xobs$ be the set of observable and $\Xinv$ the set of invisible variables.
+%Let $\vect{x} = \vect{x}[k]$ be a vector of visible and $\vect{y}=\vect{y}[\ell]$ a vector of invisible variables.
+Let $\vect{x}$ be a vector of visible and $\vect{y}$ a vector of invisible variables.
 %
-A transition system (TS) is a triple formula $T = (\initial(\Xobs,\Xinv),\transition(\Xobs,\Xinv,\Xobs', \Xinv'),\accepting(\Xobs,\Xinv))$ where $\initial$ is a fomrula describing initial valuations, $\transition(\Xobs,\Xinv,\Xobs', \Xinv')$ describes the transition relation, and $\accepting(\Xobs,\Xinv)$ describes accepting valuations.
+A transition system is a triple $T = (\initial(\Xobs,\Xinv),\transition(\Xobs,\Xinv,\Xobs', \Xinv'),\accepting(\Xobs,\Xinv))$ where $\initial$ is the initial formula, 
+$\transition(\Xobs,\Xinv,\Xobs', \Xinv')$ is the transition formula, 
+and $\accepting(\Xobs,\Xinv)$ is the final formula.
 %
 We say that a valuation $\nu'$ is 
-a~\emph{successor} of $\nu$ if and only if and $(\nu,\nu') \modelsthd
-\transition$. We denote the successor relation by $\nu
-\arrow{\transition}{} \nu'$, and we omit writing $\transition$ 
-when no confusion may arise. We write 
-$\mathit{succ}(\nu)$ to denote $\nu'$.
-
-
+a~\emph{successor} of $\nu$ if and only if $(\nu\cup\nu') \modelsthd
+\transition$. 
+%denoted by $\nu
+%\arrow{\transition}{} \nu'$. 
+%, from where we omit the $\transition$ when no confusion may arise. 
+%
+%
 A \emph{run} of $\transition$ is a sequence
-of valuations $\pi : \nu_0 \arrow{\transition}{}  \ldots \arrow{\transition}{} \nu_n$ where $\nu_0\models\initial$. It is accepting if also $\nu_n\models\accepting$.
+of valuations $\pi : \nu_0, \ldots, \nu_n$ with $\nu_0\models\initial$ and $\nu_i$ a successor of $\nu_{i-1}$ for all $1\leq i \leq n$. 
+It is \emph{accepting} if also $\nu_n\models\accepting$.
 Each run corresponds to a \emph{trace}, which is a finite sequence
 $w(\pi)=\nu_0\proj_{\Xobs}, \ldots,
-\nu_n\proj_{\Xobs}$.
+\nu_n\proj_{\Xobs}$, where $\nu_i\proj_{\Xobs}$ denotes the restriction of $\nu_i$ to $\Xobs$.
 %
-The \emph{language} of $A$ is the set of traces 
-$\mathcal{L}(T) = \{w(\pi)\mid \pi \text{ is a run of } T\}$.
-
-\paragraph{Trace Inclusion.} Let 
-$\transition({\Xobs},{\Xinv},{\Xobs}',{\Xinv}')$ 
-and
-$\mu({\Xobs},{\Xinvz},{\Xobs}',{\Xinvz}')$ be two TS. The \emph{trace
-  inclusion problem} asks whether $\mathcal{L}(\mathcal{A})
-\subseteq \mathcal{L}(B)$.
-
-\newcommand{\viz}{x}
-\newcommand{\inviz}{y}
-\newcommand{\domain}{\mathcal {D}}
-\newcommand{\dvalue}{d}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Subset Construction and Universality}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-For simplicity, let us have one visible variable $x$ and one invisible variable $y$.
-A trace is then just a sequence $d_0\cdots d_k$ of elements of the domain.
-
-This is a formula describing a relation between the current state after $k$ steps (that is, the values of $\viz$ and $\inviz$) and the global trace leading to it (that is, the values of $\viz_0,\ldots,\viz_k$):
-$$
-M_k(\viz_0,\ldots,\viz_k,\inviz,\viz) \equiv \exists \inviz_0\cdots \inviz_{k}:  I[x,y/x_0,y_0] \land \bigwedge_{i=1}^k \transition[\viz,\inviz,\viz',\inviz'/\viz_{i-1},\inviz_{i-1},\viz_i,\inviz_i] \land \viz = \viz_k \land \inviz = \inviz_k 
-$$
-%We note that in our automata, the state is determined by the last transition taken. 
-We note that in the formula, the current state is the $k$th value of the variables, which is copied as into the unindexed variables $x,y$.  
-%our automata, the state is determined by the last transition taken, and in the formu. 
-
-Every global trace gives a macrostate (subset of states of the system) to which the normal subset construction would arrive via that trace.
-That is, for every $k$-tuple (trace) $w = \dvalue_0\cdots\dvalue_k \in \domain^k$, the formula 
-$$M_{w}(\viz,\inviz) \equiv \exists \viz_0\cdots \viz_{k}: M_k \land \bigwedge_{i=0}^k{\viz_i = \dvalue_i}$$ 
-or equivalently
-$$M_{w}(\viz,\inviz) \equiv M_k [\viz_0,\ldots,\viz_k/\dvalue_0,\ldots,\dvalue_k] $$ 
-is one macrostate. 
-
-The relation between macrostates and the traces up-to $k$ steps by which they are reached is captured by the formula  
-$$\bigvee_{i=0}^k M_k$$
-
-That all macrostates reached by traces of the lenght $k+1$ have already been reached by shorter traces should be expressed by the formula
-$$
-\mathit{fixpoint}_k = \forall \viz_0'\cdots\viz_{k+1}'\exists \viz_0\cdots\viz_{k} :
-M_{k+1}[\viz_0,\ldots,\viz_{k+1}/\viz'_0,\ldots,\viz'_{k+1}]
-\iff 
- \bigvee_{i=0}^k M_k 
-$$
-
-So the symbolic version of the standart subset construction would generate the sequence $M_0,M_1,\ldots$ and terminate with $\bigvee_{i=0}^k M_k$ when $\mathit{fixpoint}_k$ holds.    
-Of course it does not have to terminate and we will try to use predicate abstraction to make it terminate more often.
-
-A universality test would ask whether every reachable macrostate contains an accepting valuation: 
-$$
-\forall \viz_0\cdots\viz_k \exists x y:  \bigvee_{i=0}^k M_k \land \accepting
-$$
-
-For the purpose of the universality checking,
-the fixpoint condition can be weakened in the spirit of antichains:
-$$
-\mathit{fixpoint}'_k = \forall \viz_0'\cdots\viz_{k+1}'\exists \viz_0\cdots\viz_{k} :
-M_{k+1}[\viz_0,\ldots,\viz_{k+1}/\viz'_0,\ldots,\viz'_{k+1}]
-\Leftarrow
-\bigvee_{i=0}^k M_k 
-$$
-That is, for every newly generated macroste, there already has been a smaller one.
+The \emph{language} of $T$ is the set of accepted traces 
+$\lang(T) = \{w(\pi)\mid \pi \text{ is an accepting run of } T\}$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\bibliographystyle{splncs03}
-\bibliography{ref}
+\section{Emptiness and Universality of Transition Systems}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+For simplicity, let us assume that the transition system $T$ has only one visible variable $x$ and only one invisible variable $y$ (this is without loss of generality since $\domain$ may contain tuples).
+A trace is then just a sequence $d_0,\ldots, d_k$ of elements of the domain.
+%
+We will elaborate on the problems of emptiness and universality of $T$, that is, the problems of deciding whether $\lang(T) = \emptyset$ and  whether $\lang(T) = \domain^*$.
+
+For a formula $\phi(x,y,x',y')$ over variables $\vect{z}$ and their primed variants $\vect z'$, we write $\phi_i,i\geq 0$ to denote the formula $\subst{\phi}{x,y,x',y'}{x_i,y_i,x_{i+1},y_{i+1}}$ where the unprimed variables are indexed by $i$ and the primed by $i+1$.
+%
+
+All runs of the length $k\geq 0$ are described by the formula 
+$$
+\Run k(\vect x[k],\vect y[k]) \fdef
+\initial_0(x_0,y_0) \land \bigwedge_{i=1}^{k} \tau_{i-1}(x_{i-1},y_{i-1},x_{i},y_{i})
+$$
+The language of $T$ would correspond to the union over all $k\geq 0$ of the satisfying assignments of formulae $\Language k$  that describe traces of the accepting runs of the length $k$:  
+$$
+\Language k(\vect x[k]) \fdef  \exists \vect y[k]:\Run k(\vect x[k],\vect y[k]) \land \final(x_k,y_k) \ \ .
+$$
+%
+We have that $T$ is nonempty iff for some $k\geq 0$, $\Language k$ is satisfiable,
+ and that $T$ is universal iff $\Language k$ is valid for all $k\geq 0$.
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Emptiness}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As an exercise, before we elaborate on universality checking, we discuss language emptiness.  
+Emptiness corresponds to unsatisfiability of the formula
+$$
+\Nonempty \fdef
+\bigvee_{k\geq 0} \exists \vect x[k]:\Language k(\vect x[k])
+=
+\bigvee_{k\geq 0} \exists \vect x[k]\,\exists \vect y[k]:\Run k(\vect x[k],\vect y[k]) \land \final_k(x_{k},y_k)\ \ . 
+$$
+%
+For any $0\geq k$, the $k$th disjunct is equivalent to 
+$$
+\exists xy: \subst{(\exists \vect x[k-1]\vect y[k-1]:\Run {k}(\vect x[k],\vect y[k]))}{x_k,y_k}{x,y}
+\land 
+\final(x,y)
+$$
+where the inner formula represents the set of states reached after $k$ steps.
+Let us denote it 
+$$\States k(x,y)\fdef \subst{(\exists \vect x[k-1]\vect y[k-1]:\Run {k}(\vect x[k],\vect y[k]))}{x_k,y_k}{x,y}\ \ .$$ $\Nonempty$ is therefore equivalent to
+$\exists xy:\bigvee_{k\geq 0} \States k(x,y) \land \final(x,y)$. To test emptiness, it is enough to compute a formula representing states reachable at all distances and test existence of an accepting state.
+To compute all reachable states, we use that 
+$$
+\States k \equiv \subst{(\exists xy:\States {k-1}(x,y)
+\land 
+\transition(x,y,x',y'))}{x',y'}{x,y}
+\ \ .
+$$
+That is, reachable states at the distance $k$ can be computed as the image wrt. the transition relation of those reached at the distance $k-1$.  
+%
+So a formula that describes states including the initial ones and stable under the transition relation describes all reachable states. E.g., the formula
+$$
+\States {\leq n} \fdef \bigvee_{k=0}^n \States k
+$$ 
+such that 
+$$
+%\States {\leq n}  \equiv \States {\leq n} \lor \subst{(\exists x,y: \States {n}\land \transition)}{x',y'}{x,y}\ \ .
+\States {\leq n}  \equiv \States {\leq n} \lor \States {n+1}\ \ .
+$$
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Universality}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We will now sketch a basic universality check. 
+As in the case of emptiness, it is incomplete due to the infinite data domain, but additionally also due to the need of working with unbounded histories. 
+%
+Universality of $T$ corresponds to the validity of the formula
+$$
+\Universal \fdef
+\bigwedge_{k\geq 0} \forall \vect x[k]:\Language k(\vect x[k])
+=
+\bigwedge_{k\geq 0} \forall \vect x[k]\,\exists \vect y[k]:\Run k(\vect x[k],\vect y[k]) \land \final_k(x_{k},y_k) 
+$$
+(the difference from the formula $\Nonempty$ is the leading $\bigwedge$ and the universal quantification over the visible trace). 
+%
+Let 
+$$
+\Configurations k(\vect x[k],x,y) \fdef \exists \vect y[k]:\Run k \land x = x_k \land y = y_k  
+$$
+be a formula which associates a visible trace $\vect x[k]$ of the length $k$ with the resulting values of $x$ and $y$.
+Fixing a particular trace $\vect \dval [k]\in\domain^k$ results in a so called \emph{configuration}, 
+a constraint over $x$ and $y$ (with $x$ fixed to the last value $\dval_k$ of the trace): 
+$$
+\subst{\Configurations k}{\vect x[k]}{\vect \dval[k]}(x,y)\ \ .
+$$
+One may hence understand $\Configurations k$ as a function $\lambda \vect x[k].\,\Configurations k$ from traces to configurations. 
+%
+%
+We may rewrite the conjunction $\Universal$ as 
+$$
+\Universal 
+\equiv
+\bigwedge_{k\geq 0} \forall \vect x[k]\,\exists y:\Configurations k(\vect x[k],x,y) \land \final(x,y) 
+$$
+That is, every configuration must admit $y$ to satisfy $\final$.
+Notice that this does not require to test all, but only the smallest (strongest) configurations.
+%
+The task is therefore to compute and test all smallest configurations $\subst{\Configurations {k}}{\vect x[k]}{\vect \dval[k]}$. 
+To compute a representation of all smallest configurations, we use the fact that configurations at the distance $k+1$ can be obtained as successors of those at the distance $k$ as follows. 
+For every visible trace $\vect \dval [k+1]$,
+$$
+\subst{\Configurations {k+1}}{\vect x[k+1]}{\vect \dval[k+1]} \equiv 
+\subst{(\exists{xy}:\subst{\Configurations {k}}{\vect x[k]}{\vect \dval[k]} \land \tau)}{x',y'}{x,y}\land x = \dval_{k+1}\ \ .
+$$
+The set of all configurations can be hence computed as the least fixpoint of the transition relation that includes the initial configurations.
+%
+Notice that the smallest configurations at the distance $k+1$ are successors of the smallest configurations at the distance $k+1$.
+%
+That is, all smallest configurations are found within the distance $k$, i.e.
+$$
+\bigwedge_{m\geq 0} \forall \vect x[m]:\Configurations {m} \rightarrow \bigvee_{\ell\leq k} \exists \vect x[\ell]: \Configurations {\ell}
+$$
+%if and only if the distance $k+1$ does not hold any any new configurations, i.e 
+if and only if the configurations found at the distance $k+1$ are only the same or larger, i.e.
+$$
+\forall \vect x[k+1]:\Configurations {k+1} \rightarrow \bigvee_{\ell\leq k} \exists \vect x[\ell]: \Configurations {\ell}\ \ .
+$$
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\bibliographystyle{splncs03}
+%\bibliography{ref}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
