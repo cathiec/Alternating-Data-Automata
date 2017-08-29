@@ -1,0 +1,2 @@
+There is equivalence between /beta and the first part, because the underaprox. by y2=Fy1^1 is precise.
+There is equivalence between /epsilon and the 4th part is because the undeaprox. by y2=Fy2^2 is precise

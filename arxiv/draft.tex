@@ -445,7 +445,7 @@ of sort $\Data$, for a formula $\phi \in \Form^+(Q,\vec{x})$, with no
 negated occurrences of the boolean variables, we define the formula
 $\overline{\phi} \in \Form^+(Q,\vec{x})$ recursively on the structure
 of $\phi$:
-\[\begin{array}{lclclcl}
+\[\begin{array}{rclcrcl}
 \overline{\phi_1 \vee \phi_2} & \equiv & \overline{\phi_1} \wedge \overline{\phi_2} && 
 \overline{\phi_1 \wedge \phi_2} & \equiv & \overline{\phi_1} \vee \overline{\phi_2} \\ 
 \overline{\neg\phi} & \equiv & \neg \overline{\phi} \text{ if $\phi$ not atom} &&
@@ -461,7 +461,7 @@ w.l.o.g. we assume that $Q_1 \cap Q_2 = \emptyset$. We define:
 \[\begin{array}{rcl}
 \A_\cup & = & \tuple{\vec{x},Q_1\cup Q_2,\iota_1 \vee \iota_2,F_1\cup F_2,\Delta_1\cup\Delta_2} \\ 
 \A_\cap & = & \tuple{\vec{x},Q_1\cup Q_2,\iota_1 \wedge \iota_2, F_1\cup F_2, \Delta_1\cup\Delta_2} \\ 
-\overline{\A_1} & = & \langle \vec{x},Q_1,\iota_1,Q_1\setminus F_1,\overline{\Delta_1} \rangle
+\overline{\A_1} & = & \langle \vec{x},Q_1,\overline{\iota_1},Q_1\setminus F_1,\overline{\Delta_1} \rangle
 \end{array}\] 
 where $\overline{\Delta_1}(q,a) \equiv \overline{\Delta_1(q,a)}$, for
 all $q \in Q_1$ and $a \in \Sigma$. The following lemma shows the
@@ -1389,11 +1389,27 @@ the pure LIA theory.
   \end{array}\] 
   To prove $L(\overline{\A_1}) = \Sigma[\vec{x}]^* \setminus L(\A_1)$,
   let $w = (a_1,\nu_1) \ldots (a_n,\nu_n)$ be a word and show that
+<<<<<<< HEAD
   $\overline{\Delta}(\iota_1,a_1 \ldots a_n) =
   \overline{\Delta(\iota_1,a_1 \ldots a_n)}$ by induction on
   $n\geq0$. The case $n=0$ is immediate, because $\fv{}{\iota_1}
   \subseteq Q$ and thus $\overline{\iota_1} \equiv \iota_1$. For the case
   $n>0$, we compute:
+=======
+  $\overline{\Delta}(\overline{\iota_1},a_1 \ldots a_n) =
+  \overline{\Delta(\iota_1,a_1 \ldots a_n)}$ by induction on $n\geq0$.
+
+  In the case $n=0$, we have $\overline{\Delta}(\overline{\iota_1},a_1
+  \ldots a_n) \equiv \overline{\iota_1}$. Then $\varepsilon$ is
+  accepted by $\A_1$ iff $\nu_0 \models \iota_1$, where $\nu_0(q) =
+  \top$ if $q \in F_1$ and $\nu_0(q) = \bot$, otherwise. But $\nu_0
+  \models \iota_1$ iff $\overline{\nu_0} \models \overline{\iota_1}$,
+  where $\overline{\nu_0}(q) = \top$ if $q \not\in F_1$ and
+  $\overline{\nu_0}(q) = \bot$, otherwise. Thus $\varepsilon$ is
+  accepted by $\A_1$ iff it is not accepted by $\overline{\A_1}$.
+
+  For the case $n>0$, we compute:
+>>>>>>> 8ea63641f4a44a64b3d44b33795e27cef0f7ae0b
   \[\begin{array}{lcl}
   \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \iffeq & \text{ (by ind. hyp.)} \\
   \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \iffeq & \text{ (by the def. of $\overline{\phi}$)} \\

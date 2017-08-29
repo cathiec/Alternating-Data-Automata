@@ -49,6 +49,10 @@ Email: \{Radu.Iosif,Xiao.Xu\}@univ-grenoble-alpes.fr}
 
 \section{Preliminaries}
 
+For two integers $0 \leq i \leq j$, we denote by $[i,j]$ the set
+$\set{i,i+1,\ldots,j}$ and by $[i]$ the set $[1,i]$, where $[0]$ is
+the empty set.
+
 A \emph{signature} $\sig = (\ssorts{\sig},\sfuns{\sig})$ consists of a
 set $\ssorts{\sig}$ of \emph{sort symbols} and a set $\sfuns{\sig}$ of
 sorted \emph{function symbols}. To simplify the presentation, we
@@ -56,31 +60,30 @@ assume w.l.o.g. that $\ssorts{\sig} = \set{\Data,\Bool}$\footnote{The
   generalization to more than two sorts is without difficulty, but
   would unnecessarily clutter the technical presentation.} and each
 function symbol $f \in \sfuns{\sig}$ has $\#(f) \geq 0$ arguments of
-sort $\Data$ and return value $\sigma(f) \in \ssorts{\sig}$. If
+sort $\Data$ and return value $f_\sigma \in \ssorts{\sig}$. If
 $\#(f)=0$ then $f$ is a \emph{constant}. Let $\top$ and $\bot$ be
 constants of sort $\Bool$ and $\mathbf{0}$ be a constant of sort
-$\Data$.
+$\Data$. 
 
 We consider an infinite countable set of \emph{variables} $\vars$,
-where each $x \in \vars$ has an associated sort $\sigma(x)$. A
-\emph{term} $t$ of sort $\sigma(t)=S$ is a variable $x \in \vars$
-where $\sigma(x)=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
-$t_1,\ldots,t_{\#(f)}$ are terms of sort $\Data$ and $\sigma(f)=S$. An
-\emph{atom} is a term of sort $\Bool$ or an equality $t \teq s$
-between two terms of sort $\Data$. A \emph{formula} is a quantified
-boolean combination of atoms, where the quantifiers are as $\exists x
-~.~ \phi$ and $\forall x ~.~ \phi$.
+where each $x \in \vars$ has an associated sort $x_\sigma$. A
+\emph{term} $t$ of sort $t_\sigma = S$ is a variable $x \in \vars$
+where $x_\sigma=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
+$t_1,\ldots,t_{\#(f)}$ are terms of sort $\Data$ and $f_\sigma=S$. An
+\emph{atom} is a term $p(t_1,\ldots,t_{\#(p)})$ of sort $\Bool$, or an
+equality $t \teq s$ between two terms of sort $\Data$. A
+\emph{formula} is a possibly quantified boolean combination of atoms.
 
 We denote by $\fv{\sigma}{\phi}$ the set of free variables of sort
 $\sigma$ in $\phi$ and write $\fv{}{\phi}$ for $\bigcup_{\sigma \in
   \ssorts{\sig}} \fv{\sigma}{\phi}$. For a variable $x \in
-\fv{}{\phi}$ and a term $t$ such that $\sigma(t) = \sigma(x)$, let
+\fv{}{\phi}$ and a term $t$ such that $t_\sigma = x_\sigma$, let
 $\phi[t/x]$ be the result of replacing each occurrence of $x$ by
 $t$. For indexed sets $T=\set{t_1,\ldots,t_n}$ and
-$X=\set{x_1,\ldots,x_n}$, we write $\phi[T/X]$ for
-the formula obtained by simultaneously replacing $x_i$ with $t_i$ in
-$\phi$, for all $i\in[1,n]$. The size $\len{\phi}$ is the number of
-symbols occuring in $\phi$.
+$X=\set{x_1,\ldots,x_n}$, we write $\phi[T/X]$ for the formula
+obtained by simultaneously replacing $x_i$ with $t_i$ in $\phi$, for
+all $i\in[n]$. The size $\len{\phi}$ is the number of symbols
+occuring in $\phi$.
 
 An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
 \item the sort $\Data$ into a non-empty set $\Data^\I$, 
@@ -89,21 +92,20 @@ An \emph{interpretation} $\I$ maps\begin{inparaenum}[(1)]
   $\top^\I = \true$, $\bot^\I = \false$, and
 %
 \item each function symbol $f$ into a total function $f^\I :
-  (\Data^\I)^{\#(f)} \rightarrow \sigma(f)^I$, or an element of
-  $\sigma(f)^I$ when $\#(f)=0$.
+  (\Data^\I)^{\#(f)} \rightarrow f_\sigma^I$, or an element of
+  $f_\sigma^I$ when $\#(f)=0$.
 \end{inparaenum}
 Given an interpretation $\I$, a \emph{valuation} $\nu$ maps each
-variable $x \in \vars$ into an element $\nu(x) \in \sigma(x)^\I$. For
-a term $t$, we denote by $t^\I_\nu$ the value obtained by replacing
-each function symbol $f$ by its interpretation $f^\I$ and each
-variable $x$ by its valuation $\nu(x)$. For a formula $\phi$, we write
-$\I,\nu \models \phi$ if the formula obtained by replacing each term
-$t$ in $\phi$ by the value $t^\I_\nu$ is logically equivalent to true.
-The semantics of quantifiers is given as usual: $\I,\nu \models
-\exists x ~.~ \phi$ ($\forall x ~.~ \phi$) if and only if $\I,\nu[x
-  \leftarrow u] \models \phi$, for some (for all) value(s) $u \in
-\sigma(x)^\I$, where $\nu[x \leftarrow u]$ is the valuation that
-assigns $u$ to $x$ and $\nu(y)$ to all $y \neq x$.
+variable $x \in \vars$ into an element of $x_\sigma^\I$. For a term
+$t$, we denote by $t^\I_\nu$ the value obtained by replacing each
+function symbol $f$ by its interpretation $f^\I$ and each variable $x$
+by its valuation $\nu(x)$. For a formula $\phi$, we write $\I,\nu
+\models \phi$ if the formula obtained by replacing each term $t$ in
+$\phi$ by the value $t^\I_\nu$ is logically equivalent to true.  The
+semantics of quantifiers is given as usual: $\I,\nu \models \exists x
+~.~ \phi$ if and only if $\I,\nu[x \leftarrow u] \models \phi$, for
+some value $u \in x_\sigma^\I$, where $\nu[x \leftarrow u]$ is the
+valuation that assigns $u$ to $x$ and $\nu(y)$ to all $y \neq x$.
 
 A formula $\phi$ is \emph{satisfiable} in the interpretation $\I$ if
 there exists a valuation $\nu$ such that $\I,\nu \models \phi$, and
@@ -136,14 +138,14 @@ $\varepsilon$ the empty sequence, by $\Sigma^*$ the set of finite
 sequences of input events and by $\Sigma[X]^*$ the set of data
 words over the variables $X$.
 
-Given sets of variables $B,X \subset \vars$ of sort $\Bool$ and
-$\Data$, respectively, we denote by $\Form(B,X,Y)$ the set of formulae
-$\phi$ such that $\fv{\Bool}{\phi} = B$, $\fv{\Data}{\phi} = X$ and
-each variable from $Y$ is of sort $\Data$ and occurs under the scope
-of a quantifier. By $\Form^+(B,X,Y)$ we denote the subset of
-$\Form(B,X,Y)$ in which each boolean variable occurs under an even
-number of negations. We denote by $\phi(B,X,Y)$ any formula from
-$\Form(B,X,Y)$. 
+Given sets of variables $B,X,Y \subset \vars$ of sorts $\Bool$,
+$\Data$ and $\Data$, respectively, we denote by $\Form\tuple{B;X;Y}$
+the set of formulae $\phi$ such that $\fv{\Bool}{\phi} = B$,
+$\fv{\Data}{\phi} = X$ and each variable from $Y$ occurs under the
+scope of a quantifier. By $\Form^+\tuple{B;X;Y}$ we denote the subset
+of $\Form\tuple{B;X;Y}$ in which each boolean variable from $B$ occurs
+under an even number of negations. We denote by $\phi\tuple{B;X;Y}$
+any formula in $\Form\tuple{B;X;Y}$.
 
 A \emph{first-order alternating data automaton} (fo-ADA or automaton
 in the sequel) is a tuple $\A =
@@ -158,27 +160,29 @@ in the sequel) is a tuple $\A =
 \item $Q \subset \vars$ is a finite set of variables of sort $\Bool$
   (\emph{states}),
 %
-\item $\iota \in \Form^+(Q,\emptyset,\emptyset)$ is the \emph{initial
+\item $\iota \in \Form^+\tuple{Q;\emptyset;\emptyset}$ is the \emph{initial
   configuration},
 %
 \item $\Delta : Q \times \Sigma \rightarrow
-  \Form^+(Q,\overline{G}\cup G\cup\overline{L},L)$
-  is a \emph{transition function},
+  \Form^+\tuple{Q;\overline{G}\cup G\cup\overline{L};L}$ is a
+  \emph{transition function},
 \end{compactitem}
 where, for a set $X \subseteq \vars$, we denote $\overline{X} =
-\set{\overline{x} \mid x \in X}$. The size of $\A$ is defined as
-$\len{\A} = \len{\iota} + \sum_{(q,a) \in
+\set{\overline{x} \mid x \in X}$. The \emph{size} of $\A$ is defined
+as $\len{\A} = \len{\iota} + \sum_{(q,a) \in
   Q\times\Sigma}\len{\Delta(q,a)}$.
 
 Intuitively, the variables $\overline{x}$ from a transition formula
 $\Delta(q,a)$ refer to past values, whereas the other variables refer
 to the current values. Observe that the initial values of the global
 variables are unconstrained (since the initial configuration is a
-boolean combination of states without variables) and quantification is
-allowed only over the current local variables. In other words, we do
-not quantify over global variables which are visible throughout the
-execution and also, we do not quantify over over past values, which
-are beyond our control.
+boolean combination of states without variables) and quantification
+occurs only over the current copy of the local variables $L$. As a
+remark, the transition relation does not quantify over global
+variables $G \cup \overline{G}$, which must be visible throughout the
+execution. Furthermore, we assume that the past values of the local
+variables are coined and beyond our control, thus quantification over
+$\overline{L}$ is not allowed either.
 
 In order to define the semantics of automata, we consider time-stamped
 sets of variables $\stamp{X}{n} = \{\stamp{x}{n} \mid x \in X\}$ for
@@ -191,38 +195,144 @@ $\Delta(\phi,a)[\stamp{G}{n}/\overline{G}, \stamp{G}{n+1}/G,
 
 Given a word $w = (a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n) \in
 \Sigma[G]^*$ the \emph{run} of $\A$ over $w$ is the sequence of
-formulae: \[\iota \stackrel{(a_1,\nu_1)}{\Longrightarrow}
-\phi_1(Q,\stamp{G}{1},
-\stamp{L}{1}) \stackrel{(a_2,\nu_2)}{\Longrightarrow} \ldots
-\stackrel{(a_n,\nu_n)}{\Longrightarrow} \phi_n(Q,\stamp{G}{1} \cup
-\ldots \cup \stamp{G}{n}, \stamp{L}{1} \cup \ldots \cup
-\stamp{L}{n})\] where: \begin{compactitem}
-\item $\phi_1 \equiv \stamp{\Delta}{0}(\iota,a_1)[\mathbf{0}/\stamp{G}{0},\mathbf{0}/\stamp{L}{0}]$, and
+formulae: \[\iota \stackrel{(a_1,\nu_1)}{\Longrightarrow} \phi_1
+\tuple{Q,\stamp{G}{1}, \stamp{L}{1}}
+\stackrel{(a_2,\nu_2)}{\Longrightarrow} \ldots
+\stackrel{(a_n,\nu_n)}{\Longrightarrow} \phi_n\tuple{Q,\stamp{G}{1}
+  \cup \ldots \cup \stamp{G}{n}, \stamp{L}{1} \cup \ldots \cup
+  \stamp{L}{n}}\] where $\phi_1 \equiv
+\stamp{\Delta}{0}(\iota,a_1)[\mathbf{0}/\stamp{G}{0},\mathbf{0}/\stamp{L}{0}]$
+and $\phi_{i+1} \equiv \stamp{\Delta}{i}(\phi_i,a_{i+1})$, for all $i
+\in [1,n-1]$. In other words, we assume that all data variables are
+initially $\mathbf{0}$.
+
+We say that $\A$ \emph{accepts} $w$ if there exists a valuation $\nu$
+such that $\nu(\stamp{x}{i}) = \nu_i(x)$ for each global variable $x
+\in G$ and each timestamp $i \in [n]$, $\nu(q) = \true$ for each $q
+\in F$, $\nu(q) = \false$ for each $q \in Q \setminus F$ and $\I,\nu
+\models \phi_n$. The \emph{language} of $\A$ is the set $L(\A)$ of
+words from $\Sigma[G]^*$ accepted by $\A$. In this paper, we ask the
+following two questions: \begin{compactenum}
+\item \emph{boolean closure}: given automata $\A_i =
+  \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$, for $i=1,2$, with $L_1 \cap
+  L_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$, do there exist
+  automata $\A_\cap$, $\A_\cup$ and $\overline{\A}_1$ such that
+  $L(\A_\cap) = L(\A_1) \cap L(\A_2)$, $L(\A_\cup) = L(\A_1) \cup
+  L(\A_2)$ and $L(\overline{\A}_1) = \Sigma[G]^* \setminus L(\A_1)$ ?
 %
-\item $\phi_{i+1} \equiv \stamp{\Delta}{i}(\phi_i,a_{i+1})$, for all $i \in [1,n-1]$.
-\end{compactitem}
-$\A$ \emph{accepts} $w$ if $\I,\nu \models \phi_n(Q,\stamp{G}{1} \cup
-\ldots \cup \stamp{G}{n}, \stamp{L}{1} \cup \ldots \cup
-\stamp{L}{n})$, where $\nu$ is any valuation such
-that: \begin{compactitem}
-\item $\nu(\stamp{g}{i}) = \nu_i(g)$ for each $g \in G$ and each $i \in [1,n]$, 
-%
-\item $\nu(q) = \true$ for each $q \in F$, and
-%
-\item $\nu(q) = \false$ for each $q \in Q \setminus F$.
-\end{compactitem}
-The language of $\A$ is the set $L(\A)$ of words from $\Sigma[G]^*$
-accepted by $\A$. In the following, we ask the two
-questions below: \begin{compactenum}
-\item given automata $\A_i = \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$,
-  for $i=1,2$, with $L_1 \cap L_2 = \emptyset$ and $Q_1 \cap Q_2 =
-  \emptyset$, do there exist automata $\A_\cap$, $\A_\cup$ and
-  $\overline{\A}_1$ such that $L(\A_\cap) = L(\A_1) \cap L(\A_2)$,
-  $L(\A_\cup) = L(\A_1) \cup L(\A_2)$ and $L(\overline{\A}_1) =
-  \Sigma[G]^* \setminus L(\A_1)$ ?
-%
-\item given an automaton $\A$, is $L(\A) = \emptyset$ ? 
+\item \emph{emptiness}: given an automaton $\A$, is $L(\A) =
+  \emptyset$ ?
 \end{compactenum}
+
+\subsection{Boolean Closure} 
+
+Given a set $B$ of boolean variables, two disjoint sets $X$ and $Y$ of
+data variables, for any formula $\phi \in \Form^+\tuple{B;X;Y}$,
+define $\overline{\phi} \in \Form^+\tuple{B;X;Y}$ recursively:
+\[\begin{array}{rclcrclcrcl}
+\overline{\phi_1 \vee \phi_2} & \equiv & \overline{\phi_1} \wedge \overline{\phi_2} & \hspace*{5mm} & 
+\overline{\phi_1 \wedge \phi_2} & \equiv & \overline{\phi_1} \vee \overline{\phi_2} & \hspace*{5mm} & 
+\overline{\phi} & \equiv & \neg\phi \text{ if $\phi \not\in B$ is an atom} \\ 
+\overline{\exists x ~.~ \phi_1} & \equiv & \forall x ~.~ \overline{\phi_1} && 
+\overline{\forall x ~.~ \phi_1} & \equiv & \exists x ~.~ \overline{\phi_1} && 
+\overline{\neg\phi} & \equiv & \neg \overline{\phi} \text{ if $\phi$ is not an atom} \\
+&& && && && \overline{\phi} & \equiv & \phi \text{ if $\phi \in B$}
+\end{array}\]
+Clearly $\phi$ and $\overline{\phi}$ have the same size. The relation
+between $\phi$ and $\overline{\phi}$ is formalized below:
+
+\begin{proposition}\label{prop:complement}
+  Given sets of variables $B,X,Y \subset \vars$ of sorts boolean, data
+  and data respectively, and a formula $\phi \in
+  \Form^+\tuple{B;X;Y}$, for any valuation $\nu$ we have $\nu \models
+  \phi$ if and only if $\overline{\nu} \models \neg\overline{\phi}$,
+  where $\overline{\nu}(x) = \nu(x)$ for all $x \in X$ and
+  $\overline{\nu}(b) = \neg\nu(b)$ for all $b \in B$.
+\end{proposition}
+\proof{By induction on the structure of $\phi$. \qed}
+
+Consider the automata $\A_i = \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$,
+for $i=1,2$, where $L_1 \cap L_2 = \emptyset$ and $Q_1 \cap Q_2 =
+\emptyset$. We define the following automata: 
+\[\begin{array}{rcl}
+\A_\cup & = & \tuple{G,~ L_1 \cup L_2,~ Q_1 \cup Q_2,~ \iota_1 \vee \iota_2,~ F_1 \cup F_2,~ \Delta_1 \cup \Delta_2} \\
+\A_\cap & = & \tuple{G,~ L_1 \cup L_2,~ Q_1 \cup Q_2,~ \iota_1 \wedge \iota_2,~ F_1 \cup F_2,~ \Delta_1 \cup \Delta_2} \\
+\overline{A_1} & = & \tuple{G,~ L_1,~ Q_1,~ \overline{\iota_1},~ Q_1 \setminus F_1,~ \lambda q \in Q_1~ \lambda a \in \Sigma ~.~ \overline{\Delta_1(q,a)}}
+\end{array}\]
+
+\begin{lemma}\label{lemma:boolean-closure}
+  Given automata $\A_i = \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$, for
+  $i=1,2$, where $L_1 \cap L_2 = \emptyset$ and $Q_1 \cap Q_2 =
+  \emptyset$, we have $L(\A_\cup) = L(\A_1) \cup L(\A_2)$, $L(A_\cap)
+  = L(\A_1) \cap L(\A_2)$ and $L(\overline{\A_1}) = \Sigma[G]*
+  \setminus L(\A_1)$. 
+\end{lemma}
+\proof{
+  Same as \cite[Lemma 1]{IosifX17}. 
+\qed}
+
+\section{Checking Emptiness with Interpolants and Skolem Witnesses}
+
+Since the emptiness problem is undecidable even for automata with only
+two global variables and no local variables, by reduction from the
+emptiness problem for 2-counter machines \cite{Minsky67}, we give a
+semi-algorithm with the following properties. Given an automaton $\A$
+as input, the procedure will\begin{inparaenum}[(1)] 
+\item return a word $w \in L(\A)$ if $L(\A)
+\neq \emptyset$, and 
+%
+\item if the procedure terminates without returning such a word, then
+  we can safely conclude that $L(\A) = \emptyset$. \end{inparaenum}
+Due to the undecidability of the emptiness problem, it is possible for
+the semi-algorithm to run forever in the case when the language of the
+automaton is empty.
+
+\begin{proposition}\label{prop:substitution}
+  Given a formula $Q_1 x_1 \ldots Q_n x_n ~.~ \phi$, where $Q_1 \ldots
+  Q_n \in \set{\exists,\forall}$ and $\phi$ is a quantifier-free
+  formula with free variables $\fv{}{\phi} = \set{x_1,\ldots,x_n,q}$
+  in which the boolean variable $q$ occurs positively, for any formula
+  $\psi$, the following equivalence holds:
+  \[Q_1 x_1 \ldots Q_n x_n ~.~ \phi[\psi/q] \iff 
+  Q_1 x_1 \ldots Q_n x_n \exists q ~.~ \phi \wedge (q \rightarrow \psi)\]
+\end{proposition}
+\proof{ Let $\nu$ be an arbitrary valuation of the variables in
+  $\fv{}{\phi} \cup \fv{}{\psi}$. It is sufficient to prove that $\nu
+  \models \phi[\psi/q]$ if and only if $\nu \models \exists q ~.~ \phi
+  \wedge (q \rightarrow \psi)$.
+
+  ``$\Leftarrow$'' Suppose that $\nu \models \phi[\psi/q]$ and
+  distinguish the following cases: \begin{compactenum}
+  \item if $\nu \models \psi$, since $q$ occurs positively in $\phi$, we
+    obtain that $\nu \models \phi[\top/q]$, thus $\nu \models
+    \phi[\top/q] \wedge (\top \rightarrow \psi)$ and $\nu \models
+    \exists q ~.~ \phi \wedge (q \rightarrow \psi)$ follows.
+    %
+  \item if $\nu \not\models \psi$, since $q$ occurs positively in $\phi$, we
+    obtain that $\nu \models \phi[\bot/q]$, thus $\nu \models
+    \phi[\bot/q] \wedge (\bot \rightarrow \psi)$ and $\nu \models
+    \exists q ~.~ \phi \wedge (q \rightarrow \psi)$ follows.
+  \end{compactenum}
+
+  ``$\Rightarrow$'' Suppose that $\nu \models \exists q ~.~ \phi
+  \wedge (q \rightarrow \psi)$, or equivalently, $\nu \models
+  (\phi[\top/q] \wedge \psi) \vee \phi[\bot/q]$. If $\nu \models
+  \phi[\top/q] \wedge \psi$ then $\nu \models
+  \phi[\psi/q]$. Otherwise, if $\nu \models \phi[\bot/q]$, we
+  distinguish two cases: \begin{compactitem} 
+  \item if $\nu \not\models \psi$ then clearly $\nu \models
+    \phi[\psi/q]$.
+    %
+  \item else, if $\nu \models \psi$, since $q$ occurs positively in
+    $\phi$ and $\nu \models \phi[\bot/q]$ then also $\nu \models
+    \phi[\top/q]$, because $\phi$ is monotone in $q$ in the entailment
+    partial order. But then $\nu \models \phi[\psi/q]$.
+  \end{compactitem}
+  \qed}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{abbrv} \bibliography{refs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}

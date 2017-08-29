@@ -33,8 +33,8 @@
 \newcommand{\lfp}[1]{\mbox{fix}\ {#1}}
 \newcommand{\wpr}{\widetilde{pre}}
 \newcommand{\cceil}[1]{\lfloor #1 \rfloor + 1}
-\newcommand{\set}[1]{\left\{ #1 \right\}}
-\newcommand{\tuple}[1]{\left\langle #1 \right\rangle}
+\newcommand{\set}[1]{\{ #1 \}}
+\newcommand{\tuple}[1]{\langle #1 \rangle}
 \renewcommand{\vec}[1]{\mathbf #1}
 \newcommand{\tup}[1]{\overline #1}
 \newcommand{\ite}[3]{\mathsf{ite}(#1,#2,#3)}
@@ -52,7 +52,7 @@
 
 % algorithms
 \newcommand{\sig}{\mathsf{S}}
-\newcommand{\stamp}[2]{{#1}^{\tuple{#2}}}
+\newcommand{\stamp}[2]{{#1}^{({#2})}}
 
 % recursive structures
 \newcommand{\LS}{\mathtt{LS}}
@@ -232,7 +232,7 @@
 \newcommand{\lab}{\triangleleft}
 \newcommand{\labd}[1]{#1\!\!\Downarrow}
 \newcommand{\thsep}{\mathsf{Sep}}
-\newcommand{\fv}[2]{\mathrm{FV}^{#1}(#2)}
+\newcommand{\fv}[2]{\mathrm{FV}_{#1}(#2)}
 \newcommand{\terms}[1]{\mathrm{Pt}(#1)}
 \newcommand{\bounds}[2]{\mathrm{Bnd}(#1,#2)}
 \newcommand{\dom}{\mathrm{dom}}
