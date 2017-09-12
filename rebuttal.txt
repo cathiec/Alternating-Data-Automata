@@ -1,0 +1,80 @@
+We are grateful to all reviewers for their great work. The main points
+of criticism are addressed as follows:
+
+1. Why are our semi-algorithms performing slower than Includer [11] ?
+
+First of all, Includer is specifically designed to solve language
+inclusion problems between nondeterministic data automata, which are a
+(significant) special case of alternation, whereas the semi-algorithms
+presented in this paper can deal with the entire class of alternating
+data automata, not just the ones resulting from inclusion problems. It
+is common that procedures for more general problems are slower than
+the ones for specific problems, although ideally, it is desirable to
+have matching speed on the same class of problems. 
+
+As reviewer 2 points out, the generalized subset construction used by
+Includer does not cause a huge blowup for the examples considered in
+this paper and in [11]. Moreover, Includer uses the LIA interpolation
+procedure of MathSAT5, which seems to be faster than the more generic
+UFLIA interpolation of Z3 used here (UFLIA is needed in order to deal
+with the boolean variables representing the states). In some cases, Z3
+answers unsat almost immediately and then takes up to 5 seconds to
+extract the interpolant. We believe that further experimenting with
+different Z3 tactics and tuning the encoding of the interpolation
+procedure, as well as considering a larger set of benchmarks than the
+preliminary benchmarks used to test our first prototype will greatly
+improve the performance of our tool.
+
+2. What is the difference between the semi-algorithms in this paper
+and the original ones of Blast [8] and Impact [15] ? 
+
+Both Blast and Impact are designed for checking emptiness (safety) of
+nondeterministic data automata (programs), whereas our methods address
+the emptiness problem for alternating data automata. A first
+difference between our methods and [8,15] is a more sophisticated
+Abstract Reachability Tree (ART) data structure (page 5, 2nd paragraph
+of section 5), which requires labeling both nodes and edges with
+formulae. However, on the positive side, our encoding of path formulae
+(interpolation problems) allows the basic principles of [8,15] to be
+carried over to the alternating setting (we represent path formulae as
+conjunctions of implications and abstract sets of configurations as
+combinations of boolean and data theory atoms), with some specific
+differences listed below:
+
+2.a) Difference with Blast [8]. Algorithm 1 (page 6) uses antichains
+to prune the search space (lines 29-35). Using antichains is a
+specific technique for classical finite-alphabet alternating
+automata. We adapt this idea from [5] to optimize the predicate
+abstraction emptiness checking of ADA.
+
+2.b) Difference with Impact [15]. The original description of Impact
+[15] is based on a nondeterministic application of the Cover, Refine
+and Expand procedures, whereas Algorithm 2 (page 8) is a detailed
+deterministic procedure that closely mirrors our implementation. In
+particular, we chose to cover nodes lazily, only if their labels are
+strenghtened by refinement (line 18).
+
+3. Using the Lyndon interpolation theorem instead of post-images to
+prove Proposition 1. This is a very interesting remark that we did not
+consider initially and which allows to use positive interpolants
+directly instead of post-images (quantifiers can be eliminated if the
+data theory is LIA, but quantifier elimination has a non-negligeable
+cost). If accepted, we are willing to change this point in the final
+version, provided that we can find a published reference for the fact
+that McMillan's Z3 interpolation procedure fits with Lyndon's theorem
+(their CAV13, FMCAD11 or TCS05 papers on interpolation do not seem to
+refer to it).
+
+4. Several reviewers expressed concerns relative to the paper being
+too theoretical and out of the scope of FMCAD. As authors of a paper
+on formal verification techniques, we felt the need to define and
+prove each point formally. However, the paper does not address issues
+such as decidability or computational complexity of subclasses of ADA,
+which could fit a more theoretical conference. Although interpolation
+can be used as an argument for decidability (when suitable
+restrictions are imposed, such as for symbolic alternating automata)
+it is perhaps not a very good framework to derive complexity
+bounds. In general, theoretical complexity proofs require different
+techniques (e.g. reductions to other decidable problems whose
+complexity is known) which are clearly out of the scope of the present
+paper.
