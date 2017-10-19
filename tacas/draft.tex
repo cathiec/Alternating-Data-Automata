@@ -75,14 +75,13 @@ systems. A property is a specification of the correct executions of a
 system, given as a set $\mathcal{P}$ of executions, and the
 verification problem asks if the set $\mathcal{S}$ of executions of
 the system under consideration is contained within $\mathcal{P}$.
-
 This problem is at the core of widespread verification techniques,
 such as automata-theoretic model checking \cite{VARDI94}, where
 systems are specified as finite-state automata and properties defined
 using Linear Temporal Logic \cite{Pnueli77}. However the bottleneck of
 this and other related verification techniques is the intractability
-of language inclusion (PSPACE-complete for finite-state automata on
-finite words over finite alphabets).
+of language inclusion (PSPACE-complete for finite-state automata over
+finite alphabets).
 
 Alternation \cite{ChandraKozenStockmeyer81} was introduced as a
 generalization of nondeterminism, introducing universal, in addition
@@ -108,12 +107,13 @@ alphabets. In general, when considering infinite data as part of the
 input alphabet, language inclusion is undecidable and, even
 complementation becomes impossible, for instance, for timed automata
 \cite{AlurDill94} or finite-memory register automata
-\cite{Kaminski94}. In some cases, one can recover theoretical
-decidability, by restricting the number of variables (clocks) in timed
-automata to one \cite{OuaknineWorrell04}, or forbidding relations
-between current and past/future values, as with symbolic automata
-\cite{symbTransd:POPL12}. In such cases, the emptiness problem for the
-alternating versions becomes decidable \cite{Lasota05,DAntoniKW16}.
+\cite{Kaminski94}. One can recover theoretical decidability, by
+restricting the number of variables (clocks) in timed automata to one
+\cite{OuaknineWorrell04}, or forbidding relations between current and
+past/future values, as with symbolic automata
+\cite{symbTransd:POPL12}. In such cases, also the emptiness problem
+for the alternating versions becomes decidable
+\cite{Lasota05,DAntoniKW16}.
 
 In this paper, we present a new model of alternating automata over
 infinite alphabets consisting of pairs $(a,\nu)$ where $a$ is an input
@@ -199,7 +199,7 @@ consider the full model of alternation and rely entirely on the
 ability of SMT solvers to produce interpolants in the combined theory
 of booleans and data. Since determinisation is not needed and
 complementation is possible in linear time, the bulk of the work is
-carried out by the decision procedure.
+carried out by the solver. 
 
 The emptiness check for alternating data automata adapts similar
 semi-algorithms for nondeterministic infinite-state programs to the
@@ -228,13 +228,13 @@ assume w.l.o.g. that $\ssorts{\sig} = \set{\Data,\Bool}$\footnote{The
   would unnecessarily clutter the technical presentation.} and each
 function symbol $f \in \sfuns{\sig}$ has $\#(f) \geq 0$ arguments of
 sort $\Data$ and return value $\sigma(f) \in \ssorts{\sig}$. If
-$\#(f)=0$ then $f$ is a \emph{constant}. We consider the constants
-$\top$ and $\bot$ of sort $\Bool$.
+$\#(f)=0$ then $f$ is a \emph{constant}. We consider constants $\top$
+and $\bot$ of sort $\Bool$.
 
-We consider an infinite countable set of \emph{variables} $\vars$,
-where each $x \in \vars$ has an associated sort $\sigma(x)$. A
-\emph{term} $t$ of sort $\sigma(t)=S$ is a variable $x \in \vars$
-where $\sigma(x)=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
+Let $\vars$ be an infinite countable set of \emph{variables}, where
+each $x \in \vars$ has an associated sort $\sigma(x)$. A \emph{term}
+$t$ of sort $\sigma(t)=S$ is a variable $x \in \vars$ where
+$\sigma(x)=S$, or $f(t_1,\ldots,t_{\#(f)})$ where
 $t_1,\ldots,t_{\#(f)}$ are terms of sort $\Data$ and $\sigma(f)=S$. An
 \emph{atom} is a term of sort $\Bool$ or an equality $t \teq s$
 between two terms of sort $\Data$. A \emph{formula} is an
@@ -335,15 +335,15 @@ where: \begin{compactitem}
 %
 \item $\Delta : Q \times \Sigma \rightarrow
   \Form^+(Q,\overline{\vec{x}}\cup\vec{x})$ is a \emph{transition
-    function},
+    function}, where $\overline{\vec{x}}$ denotes $\{\overline{x} \mid
+  x \in \vec{x}\}$.
 \end{compactitem}
-where $\overline{\vec{x}}=\{\overline{x} \mid x \in \vec{x}\}$. In
-each formula $\Delta(q,a)$ describing a transition rule, the variables
-$\overline{\vec{x}}$ track the previous and $\vec{x}$ the current
-values of the variables of $\A$. Observe that the initial values of
-the variables are left unconstrained, as the initial configuration
-does not contain free data variables. The size of $\A$ is defined as
-$\len{\A} = \len{\iota} + \sum_{(q,a) \in
+In each formula $\Delta(q,a)$ describing a transition rule, the
+variables $\overline{\vec{x}}$ track the previous and $\vec{x}$ the
+current values of the variables of $\A$. Observe that the initial
+values of the variables are left unconstrained, as the initial
+configuration does not contain free data variables. The size of $\A$
+is defined as $\len{\A} = \len{\iota} + \sum_{(q,a) \in
   Q\times\Sigma}\len{\Delta(q,a)}$.
 
 \begin{figure}[htb]
