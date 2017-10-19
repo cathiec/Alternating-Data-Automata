@@ -659,21 +659,18 @@ that $\I,\beta\cup\nu \models \AbsAccept{\A}(u)$. This strenghtening
 is carried out by adding to $\preds$ several predicates that are
 sufficient to exclude the spurious counterexample.
 
-In general, given an unsatisfiable conjunction $\Phi \equiv
-\phi_1(X_0,X_1) \wedge \phi_2(X_1,X_2) \wedge \ldots \wedge
-\phi_n(X_{n-1},X_n)$ of time-stamped variables $X_i = \set{x_i \mid x
-  \in X}$ of any sort, a solution of the \emph{interpolation problem}
-$\Phi$, simply called an \emph{interpolant}, is a tuple $\tuple{I_0(X),
-  I_1(X), \ldots, I_n(X)}$ such that:\begin{inparaenum}[(i)]
-\item $I_0 \equiv \top$,  
-%
-\item $I_{i-1}[X_{i-1}/X] \wedge \phi_i(X_{i-1},X_i) \models
-  I_i[X_i/X]$, for all $i \in [1,n]$, and
-%
-\item $I_n \equiv \bot$. 
-\end{inparaenum}
-In the following, we shall assume the existence of an interpolating
-decision procedure for $\theory(\sig,\I)$.
+Given an unsatisfiable conjunction of formulae $\psi_1 \wedge \ldots
+\wedge \psi_n$, an \emph{interpolant} is a tuple of formulae
+$\tuple{I_1,\ldots,I_{n-1},I_n}$ such that $I_n \equiv \bot$, $I_i
+\wedge \psi_i \models_\T I_{i+1}$ and $I_i$ contains only variables
+and function symbols that are common to $\psi_i$ and $\psi_{i+1}$, for
+all $i \in [n-1]$. Moreover, by Lyndon's Interpolation Theorem
+\cite{Lyndon59}, we can assume without loss of generality that every
+boolean variable with at least one positive (negative) occurrence in
+$I_i$ has at least one positive (negative) occurrence in both $\psi_i$
+and $\psi_{i+1}$. In the following, we shall assume the existence of
+an interpolating decision procedure for $\theory(\sig,\I)$ that meets
+the requirements of Lyndon's Interpolation Theorem.
 
 %% \paragraph{\em Remark} 
 %% We deviate w.l.o.g. from the standard notion of \emph{generalized
@@ -720,20 +717,20 @@ replaced, $\theta_0, \ldots, \theta_n$ are the sets of transition
 rules fired on the run of $\A$ over $u$ and $\theta_{n+1}$ is the
 acceptance condition, which forces the last remaining non-final states
 to be false.
-
-Moreover, we require that an interpolant
-$\tuple{\top,I_0,\ldots,I_n,\bot}$ for the interpolation problem
-$\Theta(u)$ does not have negative occurrences of states, i.e.\ $I_i
-\in \Form^+(Q,\vec{x})$, for all $i \in [0,n]$. Such an interpolant
-can always be built, as showed below:
-
-\begin{proposition}\label{prop:positive-interpol}
-  If $\Theta(a_1 \ldots a_n)$ is unsatisfiable then one can build an
-  interpolant $\tuple{\top,I_0,\ldots,I_n,\bot}$ for $\Theta(a_1\ldots
-  a_n)$, such that $I_i \in \Form^+(Q,\vec{x})$, for all $i \in
-  [0,n]$.
-\end{proposition}
-
+%
+%% Moreover, we require that an interpolant
+%% $\tuple{\top,I_0,\ldots,I_n,\bot}$ for the interpolation problem
+%% $\Theta(u)$ does not have negative occurrences of states, i.e.\ $I_i
+%% \in \Form^+(Q,\vec{x})$, for all $i \in [0,n]$. Such an interpolant
+%% can always be built, as showed below:
+%
+%% \begin{proposition}\label{prop:positive-interpol}
+%%   If $\Theta(a_1 \ldots a_n)$ is unsatisfiable then one can build an
+%%   interpolant $\tuple{\top,I_0,\ldots,I_n,\bot}$ for $\Theta(a_1\ldots
+%%   a_n)$, such that $I_i \in \Form^+(Q,\vec{x})$, for all $i \in
+%%   [0,n]$.
+%% \end{proposition}
+%
 We recall that a run of $\A$ over $u$ is a sequence: \[\phi_0(Q)
 \Rightarrow \phi_1(Q,\vec{x}_0\cup\vec{x}_1) \Rightarrow \ldots
 \Rightarrow \phi_n(Q,\vec{x}_0\cup\ldots\cup\vec{x}_n)\] where
@@ -1359,7 +1356,7 @@ the pure LIA theory.
 
 \appendix
 
-\subsection{Proof of Lemma \ref{lemma:closure}}
+\subsection*{Proof of Lemma \ref{lemma:closure}}
 
 \begin{proposition}\label{prop:overline}
   Given a formula $\phi \in \Form^+(Q,\vec{x})$ and a valuation $\nu$
@@ -1395,13 +1392,11 @@ the pure LIA theory.
   \end{array}\] 
   To prove $L(\overline{\A_1}) = \Sigma[\vec{x}]^* \setminus L(\A_1)$,
   let $w = (a_1,\nu_1) \ldots (a_n,\nu_n)$ be a word and show that
-<<<<<<< HEAD
   $\overline{\Delta}(\iota_1,a_1 \ldots a_n) =
   \overline{\Delta(\iota_1,a_1 \ldots a_n)}$ by induction on
   $n\geq0$. The case $n=0$ is immediate, because $\fv{}{\iota_1}
   \subseteq Q$ and thus $\overline{\iota_1} \equiv \iota_1$. For the case
   $n>0$, we compute:
-=======
   $\overline{\Delta}(\overline{\iota_1},a_1 \ldots a_n) =
   \overline{\Delta(\iota_1,a_1 \ldots a_n)}$ by induction on $n\geq0$.
 
@@ -1415,7 +1410,6 @@ the pure LIA theory.
   accepted by $\A_1$ iff it is not accepted by $\overline{\A_1}$.
 
   For the case $n>0$, we compute:
->>>>>>> 8ea63641f4a44a64b3d44b33795e27cef0f7ae0b
   \[\begin{array}{lcl}
   \overline{\Delta}^n(\overline{\Delta}(\iota_1,a_1\ldots a_{n-1}),a_n) & \iffeq & \text{ (by ind. hyp.)} \\
   \overline{\Delta}^n(\overline{\Delta(\iota_1,a_1\ldots a_{n-1})},a_n) & \iffeq & \text{ (by the def. of $\overline{\phi}$)} \\
@@ -1439,7 +1433,7 @@ the pure LIA theory.
   \Sigma[\vec{x}]^*$, we have $w \in L(\A_1) \iff w \not\in
   L(\overline{\A_1})$. \qed}
 
-\subsection{Proof of Lemma \ref{lemma:safety-invariant}}
+\subsection*{Proof of Lemma \ref{lemma:safety-invariant}}
 
 \proof{ Let $\A = \tuple{\vec{x},Q,\iota,F,\Delta}$ in the following.
   ``$\Leftarrow$'' This direction is trivial. ``$\Rightarrow$'' We
@@ -1450,7 +1444,7 @@ the pure LIA theory.
   \Post{\A}(\iota,u)\}$. Checking that $\Inv$ is a safety invariant is
   straightforward. \qed}
 
-\subsection{Proof of Lemma \ref{lemma:abstract-invariant}}
+\subsection*{Proof of Lemma \ref{lemma:abstract-invariant}}
 
 \proof{ It is sufficient to show that there exists $k\geq0$ such that for
   all $u \in \Sigma^*$ there exists $i \in [0,k]$ such that
@@ -1462,7 +1456,31 @@ the pure LIA theory.
   exists $i \in [0,k]$ such that $\AbsPost{\A}(\iota,u) \iffeq
   \AbsPost{\A}(\iota,\mu(i))$, which concludes the proof. \qed}
 
-\subsection{Proof of Proposition \ref{prop:positive-interpol}}
+%% \subsection*{Proof of Proposition \ref{prop:positive-interpol}}
+
+%% \vspace*{\baselineskip} \proof{ Let
+%%   $\tuple{\top,I_0,\ldots,I_{n},\bot}$ be an interpolant, and $i \in
+%%   [0,n]$ be the first index for which $I_i \not\in
+%%   \Form^+(Q,\vec{x})$. If $i=0$, we replace $I_0$ with $\iota \in
+%%   \Form^+(Q,\vec{x})$ and verify that the result is still an
+%%   interpolant. If $i>0$, by Proposition \ref{prop:asterisk}, we have
+%%   that $\Delta^{i-1}(I_{i-1},a_i) \iffeq \exists Q_{i-1} ~.~
+%%   I_{i-1}[Q_{i-1}/Q] \wedge \theta_i$. Since $I_{i-1} \in
+%%   \Form^+(Q,\vec{x})$, by the choice of $i$, we have that
+%%   $\Delta^{i-1}(I_{i-1},a_i) \in \Form^+(Q,\vec{x})$ as well. We
+%%   replace $I_i$ with $\Delta^{i-1}(I_{i-1},a_i)$. The result is still
+%%   an interpolant, because: \begin{compactitem}
+%%   \item $I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \models
+%%     \Delta^{i-1}(I_{i-1},a_i)$, by Proposition \ref{prop:asterisk}, and
+%%     %
+%%   \item $\Delta^{i-1}(I_{i-1},a_i) \wedge \theta_{i+1} \models \exists
+%%     Q_{i-1} ~.~ I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \wedge \theta_{i+1}
+%%     \models I_i[Q_i/Q] \wedge \theta_{i+1} \models I_{i+1}[Q_{i+1}/Q]$.
+%%   \end{compactitem}
+%%   We proceed with these replacements until there are no more formulae
+%%   $I_i \not\in \Form^+(Q,\vec{x})$ left. \qed}
+
+\subsection*{Proof of Lemma \ref{lemma:progress}}
 
 \begin{proposition}\label{prop:asterisk}
   Given a formula $\phi \in \Form^+(Q,\vec{x})$ and $a \in \Sigma$, we
@@ -1484,30 +1502,6 @@ the pure LIA theory.
   $\I,\beta'\cup\beta\cup\overline\nu\cup\nu \models \phi[Q'/Q] \wedge
   \bigwedge_{q \in Q} (q' \rightarrow \Delta(q,a))$ is
   immediate. $''\Leftarrow''$ This direction is an easy check. \qed}
-
-\vspace*{\baselineskip} \proof{ Let
-  $\tuple{\top,I_0,\ldots,I_{n},\bot}$ be an interpolant, and $i \in
-  [0,n]$ be the first index for which $I_i \not\in
-  \Form^+(Q,\vec{x})$. If $i=0$, we replace $I_0$ with $\iota \in
-  \Form^+(Q,\vec{x})$ and verify that the result is still an
-  interpolant. If $i>0$, by Proposition \ref{prop:asterisk}, we have
-  that $\Delta^{i-1}(I_{i-1},a_i) \iffeq \exists Q_{i-1} ~.~
-  I_{i-1}[Q_{i-1}/Q] \wedge \theta_i$. Since $I_{i-1} \in
-  \Form^+(Q,\vec{x})$, by the choice of $i$, we have that
-  $\Delta^{i-1}(I_{i-1},a_i) \in \Form^+(Q,\vec{x})$ as well. We
-  replace $I_i$ with $\Delta^{i-1}(I_{i-1},a_i)$. The result is still
-  an interpolant, because: \begin{compactitem}
-  \item $I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \models
-    \Delta^{i-1}(I_{i-1},a_i)$, by Proposition \ref{prop:asterisk}, and
-    %
-  \item $\Delta^{i-1}(I_{i-1},a_i) \wedge \theta_{i+1} \models \exists
-    Q_{i-1} ~.~ I_{i-1}[Q_{i-1}/Q] \wedge \theta_i \wedge \theta_{i+1}
-    \models I_i[Q_i/Q] \wedge \theta_{i+1} \models I_{i+1}[Q_{i+1}/Q]$.
-  \end{compactitem}
-  We proceed with these replacements until there are no more formulae
-  $I_i \not\in \Form^+(Q,\vec{x})$ left. \qed}
-
-\subsection{Proof of Lemma \ref{lemma:progress}}
 
 \proof{ Let $\Theta(u) \equiv \theta_0(Q_0) \wedge \theta_1(Q_0 \cup
   Q_1,\vec{x}_0 \cup \vec{x}_1) \wedge \ldots \wedge \theta_n(Q_{n-1}
@@ -1544,7 +1538,7 @@ the pure LIA theory.
   \exists Q_{n-1}  \exists \vec{x}_{n-1} ~.~ I_{n-1}[Q_{n-1}/Q] \wedge \theta_n \models I_n[Q_n/Q] \hfill\text{\qed}
   \end{array}\]}
 
-\subsection{Proof of Theorem \ref{thm:predabs}}
+\subsection*{Proof of Theorem \ref{thm:predabs}}
 
 \proof{We prove the following invariant: each time Algorithm
   \ref{alg:predabs} reaches line \ref{ln:while}, the set $W$ of nodes
@@ -1612,7 +1606,7 @@ the pure LIA theory.
   $w$ at line \ref{ln:feasible}. Then Algorithm \ref{alg:predabs}
   terminates returning $w \in L(\A)$. \qed}
 
-\subsection{Proof of Theorem \ref{thm:impact}}
+\subsection*{Proof of Theorem \ref{thm:impact}}
 
 \begin{lemma}\label{lemma:well-labeled}
   Given an ART $\Art = \tuple{N,E,\rootNode,\Lambda,R,T,\lhd}$ built
@@ -1630,11 +1624,11 @@ the pure LIA theory.
   interpolant for $\Phi(a_1 \ldots a_k) \equiv \Lambda(\rootNode)
   \wedge \bigwedge_{i=1}^k \theta_i \wedge \bigwedge_{q \in R(n_k)}
   (q_k \rightarrow \bot)$, such that $I^\omega_i \in
-  \Form^+(Q,\vec{x})$, for all $i \in [0,k]$. According to Proposition
-  \ref{prop:positive-interpol}, it is possible to build such an
-  interpolant, when $\Phi(a_1 \ldots a_k)$ is unsatisfiable. By
-  Proposition \ref{prop:asterisk}, we obtain
-  $\Delta^i(I^\omega_{i-1},a_i)[Q_i/Q] \iffeq \exists Q_{i-1} ~.~
+  \Form^+(Q,\vec{x})$, for all $i \in [0,k]$. According to Lyndon's
+  Interpolation Theorem, it is possible to build such an interpolant,
+  when $\Phi(a_1 \ldots a_k)$ is unsatisfiable. By Proposition
+  \ref{prop:asterisk}, we obtain $\Delta^i(I^\omega_{i-1},a_i)[Q_i/Q]
+  \iffeq \exists Q_{i-1} ~.~
   I^\omega_{i-1}[Q_{i-1}/Q,\vec{x}_{i-1}/\vec{x}] \wedge \theta_i$
   and, since $I^\omega_{i-1}[Q_{i-1}/Q,\vec{x}_{i-1}/\vec{x}] \wedge
   \theta_i \models I^\omega_i[Q_i/Q,\vec{x}_i/\vec{x}]$, we obtain
