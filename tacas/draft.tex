@@ -412,15 +412,14 @@ The following sequence is a non-accepting run of the ADA from Figure
 $(a,\tuple{0,0}),(a,\tuple{1,1}),(b,\tuple{2,1})$, where $\Data^\I =
 \zed$ and the function symbols have standard arithmetic
 interpretation:
-\[\begin{array}{l}
+{\scriptsize\[\begin{array}{l}
 q_0 \stackrel{(a,\tuple{0,0})}{\Longrightarrow} 
-q_1 \wedge q_2 \wedge x_1\teq0 \wedge y_1\teq0 \stackrel{(a,\tuple{1,1})}{\Longrightarrow} \\ 
+q_1 \wedge q_2 \wedge x_1\teq0 \wedge y_1\teq0 \stackrel{(a,\tuple{1,1})}{\Longrightarrow} 
 \underbrace{q_1 \wedge q_2 \wedge x_2\teq y_1+1 \wedge y_2\teq x_1+1}_{q_1} ~\wedge~
-\underbrace{q_2 \wedge x_2>x_1 \wedge y_2>y_1}_{q_2} \\ 
-\wedge~ x_1\teq0 \wedge y_1\teq0 \stackrel{(b,\tuple{2,1})}{\Longrightarrow} 
-\underbrace{q_3 \wedge x_2\geq y_2}_{q_1} \wedge \underbrace{q_4 \wedge x_2>y_2}_{q_2} \wedge x_2\teq y_1+1 \\ 
-\wedge~ y_2\teq x_1+1 \wedge \underbrace{q_4 \wedge x_2>y_2}_{q_2} \wedge x_2>x_1 \wedge y_2>y_1 \wedge x_1\teq0 \wedge y_1\teq0 ~\hfill\text{\qed}
-\end{array}\]
+\underbrace{q_2 \wedge x_2>x_1 \wedge y_2>y_1}_{q_2} 
+\wedge~ x_1\teq0 \wedge y_1\teq0 \stackrel{(b,\tuple{2,1})}{\Longrightarrow} \\
+\underbrace{q_3 \wedge x_2\geq y_2}_{q_1} \wedge \underbrace{q_4 \wedge x_2>y_2}_{q_2} \wedge x_2\teq y_1+1 
+\wedge~ y_2\teq x_1+1 \wedge \underbrace{q_4 \wedge x_2>y_2}_{q_2} \wedge x_2>x_1 \wedge y_2>y_1 \wedge x_1\teq0 \wedge y_1\teq0 ~\hfill\text{\qed}\end{array}\]}
 
 In this paper we tackle the following problems: \begin{compactenum}
 \item \emph{boolean closure}: given automata $\A_1$ and $\A_2$, both
