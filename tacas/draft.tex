@@ -55,7 +55,7 @@ computation is that complementation is possible in linear time, thus
 allowing to concisely encode trace inclusion problems that occur often
 in verification. In this paper we consider alternating automata over
 infinite alphabets, whose transition rules are formulae in a combined
-theory of booleans and some infinite data domain, that relate past and
+theory of Booleans and some infinite data domain, that relate past and
 current values of the data variables. The data theory is not fixed,
 but rather it is a parameter of the class. We show that union,
 intersection and complementation are possible in linear time in this
@@ -123,21 +123,21 @@ that, at all times, the successive values taken by the variables in
 $\vec{x}$ are an observable part of the language, in other words,
 there are no hidden variables in our model. The transition rules are
 specified by a set of formulae, in a combined first-order theory of
-boolean control states and data, that relate past with present values
+Boolean control states and data, that relate past with present values
 of the variables. We do not fix the data theory a~priori, but rather
 consider it to be a parameter of the class.
 
 A run over an input word $(a_1,\nu_1) \ldots (a_n,\nu_n)$ is a
 sequence $\phi_0(\vec{x}_0) \Rightarrow \phi_1(\vec{x}_0,\vec{x}_1)
 \Rightarrow \ldots \Rightarrow \phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ of
-rewritings of the initial formula by substituting boolean states with
+rewritings of the initial formula by substituting Boolean states with
 time-stamped transition rules. The word is accepted if the final
 formula $\phi_n(\vec{x}_0,\ldots,\vec{x}_n)$ holds, when all
 time-stamped variables $\vec{x}_1,\ldots,\vec{x}_n$ are substituted by
 their values in $\nu_1,\ldots,\nu_n$, all non-final states replaced by
 false and all final states by true.
 
-The boolean operations of union, intersection and complement can be
+The Boolean operations of union, intersection and complement can be
 implemented in linear time in this model, thus matching the complexity
 of performing these operations in the finite-alphabet case. The price
 to be paid is that emptiness becomes undecidable, for which reason we
@@ -149,14 +149,14 @@ termination is not guaranteed when the language is empty.
 
 %% Finally, we prove termination in the empty case, when the transition
 %% formulae\begin{inparaenum}[(i)]
-%% \item contain only constants of the data sort and boolean functions of
+%% \item contain only constants of the data sort and Boolean functions of
 %%   any arity, or they
 %% %
 %% \item constrain only the current but not the past values on the input,
 %%   as in the case of symbolic automata \cite{symbTransd:POPL12,DAntoniKW16}.
 %% \end{inparaenum}
 
-We have implemented the boolean operations and emptiness checking
+We have implemented the Boolean operations and emptiness checking
 semi-algorithms and carried out experiments with examples taken from
 array logics \cite{cav09}, timed automata
 \cite{henzinger:RealTimeSystems}, communication protocols \cite{abp}
@@ -197,7 +197,7 @@ exponential determinization procedure and an abstraction refinement
 loop using lazy predicate abstraction \cite{HJMS02}. In this work we
 consider the full model of alternation and rely entirely on the
 ability of SMT solvers to produce interpolants in the combined theory
-of booleans and data. Since determinisation is not needed and
+of Booleans and data. Since determinisation is not needed and
 complementation is possible in linear time, the bulk of the work is
 carried out by the solver. 
 
@@ -315,7 +315,7 @@ $\Bool$ and $\Data$, respectively, we denote by
 $\Form(\vec{b},\vec{x})$ the set of formulae $\phi$ such that
 $\fv{\Bool}{\phi} \subseteq \vec{b}$ and $\fv{\Data}{\phi} \subseteq
 \vec{x}$. By $\Form^+(\vec{b},\vec{x})$ we denote the set of formulae
-from $\Form(\vec{b},\vec{x})$ in which each boolean variable occurs
+from $\Form(\vec{b},\vec{x})$ in which each Boolean variable occurs
 under an even number of negations.
 
 An \emph{alternating data automaton} (ADA or automaton in the sequel)
@@ -355,7 +355,7 @@ is defined as $\len{\A} = \len{\iota} + \sum_{(q,a) \in
 \begin{minipage}{6cm}
 \[\begin{array}{rcl}
 \Delta(q_0,a) & \equiv & q_1 \wedge q_2 \wedge x\teq0 \wedge y\teq0 \\
-\Delta(q_1,a) & \equiv & q_1 \wedge q_3 \wedge x\teq\overline{y}+1 \wedge y\teq\overline{x}+1 \\
+\Delta(q_1,a) & \equiv & q_1 \wedge q_2 \wedge x\teq\overline{y}+1 \wedge y\teq\overline{x}+1 \\
 \Delta(q_1,b) & \equiv & q_3 \wedge \overline{x} \geq \overline{y} \\
 \Delta(q_2,a) & \equiv & q_2 \wedge x > \overline{x} \wedge y > \overline{y} \\
 \Delta(q_2,b) & \equiv & q_4 \wedge \overline{x}>\overline{y} \\\\
@@ -406,6 +406,7 @@ for some valuation $\nu$ that maps:\begin{inparaenum}[(1)]
 The language of $\A$ is the set $L(\A)$ of words from
 $\Sigma[\vec{x}]^*$ accepted by $\A$.
 
+
 \paragraph{\em Example} 
 The following sequence is a non-accepting run of the ADA from Figure
 \ref{fig:ex} on the word
@@ -422,7 +423,7 @@ q_1 \wedge q_2 \wedge x_1\teq0 \wedge y_1\teq0 \stackrel{(a,\tuple{1,1})}{\Longr
 \wedge~ y_2\teq x_1+1 \wedge \underbrace{q_4 \wedge x_2>y_2}_{q_2} \wedge x_2>x_1 \wedge y_2>y_1 \wedge x_1\teq0 \wedge y_1\teq0 ~\hfill\text{\qed}\end{array}\]}
 
 In this paper we tackle the following problems: \begin{compactenum}
-\item \emph{boolean closure}: given automata $\A_1$ and $\A_2$, both
+\item \emph{Boolean closure}: given automata $\A_1$ and $\A_2$, both
   with the same set of variables $\vec{x}$, do there exist automata
   $\A_\cup$, $\A_\cap$ and $\overline{\A_1}$ such that $L(\A_\cup) =
   \A_1 \cup \A_2$, $L(A_\cap) = \A_1 \cap \A_2$ and
@@ -448,9 +449,9 @@ as future work.
 
 \subsection{Boolean Closure}
 
-Given a set $Q$ of boolean variables and a set $\vec{x}$ of variables
+Given a set $Q$ of Boolean variables and a set $\vec{x}$ of variables
 of sort $\Data$, for a formula $\phi \in \Form^+(Q,\vec{x})$, with no
-negated occurrences of the boolean variables, we define the formula
+negated occurrences of the Boolean variables, we define the formula
 $\overline{\phi} \in \Form^+(Q,\vec{x})$ recursively on the structure
 of $\phi$:
 \[\begin{array}{rclcrcl}
@@ -485,7 +486,7 @@ correctness of the above definitions:
 
 It is easy to see that $\len{\A_\cup} = \len{\A_\cap} = \len{\A_1} +
 \len{\A_2}$ and $\len{\overline{\A}} = \len{\A}$, thus the automata
-for the boolean operations, including complementation, can be built in
+for the Boolean operations, including complementation, can be built in
 linear time. This matches the linear-time bounds for intersection and
 complementation of alternating automata over finite alphabets
 \cite{ChandraKozenStockmeyer81}.
@@ -532,7 +533,7 @@ enumerates all finite sequences and checks the satisfiability of
 $\Accept{\A}(u)$ for each $u \in \Sigma^*$, using a decision procedure
 for the theory $\theory(\sig,\I)$.
 
-Since no boolean variable from $Q$ occurs under negation in $\phi$, it
+Since no Boolean variable from $Q$ occurs under negation in $\phi$, it
 is easy to prove the following monotonicity property: given two
 formulae $\phi,\psi \in \Form^+(Q,\vec{x})$ if $\phi \models \psi$
 then $\Post{\A}(\phi,u) \models \Post{\A}(\psi,u)$, for any $u \in
@@ -554,7 +555,7 @@ infinite antichains exist in many interpretations, e.g.\ $q \wedge x
 
 A \emph{safety invariant} for $\A$ is a function $\Inv : (Q \mapsto
 \booli) \rightarrow 2^{\vec{x} \mapsto \Data^\I}$ such that, for every
-boolean valuation $\beta : Q \rightarrow \booli$, every valuation $\nu
+Boolean valuation $\beta : Q \rightarrow \booli$, every valuation $\nu
 : \vec{x} \mapsto \Data^\I$ of the data variables and every finite
 sequence $u \in \Sigma^*$ of input events, the following
 hold: \begin{compactenum}
@@ -568,7 +569,7 @@ hold: \begin{compactenum}
   \nu \not\models \Accept{\A}(u)$.
 \end{compactenum}
 If $\Inv$ satisfies only the first point above, we call it an
-\emph{invariant}. Intuitively, a safety invariant maps every boolean
+\emph{invariant}. Intuitively, a safety invariant maps every Boolean
 valuation into a set of data valuations, that contains the initial
 configuration $\iota \equiv \Post{\A}(\iota,\varepsilon)$, whose data
 variables are unconstrained, over-approximates the set of reachable
@@ -637,7 +638,7 @@ previous lemma, meets point (\ref{it1:inv}) but not point
 $\AbsPost{\A}$ and $\AbsAccept{\A}$, respectively. In other words,
 there exists a finite sequence $u \in \Sigma^*$ such that $\nu \in
 \abs{\Inv}(\beta)$ and $\I,\beta\cup\nu \models \AbsAccept{\A}(u)$,
-for some boolean $\beta : Q \rightarrow \booli$ and data $\nu :
+for some Boolean $\beta : Q \rightarrow \booli$ and data $\nu :
 \vec{x} \rightarrow \Data^\I$ valuations. Such a $u\in\Sigma^*$ is
 called a \emph{counterexample}.
 
@@ -664,7 +665,7 @@ $\tuple{I_1,\ldots,I_{n-1},I_n}$ such that $I_n \equiv \bot$, $I_i
 and function symbols that are common to $\psi_i$ and $\psi_{i+1}$, for
 all $i \in [n-1]$. Moreover, by Lyndon's Interpolation Theorem
 \cite{Lyndon59}, we can assume without loss of generality that every
-boolean variable with at least one positive (negative) occurrence in
+Boolean variable with at least one positive (negative) occurrence in
 $I_i$ has at least one positive (negative) occurrence in both $\psi_i$
 and $\psi_{i+1}$. In the following, we shall assume the existence of
 an interpolating decision procedure for $\theory(\sig,\I)$ that meets
@@ -693,7 +694,7 @@ $n>0$, we consider the following interpolation problem:
 && \wedge~ \theta_n(Q_{n-1} \cup Q_n,\vec{x}_{n-1} \cup \vec{x}_n) \wedge \theta_{n+1}(Q_n) \nonumber
 \end{eqnarray}
 where $Q_k = \set{q_k \mid q \in Q}$, $k \in [0,n]$ are time-stamped
-sets of boolean variables corresponding to the set $Q$ of states of
+sets of Boolean variables corresponding to the set $Q$ of states of
 $\A$. The first conjunct $\theta_0(Q_0) \equiv \iota[Q_0/Q]$ is the
 initial configuration of $\A$, with every $q \in \fv{\Bool}{\iota}$
 replaced by $q_0$. The definition of $\theta_k$, for all $k\in[1,n]$,
@@ -745,7 +746,7 @@ The main idea behind the above definition of the interpolation problem
 is that we would like to obtain an interpolant $\tuple{\top,I_0(Q),
   I_1(Q,\vec{x}), \ldots, I_{n}(Q,\vec{x}),\bot}$ whose formulae
 \emph{combine states with the data constraints that must hold
-  locally}, whenever the control reaches a certain boolean
+  locally}, whenever the control reaches a certain Boolean
 configuration. This association of states with data valuations is
 tantamount to defining efficient semi-algorithms, based on lazy
 abstraction \cite{HJMS02}. Furthermore, the abstraction defined by the
@@ -982,7 +983,7 @@ the least unfeasible suffix of $u$ to $\preds$, remove and recompute
 the subtree of $\Art$ rooted at $p$.
 
 Termination of Algorithm \ref{alg:predabs} depends on the ability of a
-given interpolating decision procedure for the combined boolean and
+given interpolating decision procedure for the combined Boolean and
 data theory $\theory(\sig,\I)$ to provide interpolants that yield a
 safety invariant, whenever $L(\A) = \emptyset$. In this case, we use
 the covering relation $\lhd$ to ensure that, when a newly generated
@@ -1207,7 +1208,7 @@ the sets of reachable configurations, the covering relation is not
 transitive, as explained in \cite{mcmillan06}. If $\Call{Close}{}$
 adds a covering edge $(n_i,m)$ to $\lhd$, it does not have to be
 called for the successors of $n_i$ on this path, which is handled via
-the boolean flag $b$.
+the Boolean flag $b$.
 
 Finally, if $n$ is still uncovered (it has not been previously covered
 during the refinement phase) we expand $n$ (lines
@@ -1283,7 +1284,7 @@ the MathSAT5 SMT solver\footnote{\url{http://mathsat.fbk.eu/}} via the
 Java SMT
 interface\footnote{\url{https://github.com/sosy-lab/java-smt}} for the
 satisfiability queries and interpolant generation, in the theory of
-linear integer arithmetic with uninterpreted boolean functions
+linear integer arithmetic with uninterpreted Boolean functions
 (UFLIA). We compared both algorithms with a previous implementation of
 a trace inclusion procedure, called
 \textsc{Includer}\footnote{\url{http://www.fit.vutbr.cz/research/groups/verifit/tools/includer/}},
