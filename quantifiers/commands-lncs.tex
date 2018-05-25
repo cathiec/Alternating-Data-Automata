@@ -191,6 +191,7 @@
 \newcommand{\funs}[1]{#1^\mathrm{F}}
 \newcommand{\ssorts}[1]{#1^\mathrm{s}}
 \newcommand{\sfuns}[1]{#1^\mathrm{f}}
+\newcommand{\sort}[1]{\sigma({#1})}
 \newcommand{\mods}{\mathbf{I}}
 \newcommand{\modsof}[2]{\sem{#1}_{#2}}
 \newcommand{\iffeq}{\Leftrightarrow}
@@ -241,7 +242,7 @@
 \newcommand{\img}{\mathrm{img}}
 \newcommand{\size}[1]{\mathrm{Size}(#1)}
 \newcommand{\vars}{\mathsf{Var}}
-\newcommand{\preds}{\mathsf{\Pi}}
+\newcommand{\preds}{\mathsf{Pred}}
 \newcommand{\T}{\mathcal{T}}
 \newcommand{\X}{\mathcal{X}}
 \newcommand{\Y}{\mathcal{Y}}
@@ -301,8 +302,8 @@
 \newcommand{\Data}{\mathsf{Data}}
 \newcommand{\Bool}{\mathsf{Bool}}
 \newcommand{\booli}{\mathbb{B}}
-\newcommand{\true}{\mathtt{true}}
-\newcommand{\false}{\mathtt{false}}
+\newcommand{\true}{\mathtt{t}}
+\newcommand{\false}{\mathtt{f}}
 \newcommand{\Form}{\mathsf{Form}}
 \newcommand{\euf}{\mathsf{E}}
 \newcommand{\lia}{\mathsf{LIA}}
@@ -313,11 +314,13 @@
 \newcommand{\il}{\mathsf{IL}}
 \newcommand{\ulid}{\mathsf{ULID}}
 \newcommand{\theory}{\mathbb{T}}
+\newcommand{\dual}[1]{{#1}^{\sim}}
+\newcommand{\bigO}[1]{\mathcal{O}({#1})}
 
 % automata
 \newcommand{\A}{\mathcal{A}}
-\newcommand{\Post}[1]{\mathsf{Post}_{#1}}
-\newcommand{\Accept}[1]{\mathsf{Acc}_{#1}}
+\newcommand{\Post}[1]{\mathsf{Post}({#1})}
+\newcommand{\Accept}[2]{\mathsf{Acc}_{\scriptscriptstyle{#1}}({#2})}
 \newcommand{\AbsPost}[1]{\abs{\mathsf{Post}}_{#1}}
 \newcommand{\AbsAccept}[1]{\abs{\mathsf{Acc}}_{#1}}
 \newcommand{\Inv}{\mathsf{I}}

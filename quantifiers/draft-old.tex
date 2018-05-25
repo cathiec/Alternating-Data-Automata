@@ -1,0 +1,390 @@
+Given sets of variables $B,X,Y \subset \vars$ of sorts $\Bool$,
+$\Data$ and $\Data$, respectively, we denote by $\Form(B;X;Y)$ the set
+of formulae $\phi$ such that $\fv{\Bool}{\phi} = B$, $\fv{\Data}{\phi}
+= X$ and each variable from $Y$ occurs under the scope of a
+quantifier. By $\Form^+(B;X;Y)$ we denote the subset of $\Form(B;X;Y)$
+in which each boolean variable from $B$ occurs under an even number of
+negations. We denote by $\phi(B;X;Y)$ any formula in $\Form(B;X;Y)$.
+
+A \emph{first-order alternating data automaton} (automaton in the
+sequel) is a tuple $\A = \tuple{G,L,Q,\iota,F,\Delta}$,
+where: \begin{compactitem}
+%
+\item $G \subseteq \vars$ is a finite set of \emph{global
+  variables} of sort $\Data$, 
+%
+\item $L \subseteq \vars$ is a finite set of \emph{local
+  variables} of sort $\Data$,
+%
+\item $Q \subset \vars$ is a finite set of variables of sort $\Bool$
+  (\emph{states}),
+%
+\item $\iota \in \Form^+(Q;\emptyset;\emptyset)$ is the \emph{initial
+  configuration},
+%
+\item $\Delta : Q \times \Sigma \rightarrow
+  \Form^+(Q;G\cup\overline{G}\cup\overline{L};L)$ is a
+  \emph{transition function},
+\end{compactitem}
+where, for a set $X \subseteq \vars$, we denote $\overline{X} =
+\set{\overline{x} \mid x \in X}$. Intuitively, the variables
+$\overline{x}$ from a transition formula $\Delta(q,a)$ refer to past
+values, whereas the other variables refer to the current
+values. Observe that the initial values of the global variables are
+unconstrained (since the initial configuration is a boolean
+combination of states without variables) and quantification occurs
+only over the current copy of the local variables $L$. As a remark,
+the transition relation does not quantify over global variables $G
+\cup \overline{G}$, which must be visible throughout the
+execution. Furthermore, we assume that the past values of the local
+variables are coined and beyond our control, thus quantification over
+$\overline{L}$ is not allowed either. Last, observe that $\Delta$ is a
+total function, defined\footnote{A partial transition relation $R$ can
+  be encoded by setting $\Delta(q,a) = \bot$ when $R(q,a)$ is
+  undefined.} for all pairs $(q,a) \in Q \times \Sigma$. The
+\emph{size} of $\A$ is defined as $\len{\A} = \len{\iota} +
+\sum_{(q,a) \in Q\times\Sigma}\len{\Delta(q,a)}$.
+
+In order to define the semantics of automata, we consider the
+\emph{time-stamped} sets of variables $\stamp{X}{n} = \{\stamp{x}{n}
+\mid x \in X\}$ for any $n\in\zed$. For an input event $a \in \Sigma$,
+a positive integer $n\geq0$ and a formula $\varphi\in\Form^+(Q;G;L)$,
+we write $\stamp{\Delta}{n}(\varphi,a)$ for the formula obtained from
+$\varphi$ by simultaneously replacing each state $q \in
+\fv{\Bool}{\phi}$ with the formula
+$\Delta(q,a)[\stamp{G}{n}/\overline{G}, \stamp{G}{n+1}/G,
+  \stamp{L}{n}/\overline{L}, \stamp{L}{n+1}/L]$. For a sequence $a_1
+\ldots a_n \in \Sigma^*$, we consider the formulae \(\iota \equiv
+\phi_0, \phi_1, \ldots, \phi_n \), where $\phi_{i} \equiv
+\stamp{\Delta}{i-1}(\phi_{i-1},a_{i})$, for all $i \in [n]$. $\A$
+\emph{accepts} a word $w = (a_1,\nu_1) \ldots (a_n,\nu_n) \in
+\Sigma[G]^*$ iff there exists a valuation $\nu$ such that
+$\I,\nu \models \phi_n$ and: \begin{compactitem}
+%% \item $\nu(\stamp{x}{0}) = \mathbf{0}^\I$ for each variable $x \in G
+%%   \cup L$, i.e.\ all data variables are initially $\mathbf{0}$,
+%
+\item $\nu(\stamp{x}{i}) = \nu_i(x)$ for each global variable $x\in G$
+  and each time-stamp $i \in [n]$,
+%
+\item $\nu(q) = \true$ if and only if $q \in F$. 
+\end{compactitem}
+The \emph{language} of $\A$ is the set $L(\A)$ of words from
+$\Sigma[G]^*$ accepted by $\A$. In this paper, we ask the following
+questions: \begin{compactenum}
+\item \emph{boolean closure}: given automata $\A_i =
+  \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$, for $i=1,2$, with $L_1 \cap
+  L_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$, do there exist
+  automata $\A_\cap$, $\A_\cup$ and $\overline{\A}_1$ such that
+  $L(\A_\cap) = L(\A_1) \cap L(\A_2)$, $L(\A_\cup) = L(\A_1) \cup
+  L(\A_2)$ and $L(\overline{\A}_1) = \Sigma[G]^* \setminus L(\A_1)$ ?
+%
+\item \emph{emptiness}: given an automaton $\A$, is $L(\A) =
+  \emptyset$ ?
+\end{compactenum}
+
+\subsection{Boolean Closure} 
+
+Given a set $B$ of boolean variables, two disjoint sets $X$ and $Y$ of
+data variables, for any formula $\phi \in \Form^+(B;X;Y)$,
+define $\overline{\phi} \in \Form^+(B;X;Y)$ recursively:
+\[\begin{array}{rclcrclcrcl}
+\overline{\phi_1 \vee \phi_2} & \equiv & \overline{\phi_1} \wedge \overline{\phi_2} & \hspace*{5mm} & 
+\overline{\phi_1 \wedge \phi_2} & \equiv & \overline{\phi_1} \vee \overline{\phi_2} & \hspace*{5mm} & 
+\overline{\phi} & \equiv & \neg\phi \text{ if $\phi \not\in B$ is an atom} \\ 
+\overline{\exists x ~.~ \phi_1} & \equiv & \forall x ~.~ \overline{\phi_1} && 
+\overline{\forall x ~.~ \phi_1} & \equiv & \exists x ~.~ \overline{\phi_1} && 
+\overline{\neg\phi} & \equiv & \neg \overline{\phi} \text{ if $\phi$ is not an atom} \\
+&& && && && \overline{\phi} & \equiv & \phi \text{ if $\phi \in B$}
+\end{array}\]
+Clearly $\phi$ and $\overline{\phi}$ have the same size. The relation
+between $\phi$ and $\overline{\phi}$ is formalized below:
+
+\begin{proposition}\label{prop:complement}
+  Given sets of variables $B,X,Y \subset \vars$ of sorts boolean, data
+  and data respectively, and a formula $\phi \in
+  \Form^+(B;X;Y)$, for any valuation $\nu$ we have $\nu \models
+  \phi$ if and only if $\overline{\nu} \models \neg\overline{\phi}$,
+  where $\overline{\nu}(x) = \nu(x)$ for all $x \in X$ and
+  $\overline{\nu}(b) = \neg\nu(b)$ for all $b \in B$.
+\end{proposition}
+\proof{By induction on the structure of $\phi$. \qed}
+
+Consider the automata $\A_i = \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$,
+for $i=1,2$, where $L_1 \cap L_2 = \emptyset$ and $Q_1 \cap Q_2 =
+\emptyset$. We define the following automata: 
+\[\begin{array}{rcl}
+\A_\cup & = & \tuple{G,~ L_1 \cup L_2,~ Q_1 \cup Q_2,~ \iota_1 \vee \iota_2,~ F_1 \cup F_2,~ \Delta_1 \cup \Delta_2} \\
+\A_\cap & = & \tuple{G,~ L_1 \cup L_2,~ Q_1 \cup Q_2,~ \iota_1 \wedge \iota_2,~ F_1 \cup F_2,~ \Delta_1 \cup \Delta_2} \\
+\overline{A_1} & = & \tuple{G,~ L_1,~ Q_1,~ \overline{\iota_1},~ Q_1 \setminus F_1,~ \lambda q \in Q_1~ \lambda a \in \Sigma ~.~ \overline{\Delta_1(q,a)}}
+\end{array}\]
+
+\begin{lemma}\label{lemma:boolean-closure}
+  Given automata $\A_i = \tuple{G,L_i,Q_i,\iota_i,F_i,\Delta_i}$, for
+  $i=1,2$, where $L_1 \cap L_2 = \emptyset$ and $Q_1 \cap Q_2 =
+  \emptyset$, we have $L(\A_\cup) = L(\A_1) \cup L(\A_2)$, $L(A_\cap)
+  = L(\A_1) \cap L(\A_2)$ and $L(\overline{\A_1}) = \Sigma[G]*
+  \setminus L(\A_1)$. 
+\end{lemma}
+\proof{
+  Same as \cite[Lemma 1]{IosifX17}. 
+\qed}
+
+\section{Checking Emptiness with Interpolants and Skolem Witnesses}
+
+Since the emptiness problem is undecidable even for automata with only
+two global variables and no local variables, by reduction from the
+emptiness problem for 2-counter machines \cite{Minsky67}, we give a
+semi-algorithm with the following properties. Given an automaton $\A =
+\tuple{G,L,Q,\iota,F,\Delta}$ as input, the procedure
+will\begin{inparaenum}[(1)]
+\item return a word $w \in L(\A)$ if $L(\A) \neq \emptyset$, and
+%
+\item if the procedure terminates without returning such a word, then
+  we can safely conclude that $L(\A) = \emptyset$. \end{inparaenum}
+Due to the undecidability of the emptiness problem, there exist
+automata with empty language on which the procedure runs forever.
+
+The semi-algorithm described in this section reduces the language
+emptiness problem for $\A$ to a (possibly infinite) sequence of
+satisfiability problems. We generate these formulae systematically
+using a tree whose backbone is a finite set of input events and whose
+labels are quantifier-free formulae. Given two input sequences
+$\alpha,\beta \in \Sigma^*$, we say that $\beta$ is a prefix of
+$\alpha$, written $\beta \preceq \alpha$ if $\alpha = \beta \gamma$,
+for some sequence $\gamma \in \Sigma^*$. A set $S \subseteq \Sigma^*$
+is \emph{prefix-closed} if for each $\alpha \in S$, $\beta \preceq
+\alpha$ implies $\beta \in S$ and \emph{complete} if for each $\alpha
+\in S$ there exists $a \in \Sigma$ such that $\alpha a \in S$ if and
+only if $\alpha b \in S$ for all $b \in \Sigma$. 
+
+For a set of variables $X \subseteq \vars$, let $\stamp{X}{-\infty} =
+\bigcup_{n\leq0} \stamp{X}{n}$ be a set of \emph{history} variables,
+where $\stamp{X}{0}$ track the current values, $\stamp{X}{-1}$ the
+immediate predecessors, etc. For a formula $\varphi$ and an integer $n
+\in \zed$, we denote by $\stamp{\varphi}{n}$ the formula in which each
+time-stamped free variable $\stamp{x}{i}$ is replaced with
+$\stamp{x}{i+n}$. Given formulae $\varphi,\psi \in
+\Form^+(Q;\stamp{X}{-\infty}; \emptyset)$ and a sequence $a_1 \ldots
+a_n \in \Sigma^*$, we write $\varphi \darrow{a_1 \ldots a_n}{\A} \psi$
+if there exist formulae $\phi_0, \ldots, \phi_n$ such
+that\begin{inparaenum}[(i)]
+\item $\varphi \equiv \phi_0$, 
+\item $\phi_i \equiv \stamp{\Delta}{i-1}(\phi_{i-1},a_i)$, for all $i
+  \in [n]$, and
+\item $\psi \equiv \stamp{\phi_n}{-n}$. \end{inparaenum} Observe that
+$\psi$ is uniquely determined by $\varphi$, because the result of the
+substitutions $\stamp{\Delta}{i-1}(\phi_{i-1},a_i)$ and
+$\stamp{\phi_n}{-n}$ is unique.
+
+\begin{proposition}\label{prop:monotonicity}
+  For all $\varphi,\psi \in \Form^+(Q;\stamp{X}{-\infty}; \emptyset)$
+  and $w \in \Sigma^*$, if $\varphi \models_\T \psi$ and $\varphi',
+  \psi'$ are the unique formulae such that $\varphi \darrow{w}{\A}
+  \varphi'$ and $\psi \darrow{w}{\A} \psi'$, then $\varphi' \models_\T
+  \psi'$.
+\end{proposition}
+\proof{By induction on the length of $w = a_1 \ldots a_n$, using the
+  fact that any state $q \in Q$ occurs positively in each formula from
+  the sequences $\varphi \equiv \varphi_0, \ldots, \varphi_n$ and
+  $\psi \equiv \psi_0, \ldots, \psi_n$, defining $\varphi
+  \darrow{w}{\A} \varphi' \equiv \stamp{\psi_n}{-n}$ and $\psi
+  \darrow{w}{\A} \stamp{\psi_n}{-n} \equiv \psi'$, respectively. \qed}
+
+\begin{definition}\label{def:unfolding}
+An \emph{unfolding} of $\A$ is a finite mapping $U : \Sigma^*
+\rightharpoonup_{\mathit{fin}} \Form^+(Q;\stamp{(G\cup L)}{-\infty};
+\emptyset)$ such that $\dom(U)$ is a prefix-closed complete set,
+$U(\varepsilon) = \iota$ and, for all $\alpha a \in \dom(U)$, we have
+$\stamp{\Delta}{0}(U(\alpha),a) \models_\T \stamp{U(\alpha a)}{1}$.
+Moreover, $U$ is \emph{safe} if for all $\alpha \in \dom(U)$, the
+formula $U(\alpha) \wedge \mathit{Final}$ is unsatisfiable, where
+$\mathit{Final} \equiv \bigwedge_{q \not\in F} q \rightarrow \bot$.
+%% $\mathit{Init} \equiv \bigwedge_{x \in \stamp{G}{0} \cup
+%% \stamp{L}{0}} x \teq \mathbf{0}$ and
+\end{definition}
+
+The elements of $\dom(U)$ are called \emph{nodes} and the
+prefix-maximal nodes \emph{leaves}. A node $\alpha \in \dom(U)$ is
+\emph{covered} by another node $\beta \in \dom(U)$ if there exists a
+prefix $\alpha' \preceq \alpha$ such that $U(\alpha') \models_\T
+U(\beta)$. A node is \emph{uncovered} if it is not covered by any
+other node. We say that $U$ is \emph{closed} when each leaf in
+$\dom(U)$ is covered by an uncovered node.
+
+\begin{lemma}\label{lemma:art}
+  If $\A$ has a nonempty safe closed unfolding, then $L(\A) =
+  \emptyset$.
+\end{lemma}
+\proof{ Let $U$ be a safe closed unfolding of $\A$ and suppose, for a
+  contradiction, that $w = (a_1,\nu_1) \ldots (a_n,\nu_n) \in
+  L(\A)$. Let $\alpha = a_1 \ldots a_n \in \Sigma^*$ and
+  $\phi_{\alpha}$ be the unique formula such that $\iota
+  \darrow{\alpha}{\A} \phi_{\alpha}$. Since $w \in L(\A)$, we have
+  that $\phi_{\alpha} \wedge \mathit{Final}$ is satisfiable. It is
+  sufficient to show that there exists a node $\beta \in \dom(U)$ such
+  that $\phi_{\alpha} \models_\T U(\beta)$, because then $U(\beta)
+  \wedge \mathit{Final}$ is satisfiable as well and $U$ is not safe,
+  contradiction.
+
+  If $\alpha \in \dom(U)$ then we obtain $\phi_{\alpha} \models_\T
+  U(\alpha)$ from the fact that $U$ is an unfolding, applying
+  Proposition \ref{prop:monotonicity} inductively on the length of
+  $\alpha$. Otherwise, let $\alpha' \in \dom(U)$ be the unique leaf
+  which is a prefix of $\alpha = \alpha'\gamma$, for a unique nonempty
+  sequence $\gamma$. Such a leaf must exist because $\dom(U) \neq
+  \emptyset$. Moreover, since $U$ is closed, $\alpha'$ must be covered
+  and let $\alpha_1$ be the prefix of $\alpha'$ such that $U(\alpha_1)
+  \models_\T U(\beta_1)$, for some uncovered node $\beta_1$. Let
+  $\phi_1$ be the unique formula such that $\iota
+  \darrow{\alpha_1}{\A} \phi_1$. Applying Proposition
+  \ref{prop:monotonicity} inductively, we obtain that $\phi_1
+  \models_\T U(\alpha_1)$, hence $\phi_1 \models_\T U(\beta_1)$.
+  Because $\beta_1$ is uncovered, it cannot be a leaf and let
+  $\gamma_1$ be the unique prefix of $\gamma$ such that
+  $\beta_1\gamma_1$ is a leaf. Since $U$ is closed, $\beta_1\gamma_1$
+  is covered and, because $\beta_1$ is uncovered, there exists a
+  nonempty sequence $\gamma'_1 \preceq \gamma_1$ such that
+  $U(\beta_1\gamma'_1) \models_\T U(\beta_2)$ for some uncovered node
+  $\beta_2 \in \dom(U)$. Let $\alpha_2 = \alpha_1\gamma'_1$ and
+  $\phi_2$ be the unique formula such that $\iota
+  \darrow{\alpha_2}{\A} \phi_2$. Since $\phi_1 \models_\T U(\beta_1)$
+  and $\phi_1 \darrow{\gamma'_1}{\A} \phi_2$, we obtain that $\phi_2
+  \models_\T U(\beta_2)$ by an inductive application of Proposition
+  \ref{prop:monotonicity}. Continuing this argument inductively, we
+  discover a strictly increasing sequence $\alpha_1 \prec \alpha_2
+  \prec \ldots$ of prefixes of $\alpha$, a sequence of formulae $\iota
+  \darrow{\alpha_1}{\A} \phi_1, \iota \darrow{\alpha_2}{\A} \phi_2,
+  \ldots$ and a sequence of nodes $\beta_1, \beta_2, \ldots \in
+  \dom(U)$ such that $\phi_i \models_\T U(\beta_i)$, for all $i =
+  1,2,\ldots$. Since $\alpha$ is finite, it must be the case that
+  $\phi_\alpha \models_\T U(\beta_n)$, for some node $\beta_n$ in the
+  sequence. \qed}
+
+Lazy annotation semi-algorithms \cite{McMillan06,McMillan14}
+essentially try to prove language emptiness by building safe closed
+unfoldings of automata. The labels of these unfoldings are
+interpolants obtained from the proof of unsatisfiability of the
+formulae that encode the acceptance conditions for the nodes
+(sequences of input events) in the unfolding. Given an unsatisfiable
+conjunction of formulae $\psi_1 \wedge \ldots \wedge \psi_n$, an
+\emph{interpolant} is a tuple of formulae
+$\tuple{I_1,\ldots,I_{n-1},I_n}$ such that $I_n \equiv \bot$, $I_i
+\wedge \psi_i \models_\T I_{i+1}$ and $I_i$ contains only variables
+and function symbols that are common to $\psi_i$ and $\psi_{i+1}$, for
+all $i \in [n-1]$. Moreover, by Lyndon's Interpolation Theorem
+\cite{Lyndon59}, we can assume without loss of generality that every
+boolean variable with at least one positive (negative) occurrence in
+$I_i$ has at least one positive (negative) occurrence in both $\psi_i$
+and $\psi_{i+1}$.
+
+The execution semantics of automata is defined in terms of successive
+rewritings of the boolean variables (states) by time-stamped
+transition formulae. Formally, given a sequence $a_1 \ldots a_n \in
+\Sigma^*$ of input events, we have a sequence of formulae $\Phi_1,
+\ldots, \Phi_n$, where $\iota \darrow{a_1 \ldots a_i}{\A} \Phi_i$, for
+all $i \in [n]$. Altough natural for defining acceptance of
+alternating automata, this semantics does not cope well with
+interpolation, because\begin{inparaenum}[(1)]
+\item rewriting states loses track of the history of the computation,
+  and
+%
+\item quantifiers may occur nested in each of the intermediate
+  formulae $\Phi_1,\ldots,\Phi_n$.
+\end{inparaenum}
+
+More precisely, each formula in the sequence defining acceptance is of
+the form: \[\Phi_i \equiv \mathbf{Q}_1 \stamp{\mathcal{L}}{1}_1 \ldots
+\mathbf{Q}_i \stamp{\mathcal{L}}{i}_i ~.~ \psi_i(Q,\bigcup_{j=0}^i
+\stamp{G}{j} \cup \stamp{\mathcal{L}}{j}_j)\] where $\mathcal{L}_1,
+\ldots, \mathcal{L}_i$ are sequences of local variables from $L$ and
+$\mathbf{Q} \mathcal{X}$ denotes the quantifier prefix $\mathcal{Q}_1
+x_1 \ldots \mathcal{Q}_k x_k$, with $\mathbf{Q} = \mathcal{Q}_1 \ldots
+\mathcal{Q}_k$ and $\mathcal{X} = x_1,\ldots,x_k$. We deal with the
+first issue above by explicitly encoding the computation history as a
+possibly quantified conjunction of implications of the form
+$\stamp{q}{i} \rightarrow \stamp{\Delta}{i}(q,a_i)[\stamp{q}{i+1}/q]$,
+for $i \in [0,n-1]$. To this end, we use the following fact:
+
+\begin{proposition}\label{prop:substitution}
+  Given a formula $\phi$ in which $q \in \fv{\Bool}{\phi}$ occurs
+  positively, for any formula $\psi$ and any valuation $\nu$ of
+  $\fv{}{\phi} \cup \fv{}{\psi}$, \(\nu \models \phi[\psi/q]\) iff
+  \(\nu \models \exists q ~.~ \phi \wedge (q \rightarrow \psi)\).
+\end{proposition}
+\proof{ ``$\Leftarrow$'' Suppose that $\nu \models \phi[\psi/q]$ and
+  distinguish the following cases: \begin{compactenum}
+  \item if $\nu \models \psi$, since $q$ occurs positively in $\phi$, we
+    obtain that $\nu \models \phi[\top/q]$, thus $\nu \models
+    \phi[\top/q] \wedge (\top \rightarrow \psi)$ and $\nu \models
+    \exists q ~.~ \phi \wedge (q \rightarrow \psi)$ follows.
+    %
+  \item if $\nu \not\models \psi$, since $q$ occurs positively in $\phi$, we
+    obtain that $\nu \models \phi[\bot/q]$, thus $\nu \models
+    \phi[\bot/q] \wedge (\bot \rightarrow \psi)$ and $\nu \models
+    \exists q ~.~ \phi \wedge (q \rightarrow \psi)$ follows.
+  \end{compactenum}
+
+  ``$\Rightarrow$'' Suppose that $\nu \models \exists q ~.~ \phi
+  \wedge (q \rightarrow \psi)$, or equivalently, $\nu \models
+  (\phi[\top/q] \wedge \psi) \vee \phi[\bot/q]$. If $\nu \models
+  \phi[\top/q] \wedge \psi$ then $\nu \models
+  \phi[\psi/q]$. Otherwise, if $\nu \models \phi[\bot/q]$, we
+  distinguish two cases: \begin{compactitem} 
+  \item if $\nu \not\models \psi$ then clearly $\nu \models
+    \phi[\psi/q]$.
+    %
+  \item else, if $\nu \models \psi$, since $q$ occurs positively in
+    $\phi$ and $\nu \models \phi[\bot/q]$ then also $\nu \models
+    \phi[\top/q]$, because $\phi$ is monotone in $q$ in the entailment
+    partial order. But then $\nu \models \phi[\psi/q]$. \qed
+  \end{compactitem}}
+Next, we consider the following formulae, logically equivalent to
+$\Phi_i$, for all $i \in [n]$:
+\[\begin{array}{rcl} 
+\Theta_i & \equiv & \mathbf{\exists} \stamp{Q}{0} \mathbf{Q}_1
+\stamp{\mathcal{L}}{1}_1 \mathbf{\exists} \stamp{Q}{1} \mathbf{Q}_2
+\stamp{\mathcal{L}}{2}_2 \mathbf{\exists} \stamp{Q}{2} \ldots
+\mathbf{Q}_i \stamp{\mathcal{L}}{i}_i \mathbf{\exists} \stamp{Q}{i} 
+~.~ (\top \rightarrow \stamp{\iota}{0}) ~\wedge~ \bigwedge_{j=0}^i \Psi_j \\
+&& \text{where } \Psi_j \equiv \bigwedge_{q \in Q} \left(\stamp{q}{j} \rightarrow
+\stamp{\Delta}{j}(q,a_j)[\stamp{q}{j+1}/q]\right)\enspace.
+\end{array}\] These formulae are
+still not proper interpolation problems, due to the nested quantifier
+prefix. Thus we use Skolem witnesses to reduce the (un)satisfiability
+of the above formulae to the problem of computing an interpolant for a
+quantifier-free formula.
+
+\begin{theorem}\label{thm:skolem}
+  Given $Q_1 x_1 \ldots Q_n x_n ~.~ \varphi$ a first order sentence, 
+  where $Q_1, \ldots, Q_n \in \set{\exists,\forall}$ and $\varphi$ is
+  quantifier-free, let: 
+  \[\eta_i \equiv \left\{\begin{array}{ll}
+  f_{x_i}(y_1,\ldots,y_{k_i}) & \text{if } Q_i \equiv \forall \\
+  x_i & \text{if } Q_i \equiv \exists
+  \end{array}\right.\]
+  where $f_{x_i}$ is a fresh function symbol and $\set{y_1, \ldots,
+    y_{k_i}} = \set{x_j \mid j < i,~ Q_j \equiv \exists}$. Then we
+  have \(Q_1 x_1 \ldots Q_n x_n ~.~ \varphi \models_\T
+  \varphi[\eta_1/x_1,\ldots,\eta_n/x_n]\).
+\end{theorem}
+\proof{See \cite[Theorem 2.1.8]{BorgerGraedelGurevich97} and
+  \cite[Lemma 2.1.9]{BorgerGraedelGurevich97}. \qed} We further
+transform $\Theta_i$ into a quantifier-free formula
+$\widehat{\Theta}_i \equiv (\top \rightarrow \stamp{\iota}{0}) \wedge
+\bigwedge_{j=0}^i \widehat{\Psi}_j$, where $\widehat{\Psi}_j$ are
+obtained from $\Psi_j$ by replacing each universally quantified
+variable $x_i$ by a term $f_{x_i}(y_1, \ldots, y_{k_i})$, whose free
+variables are among the existentially quantified variables $x_j$ that
+precede $x_i$ in the quantifier prefix. By Theorem \ref{thm:skolem},
+replacing a universally quantified variable by an uninterpreted Skolem
+function symbol yields an overapproximation of the original formula,
+thus proving unsatisfiability of $\widehat{\Theta}_i$ suffices to
+prove unsatisfiability of $\Theta_i$.
+
+Furthermore, a proof of unsatisfiability for $\widehat{\Theta}_i$
+yields an interpolant $\tuple{I_0, \ldots, I_i}$, where $\fv{}{I_j}
+\subseteq \bigcup_{\ell=0}^j \stamp{G}{\ell} \cup \stamp{L}{\ell}$,
+for all $j \in [0,i]$. That is, the interpolants obtained from the
+proof of unsatisfiability of $\widehat{\Theta}_i$ may refer to all
+values taken by the global and local variables from the beginning of
+the path up to the $i$-th step.
