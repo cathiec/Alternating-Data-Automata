@@ -39,6 +39,7 @@
 \newcommand{\tup}[1]{\overline #1}
 \newcommand{\ite}[3]{\mathsf{ite}(#1,#2,#3)}
 \newcommand{\tupite}[2]{\mathsf{ite}(#1,#2)}
+\newcommand{\minsem}[1]{\sem{#1}^\mu}
 
 % alias
 \newcommand{\alias}{\Diamond}
@@ -47,8 +48,8 @@
 \newcommand{\defd}[1]{\delta({#1})}
 
 % definitions
-\newcommand{\defequal}{\stackrel{\scriptscriptstyle{def}}{=}}
-\newcommand{\defequiv}{\stackrel{\scriptscriptstyle{def}}{\equiv}}
+\newcommand{\isdef}{\stackrel{\scriptscriptstyle{\mathsf{def}}}{=}}
+\renewcommand{\iff}{\Leftrightarrow}
 
 % algorithms
 \newcommand{\sig}{\mathsf{S}}
@@ -333,6 +334,8 @@
 \newcommand{\impact}{\textsc{Impact}}
 \newcommand{\PA}{{\scriptscriptstyle{\mathsf{PA}}}}
 \newcommand{\ADA}{{\scriptscriptstyle{\mathsf{ADA}}}}
+\newcommand{\cube}[1]{\mathsf{c}({#1})}
+\newcommand{\F}{\mathcal{F}}
 
 \newcommand{\sparagraph}[1]{\smallskip
 \noindent 
