@@ -309,25 +309,6 @@ are closed under all boolean operations:
 \end{theorem}
 \proof{\qed}
 
-\subsection{Configuration-based Semantics}
-
-We give a low-level operational semantics of automata, in terms of
-sets of configurations, with a conjunctive meaning. A (possibly
-infinite) set $C$ of configurations is also called a
-\emph{cube}. Intuitively, an automaton $\A$ is in a cube $C$ if it is
-simultaneously in all configurations $q(d_1, \ldots, d_{\#(q)})$ from
-$C$. A positive sentence $\phi$ containing at least one occurrence of
-a predicate, defines a (possibly infinite) set of cubes $\sem{\phi}$,
-defined next.
-
-A \emph{context} $q[x_1,\ldots,x_k] = q(\delta_1, \ldots,
-\delta_{\#(q)})$ is a configuration in which one or more variables may
-occur, i.e. $\delta_i \in \Data^\I \cup \set{x_1,\ldots,x_k}$, for all
-$i \in [\#(q)]$. For a set of data values $D \subseteq \Data^\I$, we
-let $q[x_1,\ldots,x_{i-1},D,x_{i+1}, \ldots, x_k] =
-\{q[x_1,\ldots,x_{i-1},d,x_{i+1},\ldots,x_k] \mid d \in D\}$ be a set
-of contexts. Observe that $q[D]$ is a cube, when $k=1$.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
