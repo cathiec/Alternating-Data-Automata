@@ -5,7 +5,7 @@
 	(trans (q3 ((x Int))) (a ((y Int))) (forall ((z Int)) (or (= x z) (q2 y))))
 )
 
-(define-automaton B (not A))
-(define-automaton C (and A B))
+(assert (and A (not A)) ; emptiness of A intersected with the complement of A
 
-(check-empty C)
+(check-sat) ; runs Impact
+(get-model) ; counterexample trace, if answer is sat
