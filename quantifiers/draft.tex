@@ -62,9 +62,12 @@ function symbols $f : \Data^{\#(f)} \rightarrow \Data$, where
 $\#(f)\geq0$ denotes the number of arguments (arity) of $f$. When
 $\#(f)=0$, we say that $f$ is a constant, and denote by $\top$ and
 $\bot$ the only constants of sort $\Bool$, representing the true and
-false values, respectively. A \emph{predicate} is a function symbol
-$p : \Data^{\#(p)} \rightarrow \Bool$, denoting a relation of arity
-$\#(p)$ and we write $\preds$ for the set of predicates.
+false values, respectively. A \emph{predicate} is a function symbol $p
+: \Data^{\#(p)} \rightarrow \Bool$, denoting a relation of arity
+$\#(p)$ and we write $\preds$ for the set of predicates. In the
+following, we shall consider that the interpretation of all function
+symbols $f : \Data^{\#(f)} \rightarrow \Data$ that are not predicates
+is fixed and relative to the interpretation of the $\Data$ sort.
 
 Let $\vars = \set{x,y,z,\ldots}$ be an infinite countable set of
 variables, ranging over the interpretation of the $\Data$ sort. Terms
@@ -99,25 +102,25 @@ structure of $\phi$, as follows:
 \begin{array}{rcl}
 \I,\nu \models t \teq s & \iff & t^\nu=s^\nu \\
 \I,\nu \models t \not\teq s & \iff & t^\nu \neq s^\nu \\
+\I,\nu \models p(t_1,\ldots,t_{\#(p)}) & \iff & \tuple{t_1^\nu,\ldots,t_{\#(p)}^\nu} \in p^\I \\
 \I,\nu \models \phi_1 \wedge \phi_2 & \iff & \I,\nu \models \phi_i \text{, for all } i=1,2 \\ 
 \I,\nu \models \phi_1 \vee \phi_2 & \iff & \I,\nu \models \phi_i \text{, for some } i=1,2 \\
 \I,\nu \models \forall x ~.~ \phi_1 & \iff & \I,\nu[x\leftarrow d] \models \phi_1 \text{, for all } d \in \Data \\
-\I,\nu \models \exists x ~.~ \phi_1 & \iff & \I,\nu[x\leftarrow d] \models \phi_1 \text{, for some } d \in \Data \\
-\I,\nu \models p(t_1,\ldots,t_{\#(p)}) & \iff & \tuple{t_1^\nu,\ldots,t_{\#(p)}^\nu} \in p^\I 
+\I,\nu \models \exists x ~.~ \phi_1 & \iff & \I,\nu[x\leftarrow d] \models \phi_1 \text{, for some } d \in \Data 
 \end{array}
 \]
 For a formula $\phi$, we define $\sem{\phi}_\nu \isdef \set{\I \mid
   \I,\nu \models \phi}$, where $\nu(x)$ is defined for each $x \in
-\fv{}{\phi}$, and drop the subscript for sentences. An element of
-$\sem{\phi}$ is called a \emph{model} of $\phi$. A formula is
-satisfiable if $\sem{\phi}\neq\emptyset$. 
+\fv{}{\phi}$, and drop the subscript for sentences. A sentence $\phi$
+is \emph{satisfiable} if $\sem{\phi}\neq\emptyset$, an element of
+$\sem{\phi}$ being called a \emph{model} of $\phi$.
 
 Interpretations are partially ordered by the pointwise subset order,
 defined as $\I_1 \subseteq \I_2$ if and only if $p^{\I_1} \subseteq
-p^{\I_2}$ for each predicate $p \in \preds$. Given a set $\mathcal{M}$
-of interpretations, a minimal element $\I \in \mathcal{M}$ is an
+p^{\I_2}$ for each predicate $p \in \preds$. Given a set $\mathcal{S}$
+of interpretations, a minimal element $\I \in \mathcal{S}$ is an
 interpretation such that for no other interpretation $\I' \in
-\mathcal{M} \setminus \set{\I}$ do we have $\I' \subseteq \I$. For a
+\mathcal{S} \setminus \set{\I}$ do we have $\I' \subseteq \I$. For a
 formula $\phi$ and a valuation $\nu$, we denote by $\minsem{\phi}_\nu$
 and $\minsem{\phi}$ the set of minimal interpretations from
 $\sem{\phi}_\nu$ and $\sem{\phi}$, respectively.
@@ -129,12 +132,15 @@ Let $\Sigma$ be a finite alphabet $\Sigma$ of \emph{input
 \mapsto \Data^\I$ the set of valuations of the variables $X$ and
 $\Sigma[X] = \Sigma \times (X \mapsto \Data)$ be the possibly infinite
 set of \emph{data symbols}. A \emph{data word} (word) is a finite
-sequence $(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$ of data symbols,
-where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n : X
-\rightarrow \Data$ are valuations. We denote by $\varepsilon$ the
-empty sequence, by $\Sigma^*$ the set of finite sequences of input
-events and by $\Sigma[X]^*$ the set of data words over the variables
-$X$.
+sequence $w=(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n)$ of data
+symbols, where $a_1,\ldots,a_n \in \Sigma$ and $\nu_1,\ldots,\nu_n : X
+\rightarrow \Data$ are valuations. Given a word $w$, we denote by
+$\event{w} \isdef a_1\ldots a_n$ its sequence of input events and by
+$\data{w}$ the valuation associating each time-stamped variable
+$\stamp{x}{i}$ the value $\nu_i(x)$, for all $x \in \vars$ and
+$i\in[1,n]$. We denote by $\varepsilon$ the empty sequence, by
+$\Sigma^*$ the set of finite sequences of input events and by
+$\Sigma[X]^*$ the set of data words over the variables $X$.
 
 A \emph{first-order alternating automaton} (automaton) is a tuple $\A
 = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, where $\Sigma$ is the finite
@@ -169,7 +175,10 @@ formulae. In this case, both $\set{q_1 \leftarrow \top, q_2 \leftarrow
   \top, q_3 \leftarrow \bot}$ and $\set{q_1 \leftarrow \bot, q_2
   \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models, but not
 $\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow \top}$,
-which is a model but is not minimal.
+which is a model but is not minimal\footnote{To avoid the confusion of
+  considering potentially non-minimal models, the original definition
+  of alternating finite-state automata \cite{ChandraKozenStockmeyer81}
+  uses boolean valuations instead of formulae.}.
 
 Given a predicate $q \in Q$ and a tuple of data values
 $d_1,\ldots,d_{\#(q)}$, the tuple $q(d_1,\ldots,d_{\#(q)})$ is called
@@ -181,21 +190,21 @@ formula $\phi$ and a valuation of its free variables $\nu$, each
 interpretation $\I \in \sem{\phi}_\nu$ corresponds to a set of
 configurations $\cube{\I} \isdef \set{q(d_1,\ldots,d_{\#(q)}) \mid
   \tuple{d_1,\ldots,d_{\#(q)}} \in q^\I}$, called a \emph{cube}. For a
-set $\mathcal{M}$ of interpretations, we define $\cube{\mathcal{M}}
-\isdef \set{\cube{\I} \mid \I \in \mathcal{M}}$. Given a word
+set $\mathcal{S}$ of interpretations, we define $\cube{\mathcal{S}}
+\isdef \set{\cube{\I} \mid \I \in \mathcal{S}}$. Given a word
 $w=(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n) \in \Sigma[X]^*$, an
 \emph{execution} of $\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$ is
 a (possibly infinite) forest $\F_w = \set{T_1,T_2,\ldots}$, where each
-$T_i$ is defined below:
+tree $T_i$ is defined below:
 \begin{compactitem}
 \item $T_i$ is rooted in a configuration from some cube from
-  $\cube{\minsem{\iota}}$ --- because $\iota$ is satisfiable, such cube
+  $\cube{\minsem{\iota}}$ --- because $\iota$ is satisfiable, such a cube
   always exists,
 %
 \item all paths from the root to a leaf of $T_i$ have length $n$, and
 %
-\item if $q(d_1,\ldots,d_{\#(q)})$ is a node on level $j \in [0,n-1]$
-  in $T_i$, then its children form a cube from
+\item if $q(d_1,\ldots,d_{\#(q)})$ is a node on the level $j \in
+  [n-1]$ in $T_i$, then its children form a cube from
   $\cube{\minsem{\psi}_\eta}$, where \(q(y_1,\ldots,y_{\#(q)})
   \arrow{a_{j+1}(X)}{} \psi \in \Delta\) is a transition rule and
   $\eta$ is a valuation that assigns each variable $y_k$ the value
@@ -222,6 +231,46 @@ questions: \begin{compactenum}
 \end{compactenum}
 
 \subsection{Symbolic Execution}
+
+In the upcoming developments it is more convenient to work with path
+formulae defining executions.  Let $\A =
+\tuple{\Sigma,X,Q,\iota,F,\Delta}$ be an automaton for the rest of
+this session. For any $i \in \nat$, we denote by $\stamp{Q}{i} =
+\set{\stamp{q}{i} \mid q \in Q}$ and $\stamp{X}{i} = \set{\stamp{x}{i}
+  \mid x \in X}$ the sets of time-stamped predicates and variables,
+respectively. For a formula $\psi$ and $i \in \nat$, we define
+$\stamp{\psi}{i} \isdef \psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$ the
+formula in which all input variables and state predicates are replaced
+by their time-stamped counterparts. 
+
+Given a sequence of input events $\alpha = a_1 \ldots a_n$, the
+\emph{path formula} of $\alpha$ in $\A$ is defined as follows: 
+\[\pathform{\A}{\alpha} \isdef \stamp{\iota}{0} \wedge 
+\bigwedge_{i=1}^n \bigwedge_{q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{}
+  \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+\stamp{q}{i-1}(y_1,\ldots,y_{\#(q)}) \Longrightarrow \stamp{\psi}{i}\]
+Observe that path formulae are not positive, due to the occurrence of
+predicate atoms to the left of the implication as in
+$\stamp{q}{i-1}(y_1,\ldots,y_{\#(q)}) \Longrightarrow
+\stamp{\psi}{i}$. The intuition is that, whenever the automaton is in
+a configuration $q(d_1, \ldots, d_{\#(q)})$ at step $i-1$, it proceeds
+at step $i$, according to $\psi$.
+
+To formalize the relation between the low-level configuration-based
+execution semantics and the symbolic path formulae, consider a word
+$w=(a_1,\nu_1) \ldots (a_n,\nu_n)$. Any execution forest $\F_w$ of
+$\A$ over $w$ is associated a unique interpretation defined as
+$\I_{[\F_w]}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}}
+  \mid q(d_1,\ldots,d_{\#(q)}) \text{ occurs on level $i$ in $\F_w$}}$
+for each $q \in \preds$ and $i \in [n]$. 
+
+\begin{lemma}\label{lemma:path-formula}
+  For any word $w=(a_1,\nu_1) \ldots (a_n,\nu_n)$, we have: 
+  \[\minsem{\pathform{\A}{w_\Sigma}}_{w_\Data} = \set{\I_{[\F_w]} \mid \F_w
+    \text{ is an execution of $\A$ over $w$}}\enspace.\]
+\end{lemma}
+
+\comment[ri]{I am here}
 
 In several of the upcoming developments it is more convenient to work
 with a symbolic execution semantics, that describes a set of execution
