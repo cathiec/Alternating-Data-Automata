@@ -54,25 +54,23 @@
 \section{Preliminaries}
 
 For two integers $0 \leq i \leq j$, we denote by $[i,j]$ the set
-$\set{i,i+1,\ldots,j}$ and by $[i]$ the set $[1,i]$, where $[0]$ is
-the empty set. To simplify the presentation, we consider two sorts
-$\Data$ and $\Bool$, where $\Data$ ranges over an infinite domain and
-$\Bool$ has the usual interpretation. The $\Data$ sort is equipped
-with a finite set of function symbols $f : \Data^{\#(f)} \rightarrow
-\Data$, where $\#(f)\geq0$ denotes the number of arguments (arity) of
-$f$. When $\#(f)=0$, we say that $f$ is a constant, and denote by
-$\top$ and $\bot$ the only constants of sort $\Bool$, representing the
-true and false values, respectively.  For conciseness, in the
-following we blur the distinction between the sort and function
-symbols and their interpretations. A \emph{predicate} is a function
-symbol $p : \Data^{\#(p)} \rightarrow \Bool$, denoting a relation of
-arity $\#(p)$.
+$\set{i,i+1,\ldots,j}$ and by $[i]$ the set $[0,i]$. To simplify the
+presentation, we consider two sorts $\Data$ and $\Bool$, where $\Data$
+ranges over an infinite domain and $\Bool$ has the usual
+interpretation. The $\Data$ sort is equipped with a finite set of
+function symbols $f : \Data^{\#(f)} \rightarrow \Data$, where
+$\#(f)\geq0$ denotes the number of arguments (arity) of $f$. When
+$\#(f)=0$, we say that $f$ is a constant, and denote by $\top$ and
+$\bot$ the only constants of sort $\Bool$, representing the true and
+false values, respectively. A \emph{predicate} is a function symbol
+$p : \Data^{\#(p)} \rightarrow \Bool$, denoting a relation of arity
+$\#(p)$ and we write $\preds$ for the set of predicates.
 
 Let $\vars = \set{x,y,z,\ldots}$ be an infinite countable set of
 variables, ranging over the interpretation of the $\Data$ sort. Terms
 are either constants of sort $\Data$, variables or function
-applications. The set of \emph{positive} formulae is defined by the
-syntax below: 
+applications. The set of \emph{positive} first-order formulae is
+defined by the syntax below:
 \[\phi := t \teq s \mid t \not\teq s \mid p(t_1,\ldots,t_{\#(p)}) 
 \mid \phi_1 \wedge \phi_2 \mid \phi_1 \vee \phi_2 \mid \exists x ~.~
 \phi_1 \mid \forall x ~.~ \phi_1\] where $t,s,t_1,\ldots,t_{\#(p)}$
@@ -114,6 +112,16 @@ For a formula $\phi$, we define $\sem{\phi}_\nu \isdef \set{\I \mid
 $\sem{\phi}$ is called a \emph{model} of $\phi$. A formula is
 satisfiable if $\sem{\phi}\neq\emptyset$. 
 
+Interpretations are partially ordered by the pointwise subset order,
+defined as $\I_1 \subseteq \I_2$ if and only if $p^{\I_1} \subseteq
+p^{\I_2}$ for each predicate $p \in \preds$. Given a set $\mathcal{M}$
+of interpretations, a minimal element $\I \in \mathcal{M}$ is an
+interpretation such that for no other interpretation $\I' \in
+\mathcal{M} \setminus \set{\I}$ do we have $\I' \subseteq \I$. For a
+formula $\phi$ and a valuation $\nu$, we denote by $\minsem{\phi}_\nu$
+and $\minsem{\phi}$ the set of minimal interpretations from
+$\sem{\phi}_\nu$ and $\sem{\phi}$, respectively.
+
 \section{First Order Alternating Automata}
 
 Let $\Sigma$ be a finite alphabet $\Sigma$ of \emph{input
@@ -147,51 +155,55 @@ that trigger the transition, whereas $q$ and $y_1,\ldots,y_{\#(q)}$
 are the current control state and data values pertaining to that
 state, respectively. Without loss of generality, we consider, for each
 predicate $q \in Q$ and each input event $a \in \Sigma$, at most one
-such rule (two or more rules can be joined using disjunction). 
+such rule --- two or more rules can be joined using disjunction.
+
+The execution semantics of of automata is given in close analogy with
+the case of boolean alternating automata, with transition rules of the
+form $q \arrow{a}{} \phi$, where $q$ is a boolean constant and $\phi$
+a positive boolean combination of such constants. For instance, $q_0
+\arrow{a}{} q_1 \wedge q_2 \vee q_3$ means that the automaton can
+choose to transition in either both $q_1$ and $q_2$ or in $q_3$
+alone. This intuition leads to saying that the steps of the automaton
+are defined by the minimal boolean models of the transition
+formulae. In this case, both $\set{q_1 \leftarrow \top, q_2 \leftarrow
+  \top, q_3 \leftarrow \bot}$ and $\set{q_1 \leftarrow \bot, q_2
+  \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models, but not
+$\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow \top}$,
+which is a model but is not minimal.
 
 Given a predicate $q \in Q$ and a tuple of data values
 $d_1,\ldots,d_{\#(q)}$, the tuple $q(d_1,\ldots,d_{\#(q)})$ is called
 a \emph{configuration}\footnote{Note that a configuration is not a
-  logical term since data values cannot be written in logic.}.
-Because we consider an alternating model of computation, an automaton
-can find itself, at the same time, in more than one
-configuration. Typically, in the classical literature on alternating
-machines, this set is finite. In our case, due to the presence of
-first-order quantifiers ranging over an infinite data domain, we
-consider that an automaton can be also in an infinite set of
-configurations, all at once.
-
-To formalize the execution semantics of automata, we relate sets of
+  logical term since data values cannot be written in logic.}. To
+formalize the execution semantics of automata, we relate sets of
 configurations to models of first-order sentences, as follows. Given a
 formula $\phi$ and a valuation of its free variables $\nu$, each
 interpretation $\I \in \sem{\phi}_\nu$ corresponds to a set of
 configurations $\cube{\I} \isdef \set{q(d_1,\ldots,d_{\#(q)}) \mid
   \tuple{d_1,\ldots,d_{\#(q)}} \in q^\I}$, called a \emph{cube}. For a
 set $\mathcal{M}$ of interpretations, we define $\cube{\mathcal{M}}
-\isdef \set{\cube{\I} \mid \I \in \mathcal{M}}$.
-
-Given a word $w=(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n) \in
-\Sigma[X]^*$, an \emph{execution} of
-$\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$ is a (possibly
-infinite) forest $\F_w = \set{T_1,T_2,\ldots}$, where each $T_i$ is
-defined below:
+\isdef \set{\cube{\I} \mid \I \in \mathcal{M}}$. Given a word
+$w=(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n) \in \Sigma[X]^*$, an
+\emph{execution} of $\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$ is
+a (possibly infinite) forest $\F_w = \set{T_1,T_2,\ldots}$, where each
+$T_i$ is defined below:
 \begin{compactitem}
-\item $T_i$ is rooted in a configuration from some cube $C \in
-  \cube{\sem{\iota}}$ --- since $\iota$ is satisfiable, such cube
+\item $T_i$ is rooted in a configuration from some cube from
+  $\cube{\minsem{\iota}}$ --- because $\iota$ is satisfiable, such cube
   always exists,
 %
-\item all paths from the root to a leaf of $T_i$ have length $n$,
+\item all paths from the root to a leaf of $T_i$ have length $n$, and
 %
 \item if $q(d_1,\ldots,d_{\#(q)})$ is a node on level $j \in [0,n-1]$
-  in $T_i$, then its children form a cube $C \in
-  \cube{\sem{\psi}_\eta}$, where \(q(y_1,\ldots,y_{\#(q)})
+  in $T_i$, then its children form a cube from
+  $\cube{\minsem{\psi}_\eta}$, where \(q(y_1,\ldots,y_{\#(q)})
   \arrow{a_{j+1}(X)}{} \psi \in \Delta\) is a transition rule and
   $\eta$ is a valuation that assigns each variable $y_k$ the value
   $d_k$, for $k \in [1,\#(q)]$ and each variable $x \in X$ the value
-  $\nu_{j+1}(x)$ --- because $\fv{}{\psi} \subseteq
-  \set{y_1,\ldots,y_{\#(q)}} \cup X$, the values assigned by $\eta$ to
-  variables outside $\set{y_1,\ldots,y_{\#(q)}} \cup X$ are not
-  important for $\cube{\sem{\psi}_\eta}$.
+  $\nu_{j+1}(x)$ --- because $\fv{}{\psi} \subseteq X \cup
+  \set{y_1,\ldots,y_{\#(q)}}$, the values assigned by $\eta$ to
+  variables outside $X \cup \set{y_1,\ldots,y_{\#(q)}}$ have no impact
+  on $\cube{\minsem{\psi}_\eta}$.
 \end{compactitem}
 A forest $\F_w$ is said to be \emph{accepting} if and only if the
 frontier of each tree $T \in \F_w$ is labeled with configurations
@@ -227,14 +239,14 @@ $q \in F$, and by $\bot$, otherwise.
 For a sequence of input events $a_1 \ldots a_n \in \Sigma^*$, we
 consider the sequence of formulae \(\phi_0 \stackrel{a_1}{\Rightarrow}
 \phi_1 \stackrel{a_2}{\Rightarrow} \ldots \stackrel{a_n}{\Rightarrow}
-\phi_n\), where $\phi_0 = \iota$ and $\phi_{i+1}$ is obtained from
-$\phi_i$ by replacing each predicate atom $q(t_1,\ldots,t_{\#(q)})$
-from $\phi_i$ by the formula $\stamp{\psi}{i+1}[t_1, \ldots,
-  t_{\#(q)}/y_1,\ldots,y_{\#(q)}]$, where $q(y_1,\ldots,y_{\#(q)})
-\arrow{a_i(X)}{} \psi \in \Delta$ is the only transition rule that
-applies, or by $\bot$, if no transition rule applies. The following
-lemma formalizes the relation between symbolic execution and the
-low-level configuration-based semantics of automata:
+\phi_n\), where $\phi_0 = \iota$ and, for each $i \in [n-1]$, the
+formula $\phi_{i+1}$ is obtained from $\phi_i$ by replacing each
+predicate atom $q(t_1,\ldots,t_{\#(q)})$ from $\phi_i$ by the formula
+$\stamp{\psi}{i+1}[t_1, \ldots, t_{\#(q)}/y_1,\ldots,y_{\#(q)}]$,
+where $q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{} \psi \in \Delta$ is
+the only transition rule that applies, or by $\bot$, if no transition
+rule applies. The following lemma formalizes the relation between the
+symbolic and the configuration-based semantics of automata:
 
 \begin{lemma}\label{lemma:symbolic-execution}
   A word $(a_1,\nu_1) \ldots (a_n,\nu_n)$ is accepted by $\A =
