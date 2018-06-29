@@ -73,8 +73,8 @@ interpretations.
 Let $\vars = \set{x,y,z,\ldots}$ be an infinite countable set of
 variables, ranging over the interpretation of the $\Data$ sort. Terms
 are either constants of sort $\Data$, variables or function
-applications. The set of \emph{positive} first-order formulae is
-defined by the syntax below:
+applications. The set of first-order formulae is defined by the syntax
+below:
 \[\phi := t \teq s \mid p(t_1,\ldots,t_{\#(p)}) 
 \mid \neg \phi_1 \mid \phi_1 \wedge \phi_2 \mid \exists x ~.~
 \phi_1 \] where $t,s,t_1,\ldots,t_{\#(p)}$ denote terms. We write
@@ -168,8 +168,8 @@ for each predicate $q \in Q$ and each input event $a \in \Sigma$, at
 most one such rule --- two or more rules can be joined using
 disjunction.
 
-The execution semantics of automata is given in close analogy with
-the case of boolean alternating automata, with transition rules of the
+The execution semantics of automata is given in close analogy with the
+case of boolean alternating automata, with transition rules of the
 form $q \arrow{a}{} \phi$, where $q$ is a boolean constant and $\phi$
 a positive boolean combination of such constants. For instance, $q_0
 \arrow{a}{} q_1 \wedge q_2 \vee q_3$ means that the automaton can
@@ -178,9 +178,9 @@ alone. This intuition leads to saying that the steps of the automaton
 are defined by the minimal boolean models of the transition
 formulae. In this case, both $\set{q_1 \leftarrow \top, q_2 \leftarrow
   \top, q_3 \leftarrow \bot}$ and $\set{q_1 \leftarrow \bot, q_2
-  \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models, but not
+  \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models, however
 $\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow \top}$,
-which is a model but is not minimal\footnote{To avoid the confusion of
+is a model but is not minimal\footnote{To avoid the confusion of
   considering potentially non-minimal models, the original definition
   of alternating finite-state automata \cite{ChandraKozenStockmeyer81}
   uses boolean valuations instead of formulae.}.
@@ -194,15 +194,16 @@ configurations to models of first-order sentences, as follows. Given a
 formula $\phi$ and a valuation of its free variables $\nu$, each
 interpretation $\I \in \sem{\phi}_\nu$ corresponds to a set of
 configurations $\cube{\I} \isdef \set{q(d_1,\ldots,d_{\#(q)}) \mid
-  \tuple{d_1,\ldots,d_{\#(q)}} \in q^\I}$, called a \emph{cube}. For a
-set $\mathcal{S}$ of interpretations, we define $\cube{\mathcal{S}}
-\isdef \set{\cube{\I} \mid \I \in \mathcal{S}}$. Given a word
-$w=(a_1,\nu_1)(a_2,\nu_2) \ldots (a_n,\nu_n) \in \Sigma[X]^*$, an
-\emph{execution} of $\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$ is
-a (possibly infinite) forest $\F = \set{T_1,T_2,\ldots}$, where each
-tree $T_i$ is defined below:
+  \tuple{d_1,\ldots,d_{\#(q)}} \in q^\I, q \in Q}$, called a
+\emph{cube}. For a set $\mathcal{S}$ of interpretations, we define
+$\cube{\mathcal{S}} \isdef \set{\cube{\I} \mid \I \in
+  \mathcal{S}}$. Given a word $w=(a_1,\nu_1)(a_2,\nu_2) \ldots
+(a_n,\nu_n) \in \Sigma[X]^*$, an \emph{execution} of
+$\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$ is a (possibly
+infinite) forest $\F = \set{T_1,T_2,\ldots}$, where each tree $T_i$ is
+such that:
 \begin{compactitem}
-\item $T_i$ is rooted in a configuration from some cube from
+\item the roots of $T_1, T_2, \ldots$ form a cube from
   $\cube{\minsem{\iota}}$. % --- because $\iota$ is satisfiable, such
                            % a cube always exists,
 %
@@ -269,58 +270,26 @@ defined as follows:
   \[\minsem{\pathform{\A}{w_\Sigma}}_{w_\Data} = \set{\I_{\F} \mid \F
     \text{ is an execution of $\A$ over $w$}}\enspace.\]
 \end{lemma}
-
-\comment[ri]{I am here}
-
-In several of the upcoming developments it is more convenient to work
-with a symbolic execution semantics, that describes a set of execution
-forests by a sequence of formulae obtained one from another using
-rewriting rules. Let $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ be an
-automaton and $\stamp{X}{i} = \set{\stamp{x}{i} \mid x \in X}$ be a
-set of \emph{time-stamped} variables. For a formula $\psi$ and $i \in
-\nat$, we define $\stamp{\psi}{i} = \psi[X/\stamp{X}{i}]$, i.e.\ the
-formula in which each variable $x \in X$, denoting an input data
-element, is replaced by $\stamp{x}{i}$. Further, given a formula
-$\phi$, let $\Accept{F}{\phi}$ be the formula obtained from $\phi$ by
-replacing each predicate atom $q(z_1,\ldots,z_{\#(q)})$ by $\top$ if
-$q \in F$, and by $\bot$, otherwise.
-
-For a sequence of input events $a_1 \ldots a_n \in \Sigma^*$, we
-consider the sequence of formulae \(\phi_0 \stackrel{a_1}{\Rightarrow}
-\phi_1 \stackrel{a_2}{\Rightarrow} \ldots \stackrel{a_n}{\Rightarrow}
-\phi_n\), where $\phi_0 = \iota$ and, for each $i \in [n-1]$, the
-formula $\phi_{i+1}$ is obtained from $\phi_i$ by replacing each
-predicate atom $q(t_1,\ldots,t_{\#(q)})$ from $\phi_i$ by the formula
-$\stamp{\psi}{i+1}[t_1, \ldots, t_{\#(q)}/y_1,\ldots,y_{\#(q)}]$,
-where $q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{} \psi \in \Delta$ is
-the only transition rule that applies, or by $\bot$, if no transition
-rule applies. The following lemma formalizes the relation between the
-symbolic and the configuration-based semantics of automata:
-
-\begin{lemma}\label{lemma:symbolic-execution}
-  A word $(a_1,\nu_1) \ldots (a_n,\nu_n)$ is accepted by $\A =
-  \tuple{\Sigma,X,Q,\iota,F,\Delta}$ if and only if $\I,\nu \models
-  \Accept{F}{\phi_n}$ for each interpretation $\I$, where the
-  valuation $\nu : \bigcup_{i=1}^n \stamp{X}{i} \rightarrow \Data$ is
-  defined as $\nu(\stamp{x}{i}) = \nu_i(x)$, for each $x \in X$ and $i
-  \in [n]$.
-\end{lemma}
-\proof{ ``$\Rightarrow$'' Assume that $w = (a_1,\nu_1) \ldots
-  (a_n,\nu_n)$ is accepted by $\A$ and let $\F_w$ be an execution
-  forest of $\A$ over $w$. First, it is easy to check that $\phi_i$ is
-  a positive formula, for each $i \in [n]$. Next, we define the
-  interpretation: \[\I^w_n(q) = \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
-    q(d_1,\ldots,d_{\#(q)}) \text{ occurs on the $n$-th level of }
-    F_w}\] and prove $\I^w_n,\nu \models \phi_n$, by induction on
-  $n\geq0$. For $n=0$, we have $\cube{\I^w_0} \in
-  \cube{\sem{\iota}}$ and $\I^w_0 \models \iota$ follows, by
-  definition. For the induction step, assume that $\I^w_{n-1},\mu
-  \models \phi_{n-1}$, where $\mu(\stamp{x}{i}) = \nu_i(x)$, for each
-  $x \in X$ and $i \in [n-1]$. 
-
-
-  \noindent''$\Leftarrow$'' 
-\qed}
+\proof{ ``$\subseteq$'' Let $\I$ be a minimal interpretation such that
+  $\I,w_\Data \models \pathform{\A}{w_\Sigma}$. We show that there
+  exists an execution $\F$ of $\A$ over $w$ such that $\I = \I_\F$, by
+  induction on $n\geq 0$. For $n=0$, we have $w=\epsilon$ and
+  $\pathform{\A}{w_\Sigma} = \stamp{\iota}{0}$. Because $\iota$ is a
+  sentence, the valuation $w_\Data$ is not important in $\I,w_\Data
+  \models \stamp{\iota}{0}$ and, moreover, since $\I$ is minimal, we
+  have $\I \in \minsem{\stamp{\iota}{0}}$. We define the
+  interpretation $\J(q)=\I(\stamp{q}{0})$, for all $q \in Q$. Then
+  $\cube{\J}$ is an execution of $\A$ over $\epsilon$ and $\I =
+  \I_{\cube{\J}}$ is immediate. For the inductive case $n>0$, we
+  assume that $w=u\cdot(a_n,\nu_n)$ for a word $u$. Let $\J$ be the
+  interpretation defined as $\I$ for all $\stamp{q}{i}$, with $q \in
+  Q$ and $i \in [n-1]$, and $\emptyset$ everywhere else. Then
+  $\J,u_\Data \models \pathform{\A}{u_\Sigma}$ and $\J$ is moreover
+  minimal. By the induction hypothesis, there exists an execution $\G$
+  of $\A$ over $u$, such that $\J = \I_\G$. We extend this to an
+  execution over $w$, by appending to each configuration
+  $q(d_1,\ldots,d_{\#(q)})$ on the frontier [($n-1$)-th level] of a
+  tree $T \in \G$ the leaves corresponding to \qed}
 
 \subsection{Closure Properties}
 
