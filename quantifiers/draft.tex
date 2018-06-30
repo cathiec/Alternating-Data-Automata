@@ -33,6 +33,7 @@
 \include{commands-lncs}
 
 \declareauthor{ri}{Radu}{blue}
+\declareauthor{xx}{Xiao}{red}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -204,10 +205,10 @@ infinite) forest $\F = \set{T_1,T_2,\ldots}$, where each tree $T_i$ is
 such that:
 \begin{compactitem}
 \item the roots of $T_1, T_2, \ldots$ form a cube from
-  $\cube{\minsem{\iota}}$. % --- because $\iota$ is satisfiable, such
+  $\cube{\minsem{\iota}}$, % --- because $\iota$ is satisfiable, such
                            % a cube always exists,
 %
-\item all paths from the root to a leaf of $T_i$ have length $n$, and
+% \item all paths from the root to a leaf of $T_i$ have length $n$, and
 %
 \item if $q(d_1,\ldots,d_{\#(q)})$ is a node on the level $j \in
   [n-1]$ in $T_i$, then its children form a cube from
@@ -286,10 +287,32 @@ defined as follows:
   Q$ and $i \in [n-1]$, and $\emptyset$ everywhere else. Then
   $\J,u_\Data \models \pathform{\A}{u_\Sigma}$ and $\J$ is moreover
   minimal. By the induction hypothesis, there exists an execution $\G$
-  of $\A$ over $u$, such that $\J = \I_\G$. We extend this to an
-  execution over $w$, by appending to each configuration
-  $q(d_1,\ldots,d_{\#(q)})$ on the frontier [($n-1$)-th level] of a
-  tree $T \in \G$ the leaves corresponding to \qed}
+  of $\A$ over $u$, such that $\J = \I_\G$. Consider a leaf of a tree
+  $T \in \G$, labeled with a configuration $q(d_1,\ldots,d_{\#(q)})$
+  and let $\forall y_1 \ldots \forall y_{\#(q)} ~.~
+  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{n}$ be
+  the subformula of $\pathform{\A}{w_\Sigma}$ corresponding to the
+  application(s) of the transition rule $q(y_1,\ldots,y_{\#(q)})
+  \arrow{a_n}{} \psi$ at the $(n-1)$-th step. Let $\nu$ be the
+  valuation that assigns each $y_i$ the value $d_i$, for all $i \in
+  [1,\#(q)]$ and behaves like $w_\Data$ outside of
+  $\set{y_1,\ldots,y_{\#(d)}}$. Because $I, w_\Data \models \forall
+  y_1 \ldots \forall y_{\#(q)} ~.~
+  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{n}$,
+  we have $\I \in \sem{\stamp{\psi}{n}}_{w_\Data}$ and let $\K$ be one
+  of the minimal interpretations such that $\K \subseteq \I$ and $\K
+  \in \sem{\stamp{\psi}{n}}_{w_\Data}$. It is not hard to see that
+  $\K$ exists and is unique, otherwise we could take the pointwise
+  intersection of two or more such interpretations. We define the
+  interpretation $\bar{\K}(q) = \bar{\K}(\stamp{q}{n})$ for all $q \in
+  Q$. We have that $\bar{\K} \in \minsem{\psi}_{\nu}$ --- if
+  $\bar{\K}$ was not minimal, $\K$ was minimal to start with,
+  contradiction. Then we extend the execution $\G$ by appending to
+  each node labeled with a configuration $q(d_1, \ldots, d_{\#(q)})$
+  the cube $\cube{\bar{\K}}$. Clearly the result is an execution of
+  $\A$ over $w$. 
+
+  ``$\supseteq$'' \comment[ri]{todo} \qed}
 
 \subsection{Closure Properties}
 
@@ -306,14 +329,15 @@ $\dual{\phi}$ recursively on the structure of $\phi$ as follows:
 \end{array}\]
 Observe that, because predicate atoms do not occur negated in $\phi$,
 there is no need to define dualization for formulae of the form $\neg
-q(x_1,\ldots,x_{\#(q)})$. The dualization operation has the following
-property:
-\begin{lemma}\label{lemma:dual}
-  Given a formula $\phi$ and an automaton
-  $\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$, we have the equivalence
-  $\Accept{F}{\phi} \equiv \neg(\dual{\Accept{Q\setminus F}{\phi}})$. 
-\end{lemma}
-\proof{ By straightforward induction on the structure of $\phi$. \qed}
+q(x_1,\ldots,x_{\#(q)})$. 
+
+%% The dualization operation has the following property:
+%% \begin{lemma}\label{lemma:dual}
+%%   Given a formula $\phi$ and an automaton
+%%   $\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$, we have the equivalence
+%%   $\Accept{F}{\phi} \equiv \neg(\dual{\Accept{Q\setminus F}{\phi}})$. 
+%% \end{lemma}
+%% \proof{ By straightforward induction on the structure of $\phi$. \qed}
 
 The following theorem shows that first-order alternating data automata
 are closed under all boolean operations: 
