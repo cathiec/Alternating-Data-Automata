@@ -248,34 +248,36 @@ this session. For any $i \in \nat$, we denote by $\stamp{Q}{i} =
   \mid x \in X}$ the sets of time-stamped predicates and variables,
 respectively. For a formula $\psi$ and $i \in \nat$, we define
 $\stamp{\psi}{i} \isdef \psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$ the
-formula in which all input variables and state predicates are replaced
-by their time-stamped counterparts. Given a sequence of input events
-$\alpha = a_1 \ldots a_n$, the \emph{path formula} of $\alpha$ in $\A$
-is defined as follows:
-\[\pathform{\A}{\alpha} \isdef \stamp{\iota}{0} \wedge 
+formula in which all input variables and state predicates (and only
+those symbols) are replaced by their time-stamped counterparts. Given
+a sequence of input events $\alpha = a_1 \ldots a_n$, the \emph{path
+  formula} of $\alpha$ (in $\A$) is defined as follows:
+\[\pathform{\alpha} \isdef \stamp{\iota}{0} \wedge 
 \bigwedge_{i=1}^n \bigwedge_{q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{}
   \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
 \stamp{q}{i-1}(y_1,\ldots,y_{\#(q)}) \Longrightarrow \stamp{\psi}{i}\]
-To formalize the relation between the low-level configuration-based
-execution semantics and the symbolic path formulae, consider a word
-$w=(a_1,\nu_1) \ldots (a_n,\nu_n)$. Any execution forest $\F$ of $\A$
-over $w$ is associated an interpretation $\I_{\F}$ of the set of
-time-stamped predicates $\set{\stamp{q}{i} \mid q \in Q, i \in [n]}$,
-defined as follows:
+The automaton $\A$, to which $\pathform{\alpha}$ refers, will always
+be clear from the context. To formalize the relation between the
+low-level configuration-based execution semantics and the symbolic
+path formulae, consider a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n)$. Any
+execution forest $\F$ of $\A$ over $w$ is associated an interpretation
+$\I_{\F}$ of the set of time-stamped predicates $\set{\stamp{q}{i}
+  \mid q \in Q, i \in [n]}$, defined as follows:
 \[\I_{\F}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}}
   \mid q(d_1,\ldots,d_{\#(q)}) \text{ occurs on level $i$ in
     $\F$}}\enspace.\]
 
 \begin{lemma}\label{lemma:path-formula}
-  For any word $w=(a_1,\nu_1) \ldots (a_n,\nu_n)$, we have: 
-  \[\minsem{\pathform{\A}{w_\Sigma}}_{w_\Data} = \set{\I_{\F} \mid \F
+  Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for any
+  word $w=(a_1,\nu_1) \ldots (a_n,\nu_n)$, we have:
+  \[\minsem{\pathform{w_\Sigma}}_{w_\Data} = \set{\I_{\F} \mid \F
     \text{ is an execution of $\A$ over $w$}}\enspace.\]
 \end{lemma}
 \proof{ ``$\subseteq$'' Let $\I$ be a minimal interpretation such that
-  $\I,w_\Data \models \pathform{\A}{w_\Sigma}$. We show that there
-  exists an execution $\F$ of $\A$ over $w$ such that $\I = \I_\F$, by
+  $\I,w_\Data \models \pathform{w_\Sigma}$. We show that there exists
+  an execution $\F$ of $\A$ over $w$ such that $\I = \I_\F$, by
   induction on $n\geq 0$. For $n=0$, we have $w=\epsilon$ and
-  $\pathform{\A}{w_\Sigma} = \stamp{\iota}{0}$. Because $\iota$ is a
+  $\pathform{w_\Sigma} = \stamp{\iota}{0}$. Because $\iota$ is a
   sentence, the valuation $w_\Data$ is not important in $\I,w_\Data
   \models \stamp{\iota}{0}$ and, moreover, since $\I$ is minimal, we
   have $\I \in \minsem{\stamp{\iota}{0}}$. We define the
@@ -285,34 +287,69 @@ defined as follows:
   assume that $w=u\cdot(a_n,\nu_n)$ for a word $u$. Let $\J$ be the
   interpretation defined as $\I$ for all $\stamp{q}{i}$, with $q \in
   Q$ and $i \in [n-1]$, and $\emptyset$ everywhere else. Then
-  $\J,u_\Data \models \pathform{\A}{u_\Sigma}$ and $\J$ is moreover
+  $\J,u_\Data \models \pathform{u_\Sigma}$ and $\J$ is moreover
   minimal. By the induction hypothesis, there exists an execution $\G$
   of $\A$ over $u$, such that $\J = \I_\G$. Consider a leaf of a tree
   $T \in \G$, labeled with a configuration $q(d_1,\ldots,d_{\#(q)})$
   and let $\forall y_1 \ldots \forall y_{\#(q)} ~.~
   \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{n}$ be
-  the subformula of $\pathform{\A}{w_\Sigma}$ corresponding to the
+  the subformula of $\pathform{w_\Sigma}$ corresponding to the
   application(s) of the transition rule $q(y_1,\ldots,y_{\#(q)})
   \arrow{a_n}{} \psi$ at the $(n-1)$-th step. Let $\nu$ be the
   valuation that assigns each $y_i$ the value $d_i$, for all $i \in
   [1,\#(q)]$ and behaves like $w_\Data$ outside of
-  $\set{y_1,\ldots,y_{\#(d)}}$. Because $I, w_\Data \models \forall
+  $\set{y_1,\ldots,y_{\#(d)}}$. Because $\I, w_\Data \models \forall
   y_1 \ldots \forall y_{\#(q)} ~.~
   \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{n}$,
-  we have $\I \in \sem{\stamp{\psi}{n}}_{w_\Data}$ and let $\K$ be one
-  of the minimal interpretations such that $\K \subseteq \I$ and $\K
-  \in \sem{\stamp{\psi}{n}}_{w_\Data}$. It is not hard to see that
-  $\K$ exists and is unique, otherwise we could take the pointwise
-  intersection of two or more such interpretations. We define the
-  interpretation $\bar{\K}(q) = \bar{\K}(\stamp{q}{n})$ for all $q \in
-  Q$. We have that $\bar{\K} \in \minsem{\psi}_{\nu}$ --- if
-  $\bar{\K}$ was not minimal, $\K$ was minimal to start with,
+  we have $\I \in \sem{\stamp{\psi}{n}}_{\nu}$ and let $\K$ be one of
+  the minimal interpretations such that $\K \subseteq \I$ and $\K \in
+  \sem{\stamp{\psi}{n}}_{\nu}$. It is not hard to see that $\K$ exists
+  and is unique, otherwise we could take the pointwise intersection of
+  two or more such interpretations. We define the interpretation
+  $\overline{\K}(q) = \overline{\K}(\stamp{q}{n})$ for all $q \in
+  Q$. We have that $\overline{\K} \in \minsem{\psi}_{\nu}$ --- if
+  $\overline{\K}$ was not minimal, $\K$ was not minimal to start with,
   contradiction. Then we extend the execution $\G$ by appending to
   each node labeled with a configuration $q(d_1, \ldots, d_{\#(q)})$
-  the cube $\cube{\bar{\K}}$. Clearly the result is an execution of
-  $\A$ over $w$. 
-
-  ``$\supseteq$'' \comment[ri]{todo} \qed}
+  the cube $\cube{\overline{\K}}$. By repeating this step for all
+  leaves of a tree in $\G$, we obtain an execution of $\A$ over $w$.
+  
+  ``$\supseteq$'' Let $\F$ be an execution of $\A$ over $w$. We show
+  that $\I_{\F}$ is a minimal interpretation such that $\I_{\F},
+  w_\Data \models \pathform{w_\Sigma}$, by induction on $n \geq
+  0$. For $n=0$, $\F$ is a cube from $\cube{\minsem{\iota}}$, by
+  definition. Then $\I_{\F} \models \stamp{\iota}{0}$ and moreover, it
+  is a minimal such interpretation. For the inductive case $n > 0$,
+  let $w=u\cdot(a_n,\nu_n)$ for a word $u$. Let $\G$ be the
+  restriction of $\F$ to $u$. Consequently, $\I_\G$ is the restriction
+  of $\I_\F$ to $\bigcup_{i=0}^{n-1} \stamp{Q}{i}$. By the inductive
+  hypothesis, $\I_{\G}$ is a minimal interpretation such that
+  \(\I_{\G}, u_{\Data} \models \pathform{u_\Sigma}\). Since
+  $\I_{\F}(\stamp{q}{n}) = \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
+    q(d_1,\ldots,d_{\#(q)}) \text{ occurs on the $n$-th level in
+      $\F$}}$, we have $\I_{\F}, w_\Data \models \varphi$, for each
+  subformula $\varphi = \forall y_1 \ldots \forall y_{\#(q)} ~.~
+  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{n}$ of
+  $\pathform{w_\Sigma}$, by the execution semantics of $\A$. This is
+  the case because the children of each node labeled with
+  $q(d_1,\ldots,d_{\#(q)})$ on the $(n-1)$-th level of $\F$ form a
+  cube from $\cube{\minsem{\psi}_\nu}$, where $\nu$ is a valuation
+  that assigns each $y_i$ the value $d_i$ and behaves like $w_\Data$,
+  otherwise. Now supppose, for a contradiction, that $\I_{\F}$ is not
+  minimal and let $\J \subsetneq \I_{\F}$ be an interpretation such
+  that $\J,w_\Data \models \pathform{w_\Sigma}$. First, we show that
+  the restriction $\J'$ of $\J$ to $\bigcup_{i=0}^{n-1} \stamp{Q}{i}$
+  must coincide with $\I_{\G}$. Assuming this is not the case,
+  i.e.\ $\J' \subsetneq \I_{\G}$, contradicts the minimality of
+  $\I_{\G}$. Then the only possibility is that $\J(\stamp{q}{n})
+  \subsetneq \I_{\F}(\stamp{q}{n})$, for some $q \in Q$. Let
+  $p_1(y_1,\ldots,y_{\#(p_1)}) \arrow{a_n}{} \psi_1, \ldots,
+  p_k(y_1,\ldots,y_{\#(p_k)}) \arrow{a_n}{} \psi_k$ be the set of
+  transition rules in which the predicate symbol $q$ occurs. Then it
+  must be the case that, for some node $p_i(d_1,\ldots,d_{\#(p_i)})$
+  on the $(n-1)$-th level of $\G$, the set of children does not form a
+  minimal cube from $\cube{\minsem{\stamp{\psi_i}{n}}}$, which
+  contradicts the execution semantics of $\A$. \qed}
 
 \subsection{Closure Properties}
 
