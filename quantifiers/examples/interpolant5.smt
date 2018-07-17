@@ -26,6 +26,7 @@
 (declare-fun q2_6 ((Int) (Int)) Bool)
 (declare-fun q3_6 ((Int) (Int)) Bool)
 
+(declare-const x_0 Int)
 (declare-const x_1 Int)
 (declare-const x_2 Int)
 (declare-const x_3 Int)
@@ -36,8 +37,8 @@
 (compute-interpolant
 (and (p1_0 0) (q1_0 0 0))
 (and
-	(forall ((y Int)) (implies (p1_0 y) (and (= x_1 0) (p2_1 x_1))))
-	(forall ((y1 Int) (y2 Int)) (implies (q1_0 y1 y2) (or (distinct x_1 0) (q2_1 x_1 1))))
+	(forall ((y Int)) (implies (p1_0 y) (and (= x_1 x_0) (p2_1 x_1))))
+	(forall ((y1 Int) (y2 Int)) (implies (q1_0 y1 y2) (or (distinct x_1 x_0) (q2_1 x_1 (+ x_0 1)))))
 )
 (and
 	(forall ((y Int)) (implies (p2_1 y) (or (and (= x_2 (+ y 1)) (p2_2 x_2)) (and (= x_2 y) (p3_2 x_2)))))
