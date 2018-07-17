@@ -1,3 +1,44 @@
+\documentclass{llncs}
+% \documentclass[10pt,conference,letterpaper,twocolumn]{IEEEtran}
+
+\usepackage[usenames,dvipsnames]{color}
+
+\usepackage{latexsym}
+\usepackage{amsxtra} 
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{pslatex}
+\usepackage{epsfig}
+\usepackage{wrapfig}
+\usepackage{paralist}
+% \usepackage{stmaryrd}
+\usepackage{txfonts}
+\usepackage{framed}
+\usepackage{makecell}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning, calc}
+\usepackage[inline,shortlabels]{enumitem}
+
+\usepackage{proof}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+\usepackage[draft]{commenting}
+
+\pagestyle{plain}
+
+\include{commands-lncs}
+
+\declareauthor{ri}{Radu}{blue}
+\declareauthor{xx}{Xiao}{red}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Given sets of variables $B,X,Y \subset \vars$ of sorts $\Bool$,
 $\Data$ and $\Data$, respectively, we denote by $\Form(B;X;Y)$ the set
 of formulae $\phi$ such that $\fv{\Bool}{\phi} = B$, $\fv{\Data}{\phi}
@@ -388,3 +429,7 @@ for all $j \in [0,i]$. That is, the interpolants obtained from the
 proof of unsatisfiability of $\widehat{\Theta}_i$ may refer to all
 values taken by the global and local variables from the beginning of
 the path up to the $i$-th step.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

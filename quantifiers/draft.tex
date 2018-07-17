@@ -266,11 +266,10 @@ be clear from the context. To formalize the relation between the
 low-level configuration-based execution semantics and the symbolic
 path formulae, consider a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n)$. Any
 execution forest $\F$ of $\A$ over $w$ is associated an interpretation
-$\I_{\F}$ of the set of time-stamped predicates $\set{\stamp{q}{i}
-  \mid q \in Q, i \in [n]}$, defined as follows:
-\[\I_{\F}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}}
-  \mid q(d_1,\ldots,d_{\#(q)}) \text{ occurs on level $i$ in
-    $\F$}}\enspace.\]
+$\I_{\F}$ of the set of time-stamped predicates $\stamp{Q}{\leq n}
+\isdef \set{\stamp{q}{i} \mid q \in Q, i \in [n]}$, defined as: 
+\[\I_{\F}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
+  q(d_1,\ldots,d_{\#(q)}) \text{ occurs on level $i$ in $\F$}}\]
 
 \begin{lemma}\label{lemma:path-formula}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for any
@@ -327,19 +326,19 @@ $\I_{\F}$ of the set of time-stamped predicates $\set{\stamp{q}{i}
   is a minimal such interpretation. For the inductive case $n > 0$,
   let $w=u\cdot(a_n,\nu_n)$ for a word $u$. Let $\G$ be the
   restriction of $\F$ to $u$. Consequently, $\I_\G$ is the restriction
-  of $\I_\F$ to $\bigcup_{i=0}^{n-1} \stamp{Q}{i}$. By the inductive
-  hypothesis, $\I_{\G}$ is a minimal interpretation such that
-  \(\I_{\G}, u_{\Data} \models \pathform{u_\Sigma}\). Since
-  $\I_{\F}(\stamp{q}{n}) = \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
-    q(d_1,\ldots,d_{\#(q)}) \text{ occurs on the $n$-th level in
-      $\F$}}$, we have $\I_{\F}, w_\Data \models \varphi$, for each
-  subformula $\varphi = \forall y_1 \ldots \forall y_{\#(q)} ~.~
-  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{n}$ of
-  $\pathform{w_\Sigma}$, by the execution semantics of $\A$. This is
-  the case because the children of each node labeled with
-  $q(d_1,\ldots,d_{\#(q)})$ on the $(n-1)$-th level of $\F$ form a
-  cube from $\cube{\minsem{\psi}_\nu}$, where $\nu$ is a valuation
-  that assigns each $y_i$ the value $d_i$ and behaves like $w_\Data$,
+  of $\I_\F$ to $\stamp{Q}{\leq n-1}$. By the inductive hypothesis,
+  $\I_{\G}$ is a minimal interpretation such that \(\I_{\G}, u_{\Data}
+  \models \pathform{u_\Sigma}\). Since $\I_{\F}(\stamp{q}{n}) =
+  \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid q(d_1,\ldots,d_{\#(q)})
+    \text{ occurs on the $n$-th level in $\F$}}$, we have $\I_{\F},
+  w_\Data \models \varphi$, for each subformula $\varphi = \forall y_1
+  \ldots \forall y_{\#(q)} ~.~ \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)})
+  \Rightarrow \stamp{\psi}{n}$ of $\pathform{w_\Sigma}$, by the
+  execution semantics of $\A$. This is the case because the children
+  of each node labeled with $q(d_1,\ldots,d_{\#(q)})$ on the
+  $(n-1)$-th level of $\F$ form a cube from
+  $\cube{\minsem{\psi}_\nu}$, where $\nu$ is a valuation that assigns
+  each $y_i$ the value $d_i$ and behaves like $w_\Data$,
   otherwise. Now supppose, for a contradiction, that $\I_{\F}$ is not
   minimal and let $\J \subsetneq \I_{\F}$ be an interpretation such
   that $\J,w_\Data \models \pathform{w_\Sigma}$. First, we show that
@@ -350,9 +349,10 @@ $\I_{\F}$ of the set of time-stamped predicates $\set{\stamp{q}{i}
   \subsetneq \I_{\F}(\stamp{q}{n})$, for some $q \in Q$. Let
   $p_1(y_1,\ldots,y_{\#(p_1)}) \arrow{a_n}{} \psi_1, \ldots,
   p_k(y_1,\ldots,y_{\#(p_k)}) \arrow{a_n}{} \psi_k$ be the set of
-  transition rules in which the predicate symbol $q$ occurs. Then it
-  must be the case that, for some node $p_i(d_1,\ldots,d_{\#(p_i)})$
-  on the $(n-1)$-th level of $\G$, the set of children does not form a
+  transition rules in which the predicate symbol $q$ occurs on the
+  right-hand side. Then it must be the case that, for some node on the
+  $(n-1)$-th level of $\G$, labeled with a configuration
+  $p_i(d_1,\ldots,d_{\#(p_i)})$, the set of children does not form a
   minimal cube from $\cube{\minsem{\stamp{\psi_i}{n}}}$, which
   contradicts the execution semantics of $\A$. \qed}
 
@@ -462,20 +462,24 @@ are closed under all boolean operations:
 \section{The Emptiness Problem}
 
 The problem of checking emptiness of a given automata is undecidable,
-for automata using predicates of arity two or more, even if the theory
-in which the (right-hand sides of the) transition rules are written
-consists of only equalities and disequalities between variables, with
-no quantifiers \cite{FarzanKincaidPodelski15}. Thus, we resort to an
-abstraction-refinement loop that looks for an accepted word, by firing
-longer and longer sequences of input events.
+for automata using predicates of arity two or more, even only when the
+theory in which the (right-hand sides of the) transition rules are
+written consists of only equalities and disequalities between
+variables, with no quantifiers \cite{FarzanKincaidPodelski15}.
+Consequently, we cannot tackle the emptiness problem via a complete
+decision procedure and resort to an abstraction-refinement loop that
+tries to prove non-emptiess by discovering a word that it accepted,
+firing longer and longer sequences of input events.
 
-Since, for a countable data domain $\Data$, the set of finite words
-$\Sigma[X]^*$ over a finite set of variables $X$ is countable, the
-emptiness problem is recursively enumerable in this case. As a
-consequence of Lemma \ref{lemma:acceptance}, if the given automaton is
-not empty, a semi-algorithm based on a systematic exploration of the
-sequences of input events will eventually discover an accepted word,
-provided that the first-order data theory is decidable. 
+Assuming that the data domain is countable, the set of finite words
+$\Sigma[X]^*$ is countable and the emptiness problem is recursively
+enumerable. Moreover, by Lemma \ref{lemma:acceptance}, a systematic
+enumeration of sequences of input events $\alpha \in \Sigma^*$ will
+eventually discover an accepted word, provided that all path formulae
+$\pathform{\alpha}$ belong to a decidable first-order theory.
+
+
+
 
 However, if the automaton is empty, the enumeration of input event
 sequences will fail to terminate, in general. The classical way to
