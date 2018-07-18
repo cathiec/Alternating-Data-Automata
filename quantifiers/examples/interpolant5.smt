@@ -1,5 +1,13 @@
 (set-option :produce-interpolants true)
 
+(declare-fun p1 ((Int)) Bool)
+(declare-fun p2 ((Int)) Bool)
+(declare-fun p3 ((Int)) Bool)
+
+(declare-fun q1 ((Int) (Int)) Bool)
+(declare-fun q2 ((Int) (Int)) Bool)
+(declare-fun q3 ((Int) (Int)) Bool)
+
 (declare-fun p1_0 ((Int)) Bool)
 (declare-fun p2_1 ((Int)) Bool)
 (declare-fun p2_2 ((Int)) Bool)
@@ -72,3 +80,57 @@
 	(forall ((y Int)) (implies (p2_6 y) false))
 	(forall ((y1 Int) (y2 Int)) (implies (q3_6 y1 y2) false))
 ))
+
+;; checking entailment between interpolants
+
+(define-fun I1 () Bool
+ (exists ((%0 Int))
+  (! (and (p2 %0)
+          (forall ((%1 Int))
+            (! (let ((a!1 (not (= (+ %0 (* (- 1) %1)) (- 1)))))
+                 (or (q2 %0 %1) a!1))
+               :qid itp)))
+     :qid itp)) 
+)
+
+(define-fun I2 () Bool
+ (exists ((%0 Int))
+  (! (forall ((%1 Int))
+       (! (exists ((%2 Int))
+            (! (let ((a!1 (not (forall ((y Int))
+                                 (! (not (p3 y)) :pattern ((p3 y))))))
+                     (a!2 (not (= (+ %0 (* (- 1) %1)) (- 1))))
+                     (a!3 (not (or (not (= %0 %2)) (not (= %1 %0)) (q3 %0 %1)))))
+               (let ((a!4 (or (not (or a!2 (q2 %0 %1))) a!3)))
+                 (and (or (p2 %0) a!1) (or (not a!4) a!1))))
+               :qid itp))
+          :qid itp))
+     :qid itp))
+)
+
+(define-fun I3 () Bool
+ (exists ((%0 Int))
+  (! (let ((a!1 (not (forall ((y Int)) (! (not (p3 y)) :pattern ((p3 y)))))))
+     (let ((a!2 (or (and (or (p2 %0) a!1) (q2 %0 (+ 1 %0))) a!1)))
+       (and a!2 (or (p2 %0) a!1))))
+     :qid itp))
+)
+
+(define-fun I4 () Bool
+ (exists ((%0 Int) (%1 Int))
+  (! (let ((a!1 (not (forall ((y Int)) (! (not (p3 y)) :pattern ((p3 y)))))))
+     (let ((a!2 (or (and (or (p2 %1) a!1) (q2 %1 (+ 2 %0))) a!1)))
+     (let ((a!3 (and (<= (- 1) (+ %0 (* (- 1) %1)))
+                     (<= 1 (+ (* (- 1) %0) %1))
+                     a!2
+                     (or (p2 %1) a!1))))
+     (let ((a!4 (or (and (or a!3 a!1) (or (p2 %1) a!1)) a!1)))
+       (and a!4 (or (p2 %1) a!1))))))
+     :qid itp))
+)
+
+; (assert (and I2 (not I1)))
+(assert (and I3 (not I2)))
+; (assert (and I4 (not I3)))
+
+(check-sat)
