@@ -130,7 +130,8 @@
 )
 
 ; (assert (and I2 (not I1)))
-(assert (and I3 (not I2)))
+; (assert (and I2 (not I3)))
+(assert (and I2 (not I3)))
 ; (assert (and I4 (not I3)))
 
 (check-sat)
