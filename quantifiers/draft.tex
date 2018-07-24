@@ -202,7 +202,7 @@ $\cube{\mathcal{S}} \isdef \set{\cube{\I} \mid \I \in
   \mathcal{S}}$. Given a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n) \in
 \Sigma[X]^*$, an \emph{execution} of
 $\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$ is a (possibly
-infinite) forest $\F = \set{T_1,T_2,\ldots}$, where each tree $T_i$ is
+infinite) forest $\T = \set{T_1,T_2,\ldots}$, where each tree $T_i$ is
 such that:
 \begin{compactitem}
 \item the roots of $T_1, T_2, \ldots$ form a cube from
@@ -223,17 +223,16 @@ such that:
                   % \set{y_1,\ldots,y_{\#(q)}}$ have no impact on
                   % $\cube{\minsem{\psi}_\eta}$.
 \end{compactitem}
-An execution $\F$ over $w$ is said to be \emph{accepting} if and only
+An execution $\T$ over $w$ is said to be \emph{accepting} if and only
 if \begin{inparaenum}[(i)]
-\item all paths in $\F$ have the same length $n$, and
-\item the frontier of each tree $T \in \F$ is labeled with \emph{final
+\item all paths in $\T$ have the same length $n$, and
+\item the frontier of each tree $T \in \T$ is labeled with \emph{final
   configurations} $q(d_1,\ldots,d_{\#(q)})$, where $q \in F$ is a
   final predicate.
 \end{inparaenum} In this case, we say that $\A$ accepts $w$ and
-denote by $\lang{\A}$ the set of words accepted by $\A$. 
-
-In this paper, we answer the following questions: \begin{compactenum}
-\item \emph{closure}: given automata $\A_i =
+denote by $\lang{\A}$ the set of words accepted by $\A$. We address
+the following questions: \begin{compactenum}
+\item \emph{boolean closure}: given automata $\A_i =
   \tuple{\Sigma,X,Q_i,\iota_i,F_i,\Delta_i}$, for $i=1,2$, do there
   exist automata $\A_\cap$, $\A_\cup$ and $\overline{\A}_1$ such that
   $L(\A_\cap) = L(\A_1) \cap L(\A_2)$, $L(\A_\cup) = L(\A_1) \cup
@@ -251,12 +250,15 @@ logical formulae defining executions. Let $\A =
 this session. For any $i \in \nat$, we denote by $\stamp{Q}{i} =
 \set{\stamp{q}{i} \mid q \in Q}$ and $\stamp{X}{i} = \set{\stamp{x}{i}
   \mid x \in X}$ the sets of time-stamped predicates and variables,
-respectively. For a formula $\psi$ and $i \in \nat$, we define
-$\stamp{\psi}{i} \isdef \psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$ the
-formula in which all input variables and state predicates (and only
-those symbols) are replaced by their time-stamped counterparts. Given
-a sequence of input events $\alpha = a_1 \ldots a_n$, the \emph{path
-  formula} of $\alpha$ (in $\A$) is defined as follows:
+respectively. As a shorthand, we write $\stamp{Q}{\leq n}$ (resp.
+$\stamp{X}{\leq n}$) for the set $\set{\stamp{q}{i} \mid q \in Q, i
+  \in [n]}$ (resp. $\set{\stamp{x}{i} \mid x \in X, i \in [n]}$). For
+a formula $\psi$ and $i \in \nat$, we define $\stamp{\psi}{i} \isdef
+\psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$ the formula in which all input
+variables and state predicates (and only those symbols) are replaced
+by their time-stamped counterparts. For a sequence of input events
+$\alpha = a_1 \ldots a_n$, the \emph{path formula} of $\alpha$ (in
+$\A$) is defined as:
 \[\pathform{\alpha} \isdef \stamp{\iota}{0} \wedge 
 \bigwedge_{i=1}^n \bigwedge_{q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{}
   \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
@@ -265,21 +267,21 @@ The automaton $\A$, to which $\pathform{\alpha}$ refers, will always
 be clear from the context. To formalize the relation between the
 low-level configuration-based execution semantics and the symbolic
 path formulae, consider a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n)$. Any
-execution forest $\F$ of $\A$ over $w$ is associated an interpretation
-$\I_{\F}$ of the set of time-stamped predicates $\stamp{Q}{\leq n}
-\isdef \set{\stamp{q}{i} \mid q \in Q, i \in [n]}$, defined as: 
-\[\I_{\F}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
-  q(d_1,\ldots,d_{\#(q)}) \text{ occurs on level $i$ in $\F$}}\]
+execution forest $\T$ of $\A$ over $w$ is associated an interpretation
+$\I_{\T}$ of the set of time-stamped predicates $\stamp{Q}{\leq n}$,
+defined as:
+\[\I_{\T}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
+  q(d_1,\ldots,d_{\#(q)}) \text{ occurs on level $i$ in $\T$}}\]
 
 \begin{lemma}\label{lemma:path-formula}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for any
   word $w=(a_1,\nu_1) \ldots (a_n,\nu_n)$, we have 
-  \(\minsem{\pathform{w_\Sigma}}_{w_\Data} = \set{\I_{\F} \mid \F
+  \(\minsem{\pathform{w_\Sigma}}_{w_\Data} = \set{\I_{\T} \mid \T
     \text{ is an execution of $\A$ over $w$}}\). 
 \end{lemma}
 \proof{ ``$\subseteq$'' Let $\I$ be a minimal interpretation such that
   $\I,w_\Data \models \pathform{w_\Sigma}$. We show that there exists
-  an execution $\F$ of $\A$ over $w$ such that $\I = \I_\F$, by
+  an execution $\T$ of $\A$ over $w$ such that $\I = \I_\T$, by
   induction on $n\geq 0$. For $n=0$, we have $w=\epsilon$ and
   $\pathform{w_\Sigma} = \stamp{\iota}{0}$. Because $\iota$ is a
   sentence, the valuation $w_\Data$ is not important in $\I,w_\Data
@@ -318,35 +320,35 @@ $\I_{\F}$ of the set of time-stamped predicates $\stamp{Q}{\leq n}
   the cube $\cube{\overline{\K}}$. By repeating this step for all
   leaves of a tree in $\G$, we obtain an execution of $\A$ over $w$.
   
-  ``$\supseteq$'' Let $\F$ be an execution of $\A$ over $w$. We show
-  that $\I_{\F}$ is a minimal interpretation such that $\I_{\F},
+  ``$\supseteq$'' Let $\T$ be an execution of $\A$ over $w$. We show
+  that $\I_{\T}$ is a minimal interpretation such that $\I_{\T},
   w_\Data \models \pathform{w_\Sigma}$, by induction on $n \geq
-  0$. For $n=0$, $\F$ is a cube from $\cube{\minsem{\iota}}$, by
-  definition. Then $\I_{\F} \models \stamp{\iota}{0}$ and moreover, it
+  0$. For $n=0$, $\T$ is a cube from $\cube{\minsem{\iota}}$, by
+  definition. Then $\I_{\T} \models \stamp{\iota}{0}$ and moreover, it
   is a minimal such interpretation. For the inductive case $n > 0$,
   let $w=u\cdot(a_n,\nu_n)$ for a word $u$. Let $\G$ be the
-  restriction of $\F$ to $u$. Consequently, $\I_\G$ is the restriction
-  of $\I_\F$ to $\stamp{Q}{\leq n-1}$. By the inductive hypothesis,
+  restriction of $\T$ to $u$. Consequently, $\I_\G$ is the restriction
+  of $\I_\T$ to $\stamp{Q}{\leq n-1}$. By the inductive hypothesis,
   $\I_{\G}$ is a minimal interpretation such that \(\I_{\G}, u_{\Data}
-  \models \pathform{u_\Sigma}\). Since $\I_{\F}(\stamp{q}{n}) =
+  \models \pathform{u_\Sigma}\). Since $\I_{\T}(\stamp{q}{n}) =
   \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid q(d_1,\ldots,d_{\#(q)})
-    \text{ occurs on the $n$-th level in $\F$}}$, we have $\I_{\F},
+    \text{ occurs on the $n$-th level in $\T$}}$, we have $\I_{\T},
   w_\Data \models \varphi$, for each subformula $\varphi = \forall y_1
   \ldots \forall y_{\#(q)} ~.~ \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)})
   \Rightarrow \stamp{\psi}{n}$ of $\pathform{w_\Sigma}$, by the
   execution semantics of $\A$. This is the case because the children
   of each node labeled with $q(d_1,\ldots,d_{\#(q)})$ on the
-  $(n-1)$-th level of $\F$ form a cube from
+  $(n-1)$-th level of $\T$ form a cube from
   $\cube{\minsem{\psi}_\nu}$, where $\nu$ is a valuation that assigns
   each $y_i$ the value $d_i$ and behaves like $w_\Data$,
-  otherwise. Now supppose, for a contradiction, that $\I_{\F}$ is not
-  minimal and let $\J \subsetneq \I_{\F}$ be an interpretation such
+  otherwise. Now supppose, for a contradiction, that $\I_{\T}$ is not
+  minimal and let $\J \subsetneq \I_{\T}$ be an interpretation such
   that $\J,w_\Data \models \pathform{w_\Sigma}$. First, we show that
   the restriction $\J'$ of $\J$ to $\bigcup_{i=0}^{n-1} \stamp{Q}{i}$
   must coincide with $\I_{\G}$. Assuming this is not the case,
   i.e.\ $\J' \subsetneq \I_{\G}$, contradicts the minimality of
   $\I_{\G}$. Then the only possibility is that $\J(\stamp{q}{n})
-  \subsetneq \I_{\F}(\stamp{q}{n})$, for some $q \in Q$. Let
+  \subsetneq \I_{\T}(\stamp{q}{n})$, for some $q \in Q$. Let
   $p_1(y_1,\ldots,y_{\#(p_1)}) \arrow{a_n}{} \psi_1, \ldots,
   p_k(y_1,\ldots,y_{\#(p_k)}) \arrow{a_n}{} \psi_k$ be the set of
   transition rules in which the predicate symbol $q$ occurs on the
@@ -357,29 +359,35 @@ $\I_{\F}$ of the set of time-stamped predicates $\stamp{Q}{\leq n}
   contradicts the execution semantics of $\A$. \qed}
 
 Next, we give a logical characterization of acceptance, relative to a
-given sequence of input events. 
+given sequence of input events $\alpha \in \Sigma^*$. To this end, we
+extend the path formula $\pathform{\alpha}$ with a characterization of
+the set of final states of $\A$: 
+
+\[\accform{\alpha} \isdef \pathform{\alpha} \wedge \bigwedge_{q
+  \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+\stamp{q}{n}(y_1,\ldots,y_{\#(q)}) \Rightarrow \bot\]
 
 \begin{lemma}\label{lemma:acceptance}
-  Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ and a
-  sequence of input events $\alpha = a_1 \ldots a_n \in \Sigma^*$, the
-  formula $\accform{\alpha} = \pathform{\alpha} \wedge \bigwedge_{q
-    \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
-  \stamp{q}{n}(y_1,\ldots,y_{\#(q)}) \Rightarrow \bot$ is satisfiable
-  if and only if $\A$ accepts a word $w$ such that $w_\Sigma =
-  \alpha$.
+  Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
+  every word $w \in \Sigma[X]^*$, the following are
+  equivalent: \begin{compactenum}
+  \item\label{it1:lemma:acceptance} there exists an interpretation
+    $\I$ such that $\I,w_\Data \models \accform{w_\Sigma}$, 
+    %
+  \item\label{it2:lemma:acceptance} $w \in \lang{\A}$. 
+  \end{compactenum}
 \end{lemma}
-\proof{ ``$\Rightarrow$'' Let $\I$ be an interpretation and $\nu$ be a
-  valuation such that $\I,\nu \models \accform{\alpha}$. W.l.o.g. we
-  consider $\I$ to be a minimal interpretation with this property. Let
-  $w$ be the unique word such that $w_\Sigma = \alpha$ and $w_\Data =
-  \nu$. By Lemma \ref{lemma:path-formula}, $\A$ has an execution $\F$
-  over $w$ such that $\I = \I_{\F}$. To prove that $\F$ is accepting,
-  we show that \begin{inparaenum}[(i)]
-    \item\label{it1:acceptance} all paths in $\F$ have length $n$ and
+\proof{ ``$(\ref{it1:lemma:acceptance}) \Rightarrow
+  (\ref{it2:lemma:acceptance})$'' Let $\I$ be an interpretation such
+  that $\I,w_\Data \models \accform{w_\Sigma}$. By Lemma
+  \ref{lemma:path-formula}, $\A$ has an execution $\T$ over $w$ such
+  that $\I = \I_{\T}$. To prove that $\T$ is accepting, we show
+  that \begin{inparaenum}[(i)]
+    \item\label{it1:acceptance} all paths in $\T$ have length $n$ and
       that
-    \item\label{it2:acceptance} the frontier of $\F$ is labeled with
+    \item\label{it2:acceptance} the frontier of $\T$ is labeled with
       final configurations only. \end{inparaenum} First, assume that
-  (\ref{it1:acceptance}) there exists a path in $\F$ of length $0 \leq
+  (\ref{it1:acceptance}) there exists a path in $\T$ of length $0 \leq
   m < n$. Then there exists a node on the $m$-th level, labeled with
   some configuration $q(d_1,\ldots,q_{\#(q)})$, that has no
   children. By the definition of the execution semantics of $\A$, we
@@ -391,24 +399,122 @@ given sequence of input events.
   $\I,\nu \models \accform{\alpha}$, we obtain that $\I,\eta \models
   q(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{m+1}$, thus
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$. However, this
-  contradicts the fact that $\I=\I_{\F}$ and that
-  $q(d_1,\ldots,d_{\#(q)})$ labels a node of $\F$. Second, assume that
-  (\ref{it2:acceptance}), there exists a frontier node of $\F$ labeled
+  contradicts the fact that $\I=\I_{\T}$ and that
+  $q(d_1,\ldots,d_{\#(q)})$ labels a node of $\T$. Second, assume that
+  (\ref{it2:acceptance}), there exists a frontier node of $\T$ labeled
   with a configuration $q(d_1,\ldots,d_{\#(q)})$ such that $q \in Q
   \setminus F$. Since $\I,\nu \models \forall y_1 \ldots \forall
   y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \Rightarrow \bot$, by a
   similar reasoning as in the above case, we obtain that
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$, contradiction.  
 
-  ``$\Leftarrow$'' Let $\F$ be an accepting execution of $\A$ over
-  $w$, where $w_\Sigma = \alpha$. We prove that $\I_\F,w_\Data \models
-  \accform{\alpha}$. By Lemma \ref{lemma:path-formula}, we obtain
-  $\I_\F,w_\Data \models \pathform{\alpha}$. Since every path in $\F$
-  is of length $n$ and all nodes on the $n$-th level of $\F$ are
-  labeled by final configurations, we obtain that $\I_F,w_\Data
+  ``$(\ref{it2:lemma:acceptance}) \Rightarrow
+  (\ref{it1:lemma:acceptance})$'' Let $\T$ be an accepting execution
+  of $\A$ over $w$. We prove that $\I_\T,w_\Data \models
+  \accform{w_\Sigma}$. By Lemma \ref{lemma:path-formula}, we obtain
+  $\I_\T,w_\Data \models \pathform{w_\Sigma}$. Since every path in
+  $\T$ is of length $n$ and all nodes on the $n$-th level of $\T$ are
+  labeled by final configurations, we obtain that $\I_\T,w_\Data
   \models \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
   y_{\#(q)} ~.~ \stamp{q}{n}(y_1,\ldots,y_{\#(q)}) \Rightarrow \bot$,
   trivially.  \qed}
+
+In the following, it will be useful to define the set of data
+valuations of a word by a formula without predicates. Given a sequence
+of input events $\alpha = a_1 \ldots a_n$, let $\substform{\alpha}$ be
+the formula obtained from $\pathform{\alpha}$, by successively
+replacing in $\accform{\alpha}$: \begin{compactitem}
+\item each occurrence of a predicate
+  $\stamp{q}{i}(t_1,\ldots,t_{\#(q)})$ by the formula
+  $\stamp{\psi}{i+1}[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$, where
+  $q(y_1,\ldots,y_{\#(q)}) \arrow{a_{i+1}(X)}{} \psi \in \Delta$ is the
+  unique transition rule for $q$ and $a_i$, for all $i=0,\ldots,n-1$,
+%
+\item each occurrence of a predicate $\stamp{q}{n}$, such that $q \in
+  Q \setminus F$, by $\top$, and
+%
+\item each occurrence of a predicate $\stamp{q}{n}$, such that $q \in
+  F$, by $\bot$.
+\end{compactitem}
+Since there are no occurrences of predicates in $\substform{\alpha}$,
+for each valuation $\nu : \stamp{X}{\leq n} \rightarrow \Data$, there
+exists an interpretation $\I$ such that $\I,\nu \models
+\substform{\alpha}$ if and only if $\J,\nu \models \substform{\alpha}$, 
+for every interpretation $\J$. Thus we omit $\I$ and simply write $\nu
+\models \substform{\alpha}$ in this case.
+
+\begin{proposition}\label{prop:subst}
+  Let $\phi$ be a positive formula and let $q(t_1,\ldots,t_{\#(q)})$
+  be the only predicate atom occurring within $\phi$. Then, for every
+  valuation $\nu$ of $\fv{}{\phi}$ and every formula $\psi$ with no
+  predicate occurrences, the following are
+  equivalent: \begin{compactenum}
+  \item\label{it1:prop:subst} $\nu \models \phi[\psi[t_1/y_1, \ldots,
+      t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]$, 
+    %
+  \item\label{it2:prop:subst} $\I,\nu \models \phi \wedge \forall y_1
+    \ldots \forall y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow
+    \psi$, for some interpretation $\I$.
+  \end{compactenum}
+\end{proposition}
+\proof{ We give the proof in the case $\phi$ is quantifier-free. The
+  generalization to a non-empty quantifier prefix is straightforward.
+  ``$(\ref{it1:prop:subst}) \Rightarrow (\ref{it2:prop:subst})$'' We
+  distinguish two cases:
+  \begin{compactitem}
+  \item if $\nu \models \psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$
+    then let $\I(q) = \set{\tuple{t_1^\nu,\ldots,t_{\#(q)}^\nu}}$ and
+    $\emptyset$ everywhere else. We have $\I,\nu \models
+    q(t_1,\ldots,t_{\#(q)})$ and, since $\phi$ is positive, replacing
+    $\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$ with
+    $q(t_1,\ldots,t_{\#(q)})$ in $\phi$ does not change its
+    satisfiability under $\I,\nu$, hence $\I,\nu \models
+    \phi$. Moreover, $\nu \models \psi[t_1/y_1, \ldots,
+      t_{\#(q)}/y_{\#(q)}]$ thus $\I,\nu \models \forall y_1 \ldots
+    \forall y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$.
+    %
+  \item else $\nu \not\models \psi[t_1/y_1, \ldots,
+    t_{\#(q)}/y_{\#(q)}]$ and let $\I$ be the interpretation assigning
+    each predicate symbol with $\emptyset$. Then replacing
+    $\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$ with
+    $q(t_1,\ldots,t_{\#(q)})$ in $\phi$ does not change its
+    satisfiability under $\I,\nu$. Moreover, since $\I$ maps $q$ to
+    $\emptyset$, we have $\I,\nu \models \forall y_1 \ldots \forall
+    y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$, trivially.
+  \end{compactitem}
+
+  ``$(\ref{it2:prop:subst}) \Rightarrow (\ref{it1:prop:subst})$'' We
+  distinguish two cases: \begin{compactitem}
+  \item if $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \in \I(q)$, since
+    $\I,\nu \models \forall y_1 \ldots \forall y_{\#(q)} ~.~
+    q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$, we have $\nu \models
+    \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$. Since $\phi$ is
+    positive, replacing $q(t_1,\ldots,t_{\#(q)})$ by $\psi$ in $\phi$
+    does not change its satisfiability under $\nu$, hence $\nu \models
+    \phi[\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]/q(t_1, \ldots,
+      t_{\#(q)})]$.
+    %
+  \item else $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \not\in \I(q)$,
+    that is $\I,\nu \not\models q(t_1,\ldots,t_{\#(q)})$. Then $\nu
+    \models \phi[\bot/q(t_1,\ldots,t_{\#(q)})]$ and we obtain $\nu
+    \models \phi[\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]/q(t_1,
+      \ldots, t_{\#(q)})]$, because $\phi$ is positive, thus
+    $\phi[\bot/q(t_1,\ldots,t_{\#(q)})] \models \phi[\psi[t_1/y_1,
+        \ldots, t_{\#(q)}/y_{\#(q)}]/q(t_1, \ldots, t_{\#(q)})]$. \qed
+  \end{compactitem}}
+
+\begin{lemma}\label{lemma:substitution}
+  Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
+  every word $w \in \Sigma[X]^*$, we have $w_\Data \models
+  \substform{w_\Sigma}$ if and only if $w \in \lang{\A}$.
+\end{lemma}
+\proof{ By Lemma \ref{lemma:acceptance}, $w \in \lang{\A}$ if and only
+  if $\I,w_\Data \models \accform{w_\Sigma}$, for some interpretation
+  $\I$. By induction on the number of predicate atoms in
+  $\accform{w_\Sigma}$, using Proposition \ref{prop:subst} in the
+  inductive step, we prove that, $\I,w_\Data \models
+  \accform{w_\Sigma}$ if and only if $w_\Data \models
+  \substform{w_\Sigma}$. \qed}
 
 \subsection{Closure Properties}
 
@@ -425,7 +531,8 @@ $\dual{\phi}$ recursively as follows:
 \end{array}\]
 Observe that, because predicate atoms do not occur negated in $\phi$,
 there is no need to define dualization for formulae of the form $\neg
-q(x_1,\ldots,x_{\#(q)})$. 
+q(x_1,\ldots,x_{\#(q)})$. The following theorem shows closure of
+automata under all boolean operations:
 
 %% The dualization operation has the following property:
 %% \begin{lemma}\label{lemma:dual}
@@ -435,13 +542,10 @@ q(x_1,\ldots,x_{\#(q)})$.
 %% \end{lemma}
 %% \proof{ By straightforward induction on the structure of $\phi$. \qed}
 
-The following theorem shows that first-order alternating data automata
-are closed under all boolean operations: 
-
 \begin{theorem}\label{thm:closure}
   Given automata $\A_i = \tuple{\Sigma,X,Q_i,\iota_i,F_i,\Delta_i}$,
   for $i=1,2$, such that $Q_1 \cap Q_2 = \emptyset$, the following hold: 
-  \begin{compactitem}
+  \begin{compactenum}
     \item\label{it1:closure} $\lang{\A_\cap} = \lang{\A_1} \cap \lang{\A_2}$, where
       $\A_\cap = \tuple{\Sigma,X,Q_1 \cup Q_2, \iota_1 \wedge \iota_2,
       F_1 \cup F_2, \Delta_1 \cup \Delta_2}$, 
@@ -453,7 +557,7 @@ are closed under all boolean operations:
       \set{q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \dual{\psi} \mid
         q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \psi \in
         \Delta_i}\enspace.\]
-  \end{compactitem}
+  \end{compactenum}
   Moreover, $\len{\A_\cap} = \bigO{\len{\A_1}+\len{\A_2}}$ and
   $\len{\overline{\A_i}} = \bigO{\len{\A_i}}$, for all $i=1,2$.
 \end{theorem}
