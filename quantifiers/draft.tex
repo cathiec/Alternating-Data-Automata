@@ -79,7 +79,7 @@ below:
 \[\phi := t \teq s \mid p(t_1,\ldots,t_{\#(p)}) 
 \mid \neg \phi_1 \mid \phi_1 \wedge \phi_2 \mid \exists x ~.~
 \phi_1 \] where $t,s,t_1,\ldots,t_{\#(p)}$ denote terms. We write
-$\phi_1 \vee \phi_2$, $\phi_1 \Rightarrow \phi_2$ and $\forall x ~.~
+$\phi_1 \vee \phi_2$, $\phi_1 \rightarrow \phi_2$ and $\forall x ~.~
 \phi_1$ for $\neg(\neg\phi_1 \wedge \neg\phi_2)$, $\neg\phi_1 \vee
 \phi_2$ and $\neg\exists x ~.~ \neg\phi_1$, respectively. We denote by
 $\fv{}{\phi}$ the set of free variables in $\phi$. A \emph{sentence}
@@ -116,8 +116,11 @@ structure of $\phi$, as follows:
 For a formula $\phi$, we define $\sem{\phi}_\nu \isdef \set{\I \mid
   \I,\nu \models \phi}$, where $\nu(x)$ is defined for each $x \in
 \fv{}{\phi}$, and drop the subscript for sentences. A sentence $\phi$
-is \emph{satisfiable} if $\sem{\phi}\neq\emptyset$, an element of
-$\sem{\phi}$ being called a \emph{model} of $\phi$.
+is \emph{satisfiable} (\emph{unsatisfiable}) if
+$\sem{\phi}\neq\emptyset$ [$\sem{\phi}=\emptyset$]. An element of
+$\sem{\phi}$ is called a \emph{model} of $\phi$. A formula $\phi$ is
+\emph{valid} if $\I,\nu \models \phi$ for every interpretation $\I$
+and every valuation $\nu$.
 
 Interpretations are partially ordered by the pointwise subset order,
 defined as $\I_1 \subseteq \I_2$ if and only if $p^{\I_1} \subseteq
@@ -262,7 +265,7 @@ $\A$) is defined as:
 \[\pathform{\alpha} \isdef \stamp{\iota}{0} \wedge 
 \bigwedge_{i=1}^n \bigwedge_{q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{}
   \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
-\stamp{q}{i-1}(y_1,\ldots,y_{\#(q)}) \Longrightarrow \stamp{\psi}{i}\]
+\stamp{q}{i-1}(y_1,\ldots,y_{\#(q)}) \rightarrow \stamp{\psi}{i}\]
 The automaton $\A$, to which $\pathform{\alpha}$ refers, will always
 be clear from the context. To formalize the relation between the
 low-level configuration-based execution semantics and the symbolic
@@ -298,7 +301,7 @@ defined as:
   of $\A$ over $u$, such that $\J = \I_\G$. Consider a leaf of a tree
   $T \in \G$, labeled with a configuration $q(d_1,\ldots,d_{\#(q)})$
   and let $\forall y_1 \ldots \forall y_{\#(q)} ~.~
-  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{n}$ be
+  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \rightarrow \stamp{\psi}{n}$ be
   the subformula of $\pathform{w_\Sigma}$ corresponding to the
   application(s) of the transition rule $q(y_1,\ldots,y_{\#(q)})
   \arrow{a_n}{} \psi$ at the $(n-1)$-th step. Let $\nu$ be the
@@ -306,7 +309,7 @@ defined as:
   [1,\#(q)]$ and behaves like $w_\Data$ outside of
   $\set{y_1,\ldots,y_{\#(d)}}$. Because $\I, w_\Data \models \forall
   y_1 \ldots \forall y_{\#(q)} ~.~
-  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{n}$,
+  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \rightarrow \stamp{\psi}{n}$,
   we have $\I \in \sem{\stamp{\psi}{n}}_{\nu}$ and let $\K$ be one of
   the minimal interpretations such that $\K \subseteq \I$ and $\K \in
   \sem{\stamp{\psi}{n}}_{\nu}$. It is not hard to see that $\K$ exists
@@ -335,7 +338,7 @@ defined as:
     \text{ occurs on the $n$-th level in $\T$}}$, we have $\I_{\T},
   w_\Data \models \varphi$, for each subformula $\varphi = \forall y_1
   \ldots \forall y_{\#(q)} ~.~ \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)})
-  \Rightarrow \stamp{\psi}{n}$ of $\pathform{w_\Sigma}$, by the
+  \rightarrow \stamp{\psi}{n}$ of $\pathform{w_\Sigma}$, by the
   execution semantics of $\A$. This is the case because the children
   of each node labeled with $q(d_1,\ldots,d_{\#(q)})$ on the
   $(n-1)$-th level of $\T$ form a cube from
@@ -365,7 +368,7 @@ the set of final states of $\A$:
 
 \[\accform{\alpha} \isdef \pathform{\alpha} \wedge \bigwedge_{q
   \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
-\stamp{q}{n}(y_1,\ldots,y_{\#(q)}) \Rightarrow \bot\]
+\stamp{q}{n}(y_1,\ldots,y_{\#(q)}) \rightarrow \bot\]
 
 \begin{lemma}\label{lemma:acceptance}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
@@ -397,14 +400,14 @@ the set of final states of $\A$:
   for $\nu[y_1 \leftarrow d_1,\ldots,y_{\#(q)} \leftarrow
     d_{\#(q)}]$. Hence $\sem{\psi}_{\eta} = \emptyset$, and because
   $\I,\nu \models \accform{\alpha}$, we obtain that $\I,\eta \models
-  q(y_1,\ldots,y_{\#(q)}) \Rightarrow \stamp{\psi}{m+1}$, thus
+  q(y_1,\ldots,y_{\#(q)}) \rightarrow \stamp{\psi}{m+1}$, thus
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$. However, this
   contradicts the fact that $\I=\I_{\T}$ and that
   $q(d_1,\ldots,d_{\#(q)})$ labels a node of $\T$. Second, assume that
   (\ref{it2:acceptance}), there exists a frontier node of $\T$ labeled
   with a configuration $q(d_1,\ldots,d_{\#(q)})$ such that $q \in Q
   \setminus F$. Since $\I,\nu \models \forall y_1 \ldots \forall
-  y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \Rightarrow \bot$, by a
+  y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow \bot$, by a
   similar reasoning as in the above case, we obtain that
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$, contradiction.  
 
@@ -416,26 +419,27 @@ the set of final states of $\A$:
   $\T$ is of length $n$ and all nodes on the $n$-th level of $\T$ are
   labeled by final configurations, we obtain that $\I_\T,w_\Data
   \models \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
-  y_{\#(q)} ~.~ \stamp{q}{n}(y_1,\ldots,y_{\#(q)}) \Rightarrow \bot$,
+  y_{\#(q)} ~.~ \stamp{q}{n}(y_1,\ldots,y_{\#(q)}) \rightarrow \bot$,
   trivially.  \qed}
 
 In the following, it will be useful to define the set of data
 valuations of a word by a formula without predicates. Given a sequence
 of input events $\alpha = a_1 \ldots a_n$, let $\substform{\alpha}$ be
 the formula obtained from $\pathform{\alpha}$, by successively
-replacing in $\accform{\alpha}$: \begin{compactitem}
-\item each occurrence of a predicate
+replacing in $\accform{\alpha}$: \begin{compactenum}[(a)]
+\item\label{it1:substform} each occurrence of a predicate
   $\stamp{q}{i}(t_1,\ldots,t_{\#(q)})$ by the formula
   $\stamp{\psi}{i+1}[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$, where
-  $q(y_1,\ldots,y_{\#(q)}) \arrow{a_{i+1}(X)}{} \psi \in \Delta$ is the
-  unique transition rule for $q$ and $a_i$, for all $i=0,\ldots,n-1$,
+  $q(y_1,\ldots,y_{\#(q)}) \arrow{a_{i+1}(X)}{} \psi \in \Delta$ is
+  the unique transition rule for $q$ and $a_i$, for all
+  $i=0,\ldots,n-1$,
 %
-\item each occurrence of a predicate $\stamp{q}{n}$, such that $q \in
-  Q \setminus F$, by $\top$, and
+\item\label{it2:substform} each occurrence of a predicate
+  $\stamp{q}{n}$, such that $q \in Q \setminus F$, by $\top$, and
 %
-\item each occurrence of a predicate $\stamp{q}{n}$, such that $q \in
-  F$, by $\bot$.
-\end{compactitem}
+\item\label{it3:substform} each occurrence of a predicate
+  $\stamp{q}{n}$, such that $q \in F$, by $\bot$.
+\end{compactenum}
 Since there are no occurrences of predicates in $\substform{\alpha}$,
 for each valuation $\nu : \stamp{X}{\leq n} \rightarrow \Data$, there
 exists an interpretation $\I$ such that $\I,\nu \models
@@ -456,6 +460,7 @@ for every interpretation $\J$. Thus we omit $\I$ and simply write $\nu
     \ldots \forall y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow
     \psi$, for some interpretation $\I$.
   \end{compactenum}
+  where $y_1,\ldots,y_{\#(q)} \not\in \fv{}{\phi}$. 
 \end{proposition}
 \proof{ We give the proof in the case $\phi$ is quantifier-free. The
   generalization to a non-empty quantifier prefix is straightforward.
@@ -546,11 +551,11 @@ automata under all boolean operations:
   Given automata $\A_i = \tuple{\Sigma,X,Q_i,\iota_i,F_i,\Delta_i}$,
   for $i=1,2$, such that $Q_1 \cap Q_2 = \emptyset$, the following hold: 
   \begin{compactenum}
-    \item\label{it1:closure} $\lang{\A_\cap} = \lang{\A_1} \cap \lang{\A_2}$, where
+    \item\label{it1:thm:closure} $\lang{\A_\cap} = \lang{\A_1} \cap \lang{\A_2}$, where
       $\A_\cap = \tuple{\Sigma,X,Q_1 \cup Q_2, \iota_1 \wedge \iota_2,
       F_1 \cup F_2, \Delta_1 \cup \Delta_2}$, 
       %
-    \item\label{it2:closure} $\lang{\overline{\A_i}} = \Sigma[X]^*
+    \item\label{it2:thm:closure} $\lang{\overline{\A_i}} = \Sigma[X]^*
       \setminus \lang{\A_i}$, where $\overline{\A_i} =
       \tuple{\Sigma,X,Q_i,\dual{\iota},Q_i\setminus
         F_i,\dual{\Delta}_i}$ and, for $i=1,2$: \[\dual{\Delta}_i =
@@ -561,19 +566,179 @@ automata under all boolean operations:
   Moreover, $\len{\A_\cap} = \bigO{\len{\A_1}+\len{\A_2}}$ and
   $\len{\overline{\A_i}} = \bigO{\len{\A_i}}$, for all $i=1,2$.
 \end{theorem}
-\proof{\qed}
+\proof{ (\ref{it1:thm:closure}) ``$\subseteq$'' Let $w \in
+  \lang{\A_\cap}$ be a word and $\T$ be an execution of $\A_\cap$ over
+  $w$. Since $Q_1 \cap Q_2 = \emptyset$, it is possible to partition
+  $\T$ into $\T_1$ and $\T_2$ such that the roots of $\T_i$ form a
+  cube from $\cube{\minsem{\iota_i}}$, for all $i=1,2$. Because
+  $\Delta_1 \cap \Delta_2 = \emptyset$, by induction on
+  $\len{w}\geq0$, one shows that $\T_i$ is an execution of $\A_i$ over
+  $w$, for all $i=1,2$. Finally, because $\T$ is accepting, we obtain
+  that $\T_1$ and $\T_2$ are accepting, respectively, hence $w \in
+  \lang{\A_1} \cap \lang{\A_2}$. ``$\supseteq$'' Let $w \in
+  \lang{\A_1} \cap \lang{\A_2}$ and let $\T_i$ an accepting execution
+  of $\A_i$ over $w$, for all $i=1,2$. We show that $\T_1 \cup \T_2$
+  is an execution of $\A_\cap$ over $w$, by induction on
+  $\len{w}\geq0$. For the base case $\len{w}=0$, we have $\T_i \in
+  \cube{\minsem{\iota_i}}$ for all $i=1,2$ and since $Q_1 \cap Q_2 =
+  \emptyset$, we have $\T_1 \cup \T_2 \in \cube{\minsem{\iota_1 \wedge
+      \iota_2}}$. The induction step follows as a consequence of the
+  fact that $\Delta_1 \cup \Delta_2$ is the set of transition rules of
+  $\A_\cap$. Finally, since both $\T_1$ and $\T_2$ are accepting,
+  $\T_1 \cup \T_2$ is accepting as well. Moreover, we have: 
+  \[
+  \len{\A_\cap} = \len{\iota_1 \wedge \iota_2} + \sum_{q(\vec{y})
+    \arrow{a(X)}{} \psi \in \Delta_1 \cup \Delta_2} \len{\psi} =
+  1 + \len{\iota_1} + \len{\iota_2} + \sum_{q(\vec{y})
+    \arrow{a(X)}{} \psi \in \Delta_1} \len{\psi} + \sum_{q(\vec{y})
+    \arrow{a(X)}{} \psi \in \Delta_2} \len{\psi} \enspace. 
+  \]
+
+  \noindent(\ref{it2:thm:closure}) Let $w \in \Sigma[X]^*$ be a
+  word. We denote by $\accformA{\A_1}{w_\Sigma}$ and
+  $\substformA{\A_1}{w_\Sigma}$
+  [resp. $\accformA{\overline{\A}_1}{w_\Sigma}$ and
+    $\substformA{\overline{\A}_1}{w_\Sigma}$] the formulae
+  $\accform{w_\Sigma}$ and $\substform{w_\Sigma}$ for $\A_1$ and
+  $\overline{\A}_1$, respectively. It is enough to show that
+  $\substformA{\overline{\A}_1}{w_\Sigma} =
+  \neg\substformA{\A_1}{w_\Sigma}$ and apply Lemma
+  \ref{lemma:substitution} to prove that $w \in \lang{\A_1} \iff w
+  \not\in \lang{\overline{\A}_1}$. Since the choice of $w$ was
+  arbitrary, this proves $\lang{\overline{\A}_1} = \Sigma[X]^*
+  \setminus \lang{\A_1}$. By induction on the number of predicate
+  atoms in $\accformA{\A_1}{w_\Sigma}$ that are replaced during the
+  generation of $\substformA{\A_1}{w_\Sigma}$. The proof relies on the
+  following fact:
+
+  \begin{fact}\label{fact:dual-neg}
+    Let $\phi$ be a positive formula and let $q(t_1,\ldots,t_{\#(q)})$
+    be the only occurrence of a predicate symbol within $\phi$. Then,
+    every formula $\phi$ with no predicate occurrences:
+    $\neg\phi[\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]
+    \equiv
+    \dual{\phi}[\neg\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]$.
+  \end{fact}
+  \proof{By induction on the structure of $\phi$. \qed}}
 
 \section{The Emptiness Problem}
 
 The problem of checking emptiness of a given automata is undecidable,
-for automata using predicates of arity two or more, even only when the
-theory in which the (right-hand sides of the) transition rules are
-written consists of only equalities and disequalities between
-variables, with no quantifiers \cite{FarzanKincaidPodelski15}.
-Consequently, we cannot tackle the emptiness problem via a complete
-decision procedure and resort to an abstraction-refinement loop that
-tries to prove non-emptiess by discovering a word that it accepted,
-firing longer and longer sequences of input events.
+even for automata with predicates of arity two whose transition rules
+use only equalities and disequalities, with no quantifiers
+\cite{Farzan15}. Since there is no decision procedure even in the most
+simple case, we use an abstraction-refinement semi-algorithm based on
+\emph{lazy annotation} \cite{McMillan06,McMillan14}. In a nutshell, a
+lazy annotation procedure systematically explores the set of execution
+traces of a program in search for a counterexample. When a spurious
+counterexample is found, the search backtracks and the program path is
+annotated with a set of learned facts, that excludes the path from
+future searches. In general, these facts are interpolants extracted
+from the proof of spuriousness of the given (finite) path.
+
+Typically, in a lazy annotation procedure that checks the
+unreachability of a given control state in a program (or, more
+generally, the infeasability of a set of non-linear Horn clauses
+\cite{BjornerGurfinkelMcMillanRybalchenko15}), the interpolants used
+to annotate the unfolded control structure are local assertions about
+the values of the program variables. These assertions define
+overapproximations of the set of configurations reachable at a given
+control state.
+
+When considering an alternating model of computation, computing local
+interpolants involving a single control state is not possible anymore,
+because of the fact the several branches of the computation
+synchronize on the same sequence of input values. Consider, for
+instance, an automaton with the following transition rules:
+\[\begin{array}{rclcrcl}
+q_0(y) & \arrow{a(x)}{} & q_1(y+x) \wedge q_2(y-x) & \hspace*{2mm} & 
+q_1(y) \arrow{a(x)}{} y+x > 0 \\
+q_1(y) & \arrow{a(x)}{} & q_1(y+x) && q_2(y) \arrow{a(x)}{} y-x > 0 \\
+q_2(y) & \arrow{a(x)}{} & q_2(y-x)
+\end{array}\]
+When started in an initial configuration $q_0(0)$, on an input word
+$(a,k_1) \ldots (a,k_n)$, the automaton executes as follows: 
+\[q_0(0) \arrow{(a,k_1)}{} q_1(k_1)
+\wedge q_2(-k_1) \ldots \arrow{(a,k_{n-1})}{} q_1(\sum_{i=1}^{n-1}
+k_i) \wedge q_2(-\sum_{i=1}^{n-1} k_i) \arrow{(a,k_n)}{}
+\sum_{i=1}^{n} k_i > 0 \wedge \sum_{i=1}^{n} k_i < 0\] A fairly good
+overapproximation of the set of cubes generated after the initial
+configuration is given by the formula $\exists x_1 \exists x_2 ~.~
+q_1(x_1) \wedge q_2(x_2) \wedge x_1+x_2 \teq 0$. Observe that a
+formula using one occurrence of a predicate would give a too rough
+overapproximation of this set, unable to prove the emptiness of the
+automaton. 
+
+The rest of this section is concerned with the building blocks of a
+lazy annotation semi-algorithm for checking emptiness of automata. In
+particular, we address the following problems: \begin{compactenum}
+%
+\item generation of interpolants that prove the infeasability of a
+  given path formula, provided that the satisfiability of the
+  first-order theory thereof is decidable, in the presence of
+  predicate symbols.
+%
+\item generation of non-local interpolants using history variables,
+  obtained by Skolemization of the universal quantifiers that occur
+  within transition rules.
+%
+\item computing the coverage between two node labels in the unfolding
+  of an automaton, when history variables occur. 
+\end{compactenum} 
+Based on these results, we show how a version of the classical
+\textsc{Impact} \cite{McMillan06} semi-algorithm can be used to
+(dis-)prove the emptiness of first-order alternating automata. 
+
+\subsection{Lyndon Interpolants}
+
+Let $\phi$ and $\psi$ be first-order formulae, such that $\phi \wedge
+\psi$ is unsatisfiable. The \emph{vocabulary} of $\phi$, denoted as
+$\voc{\phi}$, is the set of function symbols that occur in $\phi$.  By
+$\pset{+}{\phi}$ [$\pset{-}{\phi}$] we denote the set of predicate
+symbols that occur in $\phi$ under an even (odd) number of
+negations. A \emph{Lyndon interpolant} \cite{Lyndon59} for $\phi$ and
+$\psi$ is a first-order formula $I$ such that: \begin{compactitem}
+\item $\phi \rightarrow I$ is valid,  
+\item $I \wedge \psi$ is unsatisfiable, 
+\item $\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$, 
+\item $\pset{+}{I} \subseteq \pset{+}{\phi} \cap \pset{+}{\psi}$ and
+  $\pset{-}{I} \subseteq \pset{-}{\phi} \cap \pset{-}{\psi}$.
+\end{compactitem}
+The existence of Lyndon interpolants for first-order logic was proved
+by a non-constructive model-theoretic argument \cite{Lyndon59}. For
+now, we silently assume that the satisfiability problem for the theory
+in which $\phi$ and $\psi$ are written is decidable and, moreover,
+that a decision procedure generating Lyndon interpolants exists, for
+this theory. This is a rather unrealistic assumption, given that
+classical decidable theories, such as Presburger arithmetic, become
+undecidable in the presence of (monadic) predicate symbols
+\cite{Halpern91}.
+
+Let $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ be an automaton for the
+rest of this section. Given a non-empty sequence of input events
+$\alpha = a_1 \ldots a_n \in \Sigma^*$, a \emph{local interpolant} for
+$\alpha$ is a sequence $I_0,I_1,\ldots,I_n$ of first-order formulae
+such that: \begin{compactitem}
+\item $\iota \rightarrow I_0$ is valid, 
+%
+\item $\left[I_k \wedge \left(\bigwedge_{q(\vec{y}_q) \arrow{a_i(X)}{} \psi}
+  \forall \vec{y}_q ~.~ \stamp{q}{k}(\vec{y}_q) \rightarrow
+  \nextf{\psi}\right)\right] \rightarrow \nextf{I}_{k+1}$ is valid, for all $k \in [n-1]$,
+%
+\item $I_n \wedge \left(\bigwedge_{q \in Q \setminus F} \forall \vec{y}_q
+  ~.~ q(\vec{y}_q) \rightarrow \bot\right)$ is unsatisfiable,
+%
+\item $\voc{I_k} = \pset{+}{I_k}$ and $\pset{-}{I_k} = \emptyset$. 
+\end{compactitem}
+
+\begin{lemma}\label{lemma:lyndon-existence}
+  
+\end{lemma}
+
+\subsection{Skolem Witnesses} 
+
+\subsection{Lazy Annotation} 
+
 
 Assuming that the data domain is countable, the set of finite words
 $\Sigma[X]^*$ is countable and the emptiness problem is recursively
