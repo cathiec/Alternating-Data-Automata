@@ -171,7 +171,7 @@ $y_1,\ldots,y_{\#(q)}$ are the current control state and data values
 in that state, respectively. Without loss of generality, we consider,
 for each predicate $q \in Q$ and each input event $a \in \Sigma$, at
 most one such rule --- two or more rules can be joined using
-disjunction.
+disjunction. 
 
 The execution semantics of automata is given in close analogy with the
 case of boolean alternating automata, with transition rules of the
@@ -259,13 +259,17 @@ $\stamp{X}{\leq n}$) for the set $\set{\stamp{q}{i} \mid q \in Q, i
 a formula $\psi$ and $i \in \nat$, we define $\stamp{\psi}{i} \isdef
 \psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$ the formula in which all input
 variables and state predicates (and only those symbols) are replaced
-by their time-stamped counterparts. For a sequence of input events
-$\alpha = a_1 \ldots a_n$, the \emph{path formula} of $\alpha$ (in
-$\A$) is defined as:
-\[\pathform{\alpha} \isdef \stamp{\iota}{0} \wedge 
-\bigwedge_{i=1}^n \bigwedge_{q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{}
+by their time-stamped counterparts. As a shorthand, we shall write
+$q(\vec{y})$ for $q(y_1,\ldots,y_{\#(q)})$, when no confusion arises.
+
+Given a sequence of input events $\alpha = a_1 \ldots a_n$, the
+\emph{path formula} of $\alpha$ (in $\A$) is defined as follows:
+\begin{equation}\label{eq:pathform}
+\pathform{\alpha} \isdef \stamp{\iota}{0} \wedge 
+\bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{}
   \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
-\stamp{q}{i-1}(y_1,\ldots,y_{\#(q)}) \rightarrow \stamp{\psi}{i}\]
+\stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i}
+\end{equation}
 The automaton $\A$, to which $\pathform{\alpha}$ refers, will always
 be clear from the context. To formalize the relation between the
 low-level configuration-based execution semantics and the symbolic
@@ -301,15 +305,15 @@ defined as:
   of $\A$ over $u$, such that $\J = \I_\G$. Consider a leaf of a tree
   $T \in \G$, labeled with a configuration $q(d_1,\ldots,d_{\#(q)})$
   and let $\forall y_1 \ldots \forall y_{\#(q)} ~.~
-  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \rightarrow \stamp{\psi}{n}$ be
+  \stamp{q}{n-1}(\vec{y}) \rightarrow \stamp{\psi}{n}$ be
   the subformula of $\pathform{w_\Sigma}$ corresponding to the
-  application(s) of the transition rule $q(y_1,\ldots,y_{\#(q)})
+  application(s) of the transition rule $q(\vec{y})
   \arrow{a_n}{} \psi$ at the $(n-1)$-th step. Let $\nu$ be the
   valuation that assigns each $y_i$ the value $d_i$, for all $i \in
   [1,\#(q)]$ and behaves like $w_\Data$ outside of
   $\set{y_1,\ldots,y_{\#(d)}}$. Because $\I, w_\Data \models \forall
   y_1 \ldots \forall y_{\#(q)} ~.~
-  \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)}) \rightarrow \stamp{\psi}{n}$,
+  \stamp{q}{n-1}(\vec{y}) \rightarrow \stamp{\psi}{n}$,
   we have $\I \in \sem{\stamp{\psi}{n}}_{\nu}$ and let $\K$ be one of
   the minimal interpretations such that $\K \subseteq \I$ and $\K \in
   \sem{\stamp{\psi}{n}}_{\nu}$. It is not hard to see that $\K$ exists
@@ -337,7 +341,7 @@ defined as:
   \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid q(d_1,\ldots,d_{\#(q)})
     \text{ occurs on the $n$-th level in $\T$}}$, we have $\I_{\T},
   w_\Data \models \varphi$, for each subformula $\varphi = \forall y_1
-  \ldots \forall y_{\#(q)} ~.~ \stamp{q}{n-1}(y_1,\ldots,y_{\#(q)})
+  \ldots \forall y_{\#(q)} ~.~ \stamp{q}{n-1}(\vec{y})
   \rightarrow \stamp{\psi}{n}$ of $\pathform{w_\Sigma}$, by the
   execution semantics of $\A$. This is the case because the children
   of each node labeled with $q(d_1,\ldots,d_{\#(q)})$ on the
@@ -365,10 +369,11 @@ Next, we give a logical characterization of acceptance, relative to a
 given sequence of input events $\alpha \in \Sigma^*$. To this end, we
 extend the path formula $\pathform{\alpha}$ with a characterization of
 the set of final states of $\A$: 
-
-\[\accform{\alpha} \isdef \pathform{\alpha} \wedge \bigwedge_{q
+\begin{equation}\label{eq:accform}
+\accform{\alpha} \isdef \pathform{\alpha} \wedge \bigwedge_{q
   \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
-\stamp{q}{n}(y_1,\ldots,y_{\#(q)}) \rightarrow \bot\]
+\stamp{q}{n}(\vec{y}) \rightarrow \bot
+\end{equation}
 
 \begin{lemma}\label{lemma:acceptance}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
@@ -395,19 +400,19 @@ the set of final states of $\A$:
   some configuration $q(d_1,\ldots,q_{\#(q)})$, that has no
   children. By the definition of the execution semantics of $\A$, we
   have $\cube{\minsem{\psi}_{\eta}} = \emptyset$, where
-  $q(y_1,\ldots,y_{\#(q)}) \arrow{a_{m+1}(X)}{} \psi$ is the transition
+  $q(\vec{y}) \arrow{a_{m+1}(X)}{} \psi$ is the transition
   rule of $\A$ that applies for $q$ and $a_{m+1}$ and $\eta$ stands
   for $\nu[y_1 \leftarrow d_1,\ldots,y_{\#(q)} \leftarrow
     d_{\#(q)}]$. Hence $\sem{\psi}_{\eta} = \emptyset$, and because
   $\I,\nu \models \accform{\alpha}$, we obtain that $\I,\eta \models
-  q(y_1,\ldots,y_{\#(q)}) \rightarrow \stamp{\psi}{m+1}$, thus
+  q(\vec{y}) \rightarrow \stamp{\psi}{m+1}$, thus
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$. However, this
   contradicts the fact that $\I=\I_{\T}$ and that
   $q(d_1,\ldots,d_{\#(q)})$ labels a node of $\T$. Second, assume that
   (\ref{it2:acceptance}), there exists a frontier node of $\T$ labeled
   with a configuration $q(d_1,\ldots,d_{\#(q)})$ such that $q \in Q
   \setminus F$. Since $\I,\nu \models \forall y_1 \ldots \forall
-  y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow \bot$, by a
+  y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \bot$, by a
   similar reasoning as in the above case, we obtain that
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$, contradiction.  
 
@@ -419,20 +424,22 @@ the set of final states of $\A$:
   $\T$ is of length $n$ and all nodes on the $n$-th level of $\T$ are
   labeled by final configurations, we obtain that $\I_\T,w_\Data
   \models \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
-  y_{\#(q)} ~.~ \stamp{q}{n}(y_1,\ldots,y_{\#(q)}) \rightarrow \bot$,
+  y_{\#(q)} ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot$,
   trivially.  \qed}
 
-In the following, it will be useful to define the set of data
-valuations of a word by a formula without predicates. Given a sequence
-of input events $\alpha = a_1 \ldots a_n$, let $\substform{\alpha}$ be
-the formula obtained from $\pathform{\alpha}$, by successively
-replacing in $\accform{\alpha}$: \begin{compactenum}[(a)]
+In the following, it will be useful, in several places, to define the
+data sequence of an accepted word using the predicate-free formula
+defined below:
+
+\begin{definition}\label{def:substform}
+Given a sequence of input events $\alpha = a_1 \ldots a_n$, let
+$\substform{\alpha}$ be the formula obtained by successively replacing
+in $\accform{\alpha}$: \begin{compactenum}[(a)]
 \item\label{it1:substform} each occurrence of a predicate
   $\stamp{q}{i}(t_1,\ldots,t_{\#(q)})$ by the formula
   $\stamp{\psi}{i+1}[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$, where
-  $q(y_1,\ldots,y_{\#(q)}) \arrow{a_{i+1}(X)}{} \psi \in \Delta$ is
-  the unique transition rule for $q$ and $a_i$, for all
-  $i=0,\ldots,n-1$,
+  $q(\vec{y}) \arrow{a_{i+1}(X)}{} \psi \in \Delta$ is the transition
+  rule for $q$ and $a_i$, for all $i=0,\ldots,n-1$,
 %
 \item\label{it2:substform} each occurrence of a predicate
   $\stamp{q}{n}$, such that $q \in Q \setminus F$, by $\top$, and
@@ -440,12 +447,13 @@ replacing in $\accform{\alpha}$: \begin{compactenum}[(a)]
 \item\label{it3:substform} each occurrence of a predicate
   $\stamp{q}{n}$, such that $q \in F$, by $\bot$.
 \end{compactenum}
+\end{definition}
 Since there are no occurrences of predicates in $\substform{\alpha}$,
 for each valuation $\nu : \stamp{X}{\leq n} \rightarrow \Data$, there
 exists an interpretation $\I$ such that $\I,\nu \models
-\substform{\alpha}$ if and only if $\J,\nu \models \substform{\alpha}$, 
-for every interpretation $\J$. Thus we omit $\I$ and simply write $\nu
-\models \substform{\alpha}$ in this case.
+\substform{\alpha}$ if and only if $\J,\nu \models
+\substform{\alpha}$, for every interpretation $\J$. Thus we omit $\I$
+and simply write $\nu \models \substform{\alpha}$ in this case.
 
 \begin{proposition}\label{prop:subst}
   Let $\phi$ be a positive formula and let $q(t_1,\ldots,t_{\#(q)})$
@@ -457,7 +465,7 @@ for every interpretation $\J$. Thus we omit $\I$ and simply write $\nu
       t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]$, 
     %
   \item\label{it2:prop:subst} $\I,\nu \models \phi \wedge \forall y_1
-    \ldots \forall y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow
+    \ldots \forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow
     \psi$, for some interpretation $\I$.
   \end{compactenum}
   where $y_1,\ldots,y_{\#(q)} \not\in \fv{}{\phi}$. 
@@ -476,7 +484,7 @@ for every interpretation $\J$. Thus we omit $\I$ and simply write $\nu
     satisfiability under $\I,\nu$, hence $\I,\nu \models
     \phi$. Moreover, $\nu \models \psi[t_1/y_1, \ldots,
       t_{\#(q)}/y_{\#(q)}]$ thus $\I,\nu \models \forall y_1 \ldots
-    \forall y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$.
+    \forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \psi$.
     %
   \item else $\nu \not\models \psi[t_1/y_1, \ldots,
     t_{\#(q)}/y_{\#(q)}]$ and let $\I$ be the interpretation assigning
@@ -485,14 +493,14 @@ for every interpretation $\J$. Thus we omit $\I$ and simply write $\nu
     $q(t_1,\ldots,t_{\#(q)})$ in $\phi$ does not change its
     satisfiability under $\I,\nu$. Moreover, since $\I$ maps $q$ to
     $\emptyset$, we have $\I,\nu \models \forall y_1 \ldots \forall
-    y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$, trivially.
+    y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \psi$, trivially.
   \end{compactitem}
 
   ``$(\ref{it2:prop:subst}) \Rightarrow (\ref{it1:prop:subst})$'' We
   distinguish two cases: \begin{compactitem}
   \item if $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \in \I(q)$, since
     $\I,\nu \models \forall y_1 \ldots \forall y_{\#(q)} ~.~
-    q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$, we have $\nu \models
+    q(\vec{y}) \rightarrow \psi$, we have $\nu \models
     \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$. Since $\phi$ is
     positive, replacing $q(t_1,\ldots,t_{\#(q)})$ by $\psi$ in $\phi$
     does not change its satisfiability under $\nu$, hence $\nu \models
@@ -559,8 +567,8 @@ automata under all boolean operations:
       \setminus \lang{\A_i}$, where $\overline{\A_i} =
       \tuple{\Sigma,X,Q_i,\dual{\iota},Q_i\setminus
         F_i,\dual{\Delta}_i}$ and, for $i=1,2$: \[\dual{\Delta}_i =
-      \set{q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \dual{\psi} \mid
-        q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \psi \in
+      \set{q(\vec{y}) \arrow{a(X)}{} \dual{\psi} \mid
+        q(\vec{y}) \arrow{a(X)}{} \psi \in
         \Delta_i}\enspace.\]
   \end{compactenum}
   Moreover, $\len{\A_\cap} = \bigO{\len{\A_1}+\len{\A_2}}$ and
@@ -626,57 +634,177 @@ automata under all boolean operations:
 The problem of checking emptiness of a given automata is undecidable,
 even for automata with predicates of arity two whose transition rules
 use only equalities and disequalities, with no quantifiers
-\cite{Farzan15}. Since there is no decision procedure even in the most
-simple case, we use an abstraction-refinement semi-algorithm based on
-\emph{lazy annotation} \cite{McMillan06,McMillan14}. In a nutshell, a
-lazy annotation procedure systematically explores the set of execution
-traces of a program in search for a counterexample. When a spurious
-counterexample is found, the search backtracks and the program path is
-annotated with a set of learned facts, that excludes the path from
-future searches. In general, these facts are interpolants extracted
-from the proof of spuriousness of the given (finite) path.
+\cite{Farzan15}. Since even such simple classes of alternating
+automata have no general decision procedure, we use an
+abstraction-refinement semi-algorithm based on \emph{lazy annotation}
+\cite{McMillan06,McMillan14}. In a nutshell, a lazy annotation
+procedure systematically explores the set of execution traces of a
+program in search for a counterexample. When a spurious counterexample
+is found, the search backtracks and the program path is annotated with
+a set of learned facts, that excludes the path from future
+searches. These facts are interpolants extracted from the proof of
+spuriousness of the given (finite) path.
 
-Typically, in a lazy annotation procedure that checks the
-unreachability of a given control state in a program (or, more
-generally, the infeasability of a set of non-linear Horn clauses
-\cite{BjornerGurfinkelMcMillanRybalchenko15}), the interpolants used
-to annotate the unfolded control structure are local assertions about
-the values of the program variables. These assertions define
-overapproximations of the set of configurations reachable at a given
-control state.
+Typically, when checking the unreachability of a set of program
+configurations (or, more generally, the infeasability of a set of Horn
+clauses \cite{BjornerGurfinkelMcMillanRybalchenko15}), the
+interpolants used to annotate the unfolded control structure are local
+assertions about the values of the program variables in a given
+control state. These assertions define inductive overapproximations of
+the set of configurations reachable at that control state, that
+suffice to prove emptiness or, equivalently, a safety property of the
+system.
 
-When considering an alternating model of computation, computing local
-interpolants involving a single control state is not possible anymore,
-because of the fact the several branches of the computation
-synchronize on the same sequence of input values. Consider, for
-instance, an automaton with the following transition rules:
+When considering an alternating model of computation, local
+interpolants that involve a single control state are no longer enough,
+because of the synchronization of several branches of the computation
+on the same sequence of input values. Consider, for instance, an
+automaton with the following transition rules and final state $q_f$:
 \[\begin{array}{rclcrcl}
 q_0(y) & \arrow{a(x)}{} & q_1(y+x) \wedge q_2(y-x) & \hspace*{2mm} & 
-q_1(y) \arrow{a(x)}{} y+x > 0 \\
-q_1(y) & \arrow{a(x)}{} & q_1(y+x) && q_2(y) \arrow{a(x)}{} y-x > 0 \\
+q_1(y) \arrow{a(x)}{} y+x > 0 \wedge q_f \\
+q_1(y) & \arrow{a(x)}{} & q_1(y+x) && q_2(y) \arrow{a(x)}{} y-x > 0 \wedge q_f \\
 q_2(y) & \arrow{a(x)}{} & q_2(y-x)
 \end{array}\]
-When started in an initial configuration $q_0(0)$, on an input word
-$(a,k_1) \ldots (a,k_n)$, the automaton executes as follows: 
-\[q_0(0) \arrow{(a,k_1)}{} q_1(k_1)
-\wedge q_2(-k_1) \ldots \arrow{(a,k_{n-1})}{} q_1(\sum_{i=1}^{n-1}
-k_i) \wedge q_2(-\sum_{i=1}^{n-1} k_i) \arrow{(a,k_n)}{}
-\sum_{i=1}^{n} k_i > 0 \wedge \sum_{i=1}^{n} k_i < 0\] A fairly good
-overapproximation of the set of cubes generated after the initial
-configuration is given by the formula $\exists x_1 \exists x_2 ~.~
-q_1(x_1) \wedge q_2(x_2) \wedge x_1+x_2 \teq 0$. Observe that a
-formula using one occurrence of a predicate would give a too rough
-overapproximation of this set, unable to prove the emptiness of the
-automaton. 
+Started in an initial configuration $q_0(0)$ with an input word
+$(a,\nu_1) \ldots (a,\nu_{n-1}) (b,\nu_n)$, such that $\nu_i(x)=k_i$,
+the automaton executes as follows:
+\[\begin{array}{l}
+q_0(0) \arrow{(a,\nu_1)}{} q_1(k_1)
+\wedge q_2(-k_1) \ldots \arrow{(a,\nu_{n-1})}{} 
+q_1(\sum_{i=1}^{n-1} k_i) \wedge q_2(-\sum_{i=1}^{n-1} k_i) \arrow{(a,\nu_n)}{} \\
+\sum_{i=1}^{n} k_i > 0 \wedge \sum_{i=1}^{n} k_i < 0 \wedge q_f \equiv \bot
+\end{array}\] 
+An overapproximation of the set of cubes generated after one or more
+steps is defined by the formula: $\exists x_1 \exists x_2 ~.~ q_1(x_1)
+\wedge q_2(x_2) \wedge x_1+x_2 \teq 0$. Observe that a formula using
+one occurrence of a predicate would give a too rough overapproximation
+of this set, unable to prove the emptiness of the automaton.
 
-The rest of this section is concerned with the building blocks of a
-lazy annotation semi-algorithm for checking emptiness of automata. In
-particular, we address the following problems: \begin{compactenum}
+The solution we adopt is a generalization of the classical approach of
+extracting the interpolants from the proof of unsatisfiability of a
+time-stamped path formula. Given a sequence of input events $\alpha$,
+we consider the path formula $\accform{\alpha}$, constrained by the
+fact that all non-final predicates $\stamp{q}{\len{\alpha}}$ must be
+empty sets, defined as in (\ref{eq:accform}). If this formula is
+unsatisfiable, we show the existence of a sequence of (possibly
+quantified) positive interpolants that overapproximate the set of
+cubes generated at each step during an execution over a word $w$,
+whose even sequence is $w_\Sigma = \alpha$. Moreover, these
+interpolants are local, in the sense that each formula uses only the
+values of the variables and the state predicates stamped with its
+index in the sequence.
+
+Unlike with the classical path formulae for integer programs
+\cite{McMillan06} and Horn clauses
+\cite{BjornerGurfinkelMcMillanRybalchenko15}, that are expressed using
+linear or Presburger arithmetic, the existence of local interpolants
+for theories using first-order predicates relies on a non-constructive
+argument, the Lyndon Interpolation Theorem \cite{Lyndon59}. Since
+usual decidable theories, such as Presburger arithmetic, become
+undecidable in the presence of monadic predicate symbols
+\cite{Halpern91}, we cannot hope to find an automated interpolant
+generation method, in general.
+
+But here is where the predicate-free path formulae (Definition
+\ref{def:substform}) come into play. For a given event sequence
+$\alpha$, the automaton $\A$ accepts a word $w$ such that $w_\Sigma =
+\alpha$ if and only if $\substform{\alpha}$ is satisfiable (Lemma
+\ref{lemma:substitution}). Assuming further that the equality atoms in
+the transition rules of $\A$ are written in the language of a
+decidable first-order theory, such as Presburger arithmetic, Lemma
+\ref{lemma:substitution} gives us an effective way of checking
+emptiness of $\A$ relative to a given event sequence. However, this
+method does not cope well with lazy annotation, because there is no
+way to extract, from the unsatisfiability proof of
+$\substform{\alpha}$, the interpolants needed to annotate
+$\alpha$. This is because \begin{inparaenum}[(i)]
+\item the formula $\substform{\alpha}$, obtained by repeated
+  substitutions (Definition \ref{def:substform}) loses track of the
+  execution semantics of $\A$, and 
+%
+\item quantifiers may occur nested in $\substform{\alpha}$, making it
+  difficult to write $\substform{\alpha}$ as a proper interpolation
+  problem.
+\end{inparaenum}
+
+The solution we adopt in this paper relies on an additional assumption
+related to the decidability of the predicate-free theory in which
+$\substform{\alpha}$ formulae are written, namely that the theory has
+an effective \emph{witness-providing quantifier elimination}
+procedure. More precisely, we assume that, for each formula $\exists x
+~.~ \phi(x)$, there exists an effectively computable term $t$, in
+which $x$ does not occur, such that $\exists x ~.~ \phi$ and
+$\phi[t/x]$ are equi-satisfiable. These terms, called \emph{witnesses}
+in the following, are actual interpretations of the Skolem function
+symbols from the following folklore theorem:
+
+\begin{theorem}\label{thm:skolem}
+  Given $Q_1 x_1 \ldots Q_n x_n ~.~ \phi$ a first order sentence, 
+  where $Q_1, \ldots, Q_n \in \set{\exists,\forall}$ and $\phi$ is
+  quantifier-free, let: 
+  \[\eta_i \equiv \left\{\begin{array}{ll}
+  f_i(y_1,\ldots,y_{k_i}) & \text{if } Q_i \equiv \forall \\
+  x_i & \text{if } Q_i \equiv \exists
+  \end{array}\right.\]
+  where $f_i$ is a fresh function symbol and $\set{y_1, \ldots,
+    y_{k_i}} = \set{x_j \mid j < i,~ Q_j \equiv \exists}$. Then \(Q_1
+  x_1 \ldots Q_n x_n ~.~ \phi \rightarrow
+  \phi[\eta_1/x_1,\ldots,\eta_n/x_n]\) is valid.
+\end{theorem}
+\proof{See \cite[Theorem 2.1.8]{BorgerGraedelGurevich97} and
+  \cite[Lemma 2.1.9]{BorgerGraedelGurevich97}. \qed}
+Observe that our assumption on the existence of an effective
+witness-providing quantifier elimination procedure is stronger than
+the above theorem, as we require that \begin{inparaenum}[(i)] 
+\item the $f_i$ functions be definable in the language of the theory,
+  and 
+\item $Q_1 x_1 \ldots Q_n x_n ~.~ \phi$ and
+  $\phi[\eta_1/x_1,\ldots,\eta_n/x_n]$ are equi-satisfiable. 
+\end{inparaenum}
+Among the theories that support witness-providing quantifier
+elimination, one mentions \comment[ri]{LIA, LRA, Presburger, Tarski?,
+  BAPA?}
+
+Turning back to the problem of generating interpolants from the proof
+of unsatisfiability of a path formula $\accform{\alpha}$, assume that
+the equivalent predicate-free formula $\substform{\alpha} = \exists
+x_1 \forall y_1 \ldots \exists x_n \forall y_n ~.~ \psi$ is
+unsatisfiable and let $t_1(x_1)$, $\ldots, t_n(x_1,\ldots,x_n)$ be
+witnesses such that $\psi[t_1/y_1,\ldots,t_n/y_n] \equiv \bot$. Then
+we show that the quantifier-free formula (with predicates) obtained
+from $\accform{\alpha}$ by (roughly) replacing the universal
+quantifiers with $t_1, \ldots, t_n$ in $\accform{\alpha}$ is also
+unsatisfiable.  Moreover, this new formula is layered in the same way
+as $\accform{\alpha}$, namely as a conjunction of the form:
+\[\stamp{\iota}{0} \wedge \bigwedge_{i=1}^n \bigwedge_{q(\vec{y})
+  \arrow{a_i(X)}{} \psi \in \Delta} \stamp{q}{i-1}(\vec{t}_{q,i-1})
+\rightarrow \stamp{\psi}{i} \wedge \bigwedge_{q \in Q \setminus F}
+\stamp{q}{n}(\vec{t}_{q,n}) \rightarrow \bot\]
+
+
+\comment[ri]{i am here}
+
+However, the existence of a decision procedure for the theory in which
+$\accform{\alpha}$ is written is not guaranteed, as it was usually the
+case of classical path formulae for integer programs \cite{McMillan06}
+and Horn clauses \cite{BjornerGurfinkelMcMillanRybalchenko15} using
+linear or Presburger arithmetic. The problem is mainly that decidable
+theories, such as Presburger arithmetic become undecidable in the
+presence of monadic predicate symbols \cite{Halpern91}. A way around
+this problem is to check whether a given event sequence $\alpha$ may 
+
+
+
+The rest of this section is concerned with defining the building
+blocks of a lazy annotation semi-algorithm for checking emptiness of
+automata. 
+
+In particular, we address the following problems: \begin{compactenum}
 %
 \item generation of interpolants that prove the infeasability of a
-  given path formula, provided that the satisfiability of the
-  first-order theory thereof is decidable, in the presence of
-  predicate symbols.
+  given path formula, assuming the decidability of the first-order
+  theory in which the path formulae are written. 
 %
 \item generation of non-local interpolants using history variables,
   obtained by Skolemization of the universal quantifiers that occur
