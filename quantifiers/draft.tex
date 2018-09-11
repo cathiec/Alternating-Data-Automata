@@ -55,27 +55,31 @@
 \section{Preliminaries}
 
 For two integers $0 \leq i \leq j$, we denote by $[i,j]$ the set
-$\set{i,i+1,\ldots,j}$ and by $[i]$ the set $[0,i]$. To simplify the
-presentation, we consider two sorts $\Data$ and $\Bool$, where $\Data$
-is an infinite domain and $\Bool$ is the set of truth values $\top$
-(true) and $\bot$ (false). The $\Data$ sort is equipped with finitely
-many function symbols $f : \Data^{\#(f)} \rightarrow \Data$, where
-$\#(f)\geq0$ denotes the number of arguments (arity) of $f$. When
-$\#(f)=0$, we say that $f$ is a constant. A \emph{predicate} is a
-function symbol $p : \Data^{\#(p)} \rightarrow \Bool$, denoting a
+$\set{i,i+1,\ldots,j}$ and by $[i]$ the set $[0,i]$. We consider two
+sorts $\Data$ and $\Bool$, where $\Data$ is an infinite domain and
+$\Bool = \set{\top,\bot}$ is the set of boolean values true ($\top$)
+and false ($\bot$), respectively. The $\Data$ sort is equipped with
+finitely many function symbols $f : \Data^{\#(f)} \rightarrow \Data$,
+where $\#(f)\geq0$ denotes the number of arguments (arity) of
+$f$. When $\#(f)=0$, we say that $f$ is a constant. A \emph{predicate}
+is a function symbol $p : \Data^{\#(p)} \rightarrow \Bool$, denoting a
 relation of arity $\#(p)$ and we write $\preds$ for the set of
-predicates. In the following, we shall consider that the
-interpretation of all function symbols $f : \Data^{\#(f)} \rightarrow
-\Data$ that are not predicates is fixed and relative to the
-interpretation of the $\Data$ sort. For simplicity, we further blur
-the notational distinction between function symbols and their
+predicates. 
+
+In the following, we shall consider that the interpretation of all
+function symbols $f : \Data^{\#(f)} \rightarrow \Data$ that are not
+predicates is fixed by the interpretation of the $\Data$ sort,
+e.g.\ if $\Data$ is the set of integers $\zed$, the function symbols
+are zero, the successor function and the arithmetic operations of
+addition and multiplication. For simplicity, we further blur the
+notational distinction between function symbols and their
 interpretations.
 
 Let $\vars = \set{x,y,z,\ldots}$ be an infinite countable set of
-variables, ranging over the interpretation of the $\Data$ sort. Terms
-are either constants of sort $\Data$, variables or function
-applications. The set of first-order formulae is defined by the syntax
-below:
+variables, ranging over $\Data$. Terms are either constants of sort
+$\Data$, variables or function applications $f(t_1,\ldots,t_{\#(f)})$,
+where $t_1,\ldots,t_{\#(f)}$ are terms. The set of first-order
+formulae is defined by the syntax below:
 \[\phi := t \teq s \mid p(t_1,\ldots,t_{\#(p)}) 
 \mid \neg \phi_1 \mid \phi_1 \wedge \phi_2 \mid \exists x ~.~
 \phi_1 \] where $t,s,t_1,\ldots,t_{\#(p)}$ denote terms. We write
@@ -113,11 +117,12 @@ structure of $\phi$, as follows:
 \I,\nu \models \exists x ~.~ \phi_1 & \iff & \I,\nu[x\leftarrow d] \models \phi_1 \text{, for some } d \in \Data 
 \end{array}
 \]
-For a formula $\phi$, we define $\sem{\phi}_\nu \isdef \set{\I \mid
-  \I,\nu \models \phi}$, where $\nu(x)$ is defined for each $x \in
-\fv{}{\phi}$, and drop the subscript for sentences. A sentence $\phi$
+where $\nu[x\leftarrow d]$ is the valuation which assigns $d$ to $x$
+and behaves like $\nu$ elsewhere. For a formula $\phi$ and a valuation
+$\nu$, we define $\sem{\phi}_\nu \isdef \set{\I \mid \I,\nu \models
+  \phi}$ and drop the $\nu$ subscript for sentences. A sentence $\phi$
 is \emph{satisfiable} (\emph{unsatisfiable}) if
-$\sem{\phi}\neq\emptyset$ [$\sem{\phi}=\emptyset$]. An element of
+$\sem{\phi}\neq\emptyset$ ($\sem{\phi}=\emptyset$). An element of
 $\sem{\phi}$ is called a \emph{model} of $\phi$. A formula $\phi$ is
 \emph{valid} if $\I,\nu \models \phi$ for every interpretation $\I$
 and every valuation $\nu$.
@@ -135,7 +140,7 @@ $\sem{\phi}_\nu$ and $\sem{\phi}$, respectively.
 \section{First Order Alternating Automata}
 
 Let $\Sigma$ be a finite alphabet $\Sigma$ of \emph{input
-  events}. Given a finite set of variables $X$, we denote by $X
+  events}. Given a finite set of variables $X \subseteq \vars$, we denote by $X
 \mapsto \Data$ the set of valuations of the variables $X$ and
 $\Sigma[X] = \Sigma \times (X \mapsto \Data)$ be the possibly infinite
 set of \emph{data symbols} $(a,\nu)$, where $a$ is an input symbol and
@@ -149,18 +154,24 @@ $i\in[1,n]$. We denote by $\varepsilon$ the empty sequence, by
 $\Sigma^*$ the set of finite sequences of input events and by
 $\Sigma[X]^*$ the set of data words over the variables $X$.
 
-A \emph{first-order alternating automaton} (simply called automaton in
-the following) is a tuple $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$,
-where $\Sigma$ is the finite event alphabet, $X$ is a finite set of
-variables, $Q$ is a finite set of predicates, $\iota$ is a satisfiable
-sentence, $F \subseteq Q$ is the set of \emph{final} predicates and
-$\Delta$ is a set of \emph{transition rules} of the form
-\(q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \psi\), where $q \in Q$ is a
-predicate, $a \in \Sigma$ is an input event, $X \cap
-\set{y_1,\ldots,y_{\#(q)}} = \emptyset$, $\psi$ is a positive formula
-such that $\fv{}{\phi} \subseteq X \cup \set{y_1,\ldots,y_{\#(q)}}$
-and each predicate that occurs in $\psi$ belongs also to $Q$. The
-\emph{size} of $\A$ is defined as $\len{\A} = \len{\iota} +
+A \emph{first-order alternating automaton} (automaton) is a tuple $\A
+= \tuple{\Sigma,X,Q,\iota,F,\Delta}$, where: \begin{compactitem}
+\item $\Sigma$ is the finite set of input events, 
+\item $X$ is a finite set of input variables, 
+\item $Q$ is a finite set of predicates denoting control states, 
+\item $\iota$ is a sentence defining initial configurations,
+\item $F \subseteq Q$ is the set of predicates denoting final states, and 
+\item $\Delta$ is a set of \emph{transition rules} of the form
+  \(q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \psi\), where $q \in Q$ is
+  a predicate, $a \in \Sigma$ is an input event, $X \cap
+  \set{y_1,\ldots,y_{\#(q)}} = \emptyset$, $\psi$ is a positive
+  formula such that $\fv{}{\phi} \subseteq X \cup
+  \set{y_1,\ldots,y_{\#(q)}}$ and each predicate that occurs (under an
+  even number of negations) in $\psi$ belongs also to $Q$. The
+  quantifiers occurring in $\psi$ are referred to as \emph{transition
+    quantifiers}.
+\end{compactitem}
+The \emph{size} of $\A$ is defined as $\len{\A} = \len{\iota} +
 \sum_{\scriptscriptstyle{q(\vec{y}) \arrow{a(X)}{} \psi \in \Delta}}
 \len{\psi}$.
 
@@ -198,43 +209,35 @@ formalize the execution semantics of automata, we relate sets of
 configurations to models of first-order sentences, as follows. Given a
 formula $\phi$ and a valuation of its free variables $\nu$, each
 interpretation $\I \in \sem{\phi}_\nu$ corresponds to a set of
-configurations $\cube{\I} \isdef \set{q(d_1,\ldots,d_{\#(q)}) \mid
-  \tuple{d_1,\ldots,d_{\#(q)}} \in q^\I, q \in Q}$, called a
+configurations $\cube{\I} \isdef \set{q(d_1,\ldots,d_{\#(q)}) \mid q
+  \in Q,~ \tuple{d_1,\ldots,d_{\#(q)}} \in q^\I}$, called a
 \emph{cube}. For a set $\mathcal{S}$ of interpretations, we define
 $\cube{\mathcal{S}} \isdef \set{\cube{\I} \mid \I \in
-  \mathcal{S}}$. Given a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n) \in
-\Sigma[X]^*$, an \emph{execution} of
-$\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$ is a (possibly
-infinite) forest $\T = \set{T_1,T_2,\ldots}$, where each tree $T_i$ is
-such that:
+  \mathcal{S}}$. 
+
+Given a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n) \in \Sigma[X]^*$, an
+\emph{execution} of $\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$ is
+a (possibly infinite) forest $\T = \set{T_1,T_2,\ldots}$, where each
+$T_i$ is a tree labeled with configurations, such that:
 \begin{compactitem}
-\item the roots of $T_1, T_2, \ldots$ form a cube from
-  $\cube{\minsem{\iota}}$, % --- because $\iota$ is satisfiable, such
-                           % a cube always exists,
+\item the labels of the roots of $T_1, T_2, \ldots$ form a cube from
+  $\cube{\minsem{\iota}}$,
 %
-% \item all paths from the root to a leaf of $T_i$ have length $n$, and
-%
-\item if $q(d_1,\ldots,d_{\#(q)})$ is a node on the level $j \in
-  [n-1]$ in $T_i$, then its children form a cube from
-  $\cube{\minsem{\psi}_\eta}$, where \(q(y_1,\ldots,y_{\#(q)})
-  \arrow{a_{j+1}(X)}{} \psi \in \Delta\) is a transition rule and
-  $\eta$ is a valuation that assigns each variable $y_k$ the value
-  $d_k$, for $k \in [1,\#(q)]$ and each variable $x \in X$ the value
-  $\nu_{j+1}(x)$. % --- because $\fv{}{\psi} \subseteq X \cup
-                  % \set{y_1,\ldots,y_{\#(q)}}$, the values assigned
-                  % by $\eta$ to variables outside $X \cup
-                  % \set{y_1,\ldots,y_{\#(q)}}$ have no impact on
-                  % $\cube{\minsem{\psi}_\eta}$.
+\item if $q(d_1,\ldots,d_{\#(q)})$ labels a node on the level $j \in
+  [n-1]$ in $T_i$, then the labels of its children form a cube from
+  $\cube{\minsem{\psi}_{\nu_{j+1}[y_1 \leftarrow d_1,\ldots,y_{\#(q)}
+        \leftarrow d_{\#(q)}]}}$, where \(q(y_1,\ldots,y_{\#(q)})
+  \arrow{a_{j+1}(X)}{} \psi \in \Delta\) is a transition rule.
 \end{compactitem}
 An execution $\T$ over $w$ is said to be \emph{accepting} if and only
 if \begin{inparaenum}[(i)]
 \item all paths in $\T$ have the same length $n$, and
 \item the frontier of each tree $T \in \T$ is labeled with \emph{final
-  configurations} $q(d_1,\ldots,d_{\#(q)})$, where $q \in F$ is a
-  final predicate.
+  configurations} $q(d_1,\ldots,d_{\#(q)})$, where $q \in F$.
 \end{inparaenum} In this case, we say that $\A$ accepts $w$ and
-denote by $\lang{\A}$ the set of words accepted by $\A$. We address
-the following questions: \begin{compactenum}
+denote by $\lang{\A}$ the set of words accepted by $\A$. 
+
+In this paper, we address the following questions: \begin{compactenum}
 \item \emph{boolean closure}: given automata $\A_i =
   \tuple{\Sigma,X,Q_i,\iota_i,F_i,\Delta_i}$, for $i=1,2$, do there
   exist automata $\A_\cap$, $\A_\cup$ and $\overline{\A}_1$ such that
@@ -247,23 +250,34 @@ the following questions: \begin{compactenum}
 
 \subsection{Symbolic Execution}
 
-In the upcoming developments it is more convenient to work with
-logical formulae defining executions. Let $\A =
-\tuple{\Sigma,X,Q,\iota,F,\Delta}$ be an automaton for the rest of
-this session. For any $i \in \nat$, we denote by $\stamp{Q}{i} =
-\set{\stamp{q}{i} \mid q \in Q}$ and $\stamp{X}{i} = \set{\stamp{x}{i}
-  \mid x \in X}$ the sets of time-stamped predicates and variables,
-respectively. As a shorthand, we write $\stamp{Q}{\leq n}$ (resp.
-$\stamp{X}{\leq n}$) for the set $\set{\stamp{q}{i} \mid q \in Q, i
-  \in [n]}$ (resp. $\set{\stamp{x}{i} \mid x \in X, i \in [n]}$). For
-a formula $\psi$ and $i \in \nat$, we define $\stamp{\psi}{i} \isdef
-\psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$ the formula in which all input
-variables and state predicates (and only those symbols) are replaced
-by their time-stamped counterparts. As a shorthand, we shall write
-$q(\vec{y})$ for $q(y_1,\ldots,y_{\#(q)})$, when no confusion arises.
+In the upcoming developments it is sometimes more convenient to work
+with logical formulae defining executions of automata, than with
+low-level execution forests. For this reason, we first introduce
+\emph{path formulae} $\pathform{\alpha}$, which are formulae defining
+the executions of an automaton, over words that share a given sequence
+$\alpha$ of input events.  Second, we restrict a path formula
+$\pathform{\alpha}$ to an \emph{acceptance formula}
+$\accform{\alpha}$, which defines only accepting executions over words
+that share a given input sequence. Otherwise stated,
+$\accform{\alpha}$ is satisfiable if and only if the automaton accepts
+a word $w$ such that $w_\Sigma = \alpha$.
+
+Let $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ be an automaton for the
+rest of this section. For any $i \in \nat$, we denote by $\stamp{Q}{i}
+= \set{\stamp{q}{i} \mid q \in Q}$ and $\stamp{X}{i} =
+\set{\stamp{x}{i} \mid x \in X}$ the sets of time-stamped predicates
+and variables, respectively. As a shorthand, we write $\stamp{Q}{\leq
+  n}$ (resp.  $\stamp{X}{\leq n}$) for the set $\set{\stamp{q}{i} \mid
+  q \in Q, i \in [n]}$ (resp. $\set{\stamp{x}{i} \mid x \in X, i \in
+  [n]}$). For a formula $\psi$ and $i \in \nat$, we define
+$\stamp{\psi}{i} \isdef \psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$ the
+formula in which all input variables and state predicates (and only
+those symbols) are replaced by their time-stamped counterparts. As a
+shorthand, we shall write $q(\vec{y})$ for $q(y_1,\ldots,y_{\#(q)})$,
+when no confusion arises.
 
 Given a sequence of input events $\alpha = a_1 \ldots a_n$, the
-\emph{path formula} of $\alpha$ (in $\A$) is defined as follows:
+\emph{path formula} of $\alpha$ is defined as:
 \begin{equation}\label{eq:pathform}
 \pathform{\alpha} \isdef \stamp{\iota}{0} \wedge 
 \bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{}
@@ -278,7 +292,7 @@ execution forest $\T$ of $\A$ over $w$ is associated an interpretation
 $\I_{\T}$ of the set of time-stamped predicates $\stamp{Q}{\leq n}$,
 defined as:
 \[\I_{\T}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
-  q(d_1,\ldots,d_{\#(q)}) \text{ occurs on level $i$ in $\T$}}\]
+  q(d_1,\ldots,d_{\#(q)}) \text{ labels a node on level $i$ in $\T$}}\]
 
 \begin{lemma}\label{lemma:path-formula}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for any
@@ -305,17 +319,15 @@ defined as:
   of $\A$ over $u$, such that $\J = \I_\G$. Consider a leaf of a tree
   $T \in \G$, labeled with a configuration $q(d_1,\ldots,d_{\#(q)})$
   and let $\forall y_1 \ldots \forall y_{\#(q)} ~.~
-  \stamp{q}{n-1}(\vec{y}) \rightarrow \stamp{\psi}{n}$ be
-  the subformula of $\pathform{w_\Sigma}$ corresponding to the
-  application(s) of the transition rule $q(\vec{y})
-  \arrow{a_n}{} \psi$ at the $(n-1)$-th step. Let $\nu$ be the
-  valuation that assigns each $y_i$ the value $d_i$, for all $i \in
-  [1,\#(q)]$ and behaves like $w_\Data$ outside of
-  $\set{y_1,\ldots,y_{\#(d)}}$. Because $\I, w_\Data \models \forall
-  y_1 \ldots \forall y_{\#(q)} ~.~
-  \stamp{q}{n-1}(\vec{y}) \rightarrow \stamp{\psi}{n}$,
-  we have $\I \in \sem{\stamp{\psi}{n}}_{\nu}$ and let $\K$ be one of
-  the minimal interpretations such that $\K \subseteq \I$ and $\K \in
+  \stamp{q}{n-1}(\vec{y}) \rightarrow \stamp{\psi}{n}$ be the
+  subformula of $\pathform{w_\Sigma}$ corresponding to the
+  application(s) of the transition rule $q(\vec{y}) \arrow{a_n}{}
+  \psi$ at the $(n-1)$-th step. Let $\nu = w_\Data[y_1 \leftarrow
+    d_1,\ldots,y_{\#(q)} \leftarrow d_{\#(q)}]$. Because $\I, w_\Data
+  \models \forall y_1 \ldots \forall y_{\#(q)} ~.~
+  \stamp{q}{n-1}(\vec{y}) \rightarrow \stamp{\psi}{n}$, we have $\I
+  \in \sem{\stamp{\psi}{n}}_{\nu}$ and let $\K$ be one of the minimal
+  interpretations such that $\K \subseteq \I$ and $\K \in
   \sem{\stamp{\psi}{n}}_{\nu}$. It is not hard to see that $\K$ exists
   and is unique, otherwise we could take the pointwise intersection of
   two or more such interpretations. We define the interpretation
@@ -339,7 +351,7 @@ defined as:
   $\I_{\G}$ is a minimal interpretation such that \(\I_{\G}, u_{\Data}
   \models \pathform{u_\Sigma}\). Since $\I_{\T}(\stamp{q}{n}) =
   \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid q(d_1,\ldots,d_{\#(q)})
-    \text{ occurs on the $n$-th level in $\T$}}$, we have $\I_{\T},
+    \text{ labels a node on the $n$-th level in $\T$}}$, we have $\I_{\T},
   w_\Data \models \varphi$, for each subformula $\varphi = \forall y_1
   \ldots \forall y_{\#(q)} ~.~ \stamp{q}{n-1}(\vec{y})
   \rightarrow \stamp{\psi}{n}$ of $\pathform{w_\Sigma}$, by the
@@ -374,6 +386,19 @@ the set of final states of $\A$:
   \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
 \stamp{q}{n}(\vec{y}) \rightarrow \bot
 \end{equation}
+The top-level universal quantifiers from a subformula $\forall y_1
+\ldots \forall y_{\#(q)} ~.~ \stamp{q}{i}(\vec{y}) \rightarrow \psi$
+of $\accform{\alpha}$ will be referred to as \emph{path quantifiers},
+in the following. Without loss of generality, path quantifiers are
+assumed to be distinct from the transition quantifiers that occur
+within a formula $\psi$ of a transition rule $q(y_1,\ldots,y_{\#(q)})
+\arrow{a(X)}{} \psi$ of $\A$.
+
+Observe that the acceptance formula $\accform{\A}$ is false in every
+interpretation of the predicates that assigns a non-empty set to a
+non-final predicate occurring on the last level in the execution
+forest. The relation between the words accepted by $\A$ and the
+acceptance formula above, is formally captured by the following lemma:
 
 \begin{lemma}\label{lemma:acceptance}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
@@ -401,17 +426,17 @@ the set of final states of $\A$:
   children. By the definition of the execution semantics of $\A$, we
   have $\cube{\minsem{\psi}_{\eta}} = \emptyset$, where
   $q(\vec{y}) \arrow{a_{m+1}(X)}{} \psi$ is the transition
-  rule of $\A$ that applies for $q$ and $a_{m+1}$ and $\eta$ stands
-  for $\nu[y_1 \leftarrow d_1,\ldots,y_{\#(q)} \leftarrow
+  rule of $\A$ that applies for $q$ and $a_{m+1}$ and $\eta=
+  w_\Data[y_1 \leftarrow d_1,\ldots,y_{\#(q)} \leftarrow
     d_{\#(q)}]$. Hence $\sem{\psi}_{\eta} = \emptyset$, and because
-  $\I,\nu \models \accform{\alpha}$, we obtain that $\I,\eta \models
+  $\I,w_\Data \models \accform{\alpha}$, we obtain that $\I,\eta \models
   q(\vec{y}) \rightarrow \stamp{\psi}{m+1}$, thus
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$. However, this
   contradicts the fact that $\I=\I_{\T}$ and that
   $q(d_1,\ldots,d_{\#(q)})$ labels a node of $\T$. Second, assume that
   (\ref{it2:acceptance}), there exists a frontier node of $\T$ labeled
   with a configuration $q(d_1,\ldots,d_{\#(q)})$ such that $q \in Q
-  \setminus F$. Since $\I,\nu \models \forall y_1 \ldots \forall
+  \setminus F$. Since $\I,w_\Data \models \forall y_1 \ldots \forall
   y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \bot$, by a
   similar reasoning as in the above case, we obtain that
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$, contradiction.  
@@ -427,9 +452,67 @@ the set of final states of $\A$:
   y_{\#(q)} ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot$,
   trivially.  \qed}
 
-In the following, it will be useful, in several places, to define the
-data sequence of an accepted word using the predicate-free formula
-defined below:
+As an immediate consequence, one can decide whether $\A$ accepts some
+word $w$ with a given input sequence $w_\Sigma=\alpha$, by checking
+whether $\accform{\alpha}$ is satisfiable. However, unlike
+non-alternating infinite-state models of computation, such as counter
+automata (nondeterministic programs with integer variables), the
+satisfiability query for an acceptance (path) formula falls outside of
+known decidable theories, supported by standard SMT solvers. There are
+basically two reasons for this, namely \begin{inparaenum}[(i)]
+\item the presence of predicate symbols, and
+\item non-trivial alternation of quantifiers.
+\end{inparaenum}
+To understand this point, consider for example, the quantified theory
+of Presburger arithmetic. Adding even only one monadic predicate
+symbol to it yields undecidability in the presence of non-trivial
+quantifier alternation \cite{Halpern91}, however the quantifier-free
+fragment with predicate symbols is decidable\footnote{Linear integer
+  arithmetic with uninterpreted function symbols is decidable, by a
+  Nelson-Oppen style theory combination argument.}.
+
+To tackle this problem, we start from the observation that acceptance
+formulae have a particular form that allows the elimination of path
+quantifiers and of predicates, by a couple of equivalence-preserving
+transformations. The result will be a formula with no predicate
+symbols, whose only quantifiers are the transition quantifiers
+introduced by the transition rules of the automaton. We shall further
+assume (\S\ref{sec:emptiness}) that the first-order theory of the data
+sort $\Data$ has quantifier elimination, which allows to effectively
+decide these queries. 
+
+For the time being, let us formally define the elimination of
+transition quantifiers and predicates, respectively. Given a sequence
+of input events $\alpha = a_1 \ldots a_n$, consider the acceptance
+formula: 
+\[\accform{\alpha} = \stamp{\iota}{0} \wedge 
+\bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in
+  \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+\stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i} \wedge
+\bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
+~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot\]
+
+\begin{definition}\label{def:quantform}
+  Let $\quantformA{0}{\alpha}, \ldots, \quantformA{n}{\alpha}$ be the
+  following sequence of formulae: \begin{compactitem}
+  \item $\quantformA{0}{\alpha} \isdef \stamp{\iota}{0}$, 
+  \item $\quantformA{i}{\alpha} \isdef \quantformA{i-1}{\alpha} \wedge
+    \bigwedge \set{\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \rightarrow
+      \stamp{\psi}{i}[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}] \mid
+      \stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \text{ occurs in }
+      \quantformA{i-1}{\alpha}}$, for all $i \in [1,n]$.    
+  \end{compactitem}
+  We write $\quantform{\alpha}$ instead of $\quantformA{n}{\alpha}$,
+  when no confusion arises.
+\end{definition}
+Observe that $\quantform{\alpha}$ contains no path quantifiers, as
+required. On the other hand, the scope of zero or more transition
+quantifiers might extend outside the formula given by the transition
+rule, as shown by the following example: 
+
+\begin{example}\label{ex:path-quant-elim}
+  
+\end{example}
 
 \begin{definition}\label{def:substform}
 Given a sequence of input events $\alpha = a_1 \ldots a_n$, let
@@ -530,6 +613,7 @@ and simply write $\nu \models \substform{\alpha}$ in this case.
   \substform{w_\Sigma}$. \qed}
 
 \subsection{Closure Properties}
+\label{sec:closure}
 
 Given a positive formula $\phi$, we define the \emph{dual} formula
 $\dual{\phi}$ recursively as follows:
@@ -630,6 +714,7 @@ automata under all boolean operations:
   \proof{By induction on the structure of $\phi$. \qed}}
 
 \section{The Emptiness Problem}
+\label{sec:emptiness}
 
 The problem of checking emptiness of a given automata is undecidable,
 even for automata with predicates of arity two whose transition rules
