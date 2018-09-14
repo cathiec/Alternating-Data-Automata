@@ -966,21 +966,20 @@ formula. By $\pset{+}{\phi}$ [$\pset{-}{\phi}$] we denote the set of
 predicate symbols that occur in $\phi$ under an even [odd] number of
 negations.
 
+\begin{definition}\label{def:lyndon-interpolant}
 Given formulae $\phi$ and $\psi$ such that $\phi \wedge \psi$ is
 unsatisfiable, a \emph{Lyndon interpolant} \cite{Lyndon59} is a
-first-order formula $I$ such that: \begin{compactitem}
-\item the formula $\phi \rightarrow I$ is valid,
-\item the formula $I \wedge \psi$ is unsatisfiable, 
-\item $\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$, 
-\item $\pset{+}{I} \subseteq \pset{+}{\phi} \cap \pset{+}{\psi}$ and
-  $\pset{-}{I} \subseteq \pset{-}{\phi} \cap \pset{-}{\psi}$.
-\end{compactitem}
+formula $I$ such that $\phi \models I$, the formula $I \wedge \psi$ is
+unsatisfiable, $\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$,
+$\pset{+}{I} \subseteq \pset{+}{\phi} \cap \pset{+}{\psi}$ and
+$\pset{-}{I} \subseteq \pset{-}{\phi} \cap \pset{-}{\psi}$.
+\end{definition}
 The existence of Lyndon interpolants for first-order logic was proved
 by a non-constructive model-theoretic argument \cite{Lyndon59}. In the
 following, we shall consider only theories of the data domain $\Data$,
 for which there exists a decision procedure for satisfiability, able
-to produce Lyndon interpolants. For instance, interpolating decision
-procedures exist for linear real and integer arithmetic, with
+to produce Lyndon interpolants. For instance, such interpolating
+decision procedures exist for linear real and integer arithmetic, with
 uninterpreted function symbols (UFLRA and UFLIA)
 \cite{RybalchenkoSofronieStokkermans}. In the rest of this section, we
 fix an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$.
