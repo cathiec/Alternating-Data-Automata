@@ -17,6 +17,7 @@
 \usepackage{makecell}
 \usepackage{url}
 \usepackage{tikz}
+% \usepackage{hyperref}
 \usetikzlibrary{automata,positioning, calc}
 \usepackage[inline,shortlabels]{enumitem}
 
@@ -167,11 +168,11 @@ A \emph{first-order alternating automaton} (automaton) is a tuple $\A
   \set{y_1,\ldots,y_{\#(q)}} = \emptyset$, $\psi$ is a positive
   formula such that $\fv{}{\phi} \subseteq X \cup
   \set{y_1,\ldots,y_{\#(q)}}$ and each predicate that occurs (under an
-  even number of negations) in $\psi$ belongs also to $Q$. The
-  quantifiers occurring in $\psi$ are referred to as \emph{transition
-    quantifiers}.
+  even number of negations) in $\psi$ belongs also to $Q$. 
 \end{compactitem}
-The \emph{size} of $\A$ is defined as $\len{\A} = \len{\iota} +
+The quantifiers occurring in the right-hand side formula of a
+transition rule are referred to as \emph{transition quantifiers}. The
+\emph{size} of $\A$ is defined as $\len{\A} = \len{\iota} +
 \sum_{\scriptscriptstyle{q(\vec{y}) \arrow{a(X)}{} \psi \in \Delta}}
 \len{\psi}$.
 
@@ -260,7 +261,7 @@ $\pathform{\alpha}$ to an \emph{acceptance formula}
 $\accform{\alpha}$, which defines only accepting executions over words
 that share a given input sequence. Otherwise stated,
 $\accform{\alpha}$ is satisfiable if and only if the automaton accepts
-a word $w$ such that $w_\Sigma = \alpha$.
+a word $w$ such that $\event{w} = \alpha$.
 
 Let $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ be an automaton for the
 rest of this section. For any $i \in \nat$, we denote by $\stamp{Q}{i}
@@ -292,20 +293,21 @@ execution forest $\T$ of $\A$ over $w$ is associated an interpretation
 $\I_{\T}$ of the set of time-stamped predicates $\stamp{Q}{\leq n}$,
 defined as:
 \[\I_{\T}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
-  q(d_1,\ldots,d_{\#(q)}) \text{ labels a node on level $i$ in $\T$}}\]
+  q(d_1,\ldots,d_{\#(q)}) \text{ labels a node on level $i$ in $\T$}} 
+,~\forall q\in Q ~\forall i \in [n]\]
 
 \begin{lemma}\label{lemma:path-formula}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for any
   word $w=(a_1,\nu_1) \ldots (a_n,\nu_n)$, we have 
-  \(\minsem{\pathform{w_\Sigma}}_{w_\Data} = \set{\I_{\T} \mid \T
+  \(\minsem{\pathform{\event{w}}}_{\data{w}} = \set{\I_{\T} \mid \T
     \text{ is an execution of $\A$ over $w$}}\). 
 \end{lemma}
 \proof{ ``$\subseteq$'' Let $\I$ be a minimal interpretation such that
-  $\I,w_\Data \models \pathform{w_\Sigma}$. We show that there exists
+  $\I,\data{w} \models \pathform{\event{w}}$. We show that there exists
   an execution $\T$ of $\A$ over $w$ such that $\I = \I_\T$, by
   induction on $n\geq 0$. For $n=0$, we have $w=\epsilon$ and
-  $\pathform{w_\Sigma} = \stamp{\iota}{0}$. Because $\iota$ is a
-  sentence, the valuation $w_\Data$ is not important in $\I,w_\Data
+  $\pathform{\event{w}} = \stamp{\iota}{0}$. Because $\iota$ is a
+  sentence, the valuation $\data{w}$ is not important in $\I,\data{w}
   \models \stamp{\iota}{0}$ and, moreover, since $\I$ is minimal, we
   have $\I \in \minsem{\stamp{\iota}{0}}$. We define the
   interpretation $\J(q)=\I(\stamp{q}{0})$, for all $q \in Q$. Then
@@ -320,10 +322,10 @@ defined as:
   $T \in \G$, labeled with a configuration $q(d_1,\ldots,d_{\#(q)})$
   and let $\forall y_1 \ldots \forall y_{\#(q)} ~.~
   \stamp{q}{n-1}(\vec{y}) \rightarrow \stamp{\psi}{n}$ be the
-  subformula of $\pathform{w_\Sigma}$ corresponding to the
+  subformula of $\pathform{\event{w}}$ corresponding to the
   application(s) of the transition rule $q(\vec{y}) \arrow{a_n}{}
-  \psi$ at the $(n-1)$-th step. Let $\nu = w_\Data[y_1 \leftarrow
-    d_1,\ldots,y_{\#(q)} \leftarrow d_{\#(q)}]$. Because $\I, w_\Data
+  \psi$ at the $(n-1)$-th step. Let $\nu = \data{w}[y_1 \leftarrow
+    d_1,\ldots,y_{\#(q)} \leftarrow d_{\#(q)}]$. Because $\I, \data{w}
   \models \forall y_1 \ldots \forall y_{\#(q)} ~.~
   \stamp{q}{n-1}(\vec{y}) \rightarrow \stamp{\psi}{n}$, we have $\I
   \in \sem{\stamp{\psi}{n}}_{\nu}$ and let $\K$ be one of the minimal
@@ -341,7 +343,7 @@ defined as:
   
   ``$\supseteq$'' Let $\T$ be an execution of $\A$ over $w$. We show
   that $\I_{\T}$ is a minimal interpretation such that $\I_{\T},
-  w_\Data \models \pathform{w_\Sigma}$, by induction on $n \geq
+  \data{w} \models \pathform{\event{w}}$, by induction on $n \geq
   0$. For $n=0$, $\T$ is a cube from $\cube{\minsem{\iota}}$, by
   definition. Then $\I_{\T} \models \stamp{\iota}{0}$ and moreover, it
   is a minimal such interpretation. For the inductive case $n > 0$,
@@ -352,17 +354,17 @@ defined as:
   \models \pathform{u_\Sigma}\). Since $\I_{\T}(\stamp{q}{n}) =
   \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid q(d_1,\ldots,d_{\#(q)})
     \text{ labels a node on the $n$-th level in $\T$}}$, we have $\I_{\T},
-  w_\Data \models \varphi$, for each subformula $\varphi = \forall y_1
+  \data{w} \models \varphi$, for each subformula $\varphi = \forall y_1
   \ldots \forall y_{\#(q)} ~.~ \stamp{q}{n-1}(\vec{y})
-  \rightarrow \stamp{\psi}{n}$ of $\pathform{w_\Sigma}$, by the
+  \rightarrow \stamp{\psi}{n}$ of $\pathform{\event{w}}$, by the
   execution semantics of $\A$. This is the case because the children
   of each node labeled with $q(d_1,\ldots,d_{\#(q)})$ on the
   $(n-1)$-th level of $\T$ form a cube from
   $\cube{\minsem{\psi}_\nu}$, where $\nu$ is a valuation that assigns
-  each $y_i$ the value $d_i$ and behaves like $w_\Data$,
+  each $y_i$ the value $d_i$ and behaves like $\data{w}$,
   otherwise. Now supppose, for a contradiction, that $\I_{\T}$ is not
   minimal and let $\J \subsetneq \I_{\T}$ be an interpretation such
-  that $\J,w_\Data \models \pathform{w_\Sigma}$. First, we show that
+  that $\J,\data{w} \models \pathform{\event{w}}$. First, we show that
   the restriction $\J'$ of $\J$ to $\bigcup_{i=0}^{n-1} \stamp{Q}{i}$
   must coincide with $\I_{\G}$. Assuming this is not the case,
   i.e.\ $\J' \subsetneq \I_{\G}$, contradicts the minimality of
@@ -379,8 +381,9 @@ defined as:
 
 Next, we give a logical characterization of acceptance, relative to a
 given sequence of input events $\alpha \in \Sigma^*$. To this end, we
-extend the path formula $\pathform{\alpha}$ with a characterization of
-the set of final states of $\A$: 
+constrain the path formula $\pathform{\alpha}$ by requiring that only
+final states of $\A$ occur on the last level of the execution.  The
+result is the \emph{acceptance formula} for $\alpha$:
 \begin{equation}\label{eq:accform}
 \accform{\alpha} \isdef \pathform{\alpha} \wedge \bigwedge_{q
   \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
@@ -389,30 +392,29 @@ the set of final states of $\A$:
 The top-level universal quantifiers from a subformula $\forall y_1
 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{i}(\vec{y}) \rightarrow \psi$
 of $\accform{\alpha}$ will be referred to as \emph{path quantifiers},
-in the following. Without loss of generality, path quantifiers are
-assumed to be distinct from the transition quantifiers that occur
-within a formula $\psi$ of a transition rule $q(y_1,\ldots,y_{\#(q)})
-\arrow{a(X)}{} \psi$ of $\A$.
+in the following. Notice that path quantifiers are distinct from the
+transition quantifiers that occur within a formula $\psi$ of a
+transition rule $q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \psi$ of $\A$.
 
-Observe that the acceptance formula $\accform{\A}$ is false in every
-interpretation of the predicates that assigns a non-empty set to a
-non-final predicate occurring on the last level in the execution
-forest. The relation between the words accepted by $\A$ and the
-acceptance formula above, is formally captured by the following lemma:
+The acceptance formula $\accform{\A}$ is false in every interpretation
+of the predicates that assigns a non-empty set to a non-final
+predicate occurring on the last level in the execution forest. The
+relation between the words accepted by $\A$ and the acceptance formula
+above, is formally captured by the following lemma:
 
 \begin{lemma}\label{lemma:acceptance}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
   every word $w \in \Sigma[X]^*$, the following are
   equivalent: \begin{compactenum}
   \item\label{it1:lemma:acceptance} there exists an interpretation
-    $\I$ such that $\I,w_\Data \models \accform{w_\Sigma}$, 
+    $\I$ such that $\I,\data{w} \models \accform{\event{w}}$, 
     %
   \item\label{it2:lemma:acceptance} $w \in \lang{\A}$. 
   \end{compactenum}
 \end{lemma}
 \proof{ ``$(\ref{it1:lemma:acceptance}) \Rightarrow
   (\ref{it2:lemma:acceptance})$'' Let $\I$ be an interpretation such
-  that $\I,w_\Data \models \accform{w_\Sigma}$. By Lemma
+  that $\I,\data{w} \models \accform{\event{w}}$. By Lemma
   \ref{lemma:path-formula}, $\A$ has an execution $\T$ over $w$ such
   that $\I = \I_{\T}$. To prove that $\T$ is accepting, we show
   that \begin{inparaenum}[(i)]
@@ -427,33 +429,33 @@ acceptance formula above, is formally captured by the following lemma:
   have $\cube{\minsem{\psi}_{\eta}} = \emptyset$, where
   $q(\vec{y}) \arrow{a_{m+1}(X)}{} \psi$ is the transition
   rule of $\A$ that applies for $q$ and $a_{m+1}$ and $\eta=
-  w_\Data[y_1 \leftarrow d_1,\ldots,y_{\#(q)} \leftarrow
+  \data{w}[y_1 \leftarrow d_1,\ldots,y_{\#(q)} \leftarrow
     d_{\#(q)}]$. Hence $\sem{\psi}_{\eta} = \emptyset$, and because
-  $\I,w_\Data \models \accform{\alpha}$, we obtain that $\I,\eta \models
+  $\I,\data{w} \models \accform{\alpha}$, we obtain that $\I,\eta \models
   q(\vec{y}) \rightarrow \stamp{\psi}{m+1}$, thus
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$. However, this
   contradicts the fact that $\I=\I_{\T}$ and that
   $q(d_1,\ldots,d_{\#(q)})$ labels a node of $\T$. Second, assume that
   (\ref{it2:acceptance}), there exists a frontier node of $\T$ labeled
   with a configuration $q(d_1,\ldots,d_{\#(q)})$ such that $q \in Q
-  \setminus F$. Since $\I,w_\Data \models \forall y_1 \ldots \forall
+  \setminus F$. Since $\I,\data{w} \models \forall y_1 \ldots \forall
   y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \bot$, by a
   similar reasoning as in the above case, we obtain that
   $\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$, contradiction.  
 
   ``$(\ref{it2:lemma:acceptance}) \Rightarrow
   (\ref{it1:lemma:acceptance})$'' Let $\T$ be an accepting execution
-  of $\A$ over $w$. We prove that $\I_\T,w_\Data \models
-  \accform{w_\Sigma}$. By Lemma \ref{lemma:path-formula}, we obtain
-  $\I_\T,w_\Data \models \pathform{w_\Sigma}$. Since every path in
+  of $\A$ over $w$. We prove that $\I_\T,\data{w} \models
+  \accform{\event{w}}$. By Lemma \ref{lemma:path-formula}, we obtain
+  $\I_\T,\data{w} \models \pathform{\event{w}}$. Since every path in
   $\T$ is of length $n$ and all nodes on the $n$-th level of $\T$ are
-  labeled by final configurations, we obtain that $\I_\T,w_\Data
+  labeled by final configurations, we obtain that $\I_\T,\data{w}
   \models \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
   y_{\#(q)} ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot$,
   trivially.  \qed}
 
 As an immediate consequence, one can decide whether $\A$ accepts some
-word $w$ with a given input sequence $w_\Sigma=\alpha$, by checking
+word $w$ with a given input sequence $\event{w}=\alpha$, by checking
 whether $\accform{\alpha}$ is satisfiable. However, unlike
 non-alternating infinite-state models of computation, such as counter
 automata (nondeterministic programs with integer variables), the
@@ -461,156 +463,333 @@ satisfiability query for an acceptance (path) formula falls outside of
 known decidable theories, supported by standard SMT solvers. There are
 basically two reasons for this, namely \begin{inparaenum}[(i)]
 \item the presence of predicate symbols, and
-\item non-trivial alternation of quantifiers.
+\item the non-trivial alternation of quantifiers.
 \end{inparaenum}
-To understand this point, consider for example, the quantified theory
-of Presburger arithmetic. Adding even only one monadic predicate
-symbol to it yields undecidability in the presence of non-trivial
-quantifier alternation \cite{Halpern91}, however the quantifier-free
-fragment with predicate symbols is decidable\footnote{Linear integer
-  arithmetic with uninterpreted function symbols is decidable, by a
-  Nelson-Oppen style theory combination argument.}.
+To understand this point, consider for example, the decidable theory
+of Presburger arithmetic \cite{Presburger29}. Adding even only one
+monadic predicate symbol to it yields undecidability in the presence
+of non-trivial quantifier alternation \cite{Halpern91}. However the
+quantifier-free fragment of Presburger arithmetic extended with
+predicate symbols can be shown to be decidable, using a Nelson-Oppen
+style congruence closure argument \cite{NelsonOppen80}.
 
 To tackle this problem, we start from the observation that acceptance
-formulae have a particular form that allows the elimination of path
-quantifiers and of predicates, by a couple of equivalence-preserving
-transformations. The result will be a formula with no predicate
-symbols, whose only quantifiers are the transition quantifiers
-introduced by the transition rules of the automaton. We shall further
+formulae have a particular form, which allows the elimination of path
+quantifiers and of predicates, by a couple of
+satisfiability-preserving transformations. The result of applying
+these transformations is a formula with no predicate symbols, whose
+only quantifiers are those introduced by the transition rules of the
+automaton, referred to as transition quantifiers. We shall further
 assume (\S\ref{sec:emptiness}) that the first-order theory of the data
 sort $\Data$ has quantifier elimination, which allows to effectively
-decide these queries. 
+decide the satisfiability of such formulae.
 
 For the time being, let us formally define the elimination of
-transition quantifiers and predicates, respectively. Given a sequence
-of input events $\alpha = a_1 \ldots a_n$, consider the acceptance
-formula: 
-\[\accform{\alpha} = \stamp{\iota}{0} \wedge 
-\bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in
-  \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
-\stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i} \wedge
-\bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
-~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot\]
+transition quantifiers and predicates, respectively. Consider a given
+sequence of input events $\alpha = a_1 \ldots a_n$ and denote by
+$\alpha_i$ the prefix $a_1 \ldots a_i$ of $\alpha$, for $i \in [n]$,
+where $\alpha_0=\epsilon$.
+
+%% \[\accform{\alpha} = \stamp{\iota}{0} \wedge 
+%% \bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in
+%%   \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+%% \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i} \wedge
+%% \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
+%% ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot\]
 
 \begin{definition}\label{def:quantform}
-  Let $\quantformA{0}{\alpha}, \ldots, \quantformA{n}{\alpha}$ be the
-  following sequence of formulae: \begin{compactitem}
-  \item $\quantformA{0}{\alpha} \isdef \stamp{\iota}{0}$, 
-  \item $\quantformA{i}{\alpha} \isdef \quantformA{i-1}{\alpha} \wedge
-    \bigwedge \set{\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \rightarrow
-      \stamp{\psi}{i}[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}] \mid
-      \stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \text{ occurs in }
-      \quantformA{i-1}{\alpha}}$, for all $i \in [1,n]$.    
-  \end{compactitem}
-  We write $\quantform{\alpha}$ instead of $\quantformA{n}{\alpha}$,
-  when no confusion arises.
+  Let $\quantformn{\alpha_0}, \ldots, \quantformn{\alpha_n}$ be the
+  sequence of formulae defined by $\quantformn{\alpha_0} \isdef
+  \stamp{\iota}{0}$ and, for all $i \in [1,n]$:
+  \[\quantformn{\alpha_i} \isdef \quantformn{\alpha_{i-1}} \wedge
+  \bigwedge_{\begin{array}{l}
+      \scriptstyle{\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \quantformn{\alpha_{i-1}}} \\
+      \scriptstyle{q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{} \psi \in \Delta} 
+  \end{array}} \stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \rightarrow 
+    \stamp{\psi}{i}[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]
+      \]  We write
+    $\quantform{\alpha}$ for the prenex normal form of the formula: 
+      \[\quantformn{\alpha_n} \wedge \bigwedge_{\begin{array}{l}
+          \scriptstyle{\stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \quantformn{\alpha_n}} \\
+          \scriptstyle{q \in Q \setminus F}
+      \end{array}} \stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \rightarrow \bot \enspace.\]
 \end{definition}
 Observe that $\quantform{\alpha}$ contains no path quantifiers, as
-required. On the other hand, the scope of zero or more transition
-quantifiers might extend outside the formula given by the transition
-rule, as shown by the following example: 
+required. On the other hand, the scope of the transition quantifiers
+in $\quantform{\alpha}$ exceeds the right-hand side formulae from the
+transition rules, as shown by the following example. 
 
-\begin{example}\label{ex:path-quant-elim}
-  
+\begin{example}\label{ex:quant-elim}
+  Consider the automaton $\A = \tuple{\set{a_1,a_2}, \set{x}, \set{q},
+    \iota, \set{q}, \Delta}$, where:
+  \[\begin{array}{rcl}
+  \iota & = & \exists z ~.~ q(z) \wedge z \geq 0 \\
+  \Delta & = & \set{q(y) \arrow{a_1(x)}{} \forall z ~.~ z \leq x+y \rightarrow q(y-z+x),~
+    q(y) \arrow{a_2(x)}{} \exists z ~.~ z \geq x-y \wedge q(y+z+x)}
+  \end{array}\]
+  For the input event sequence $\alpha = a_1a_2$, the path and acceptance formulae are:
+  \[\begin{array}{rcl}
+  \pathform{\alpha} = \accform{\alpha} & = & \exists z ~.~ \stamp{q}{0}(z) \wedge z \geq 0 \\
+  && \forall y ~.~ \stamp{q}{0}(y) \rightarrow (\forall z ~.~ z\leq\stamp{x}{1}+y \rightarrow \stamp{q}{1}(y-z+\stamp{x}{1})) \\
+  && \forall y ~.~ \stamp{q}{1}(y) \rightarrow \exists z ~.~ z\geq\stamp{x}{2}-y \wedge \stamp{q}{2}(y+z+\stamp{x}{2})
+  \end{array}\]
+  The result of eliminating the path quantifiers, in prenex normal form, is shown below:
+  \[\begin{array}{rcl}
+  \quantform{\alpha} & = & \exists z_1\forall z_2\exists z_3 ~.~ \stamp{q}{0}(z_1) \wedge z_1 \geq 0 \\
+  && \wedge~ [\stamp{q}{0}(z_1) \rightarrow (z_2 \leq \stamp{x}{1}+z_1 \rightarrow \stamp{q}{1}(z_1-z_2+\stamp{x}{1}))] \\
+  && \wedge~ [\stamp{q}{1}(z_1-z_2+\stamp{x}{1}) \rightarrow z_3 \geq \stamp{x}{2} -z_1+z_2-\stamp{x}{1} \wedge 
+    \stamp{q}{2}(z_1-z_2+\stamp{x}{1}+z_3+\stamp{x}{2})] \enspace\enspace\hfill\blacksquare
+  \end{array}\]
 \end{example}
 
+The next lemma establishes a formal relation between the
+satisfiability of an acceptance formula $\accform{\alpha}$ and that of
+the formula $\quantform{\alpha}$, obtained by eliminating the path
+quantifiers from $\accform{\alpha}$.
+
+\begin{lemma}\label{lemma:quant}
+  For any input event sequence $\alpha=a_1\ldots a_n$ and each
+  valuation $\nu : \stamp{X}{\leq n} \rightarrow \Data$, the following
+  hold: \begin{compactenum}
+  \item\label{it1:quant} for all interpretations $\I$, if $\I,\nu
+    \models \accform{\alpha}$ then $\I,\nu \models
+    \quantform{\alpha}$. 
+    %
+  \item\label{it2:quant} if there exists an interpretation $\I$ such
+    that $\I,\nu \models \quantform{\alpha}$ then there exists an
+    interpretation $\J \subseteq \I$ such that $\J,\nu \models
+    \accform{\alpha}$. 
+  \end{compactenum}
+\end{lemma}
+\proof{(\ref{it1:quant}) Trivial, since every subformula
+  $q(t_1,\ldots,t_{\#(q)}) \rightarrow
+  \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$ of $\quantform{\alpha}$ is
+  entailed by a subformula $\forall y_1 \ldots \forall y_{\#(q)} ~.~
+  q(y_1, \ldots, y_{\#(q)}) \rightarrow \psi$ of $\accform{\alpha}$.
+
+  \noindent(\ref{it2:quant}) By repeated applications of the following fact: 
+
+  \begin{fact}
+    Given formulae $\phi$ and $\psi$, such that no predicate atom with
+    predicate symbol $q$ occurs in $\psi(y_1,\ldots,y_{\#(q)})$, for
+    each valuation $\nu$, if there exists an interpretation $\I$ such
+    that $\I,\nu \models \phi \wedge
+    \bigwedge_{q(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \phi}
+    q(t_1,\ldots,t_{\#(q)}) \rightarrow
+    \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$ then there exists a
+    valuation $\J$ such that $\J(q) \subseteq \I(q)$ and $\J(q') =
+    \I(q')$ for all $q' \in Q \setminus \set{q}$ and $\J,\nu \models
+    \phi \wedge \forall y_1 \ldots \forall y_{\#(q)} ~.~
+    q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$.
+  \end{fact}
+  \proof{Assume w.l.o.g. that $\phi$ is quantifier free. The proof can
+    be easily generalized to the case $\phi$ has quantifiers. Let
+    $\J(q) = \set{\langle t_1^\nu, \ldots, t_{\#(q)}^\nu \rangle \in
+      \I(q) \mid q(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \phi}$ and
+    $\J(q') = \I(q')$ for all $q' \in Q \setminus \set{q}$. Since
+    $\I,\nu \models \phi$, we obtain that also $\J,\nu \models \phi$
+    because the tuples of values in $\I(q) \setminus \J(q)$ are not
+    interpretations of terms that occur within subformulae
+    $q(t_1,\ldots,t_{\#(q)})$ of $\phi$. Moreover,
+    $\bigwedge_{q(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \phi}
+    q(t_1,\ldots,t_{\#(q)}) \rightarrow
+    \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$ and $\forall y_1 \ldots
+    \forall y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$
+    are equivalent under $\J$, thus $\J,\nu \models \forall y_{\#(q)}
+    ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$, as required. \qed}
+  
+  \noindent This concludes the proof. \qed}
+
+We proceed with the elimination of predicate atoms from
+$\quantform{\alpha}$, defined below. 
+
 \begin{definition}\label{def:substform}
-Given a sequence of input events $\alpha = a_1 \ldots a_n$, let
-$\substform{\alpha}$ be the formula obtained by successively replacing
-in $\accform{\alpha}$: \begin{compactenum}[(a)]
-\item\label{it1:substform} each occurrence of a predicate
-  $\stamp{q}{i}(t_1,\ldots,t_{\#(q)})$ by the formula
-  $\stamp{\psi}{i+1}[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$, where
-  $q(\vec{y}) \arrow{a_{i+1}(X)}{} \psi \in \Delta$ is the transition
-  rule for $q$ and $a_i$, for all $i=0,\ldots,n-1$,
-%
-\item\label{it2:substform} each occurrence of a predicate
-  $\stamp{q}{n}$, such that $q \in Q \setminus F$, by $\top$, and
-%
-\item\label{it3:substform} each occurrence of a predicate
-  $\stamp{q}{n}$, such that $q \in F$, by $\bot$.
-\end{compactenum}
+  Let $\substformn{\alpha_0}, \ldots, \substformn{\alpha_n}$ be the
+  sequence of formulae defined by $\substformn{\alpha_0} \isdef
+  \stamp{\iota}{0}$ and, for all $i \in [1,n]$,
+  $\substformn{\alpha_i}$ is obtained by replacing each occurrence of
+  a predicate atom $\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)})$ in
+  $\substformn{\alpha_{i-1}}$ with the formula
+  $\stamp{\psi}{i}[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$, where
+  $q(\vec{y}) \arrow{a_{i}(X)}{} \psi \in \Delta$. We write
+  $\substform{\alpha}$ for the formula obtained by replacing, in
+  $\substformn{\alpha}$, each occurrence of a predicate
+  $\stamp{q}{n}$, such that $q \in Q \setminus F$ (resp. $q \in F$),
+  by $\bot$ (resp. $\top$).
 \end{definition}
-Since there are no occurrences of predicates in $\substform{\alpha}$,
-for each valuation $\nu : \stamp{X}{\leq n} \rightarrow \Data$, there
+
+\begin{example}[Contd. from Example \ref{ex:quant-elim}]\label{ex:pred-elim}
+  The result of the elimination of predicate atoms from the acceptance
+  formula in Example \ref{ex:quant-elim} is shown below:
+  \[\exists z_1 \forall z_2 \exists z_3 ~.~ (z_2 \leq \stamp{x}{1}+z_1 
+  \rightarrow z_3 \geq \stamp{x}{2} -z_1+z_2-\stamp{x}{1}) \wedge z_1
+  \geq 0\] Since this formula is satisfiable, by Lemma
+  \ref{lemma:quant-pred-acceptance} below, there exists a word $w$
+  with input event sequence $\event{w} = a_1a_2$ that is accepted by the
+  automaton $\A$ from Example
+  \ref{ex:quant-elim}. \hfill$\blacksquare$
+\end{example}
+
+At this point, we prove the formal relation between the satisfiability
+of the formulae $\quantform{\alpha}$ and $\substform{\alpha}$. Since
+there are no occurrences of predicates in $\substform{\alpha}$, for
+each valuation $\nu : \stamp{X}{\leq n} \rightarrow \Data$, there
 exists an interpretation $\I$ such that $\I,\nu \models
 \substform{\alpha}$ if and only if $\J,\nu \models
-\substform{\alpha}$, for every interpretation $\J$. Thus we omit $\I$
-and simply write $\nu \models \substform{\alpha}$ in this case.
+\substform{\alpha}$, for every interpretation $\J$. In this case we
+omit $\I$ and simply write $\nu \models \substform{\alpha}$.
 
-\begin{proposition}\label{prop:subst}
-  Let $\phi$ be a positive formula and let $q(t_1,\ldots,t_{\#(q)})$
-  be the only predicate atom occurring within $\phi$. Then, for every
-  valuation $\nu$ of $\fv{}{\phi}$ and every formula $\psi$ with no
-  predicate occurrences, the following are
-  equivalent: \begin{compactenum}
-  \item\label{it1:prop:subst} $\nu \models \phi[\psi[t_1/y_1, \ldots,
-      t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]$, 
-    %
-  \item\label{it2:prop:subst} $\I,\nu \models \phi \wedge \forall y_1
-    \ldots \forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow
-    \psi$, for some interpretation $\I$.
-  \end{compactenum}
-  where $y_1,\ldots,y_{\#(q)} \not\in \fv{}{\phi}$. 
-\end{proposition}
-\proof{ We give the proof in the case $\phi$ is quantifier-free. The
-  generalization to a non-empty quantifier prefix is straightforward.
-  ``$(\ref{it1:prop:subst}) \Rightarrow (\ref{it2:prop:subst})$'' We
-  distinguish two cases:
-  \begin{compactitem}
-  \item if $\nu \models \psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$
-    then let $\I(q) = \set{\tuple{t_1^\nu,\ldots,t_{\#(q)}^\nu}}$ and
-    $\emptyset$ everywhere else. We have $\I,\nu \models
-    q(t_1,\ldots,t_{\#(q)})$ and, since $\phi$ is positive, replacing
-    $\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$ with
-    $q(t_1,\ldots,t_{\#(q)})$ in $\phi$ does not change its
-    satisfiability under $\I,\nu$, hence $\I,\nu \models
-    \phi$. Moreover, $\nu \models \psi[t_1/y_1, \ldots,
-      t_{\#(q)}/y_{\#(q)}]$ thus $\I,\nu \models \forall y_1 \ldots
-    \forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \psi$.
-    %
-  \item else $\nu \not\models \psi[t_1/y_1, \ldots,
-    t_{\#(q)}/y_{\#(q)}]$ and let $\I$ be the interpretation assigning
-    each predicate symbol with $\emptyset$. Then replacing
-    $\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$ with
-    $q(t_1,\ldots,t_{\#(q)})$ in $\phi$ does not change its
-    satisfiability under $\I,\nu$. Moreover, since $\I$ maps $q$ to
-    $\emptyset$, we have $\I,\nu \models \forall y_1 \ldots \forall
-    y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \psi$, trivially.
-  \end{compactitem}
+\begin{lemma}\label{lemma:subst}
+  For any input event sequence $\alpha=a_1\ldots a_n$ and each
+  valuation $\nu : \stamp{X}{\leq n} \rightarrow \Data$, there exists
+  a valuation $\I$ such that $\I,\nu \models \quantform{\alpha}$ if
+  and only if $\nu \models \substform{\alpha}$. 
+\end{lemma}
+\proof{ By induction on $n\geq0$. The base case $n=0$ is trivial,
+  since $\quantform{A} = \substform{A} = \stamp{\iota}{0}$. For the
+  induction step, we rely on the following fact: 
 
-  ``$(\ref{it2:prop:subst}) \Rightarrow (\ref{it1:prop:subst})$'' We
-  distinguish two cases: \begin{compactitem}
-  \item if $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \in \I(q)$, since
-    $\I,\nu \models \forall y_1 \ldots \forall y_{\#(q)} ~.~
-    q(\vec{y}) \rightarrow \psi$, we have $\nu \models
-    \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$. Since $\phi$ is
-    positive, replacing $q(t_1,\ldots,t_{\#(q)})$ by $\psi$ in $\phi$
-    does not change its satisfiability under $\nu$, hence $\nu \models
-    \phi[\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]/q(t_1, \ldots,
-      t_{\#(q)})]$.
-    %
-  \item else $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \not\in \I(q)$,
-    that is $\I,\nu \not\models q(t_1,\ldots,t_{\#(q)})$. Then $\nu
-    \models \phi[\bot/q(t_1,\ldots,t_{\#(q)})]$ and we obtain $\nu
-    \models \phi[\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]/q(t_1,
-      \ldots, t_{\#(q)})]$, because $\phi$ is positive, thus
-    $\phi[\bot/q(t_1,\ldots,t_{\#(q)})] \models \phi[\psi[t_1/y_1,
-        \ldots, t_{\#(q)}/y_{\#(q)}]/q(t_1, \ldots, t_{\#(q)})]$. \qed
-  \end{compactitem}}
+  \begin{fact}
+    Given formulae $\phi$ and $\psi$, such that $\phi$ is positive
+    $q(t_1,\ldots,t_{\#(q)})$ is the only one occurrence of the
+    predicate symbol $q$ in $\phi$ and no predicate atom with
+    predicate symbol $q$ occurs in $\psi(y_1,\ldots,y_{\#(q)})$, for
+    each interpretation $\I$ and each valuation $\nu$, we have:
+    \[\begin{array}{l} 
+    \I,\nu \models \phi \wedge q(t_1,\ldots,t_{\#(q)}) \rightarrow
+    \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}] \iff \\ \nu \models
+    \phi[\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]\enspace.
+    \end{array}\]
+  \end{fact}
+  \proof{ We assume w.l.o.g. that $\phi$ is quantifier-free. The proof
+    can be easily generalized to the case $\phi$ has quantifiers.
 
-\begin{lemma}\label{lemma:substitution}
+    \noindent''$\Rightarrow$'' 
+    We distinguish two cases: \begin{compactitem}
+    \item if $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \in \I(q)$ then
+      $\I,\nu \models \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$. Since
+      $\phi$ is positive, replacing $q(t_1,\ldots,t_{\#(q)})$ with
+      $\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$ does not change the
+      truth value of $\phi$ under $\nu$, thus $\nu \models
+      \phi[\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]$.
+      %
+    \item else, $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \not\in
+      \I(q)$, thus $\nu \models
+      \phi[\bot/q(t_1,\ldots,t_{\#(q)})]$. Since $\phi$ is positive
+      and $\bot$ entails $\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$,
+      we obtain $\nu \models
+      \phi[\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]$
+      by monotonicity. 
+    \end{compactitem}
+
+    \noindent``$\Leftarrow$'' Let $\I$ be any interpretation such that
+    $\I(q) = \set{\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \mid \nu
+      \models \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]}$. We
+    distinguish two cases: \begin{compactitem}
+      \item if $\I(q) \not \emptyset$ then $\I,\nu \models
+        q(t_1,\ldots,t_{\#(q)})$ and $\nu \models \psi[t_1/y_1,
+          \ldots, t_{\#(q)}/y_{\#(q)}]$. Thus replacing $\psi[t_1/y_1,
+          \ldots, t_{\#(q)}/y_{\#(q)}]$ by $q(t_1,\ldots,t_{\#(q)})$
+        does not change the truth value of $\phi$ under $\I$ and
+        $\nu$, and we obtain $\I,\nu \models \phi$. Moreover, $\I,\nu
+        \models \psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$ implies
+        $\I,\nu \models q(t_1,\ldots,t_{\#(q)}) \rightarrow
+        \psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$.
+        %
+      \item else $\I(q) = \emptyset$, hence $\nu \not\models
+        \psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$, thus $\nu \models
+        \phi[\bot/q(t_1,\ldots,t_{\#(q)})]$. Because $\phi$ is
+        positive, we obtain $\I,\nu \models \phi$ by monotonicity. But
+        $\I,\nu \models q(t_1,\ldots,t_{\#(q)}) \rightarrow
+        \psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$ trivially, because
+        $\I,\nu \not\models q(t_1,\ldots,t_{\#(q)})$.\qed
+    \end{compactitem}}
+This concludes the proof. \qed}
+
+%% \begin{proposition}\label{prop:subst}
+%%   Let $\phi$ be a positive formula and let $q(t_1,\ldots,t_{\#(q)})$
+%%   be the only predicate atom occurring within $\phi$. Then, for every
+%%   valuation $\nu$ of $\fv{}{\phi}$ and every formula $\psi$ with no
+%%   predicate occurrences, the following are
+%%   equivalent: \begin{compactenum}
+%%   \item\label{it1:prop:subst} $\nu \models \phi[\psi[t_1/y_1, \ldots,
+%%       t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]$, 
+%%     %
+%%   \item\label{it2:prop:subst} $\I,\nu \models \phi \wedge \forall y_1
+%%     \ldots \forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow
+%%     \psi$, for some interpretation $\I$.
+%%   \end{compactenum}
+%%   where $y_1,\ldots,y_{\#(q)} \not\in \fv{}{\phi}$. 
+%% \end{proposition}
+%% \proof{ We give the proof in the case $\phi$ is quantifier-free. The
+%%   generalization to a non-empty quantifier prefix is straightforward.
+%%   ``$(\ref{it1:prop:subst}) \Rightarrow (\ref{it2:prop:subst})$'' We
+%%   distinguish two cases:
+%%   \begin{compactitem}
+%%   \item if $\nu \models \psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$
+%%     then let $\I(q) = \set{\tuple{t_1^\nu,\ldots,t_{\#(q)}^\nu}}$ and
+%%     $\emptyset$ everywhere else. We have $\I,\nu \models
+%%     q(t_1,\ldots,t_{\#(q)})$ and, since $\phi$ is positive, replacing
+%%     $\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$ with
+%%     $q(t_1,\ldots,t_{\#(q)})$ in $\phi$ does not change its
+%%     satisfiability under $\I,\nu$, hence $\I,\nu \models
+%%     \phi$. Moreover, $\nu \models \psi[t_1/y_1, \ldots,
+%%       t_{\#(q)}/y_{\#(q)}]$ thus $\I,\nu \models \forall y_1 \ldots
+%%     \forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \psi$.
+%%     %
+%%   \item else $\nu \not\models \psi[t_1/y_1, \ldots,
+%%     t_{\#(q)}/y_{\#(q)}]$ and let $\I$ be the interpretation assigning
+%%     each predicate symbol with $\emptyset$. Then replacing
+%%     $\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$ with
+%%     $q(t_1,\ldots,t_{\#(q)})$ in $\phi$ does not change its
+%%     satisfiability under $\I,\nu$. Moreover, since $\I$ maps $q$ to
+%%     $\emptyset$, we have $\I,\nu \models \forall y_1 \ldots \forall
+%%     y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \psi$, trivially.
+%%   \end{compactitem}
+
+%%   ``$(\ref{it2:prop:subst}) \Rightarrow (\ref{it1:prop:subst})$'' We
+%%   distinguish two cases: \begin{compactitem}
+%%   \item if $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \in \I(q)$, since
+%%     $\I,\nu \models \forall y_1 \ldots \forall y_{\#(q)} ~.~
+%%     q(\vec{y}) \rightarrow \psi$, we have $\nu \models
+%%     \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$. Since $\phi$ is
+%%     positive, replacing $q(t_1,\ldots,t_{\#(q)})$ by $\psi$ in $\phi$
+%%     does not change its satisfiability under $\nu$, hence $\nu \models
+%%     \phi[\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]/q(t_1, \ldots,
+%%       t_{\#(q)})]$.
+%%     %
+%%   \item else $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \not\in \I(q)$,
+%%     that is $\I,\nu \not\models q(t_1,\ldots,t_{\#(q)})$. Then $\nu
+%%     \models \phi[\bot/q(t_1,\ldots,t_{\#(q)})]$ and we obtain $\nu
+%%     \models \phi[\psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]/q(t_1,
+%%       \ldots, t_{\#(q)})]$, because $\phi$ is positive, thus
+%%     $\phi[\bot/q(t_1,\ldots,t_{\#(q)})] \models \phi[\psi[t_1/y_1,
+%%         \ldots, t_{\#(q)}/y_{\#(q)}]/q(t_1, \ldots, t_{\#(q)})]$. \qed
+%%   \end{compactitem}}
+
+Finally, we define the acceptance of a word with a given input event
+sequence by means of a formula in which no predicate atom occurs. As
+previously discussed, several decidable theories, such as Presburger
+arithmetic, become undecidable if predicate atoms are added to
+them. Therefore, the result below makes a step towards deciding
+whether the automaton accepts a word with a given input sequence, by
+reducing this problem to the satisfiability of a quantified formula
+without predicates. 
+
+\begin{lemma}\label{lemma:quant-pred-acceptance}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
-  every word $w \in \Sigma[X]^*$, we have $w_\Data \models
-  \substform{w_\Sigma}$ if and only if $w \in \lang{\A}$.
+  every word $w \in \Sigma[X]^*$, we have $\data{w} \models
+  \substform{\event{w}}$ if and only if $w \in \lang{\A}$.
 \end{lemma}
 \proof{ By Lemma \ref{lemma:acceptance}, $w \in \lang{\A}$ if and only
-  if $\I,w_\Data \models \accform{w_\Sigma}$, for some interpretation
-  $\I$. By induction on the number of predicate atoms in
-  $\accform{w_\Sigma}$, using Proposition \ref{prop:subst} in the
-  inductive step, we prove that, $\I,w_\Data \models
-  \accform{w_\Sigma}$ if and only if $w_\Data \models
-  \substform{w_\Sigma}$. \qed}
+  if $\I,\data{w} \models \accform{\event{w}}$, for some
+  interpretation $\I$. By Lemma \ref{lemma:quant}, there exists an
+  interpretation $\I$ such that $\I,\data{w} \models
+  \accform{\event{w}}$ if and only if there exists an interpretation
+  $\J$ such that $\J,\nu \models \quantform{\event{w}}$. By Lemma
+  \ref{lemma:subst}, there exists an interpretation $\J$ such that
+  $\J,\nu \models \quantform{\event{w}}$ if and only if $\nu \models
+  \substform{\event{w}}$. \qed}
 
 \subsection{Closure Properties}
 \label{sec:closure}
@@ -619,7 +798,7 @@ Given a positive formula $\phi$, we define the \emph{dual} formula
 $\dual{\phi}$ recursively as follows:
 \[\begin{array}{rclcrclcrcl}
 \dual{(\phi_1 \vee \phi_2)} & = & \dual{\phi_1} \wedge \dual{\phi_2} && 
-\dual{(\phi_1 \wedge \phi_2)} & = & \dual{\phi_1} \wedge \dual{\phi_2} &&
+\dual{(\phi_1 \wedge \phi_2)} & = & \dual{\phi_1} \vee \dual{\phi_2} &&
 \dual{(t \teq s)} & = & \neg(t \teq s) \\
 \dual{(\exists x ~.~ \phi_1)} & = & \forall x ~.~ \dual{\phi_1} && 
 \dual{(\forall x ~.~ \phi_1)} & = & \exists x ~.~ \dual{\phi_1} && 
@@ -687,21 +866,21 @@ automata under all boolean operations:
   \]
 
   \noindent(\ref{it2:thm:closure}) Let $w \in \Sigma[X]^*$ be a
-  word. We denote by $\accformA{\A_1}{w_\Sigma}$ and
-  $\substformA{\A_1}{w_\Sigma}$
-  [resp. $\accformA{\overline{\A}_1}{w_\Sigma}$ and
-    $\substformA{\overline{\A}_1}{w_\Sigma}$] the formulae
-  $\accform{w_\Sigma}$ and $\substform{w_\Sigma}$ for $\A_1$ and
+  word. We denote by $\accformA{\A_1}{\event{w}}$ and
+  $\substformA{\A_1}{\event{w}}$
+  [resp. $\accformA{\overline{\A}_1}{\event{w}}$ and
+    $\substformA{\overline{\A}_1}{\event{w}}$] the formulae
+  $\accform{\event{w}}$ and $\substform{\event{w}}$ for $\A_1$ and
   $\overline{\A}_1$, respectively. It is enough to show that
-  $\substformA{\overline{\A}_1}{w_\Sigma} =
-  \neg\substformA{\A_1}{w_\Sigma}$ and apply Lemma
-  \ref{lemma:substitution} to prove that $w \in \lang{\A_1} \iff w
-  \not\in \lang{\overline{\A}_1}$. Since the choice of $w$ was
+  $\substformA{\overline{\A}_1}{\event{w}} =
+  \neg\substformA{\A_1}{\event{w}}$ and apply Lemma
+  \ref{lemma:quant-pred-acceptance} to prove that $w \in \lang{\A_1}
+  \iff w \not\in \lang{\overline{\A}_1}$. Since the choice of $w$ was
   arbitrary, this proves $\lang{\overline{\A}_1} = \Sigma[X]^*
   \setminus \lang{\A_1}$. By induction on the number of predicate
-  atoms in $\accformA{\A_1}{w_\Sigma}$ that are replaced during the
-  generation of $\substformA{\A_1}{w_\Sigma}$. The proof relies on the
-  following fact:
+  atoms in $\accformA{\A_1}{\event{w}}$ that are replaced during the
+  generation of $\substformA{\A_1}{\event{w}}$. The proof relies on
+  the following fact:
 
   \begin{fact}\label{fact:dual-neg}
     Let $\phi$ be a positive formula and let $q(t_1,\ldots,t_{\#(q)})$
@@ -717,8 +896,8 @@ automata under all boolean operations:
 \label{sec:emptiness}
 
 The problem of checking emptiness of a given automata is undecidable,
-even for automata with predicates of arity two whose transition rules
-use only equalities and disequalities, with no quantifiers
+even for automata with predicates of arity two, whose transition rules
+use only equalities and disequalities, with no transition quantifiers
 \cite{Farzan15}. Since even such simple classes of alternating
 automata have no general decision procedure, we use an
 abstraction-refinement semi-algorithm based on \emph{lazy annotation}
@@ -733,18 +912,26 @@ spuriousness of the given (finite) path.
 Typically, when checking the unreachability of a set of program
 configurations (or, more generally, the infeasability of a set of Horn
 clauses \cite{BjornerGurfinkelMcMillanRybalchenko15}), the
-interpolants used to annotate the unfolded control structure are local
+interpolants used to annotate the unfolded control structure are
 assertions about the values of the program variables in a given
-control state. These assertions define inductive overapproximations of
-the set of configurations reachable at that control state, that
-suffice to prove emptiness or, equivalently, a safety property of the
-system.
+control state $q$, at a certain step $i \geq 0$ of a given
+execution. As we discuss next, it is useful to distinguish between
+\begin{inparaenum}[(i)]
+\item locality of interpolants w.r.t. a given control state and
+%
+\item locality w.r.t. a given time stamp.
+\end{inparaenum} 
+In logical terms, \emph{control-local} interpolants are defined by
+formulae involving a single predicate symbol, whereas
+\emph{time-local} interpolants involve only predicates $\stamp{q}{i}$
+and variables $\stamp{x}{i}$, for a single $i \geq 0$.
 
-When considering an alternating model of computation, local
-interpolants that involve a single control state are no longer enough,
-because of the synchronization of several branches of the computation
-on the same sequence of input values. Consider, for instance, an
-automaton with the following transition rules and final state $q_f$:
+\paragraph{Remark}
+When considering an alternating model of computation, control-local
+interpolants are not enough to prove emptiness, because of the
+synchronization of several branches of the computation on the same
+sequence of input values. Consider, for instance, an automaton with
+the following transition rules and final state $q_f$:
 \[\begin{array}{rclcrcl}
 q_0(y) & \arrow{a(x)}{} & q_1(y+x) \wedge q_2(y-x) & \hspace*{2mm} & 
 q_1(y) \arrow{a(x)}{} y+x > 0 \wedge q_f \\
@@ -764,18 +951,68 @@ An overapproximation of the set of cubes generated after one or more
 steps is defined by the formula: $\exists x_1 \exists x_2 ~.~ q_1(x_1)
 \wedge q_2(x_2) \wedge x_1+x_2 \teq 0$. Observe that a formula using
 one occurrence of a predicate would give a too rough overapproximation
-of this set, unable to prove the emptiness of the automaton.
+of this set, unable to prove the emptiness of the
+automaton. \hfill$\blacksquare$
+
+First, let us give the formal definition of the class of interpolants
+we shall work with. Given a formula $\phi$, the \emph{vocabulary} of
+$\phi$ is the set of uninterpreted function symbols, predicate symbols
+$q \in \stamp{Q}{i}$ and variables $x \in \stamp{X}{i}$, occurring in
+$\phi$, for some $i\geq0$. Observe that quantified variables and the
+interpreted function symbols of the data theory\footnote{E.g.,\ the
+  arithmetic operators of addition and multiplication, when $\Data$ is
+  the set of integers.} do not belong to the vocabulary of a
+formula. By $\pset{+}{\phi}$ [$\pset{-}{\phi}$] we denote the set of
+predicate symbols that occur in $\phi$ under an even [odd] number of
+negations.
+
+Given formulae $\phi$ and $\psi$ such that $\phi \wedge \psi$ is
+unsatisfiable, a \emph{Lyndon interpolant} \cite{Lyndon59} is a
+first-order formula $I$ such that: \begin{compactitem}
+\item the formula $\phi \rightarrow I$ is valid,
+\item the formula $I \wedge \psi$ is unsatisfiable, 
+\item $\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$, 
+\item $\pset{+}{I} \subseteq \pset{+}{\phi} \cap \pset{+}{\psi}$ and
+  $\pset{-}{I} \subseteq \pset{-}{\phi} \cap \pset{-}{\psi}$.
+\end{compactitem}
+The existence of Lyndon interpolants for first-order logic was proved
+by a non-constructive model-theoretic argument \cite{Lyndon59}. In the
+following, we shall consider only theories of the data domain $\Data$,
+for which there exists a decision procedure for satisfiability, able
+to produce Lyndon interpolants. For instance, interpolating decision
+procedures exist for linear real and integer arithmetic, with
+uninterpreted function symbols (UFLRA and UFLIA)
+\cite{RybalchenkoSofronieStokkermans}. In the rest of this section, we
+fix an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$.
+
+\begin{definition}\label{def:generalized-lyndon-interpolant}
+  Given a non-empty sequence of input events $\alpha = a_1 \ldots a_n
+  \in \Sigma^*$, a \emph{generalized Lyndon interpolant} is a sequence
+  $I_0,I_1,\ldots,I_n$ of formulae such that, for all $k =
+  0,\ldots,n-1$: \begin{compactenum}
+    \item $\voc{I_k} = \pset{+}{I_k}$ and $\pset{-}{I_k} = \emptyset$, 
+      %
+    \item $\iota \models I_0$ and 
+      \(I_k \wedge \left(\bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi}
+      \forall \vec{y} ~.~ q(\vec{y}) \rightarrow
+      \nextf{\psi}\right) \models \nextf{I}_{k+1}\), 
+      %
+    \item the formula $I_n \wedge \bigwedge_{q \in Q \setminus F}
+      \forall \vec{y} ~.~ q(\vec{y}) \rightarrow \bot$ is
+      unsatisfiable.
+  \end{compactenum}
+\end{definition}
+
+\comment[ri]{I am here}
 
 The solution we adopt is a generalization of the classical approach of
 extracting the interpolants from the proof of unsatisfiability of a
 time-stamped path formula. Given a sequence of input events $\alpha$,
-we consider the path formula $\accform{\alpha}$, constrained by the
-fact that all non-final predicates $\stamp{q}{\len{\alpha}}$ must be
-empty sets, defined as in (\ref{eq:accform}). If this formula is
-unsatisfiable, we show the existence of a sequence of (possibly
+we consider the acceptance formula $\accform{\alpha}$. If this formula
+is unsatisfiable, we show the existence of a sequence of (possibly
 quantified) positive interpolants that overapproximate the set of
 cubes generated at each step during an execution over a word $w$,
-whose even sequence is $w_\Sigma = \alpha$. Moreover, these
+whose even sequence is $\event{w} = \alpha$. Moreover, these
 interpolants are local, in the sense that each formula uses only the
 values of the variables and the state predicates stamped with its
 index in the sequence.
@@ -793,7 +1030,7 @@ generation method, in general.
 
 But here is where the predicate-free path formulae (Definition
 \ref{def:substform}) come into play. For a given event sequence
-$\alpha$, the automaton $\A$ accepts a word $w$ such that $w_\Sigma =
+$\alpha$, the automaton $\A$ accepts a word $w$ such that $\event{w} =
 \alpha$ if and only if $\substform{\alpha}$ is satisfiable (Lemma
 \ref{lemma:substitution}). Assuming further that the equality atoms in
 the transition rules of $\A$ are written in the language of a
@@ -866,9 +1103,6 @@ as $\accform{\alpha}$, namely as a conjunction of the form:
   \arrow{a_i(X)}{} \psi \in \Delta} \stamp{q}{i-1}(\vec{t}_{q,i-1})
 \rightarrow \stamp{\psi}{i} \wedge \bigwedge_{q \in Q \setminus F}
 \stamp{q}{n}(\vec{t}_{q,n}) \rightarrow \bot\]
-
-
-\comment[ri]{i am here}
 
 However, the existence of a decision procedure for the theory in which
 $\accform{\alpha}$ is written is not guaranteed, as it was usually the
