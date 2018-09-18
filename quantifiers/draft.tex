@@ -87,12 +87,19 @@ formulae is defined by the syntax below:
 $\phi_1 \vee \phi_2$, $\phi_1 \rightarrow \phi_2$ and $\forall x ~.~
 \phi_1$ for $\neg(\neg\phi_1 \wedge \neg\phi_2)$, $\neg\phi_1 \vee
 \phi_2$ and $\neg\exists x ~.~ \neg\phi_1$, respectively. We denote by
-$\fv{}{\phi}$ the set of free variables in $\phi$. A \emph{sentence}
-is a formula $\phi$ in which each variable occurs under the scope of a
-quantifier, i.e. $\fv{}{\phi} = \emptyset$. A formula is
-\emph{positive} if each predicate symbol occurs under an even number
-of negations. The size $\len{\phi}$ of a formula $\phi$ is the number
-of symbols needed to write it down.
+$\fv{}{\phi}$ the set of free variables in $\phi$. The size
+$\len{\phi}$ of a formula $\phi$ is the number of symbols needed to
+write it down.
+
+A \emph{sentence} is a formula $\phi$ in which each variable occurs
+under the scope of a quantifier, i.e. $\fv{}{\phi} = \emptyset$.  A
+formula is \emph{positive} if each predicate symbol occurs under an
+even number of negations. A formula is in \emph{prenex form} if it is
+of the form $\varphi = Q_1x_1 \ldots Q_nx_n ~.~ \phi$, where $\phi$
+has no quantifiers. In this case we call $\phi$ the \emph{matrix} of
+$\varphi$. Every first-order formula can be written in prenex form, by
+renaming each quantified variable to a unique name and moving the
+quantifiers upfront.
 
 %% For a variable $x \in \fv{}{\phi}$ and a term $t$, let $\phi[t/x]$ be
 %% the result of replacing each occurrence of $x$ by $t$. For indexed
@@ -126,7 +133,9 @@ is \emph{satisfiable} (\emph{unsatisfiable}) if
 $\sem{\phi}\neq\emptyset$ ($\sem{\phi}=\emptyset$). An element of
 $\sem{\phi}$ is called a \emph{model} of $\phi$. A formula $\phi$ is
 \emph{valid} if $\I,\nu \models \phi$ for every interpretation $\I$
-and every valuation $\nu$.
+and every valuation $\nu$. For two formulae $\phi$ and $\psi$ we write
+$\phi \models \psi$ for $\sem{\phi} \subseteq \sem{\psi}$, in which
+case we say that $\phi$ \emph{entails} $\psi$. 
 
 Interpretations are partially ordered by the pointwise subset order,
 defined as $\I_1 \subseteq \I_2$ if and only if $p^{\I_1} \subseteq
@@ -490,13 +499,6 @@ sequence of input events $\alpha = a_1 \ldots a_n$ and denote by
 $\alpha_i$ the prefix $a_1 \ldots a_i$ of $\alpha$, for $i \in [n]$,
 where $\alpha_0=\epsilon$.
 
-%% \[\accform{\alpha} = \stamp{\iota}{0} \wedge 
-%% \bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in
-%%   \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
-%% \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i} \wedge
-%% \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
-%% ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot\]
-
 \begin{definition}\label{def:quantform}
   Let $\quantformn{\alpha_0}, \ldots, \quantformn{\alpha_n}$ be the
   sequence of formulae defined by $\quantformn{\alpha_0} \isdef
@@ -520,25 +522,29 @@ in $\quantform{\alpha}$ exceeds the right-hand side formulae from the
 transition rules, as shown by the following example. 
 
 \begin{example}\label{ex:quant-elim}
-  Consider the automaton $\A = \tuple{\set{a_1,a_2}, \set{x}, \set{q},
-    \iota, \set{q}, \Delta}$, where:
+  Consider the automaton $\A = \tuple{\set{a_1,a_2}, \set{x},
+    \set{q,q_f}, \iota, \set{q_f}, \Delta}$, where:
   \[\begin{array}{rcl}
-  \iota & = & \exists z ~.~ q(z) \wedge z \geq 0 \\
-  \Delta & = & \set{q(y) \arrow{a_1(x)}{} \forall z ~.~ z \leq x+y \rightarrow q(y-z+x),~
-    q(y) \arrow{a_2(x)}{} \exists z ~.~ z \geq x-y \wedge q(y+z+x)}
+  \iota & = & \exists z ~.~ z \geq 0 \wedge q(z) \\
+  \Delta & = & \set{
+    q(y) \arrow{a_1(x)}{} x\geq 0 \wedge \forall z ~.~ z \leq y \rightarrow q(x+z),~
+    q(y) \arrow{a_2(x)}{} y<0 \wedge q_f(x+y)
+  }
   \end{array}\]
-  For the input event sequence $\alpha = a_1a_2$, the path and acceptance formulae are:
+  For the input event sequence $\alpha = a_1a_2$, the acceptance
+  formula is:
   \[\begin{array}{rcl}
-  \pathform{\alpha} = \accform{\alpha} & = & \exists z ~.~ \stamp{q}{0}(z) \wedge z \geq 0 \\
-  && \forall y ~.~ \stamp{q}{0}(y) \rightarrow (\forall z ~.~ z\leq\stamp{x}{1}+y \rightarrow \stamp{q}{1}(y-z+\stamp{x}{1})) \\
-  && \forall y ~.~ \stamp{q}{1}(y) \rightarrow \exists z ~.~ z\geq\stamp{x}{2}-y \wedge \stamp{q}{2}(y+z+\stamp{x}{2})
+  \accform{\alpha} & = & \exists z ~.~ z \geq 0 \wedge \stamp{q}{0}(z) ~\wedge \\
+  && \forall y ~.~ \stamp{q}{0}(y) \rightarrow [\stamp{x}{1}\geq0 \wedge \forall z ~.~ z\geq y 
+    \rightarrow \stamp{q}{1}(\stamp{x}{1}+z)] ~\wedge \\
+  && \forall y ~.~ \stamp{q}{1}(y) \rightarrow [y<0 \wedge \stamp{q_f}{2}(\stamp{x}{2}+y)]
   \end{array}\]
   The result of eliminating the path quantifiers, in prenex normal form, is shown below:
   \[\begin{array}{rcl}
-  \quantform{\alpha} & = & \exists z_1\forall z_2\exists z_3 ~.~ \stamp{q}{0}(z_1) \wedge z_1 \geq 0 \\
-  && \wedge~ [\stamp{q}{0}(z_1) \rightarrow (z_2 \leq \stamp{x}{1}+z_1 \rightarrow \stamp{q}{1}(z_1-z_2+\stamp{x}{1}))] \\
-  && \wedge~ [\stamp{q}{1}(z_1-z_2+\stamp{x}{1}) \rightarrow z_3 \geq \stamp{x}{2} -z_1+z_2-\stamp{x}{1} \wedge 
-    \stamp{q}{2}(z_1-z_2+\stamp{x}{1}+z_3+\stamp{x}{2})] \enspace\enspace\hfill\blacksquare
+  \quantform{\alpha} & = & \exists z_1\forall z_2 ~.~ z_1 \geq 0 \wedge \stamp{q}{0}(z_1) ~\wedge \\
+  && [\stamp{q}{0}(z_1) \rightarrow \stamp{x}{1} \geq 0 \wedge (z_2 \geq z_1 \rightarrow \stamp{q}{1}(\stamp{x}{1}+z_2))] ~\wedge \\
+  && [\stamp{q}{1}(\stamp{x}{1}+z_2) \rightarrow \stamp{x}{1}+z_2 < 0 \wedge \stamp{q_f}{2}(\stamp{x}{2}+\stamp{x}{1}+z_2)] 
+  \enspace\enspace\hfill\blacksquare
   \end{array}\]
 \end{example}
 
@@ -621,13 +627,14 @@ $\quantform{\alpha}$, defined below.
 \begin{example}[Contd. from Example \ref{ex:quant-elim}]\label{ex:pred-elim}
   The result of the elimination of predicate atoms from the acceptance
   formula in Example \ref{ex:quant-elim} is shown below:
-  \[\exists z_1 \forall z_2 \exists z_3 ~.~ (z_2 \leq \stamp{x}{1}+z_1 
-  \rightarrow z_3 \geq \stamp{x}{2} -z_1+z_2-\stamp{x}{1}) \wedge z_1
-  \geq 0\] Since this formula is satisfiable, by Lemma
-  \ref{lemma:quant-pred-acceptance} below, there exists a word $w$
-  with input event sequence $\event{w} = a_1a_2$ that is accepted by the
-  automaton $\A$ from Example
-  \ref{ex:quant-elim}. \hfill$\blacksquare$
+  \[\substform{\alpha} = 
+  \exists z_1 \forall z_2 ~.~ z_1 \geq 0 \wedge 
+          [\stamp{x}{1} \geq 0 \wedge (z_2 \geq z_1 \rightarrow
+            \stamp{x}{1}+z_2 < 0)]\] Since this formula is
+          unsatisfiable, by Lemma \ref{lemma:quant-pred-acceptance}
+          below, no word $w$ with input event sequence $\event{w} =
+          a_1a_2$ is accepted by the automaton $\A$ from Example
+          \ref{ex:quant-elim}. \hfill$\blacksquare$
 \end{example}
 
 At this point, we prove the formal relation between the satisfiability
@@ -649,7 +656,7 @@ omit $\I$ and simply write $\nu \models \substform{\alpha}$.
   since $\quantform{A} = \substform{A} = \stamp{\iota}{0}$. For the
   induction step, we rely on the following fact: 
 
-  \begin{fact}
+  \begin{fact}\label{fact:subst}
     Given formulae $\phi$ and $\psi$, such that $\phi$ is positive
     $q(t_1,\ldots,t_{\#(q)})$ is the only one occurrence of the
     predicate symbol $q$ in $\phi$ and no predicate atom with
@@ -899,7 +906,7 @@ The problem of checking emptiness of a given automata is undecidable,
 even for automata with predicates of arity two, whose transition rules
 use only equalities and disequalities, with no transition quantifiers
 \cite{Farzan15}. Since even such simple classes of alternating
-automata have no general decision procedure, we use an
+automata have no general decision procedure for emptiness, we use an
 abstraction-refinement semi-algorithm based on \emph{lazy annotation}
 \cite{McMillan06,McMillan14}. In a nutshell, a lazy annotation
 procedure systematically explores the set of execution traces of a
@@ -907,19 +914,28 @@ program in search for a counterexample. When a spurious counterexample
 is found, the search backtracks and the program path is annotated with
 a set of learned facts, that excludes the path from future
 searches. These facts are interpolants extracted from the proof of
-spuriousness of the given (finite) path.
+spuriousness of the given (finite) path. The semi-algorithm uses
+moreover a coverage relation to ensure that a spurious counterexample
+is never explore twice, thus making progress towards either finding a
+real counterexample or a proof of emptiness. In the rest of this
+section, we discuss the generation of interpolants
+(\S\ref{sec:interpolants}) and the coverage (\S\ref{sec:coverage})
+used by our emptiness checking semi-algorithm (\S\ref{sec:impact}). 
+
+\subsection{Interpolants}\label{sec:interpolants}
 
 Typically, when checking the unreachability of a set of program
-configurations (or, more generally, the infeasability of a set of Horn
-clauses \cite{BjornerGurfinkelMcMillanRybalchenko15}), the
-interpolants used to annotate the unfolded control structure are
-assertions about the values of the program variables in a given
-control state $q$, at a certain step $i \geq 0$ of a given
-execution. As we discuss next, it is useful to distinguish between
+configurations or, more generally, the infeasability of a set of Horn
+clauses \cite{BjornerGurfinkelMcMillanRybalchenko15}, the interpolants
+used to annotate the unfolded control structure are assertions about
+the values of the program variables in a given control state, at a
+certain step of a given execution. As we discuss next, it is useful to
+distinguish between
 \begin{inparaenum}[(i)]
-\item locality of interpolants w.r.t. a given control state and
+\item locality of interpolants w.r.t. a given control state (control
+  locality) and
 %
-\item locality w.r.t. a given time stamp.
+\item locality w.r.t. a given time stamp (time locality).
 \end{inparaenum} 
 In logical terms, \emph{control-local} interpolants are defined by
 formulae involving a single predicate symbol, whereas
@@ -928,7 +944,7 @@ and variables $\stamp{x}{i}$, for a single $i \geq 0$.
 
 \paragraph{Remark}
 When considering an alternating model of computation, control-local
-interpolants are not enough to prove emptiness, because of the
+interpolants are not always enough to prove emptiness, because of the
 synchronization of several branches of the computation on the same
 sequence of input values. Consider, for instance, an automaton with
 the following transition rules and final state $q_f$:
@@ -939,7 +955,7 @@ q_1(y) & \arrow{a(x)}{} & q_1(y+x) && q_2(y) \arrow{a(x)}{} y-x > 0 \wedge q_f \
 q_2(y) & \arrow{a(x)}{} & q_2(y-x)
 \end{array}\]
 Started in an initial configuration $q_0(0)$ with an input word
-$(a,\nu_1) \ldots (a,\nu_{n-1}) (b,\nu_n)$, such that $\nu_i(x)=k_i$,
+$(a,\nu_1) \ldots (a,\nu_{n-1}) (a,\nu_n)$, such that $\nu_i(x)=k_i$,
 the automaton executes as follows:
 \[\begin{array}{l}
 q_0(0) \arrow{(a,\nu_1)}{} q_1(k_1)
@@ -949,242 +965,365 @@ q_1(\sum_{i=1}^{n-1} k_i) \wedge q_2(-\sum_{i=1}^{n-1} k_i) \arrow{(a,\nu_n)}{} 
 \end{array}\] 
 An overapproximation of the set of cubes generated after one or more
 steps is defined by the formula: $\exists x_1 \exists x_2 ~.~ q_1(x_1)
-\wedge q_2(x_2) \wedge x_1+x_2 \teq 0$. Observe that a formula using
-one occurrence of a predicate would give a too rough overapproximation
-of this set, unable to prove the emptiness of the
+\wedge q_2(x_2) \wedge x_1+x_2 \teq 0$. Observe that a control-local
+formula using one occurrence of a predicate would give a too rough
+overapproximation of this set, unable to prove the emptiness of the
 automaton. \hfill$\blacksquare$
 
 First, let us give the formal definition of the class of interpolants
 we shall work with. Given a formula $\phi$, the \emph{vocabulary} of
-$\phi$ is the set of uninterpreted function symbols, predicate symbols
-$q \in \stamp{Q}{i}$ and variables $x \in \stamp{X}{i}$, occurring in
-$\phi$, for some $i\geq0$. Observe that quantified variables and the
-interpreted function symbols of the data theory\footnote{E.g.,\ the
-  arithmetic operators of addition and multiplication, when $\Data$ is
-  the set of integers.} do not belong to the vocabulary of a
-formula. By $\pset{+}{\phi}$ [$\pset{-}{\phi}$] we denote the set of
-predicate symbols that occur in $\phi$ under an even [odd] number of
-negations.
+$\phi$, denoted $\voc{\phi}$ is the set of predicate symbols $q \in
+\stamp{Q}{i}$ and variables $x \in \stamp{X}{i}$, occurring in $\phi$,
+for some $i\geq0$. For a term $t$, its vocabulary $\voc{t}$ is the set
+of variables that occur in $t$. Observe that quantified variables and
+the interpreted function symbols of the data
+theory\footnote{E.g.,\ the arithmetic operators of addition and
+  multiplication, when $\Data$ is the set of integers.}  do not belong
+to the vocabulary of a formula. By $\pset{+}{\phi}$ [$\pset{-}{\phi}$]
+we denote the set of predicate symbols that occur in $\phi$ under an
+even [odd] number of negations.
 
-\begin{definition}\label{def:lyndon-interpolant}
+\begin{definition}[\cite{Lyndon59}]\label{def:lyndon-interpolant}
 Given formulae $\phi$ and $\psi$ such that $\phi \wedge \psi$ is
-unsatisfiable, a \emph{Lyndon interpolant} \cite{Lyndon59} is a
-formula $I$ such that $\phi \models I$, the formula $I \wedge \psi$ is
-unsatisfiable, $\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$,
-$\pset{+}{I} \subseteq \pset{+}{\phi} \cap \pset{+}{\psi}$ and
-$\pset{-}{I} \subseteq \pset{-}{\phi} \cap \pset{-}{\psi}$.
+unsatisfiable, a \emph{Lyndon interpolant} is a formula $I$ such that
+$\phi \models I$, the formula $I \wedge \psi$ is unsatisfiable,
+$\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$, $\pset{+}{I} \subseteq
+\pset{+}{\phi} \cap \pset{+}{\psi}$ and $\pset{-}{I} \subseteq
+\pset{-}{\phi} \cap \pset{-}{\psi}$.
 \end{definition}
-The existence of Lyndon interpolants for first-order logic was proved
-by a non-constructive model-theoretic argument \cite{Lyndon59}. In the
-following, we shall consider only theories of the data domain $\Data$,
-for which there exists a decision procedure for satisfiability, able
-to produce Lyndon interpolants. For instance, such interpolating
-decision procedures exist for linear real and integer arithmetic, with
-uninterpreted function symbols (UFLRA and UFLIA)
-\cite{RybalchenkoSofronieStokkermans}. In the rest of this section, we
-fix an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$.
+The existence of Lyndon interpolants for first-order logic, with no
+predefined interpretation of function symbols\footnote{A model
+  specifies the universe and the interpretation of function symbols.},
+was proved by a non-constructive model-theoretic argument
+\cite{Lyndon59}. In the following, we shall consider only those
+theories of the data domain $\Data$, for which there exists a decision
+procedure for satisfiability, able to produce Lyndon interpolants. For
+instance, such interpolating decision procedures exist for linear real
+and integer arithmetic, with uninterpreted function symbols (UFLRA and
+UFLIA) \cite{RybalchenkoSofronieStokkermans}. In the rest of this
+section, let us fix an automaton $\A =
+\tuple{\Sigma,X,Q,\iota,F,\Delta}$.
 
 \begin{definition}\label{def:generalized-lyndon-interpolant}
   Given a non-empty sequence of input events $\alpha = a_1 \ldots a_n
-  \in \Sigma^*$, a \emph{generalized Lyndon interpolant} is a sequence
-  $I_0,I_1,\ldots,I_n$ of formulae such that, for all $k =
-  0,\ldots,n-1$: \begin{compactenum}
-    \item $\voc{I_k} = \pset{+}{I_k}$ and $\pset{-}{I_k} = \emptyset$, 
+  \in \Sigma^*$, a \emph{generalized Lyndon interpolant (GLI)} is a
+  sequence $(I_0,\ldots,I_n)$ of formulae such that, for all $k \in
+  [n-1]$: \begin{compactenum}
+    \item $\pset{-}{I_k} = \emptyset$,
       %
-    \item $\iota \models I_0$ and 
-      \(I_k \wedge \left(\bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi}
-      \forall \vec{y} ~.~ q(\vec{y}) \rightarrow
-      \nextf{\psi}\right) \models \nextf{I}_{k+1}\), 
+    \item $\stamp{\iota}{0} \models I_0$ and \(I_k \wedge
+      \Big(\bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in \Delta}
+      \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{k}(\vec{y})
+      \rightarrow \stamp{\psi}{k+1}\Big) \models I_{k+1}\),
       %
-    \item the formula $I_n \wedge \bigwedge_{q \in Q \setminus F}
-      \forall \vec{y} ~.~ q(\vec{y}) \rightarrow \bot$ is
-      unsatisfiable.
+    \item $I_n \wedge \bigwedge_{q \in Q \setminus F} \forall y_1
+      \ldots \forall y_{\#(q)} ~.~ q(\vec{y})$ is unsatisfiable.
   \end{compactenum}
+  Moreover, the GLI is \emph{local} iff $\voc{I_k} \cap \stamp{Q}{\leq n}
+  \subseteq \stamp{Q}{k}$ and $\voc{I_k} \cap \stamp{X}{\leq n}
+  \subseteq \stamp{X}{k}$, for all $k \in [n]$.
 \end{definition}
+The following proposition states the existence of local GLI for the
+theories in which Lyndon's Interpolation Theorem holds.
 
-\comment[ri]{I am here}
+\begin{proposition}\label{prop:local-gli}
+  If there exists a Lyndon interpolant for any two formulae $\phi$ and
+  $\psi$, such that $\phi \wedge \psi$ is unsatisfiable, then any
+  sequence of input events $\alpha = a_1 \ldots a_n \in \Sigma^*$,
+  such that $\accform{\alpha}$ is unsatisfiable, has a local GLI
+  $(I_0,\ldots,I_n)$.
+\end{proposition}
+\proof{ By definition, $\accform{\alpha}$ is the formula:
+  \[\stamp{\iota}{0} \wedge 
+ \bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in
+   \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+ \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i} \wedge
+ \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
+ ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot\]
+ We define the formulae: 
+ \[\begin{array}{rcl}
+ \varphi_i & \isdef & \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+ \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i},~ \text{for all}~ i \in [1,n] \\
+ \psi & \isdef & \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
+ ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot
+ \end{array}\]
+ Observe that $\voc{\stamp{\iota}{0}} \subseteq \stamp{Q}{0}$,
+ $\voc{\varphi_i} \subseteq
+ \stamp{Q}{i-1}\cup\stamp{Q}{i}\cup\stamp{X}{i}$, for all $i \in
+       [1,n]$, and $\voc{\psi} \subseteq \stamp{Q}{n}$.  We apply
+       Lyndon's Interpolation Theorem for the formulae
+       $\stamp{\iota}{0}$ and $\bigwedge_{i=1}^n \varphi_i \wedge
+       \psi$ and obtain a formula $I_0$, such that $\stamp{\iota}{0}
+       \models I_0$, $I_0 \wedge \bigwedge_{i=1}^n \varphi_i \wedge
+       \psi$ is unsatisfiable, $\voc{I_0} \subseteq
+       \voc{\stamp{\iota}{0}} \cap (\bigcup_{i=1}^n \voc{\varphi_i}
+       \cup \voc{\psi}) \subseteq \stamp{Q}{0}$ and $\pset{-}{I_0}
+       \subseteq \pset{-}{\stamp{\iota}{0}} \cap (\bigcup_{i=1}^n
+       \pset{-}{\varphi} \cup \pset{-}{\psi}) = \emptyset$. Repeating
+       the reasoning for the formulae $I_0 \wedge \varphi_1$ and
+       $\bigwedge_{i=2}^n \varphi_i \wedge \psi$, we obtain $I_1$,
+       such that $I_0 \wedge \varphi_1 \models I_1$, $I_1 \wedge
+       \bigwedge_{i=2}^n \varphi_i \wedge \psi$ is unsatisfiable,
+       $\voc{I_1} \subseteq (\voc{I_0} \cup \voc{\varphi_1}) \cap
+       (\bigcup_{i=2}^n \voc{\varphi_i} \cup \voc{\psi}) \subseteq
+       \stamp{Q}{1}$ and $\pset{-}{I_1} \subseteq (\pset{-}{I_0} \cup
+       \pset{-}{\varphi_1}) \cap (\bigcup_{i=2}^n \pset{-}{\varphi_i}
+       \cup \pset{-}{\psi}) = \emptyset$. Continuing in this way, we
+       obtain formulae $I_0, I_1, \ldots, I_{n}$ as required. \qed}
 
-The solution we adopt is a generalization of the classical approach of
-extracting the interpolants from the proof of unsatisfiability of a
-time-stamped path formula. Given a sequence of input events $\alpha$,
-we consider the acceptance formula $\accform{\alpha}$. If this formula
-is unsatisfiable, we show the existence of a sequence of (possibly
-quantified) positive interpolants that overapproximate the set of
-cubes generated at each step during an execution over a word $w$,
-whose even sequence is $\event{w} = \alpha$. Moreover, these
-interpolants are local, in the sense that each formula uses only the
-values of the variables and the state predicates stamped with its
-index in the sequence.
+The main problem with the local GLI construction described in the
+proof of Proposition \ref{prop:local-gli} is that the existence of
+Lyndon interpolants (Definition \ref{def:lyndon-interpolant}) is
+guaranteed in principle, but the proof is non-constructive. Building
+an interpolant for an unsatisfiable conjunction of formulae $\phi
+\wedge \psi$ is typically the job of the decision procedure that
+proves the unsatisfiability and, in general, there is no such
+procedure, when $\phi$ and $\psi$ contain predicates and have
+non-trivial quantifier alternation.
 
-Unlike with the classical path formulae for integer programs
-\cite{McMillan06} and Horn clauses
-\cite{BjornerGurfinkelMcMillanRybalchenko15}, that are expressed using
-linear or Presburger arithmetic, the existence of local interpolants
-for theories using first-order predicates relies on a non-constructive
-argument, the Lyndon Interpolation Theorem \cite{Lyndon59}. Since
-usual decidable theories, such as Presburger arithmetic, become
-undecidable in the presence of monadic predicate symbols
-\cite{Halpern91}, we cannot hope to find an automated interpolant
-generation method, in general.
-
-But here is where the predicate-free path formulae (Definition
+This is where the predicate-free path formulae (Definition
 \ref{def:substform}) come into play. For a given event sequence
 $\alpha$, the automaton $\A$ accepts a word $w$ such that $\event{w} =
-\alpha$ if and only if $\substform{\alpha}$ is satisfiable (Lemma
-\ref{lemma:substitution}). Assuming further that the equality atoms in
-the transition rules of $\A$ are written in the language of a
-decidable first-order theory, such as Presburger arithmetic, Lemma
-\ref{lemma:substitution} gives us an effective way of checking
-emptiness of $\A$ relative to a given event sequence. However, this
-method does not cope well with lazy annotation, because there is no
-way to extract, from the unsatisfiability proof of
-$\substform{\alpha}$, the interpolants needed to annotate
-$\alpha$. This is because \begin{inparaenum}[(i)]
-\item the formula $\substform{\alpha}$, obtained by repeated
-  substitutions (Definition \ref{def:substform}) loses track of the
-  execution semantics of $\A$, and 
+\alpha$ if and only if $\substform{\alpha}$ is satisfiable. Assuming
+further that the equality atoms in the transition rules of $\A$ are
+written in the language of a decidable first-order theory, such as
+Presburger arithmetic, Lemma \ref{lemma:quant-pred-acceptance} gives
+us an effective way of checking emptiness of $\A$, relative to a given
+event sequence. However, this method does not cope well with lazy
+annotation, because there is no way to extract, from the
+unsatisfiability proof of $\substform{\alpha}$, the interpolants
+needed to annotate $\alpha$. This is because \begin{inparaenum}[(i)]
+\item\label{it1:gli} the formula $\substform{\alpha}$, obtained by
+  repeated substitutions (Definition \ref{def:substform}) loses track
+  of the steps of the execution, and
 %
-\item quantifiers may occur nested in $\substform{\alpha}$, making it
-  difficult to write $\substform{\alpha}$ as a proper interpolation
-  problem.
+\item\label{it2:gli} quantifiers that occur nested in
+  $\substform{\alpha}$ make it difficult to write $\substform{\alpha}$
+  as an unsatisfiable conjunction of formulae from which interpolants
+  are extracted (Definition \ref{def:lyndon-interpolant}).
 \end{inparaenum}
 
-The solution we adopt in this paper relies on an additional assumption
-related to the decidability of the predicate-free theory in which
-$\substform{\alpha}$ formulae are written, namely that the theory has
-an effective \emph{witness-providing quantifier elimination}
-procedure. More precisely, we assume that, for each formula $\exists x
-~.~ \phi(x)$, there exists an effectively computable term $t$, in
-which $x$ does not occur, such that $\exists x ~.~ \phi$ and
-$\phi[t/x]$ are equi-satisfiable. These terms, called \emph{witnesses}
-in the following, are actual interpretations of the Skolem function
-symbols from the following folklore theorem:
+The solution we adopt for the first issue (\ref{it1:gli}) consists in
+partially recovering the time-stamped structure of the acceptance
+formula $\accform{\alpha}$ using the formula $\quantform{\alpha}$, in
+which only transition quantifiers occur. The second issue
+(\ref{it2:gli}) is solved under the additional assuption that the
+theory of the data domain $\Data$ has \emph{witness-producing
+  quantifier elimination}. More precisely, we assume that, for each
+formula $\exists x ~.~ \phi(x)$, there exists an effectively
+computable term $\tau$, in which $x$ does not occur, such that
+$\exists x ~.~ \phi$ and $\phi[\tau/x]$ are equisatisfiable. These
+terms, called \emph{witness terms} in the following, are actual
+definitions of the Skolem function symbols from the following folklore
+theorem:
 
 \begin{theorem}\label{thm:skolem}
   Given $Q_1 x_1 \ldots Q_n x_n ~.~ \phi$ a first order sentence, 
   where $Q_1, \ldots, Q_n \in \set{\exists,\forall}$ and $\phi$ is
   quantifier-free, let: 
   \[\eta_i \equiv \left\{\begin{array}{ll}
-  f_i(y_1,\ldots,y_{k_i}) & \text{if } Q_i \equiv \forall \\
-  x_i & \text{if } Q_i \equiv \exists
+  f_i(y_1,\ldots,y_{k_i}) & \text{if } Q_i = \forall \\
+  x_i & \text{if } Q_i = \exists
   \end{array}\right.\]
   where $f_i$ is a fresh function symbol and $\set{y_1, \ldots,
-    y_{k_i}} = \set{x_j \mid j < i,~ Q_j \equiv \exists}$. Then \(Q_1
-  x_1 \ldots Q_n x_n ~.~ \phi \rightarrow
-  \phi[\eta_1/x_1,\ldots,\eta_n/x_n]\) is valid.
+    y_{k_i}} = \set{x_j \mid j < i,~ Q_j = \exists}$. Then the entailment \(Q_1
+  x_1 \ldots Q_n x_n ~.~ \phi \models
+  \phi[\eta_1/x_1,\ldots,\eta_n/x_n]\) holds. 
 \end{theorem}
 \proof{See \cite[Theorem 2.1.8]{BorgerGraedelGurevich97} and
   \cite[Lemma 2.1.9]{BorgerGraedelGurevich97}. \qed}
-Observe that our assumption on the existence of an effective
-witness-providing quantifier elimination procedure is stronger than
-the above theorem, as we require that \begin{inparaenum}[(i)] 
-\item the $f_i$ functions be definable in the language of the theory,
-  and 
-\item $Q_1 x_1 \ldots Q_n x_n ~.~ \phi$ and
-  $\phi[\eta_1/x_1,\ldots,\eta_n/x_n]$ are equi-satisfiable. 
-\end{inparaenum}
-Among the theories that support witness-providing quantifier
-elimination, one mentions \comment[ri]{LIA, LRA, Presburger, Tarski?,
-  BAPA?}
 
-Turning back to the problem of generating interpolants from the proof
-of unsatisfiability of a path formula $\accform{\alpha}$, assume that
-the equivalent predicate-free formula $\substform{\alpha} = \exists
-x_1 \forall y_1 \ldots \exists x_n \forall y_n ~.~ \psi$ is
-unsatisfiable and let $t_1(x_1)$, $\ldots, t_n(x_1,\ldots,x_n)$ be
-witnesses such that $\psi[t_1/y_1,\ldots,t_n/y_n] \equiv \bot$. Then
-we show that the quantifier-free formula (with predicates) obtained
-from $\accform{\alpha}$ by (roughly) replacing the universal
-quantifiers with $t_1, \ldots, t_n$ in $\accform{\alpha}$ is also
-unsatisfiable.  Moreover, this new formula is layered in the same way
-as $\accform{\alpha}$, namely as a conjunction of the form:
-\[\stamp{\iota}{0} \wedge \bigwedge_{i=1}^n \bigwedge_{q(\vec{y})
-  \arrow{a_i(X)}{} \psi \in \Delta} \stamp{q}{i-1}(\vec{t}_{q,i-1})
-\rightarrow \stamp{\psi}{i} \wedge \bigwedge_{q \in Q \setminus F}
-\stamp{q}{n}(\vec{t}_{q,n}) \rightarrow \bot\]
+Examples of witness-producing quantifier elimination procedures can be
+found in the literature for e.g. linear integer (real) arithmetic
+(LIA,LRA), Presburger arithmetic and boolean algebra of sets and
+Presburger cardinality constraints (BAPA)
+\cite{KuncakMayerPiskacSuter12}. Furthermore, we describe a cubic-time
+witness generation for difference bounds constraints, a simple subset
+of linear integer (real) arithmetic (\S\ref{sec:applications}).
 
-However, the existence of a decision procedure for the theory in which
-$\accform{\alpha}$ is written is not guaranteed, as it was usually the
-case of classical path formulae for integer programs \cite{McMillan06}
-and Horn clauses \cite{BjornerGurfinkelMcMillanRybalchenko15} using
-linear or Presburger arithmetic. The problem is mainly that decidable
-theories, such as Presburger arithmetic become undecidable in the
-presence of monadic predicate symbols \cite{Halpern91}. A way around
-this problem is to check whether a given event sequence $\alpha$ may 
+Under the assumption that witness terms can be effectively built, let
+us describe the generation of a non-local GLI for a given input event
+sequence $\alpha = a_1 \ldots a_n$. First, we generate successively
+the acceptance formula $\accform{\alpha}$ and its equisatisfiable
+forms $\quantform{\alpha} = Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$
+and $\substform{\alpha} = Q_1x_1 \ldots Q_mx_m ~.~ \overline{\Phi}$,
+both written in prenex form, with matrices $\widehat{\Phi}$ and
+$\overline{\Phi}$, respectively. W.l.o.g. we consider a monotonic
+mapping $\xi : [1,m] \rightarrow [n]$ assigning each transition
+quantifier from $\substform{\alpha}$ its corresponding time-stamp from
+$\accform{\alpha}$. Because we assumed that the first-order theory of
+$\Data$ has quantifier elimination, the satisfiability problem for
+$\substform{\alpha}$ is decidable. If $\substform{\alpha}$ is
+satisfiable, we build a counterexample for emptiness $w$ such that
+$\event{w}=\alpha$ and $\data{w}$ is a satisfying assignment for
+$\substform{\alpha}$. Otherwise, $\substform{\alpha}$ is unsatisfiable
+and there exist witness terms $\tau_{i_1} \ldots \tau_{i_\ell}$, such
+that $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq\xi(i_j)}$ (Theorem
+\ref{thm:skolem}) and the formula $\overline{\Phi}[\tau_{i_1}/x_{i_1},
+  \ldots, \tau_{i_\ell}/x_{i_\ell}]$, obtained from the matrix of
+$\substform{\alpha}$, by replacing the universally quantified
+variables with witness terms, is unsatisfiable. Then it turns out that
+the formula $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+  \tau_{i_\ell}/x_{i_\ell}]$, obtained analogously from the matrix of
+$\quantform{\alpha}$, is unsatisfiable as well (Lemma
+\ref{lemma:subst-quant}).
 
+Because this latter formula is structured as a conjunction of formulae
+$\stamp{\iota}{0} \wedge \phi_1 \ldots \wedge \phi_n \wedge \psi$,
+where $\voc{\phi_k} \subseteq \stamp{Q}{k-1} \cup \stamp{Q}{k} \cup
+\stamp{X}{\leq k}$ for all $k \in [1,n]$ and $\voc{\psi} \subseteq
+\stamp{Q}{n}$, it is now possible to use an existing interpolation
+procedure for the quantifier-free theory of $\Data$, extended with
+uninterpreted function symbols, to compute a sequence of non-local GLI
+$(I_0, \ldots, I_n)$ such that $\voc{I_k} \cap \stamp{Q}{\leq n}
+\subseteq \stamp{Q}{k}$ and $\voc{I_k} \cap \stamp{X}{\leq n}
+\subseteq \stamp{X}{\leq k}$, for all $k \in [n]$. Since each formula
+$I_k$ of the GLI may refer to the current predicates $\stamp{Q}{k}$
+and to the past and current input variables $\stamp{X}{\leq k}$, we
+further give up on the locality of interpolants and work with
+non-local GLI that are effectively computable by a combination of
+quantifier elimination with interpolation for quantifier-free data
+theories with uninterpreted functions.
 
+\begin{example}[Contd. from Examples \ref{ex:quant-elim} and \ref{ex:pred-elim}]\label{ex:gli}
+The formula $\substform{\alpha}$ (Example \ref{ex:pred-elim}) is
+unsatisfiable and let $\tau_2 = z_1$ be the witness term for the
+universally quantified variable $z_2$. Replacing $z_2$ with $\tau_2$
+in the matrix of $\quantform{\alpha}$ (Example \ref{ex:quant-elim})
+yields the unsatisfiable conjunction: 
+\[\begin{array}{l}
+z_1 \geq 0 \wedge \stamp{q}{0}(z_1) ~\wedge \\
+\stamp{q}{0}(z_1) \rightarrow \stamp{x}{1} \geq 0 \wedge (z_2 \geq z_1 \rightarrow \stamp{q}{1}(\stamp{x}{1}+z_2)) ~\wedge \\
+\stamp{q}{1}(\stamp{x}{1}+z_2) \rightarrow \stamp{x}{1}+z_2 < 0 \wedge \stamp{q_f}{2}(\stamp{x}{2}+\stamp{x}{1}+z_2)
+\end{array}\]
+A non-local GLI for the above is $(\stamp{q}{0}(z_1) \wedge
+z_1\geq 0,~ \stamp{x}{1} \geq 0 \wedge \stamp{q}{1}(\stamp{x}{1}+z_1)
+\wedge z_1\geq0,~\bot)$. \hfill$\blacksquare$
+\end{example}
 
-The rest of this section is concerned with defining the building
-blocks of a lazy annotation semi-algorithm for checking emptiness of
-automata. 
+The following lemma gives the formal proof of correctness for this
+construction.
 
-In particular, we address the following problems: \begin{compactenum}
-%
-\item generation of interpolants that prove the infeasability of a
-  given path formula, assuming the decidability of the first-order
-  theory in which the path formulae are written. 
-%
-\item generation of non-local interpolants using history variables,
-  obtained by Skolemization of the universal quantifiers that occur
-  within transition rules.
-%
-\item computing the coverage between two node labels in the unfolding
-  of an automaton, when history variables occur. 
-\end{compactenum} 
-Based on these results, we show how a version of the classical
-\textsc{Impact} \cite{McMillan06} semi-algorithm can be used to
-(dis-)prove the emptiness of first-order alternating automata. 
-
-\subsection{Lyndon Interpolants}
-
-Let $\phi$ and $\psi$ be first-order formulae, such that $\phi \wedge
-\psi$ is unsatisfiable. The \emph{vocabulary} of $\phi$, denoted as
-$\voc{\phi}$, is the set of function symbols that occur in $\phi$.  By
-$\pset{+}{\phi}$ [$\pset{-}{\phi}$] we denote the set of predicate
-symbols that occur in $\phi$ under an even (odd) number of
-negations. A \emph{Lyndon interpolant} \cite{Lyndon59} for $\phi$ and
-$\psi$ is a first-order formula $I$ such that: \begin{compactitem}
-\item $\phi \rightarrow I$ is valid,  
-\item $I \wedge \psi$ is unsatisfiable, 
-\item $\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$, 
-\item $\pset{+}{I} \subseteq \pset{+}{\phi} \cap \pset{+}{\psi}$ and
-  $\pset{-}{I} \subseteq \pset{-}{\phi} \cap \pset{-}{\psi}$.
-\end{compactitem}
-The existence of Lyndon interpolants for first-order logic was proved
-by a non-constructive model-theoretic argument \cite{Lyndon59}. For
-now, we silently assume that the satisfiability problem for the theory
-in which $\phi$ and $\psi$ are written is decidable and, moreover,
-that a decision procedure generating Lyndon interpolants exists, for
-this theory. This is a rather unrealistic assumption, given that
-classical decidable theories, such as Presburger arithmetic, become
-undecidable in the presence of (monadic) predicate symbols
-\cite{Halpern91}.
-
-Let $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ be an automaton for the
-rest of this section. Given a non-empty sequence of input events
-$\alpha = a_1 \ldots a_n \in \Sigma^*$, a \emph{local interpolant} for
-$\alpha$ is a sequence $I_0,I_1,\ldots,I_n$ of first-order formulae
-such that: \begin{compactitem}
-\item $\iota \rightarrow I_0$ is valid, 
-%
-\item $\left[I_k \wedge \left(\bigwedge_{q(\vec{y}_q) \arrow{a_i(X)}{} \psi}
-  \forall \vec{y}_q ~.~ \stamp{q}{k}(\vec{y}_q) \rightarrow
-  \nextf{\psi}\right)\right] \rightarrow \nextf{I}_{k+1}$ is valid, for all $k \in [n-1]$,
-%
-\item $I_n \wedge \left(\bigwedge_{q \in Q \setminus F} \forall \vec{y}_q
-  ~.~ q(\vec{y}_q) \rightarrow \bot\right)$ is unsatisfiable,
-%
-\item $\voc{I_k} = \pset{+}{I_k}$ and $\pset{-}{I_k} = \emptyset$. 
-\end{compactitem}
-
-\begin{lemma}\label{lemma:lyndon-existence}
-  
+\begin{lemma}\label{lemma:subst-quant}
+  Given a non-empty input event sequence $\alpha = a_1 \ldots a_n \in
+  \Sigma^*$, such that $\accform{\alpha}$ is unsatisfiable, let
+  $Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$ be a prenex form of
+  $\quantform{\alpha}$, where $Q_ix_i$ are transition quantifiers and
+  $\xi : [1,m] \rightarrow [n]$ is a monotonic function mapping each
+  quantified variable to the time-stamp of the step where it occurs in
+  $\accform{\alpha}$. Then the following hold: \begin{compactenum}
+  \item\label{it1:subst-quant} there exist witness terms $\tau_{i_1},
+    \ldots, \tau_{i_\ell}$, where $1 \leq i_1 < \ldots < i_\ell \leq
+    m$ and $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq \xi(i_j)}$ for
+    all $j \in [1,\ell]$, such that $\widehat{\Phi}[\tau_{i_1}/x_{i_1},
+      \ldots, \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable, and
+    %
+  \item\label{it2:subst-quant} there exists a GLI $(I_0, \ldots, I_n)$
+    for $\alpha$, such that $\voc{I_k} \cap \stamp{Q}{\leq n}
+    \subseteq \stamp{Q}{k}$ and $\voc{I_k} \cap \stamp{X}{\leq n}
+    \subseteq \stamp{X}{\leq k}$, for all $k \in [n]$.
+  \end{compactenum}
 \end{lemma}
+\proof{(\ref{it1:subst-quant}) If $\accform{\alpha}$ is unsatisfiable,
+  by Lemmas \ref{lemma:quant} and \ref{lemma:subst}, we obtain that,
+  successively $\quantform{\alpha}$ and $\substform{\alpha}$ are
+  unsatisfiable. Let $Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$ and
+  $Q_1x_1 \ldots Q_mx_m ~.~ \overline{\Phi}$ be prenex forms for
+  $\quantform{\alpha}$ and $\substform{\alpha}$,
+  respectively. Further, let $\xi : [1,m] \rightarrow [n]$ be the
+  monotone function mapping of each quantified variable to time-stamp
+  where it was introduced. Then there exist witness terms $\tau_{i_1},
+  \ldots, \tau_{i_\ell}$, where $\set{i_1,\ldots,i_\ell}=\set{i \in
+    [1,m] \mid Q_i=\forall}$, such that $\voc{\tau_{i_j}} \subseteq
+  \stamp{X}{\xi(i_j)}$, for all $j \in [1,\ell]$ and
+  $\overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+    \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable. 
 
-\subsection{Skolem Witnesses} 
+  Let $\widehat{\Phi}_0$, \ldots, $\widehat{\Phi}_n$ be the sequence
+  of quantifier-free formulae, defined as follows: \begin{compactitem}
+  \item $\widehat{\Phi}_0$ is the matrix of the prenex form of
+    $\stamp{\iota}{0}$,
+    %
+  \item for all $i=1,\ldots,n$, let $\widehat{\Phi}_i$ be a prenex
+    form matrix of the formula:
+    \[\widehat{\Phi}_i \isdef \widehat{\Phi}_{i-1} \wedge
+     \underbrace{\bigwedge_{\begin{array}{l}
+         \scriptstyle{\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \widehat{\Phi}_{i-1}} \\
+        \scriptstyle{q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{} \psi \in \Delta} 
+     \end{array}} \stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \rightarrow 
+     \stamp{\psi}{i}[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]}_{\isdef \phi_i}\]  
+  \end{compactitem}
+  It is easy to see that $\widehat{\Phi}$ is a prenex form matrix of the formula:   
+  \[\widehat{\Phi}_n \wedge \underbrace{\bigwedge_{\begin{array}{l}
+        \scriptstyle{\stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \widehat{\Phi}_n} \\
+        \scriptstyle{q \in Q \setminus F}
+    \end{array}} \stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \rightarrow \bot}_{\isdef \psi}\]
+  Applying the equivalence from Fact \ref{fact:subst} in the proof of
+  Lemma \ref{lemma:subst}, we obtain a sequence of quantifier-free
+  formulae $\overline{\Phi}_0, \ldots, \overline{\Phi}_n$ such that
+  $\overline{\Phi}_i \equiv \widehat{\Phi}_i$, for all $i \in [n]$ and
+  $\overline{\Phi}$ is obtained from $\overline{\Phi}_n$ by replacing
+  each occurrence of a predicate atom $q(t_1,\ldots,t_{\#(q)})$ in
+  $\overline{\Phi}_n$ by $\bot$ if $q \in Q\setminus F$ and by $\top$
+  if $q \in F$. Clearly $\overline{\Phi} \equiv \widehat{\Phi}$, thus
+  $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+    \tau_{i_\ell}/x_{i_\ell}] \equiv
+  \overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+    \tau_{i_\ell}/x_{i_\ell}] \equiv \bot$.
 
-\subsection{Lazy Annotation} 
+  \noindent(\ref{it2:subst-quant}) With the notation introduced at
+  point (\ref{it1:subst-quant}), we have $\widehat{\Phi} =
+  \widehat{\Phi}_0 \wedge \bigwedge_{i=1}^n \phi_i \wedge
+  \psi$. Consider the sequence of witness terms $\tau_{i_1}, \ldots,
+  \tau_{i_\ell}$, such that $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq
+    \xi(i_j)}$, for all $j \in [1,\ell]$, whose existence is proved by
+  point (\ref{it1:subst-quant}). By the definition of $\xi$, we obtain
+  the following: \begin{compactitem}
+  \item $\voc{\widehat{\Phi}_0[\tau_{i_1}/x_{i_1}, \ldots, \tau_{i_\ell}/x_{i_\ell}]} \subseteq 
+    \stamp{Q}{0} \cup \stamp{X}{0}$, 
+    %
+  \item $\voc{\phi_i[\tau_{i_1}/x_{i_1}, \ldots, \tau_{i_\ell}/x_{i_\ell}]} \subseteq 
+    \stamp{Q}{i-1} \cup \stamp{Q}{i} \cup \stamp{X}{\leq i}$, for all $i \in [1,n]$,
+    %
+  \item $\voc{\psi[\tau_{i_1}/x_{i_1}, \ldots, \tau_{i_\ell}/x_{i_\ell}]} \subseteq 
+    \stamp{Q}{n} \cup \stamp{X}{\leq n}$. 
+  \end{compactitem}
+  By repeatedly applying Lyndon's Interpolation Theorem, we obtain a
+  sequence of formulae $(I_0, \ldots, I_n)$ such that: \begin{compactitem}
+    \item $\widehat{\Phi}_0[\tau_{i_1}/x_{i_1}, \ldots,
+      \tau_{i_\ell}/x_{i_\ell}] \models I_0$ and $\voc{I_0} \subseteq
+      \stamp{Q}{0} \cup \stamp{X}{0}$,
+      %
+    \item $I_{k-1} \wedge \phi_i[\tau_{i_1}/x_{i_1}, \ldots,
+      \tau_{i_\ell}/x_{i_\ell}] \models I_k$ and $\voc{I_k} \subseteq
+      \stamp{Q}{k} \cup \stamp{X}{\leq k}$, for all $k \in [1,n]$,
+      %
+    \item $I_n \wedge \psi[\tau_{i_1}/x_{i_1}, \ldots,
+      \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable.
+  \end{compactitem}
+  To show that $(I_0,\ldots,I_n)$ is a GLI for $a_1\ldots a_n$, it is
+  sufficient to notice that \[\bigwedge_{q(\vec{y}) \arrow{a_k(X)}{}
+    \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+  \stamp{q}{k}(\vec{y}) \rightarrow \stamp{\psi}{k+1} \models \phi_k\]
+  for all $k \in [1,n]$. Consequently, we obtain: \begin{compactitem}
+    \item $\stamp{\iota}{0} \models \widehat{\Phi}_0 \models I_0$, by
+      Theorem \ref{thm:skolem},
+      %
+    \item $I_{k-1} \wedge \Big(\bigwedge_{q(\vec{y}) \arrow{a_k(X)}{}
+      \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+      \stamp{q}{k}(\vec{y}) \rightarrow \stamp{\psi}{k+1} \models
+      \phi_k\Big) \models I_k$, and 
+      %
+    \item $I_n \wedge \bigwedge_{q \in Q \setminus F} \forall y_1
+      \ldots \forall y_{\#(q)} ~.~ q(\vec{y})$ is
+      unsatisfiable,
+  \end{compactitem}
+  as required by Definition
+  \ref{def:generalized-lyndon-interpolant}. \qed}
 
+\comment[ri]{*** I am here ***}
+
+\subsection{Coverage} 
 
 Assuming that the data domain is countable, the set of finite words
 $\Sigma[X]^*$ is countable and the emptiness problem is recursively
@@ -1192,9 +1331,6 @@ enumerable. Moreover, by Lemma \ref{lemma:acceptance}, a systematic
 enumeration of sequences of input events $\alpha \in \Sigma^*$ will
 eventually discover an accepted word, provided that all path formulae
 $\pathform{\alpha}$ belong to a decidable first-order theory.
-
-
-
 
 However, if the automaton is empty, the enumeration of input event
 sequences will fail to terminate, in general. The classical way to
@@ -1229,6 +1365,8 @@ $C_1 \supseteq C_2$.
 \end{lemma}
 \proof{  
 \qed}
+
+\subsection{Lazy Annotation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
