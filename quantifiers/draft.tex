@@ -1429,52 +1429,48 @@ construction.
   as required by Definition
   \ref{def:generalized-lyndon-interpolant}. \qed}
 
-\comment[ri]{*** I am here ***}
+%% \subsection{Coverage} 
 
-\subsection{Coverage} 
+%% Assuming that the data domain is countable, the set of finite words
+%% $\Sigma[X]^*$ is countable and the emptiness problem is recursively
+%% enumerable. Moreover, by Lemma \ref{lemma:acceptance}, a systematic
+%% enumeration of sequences of input events $\alpha \in \Sigma^*$ will
+%% eventually discover an accepted word, provided that all path formulae
+%% $\pathform{\alpha}$ belong to a decidable first-order theory.
 
-Assuming that the data domain is countable, the set of finite words
-$\Sigma[X]^*$ is countable and the emptiness problem is recursively
-enumerable. Moreover, by Lemma \ref{lemma:acceptance}, a systematic
-enumeration of sequences of input events $\alpha \in \Sigma^*$ will
-eventually discover an accepted word, provided that all path formulae
-$\pathform{\alpha}$ belong to a decidable first-order theory.
+%% However, if the automaton is empty, the enumeration of input event
+%% sequences will fail to terminate, in general. The classical way to
+%% fight this divergence problem is to consider a \emph{coverage} partial
+%% order, which is a subset of the following relation: 
 
-However, if the automaton is empty, the enumeration of input event
-sequences will fail to terminate, in general. The classical way to
-fight this divergence problem is to consider a \emph{coverage} partial
-order, which is a subset of the following relation: 
+%% \begin{definition}\label{def:coverage}
+%%   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ and
+%%   $S_1, S_2 \subseteq \bigcup_{q \in Q} \set{q(d_1,\ldots,d_{\#(q)})
+%%     \mid d_1,\ldots,d_{\#(q)} \in \Data}$, we have $S_1 \sqsubseteq
+%%   S_2$ if and only if 
+%%   \begin{equation}\label{eq:po}
+%%     \text{
+%%       \begin{minipage}{0.7\textwidth}
+%%         $\A$ accepts a word $w$ when started in a set of cubes $C_1
+%%         \in S_1$ only if $\A$ accepts $w$ when started in a set of
+%%         cubes $C_2 \in S_2$.
+%%     \end{minipage}} 
+%%   \end{equation}
+%% \end{definition}
+%% Since, in general the $\sqsubseteq$ relation is not definable using
+%% available decidable (SMT) theories, we consider the following stronger
+%% relation: $S_1 \supsetforex S_2$ if and only if, for each set of cubes
+%% $C_1 \in S_1$, there exists a set of cubes $C_2 \in S_2$ such that
+%% $C_1 \supseteq C_2$.
 
-\begin{definition}\label{def:coverage}
-  Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ and
-  $S_1, S_2 \subseteq \bigcup_{q \in Q} \set{q(d_1,\ldots,d_{\#(q)})
-    \mid d_1,\ldots,d_{\#(q)} \in \Data}$, we have $S_1 \sqsubseteq
-  S_2$ if and only if 
-  \begin{equation}\label{eq:po}
-    \text{
-      \begin{minipage}{0.7\textwidth}
-        $\A$ accepts a word $w$ when started in a set of cubes $C_1
-        \in S_1$ only if $\A$ accepts $w$ when started in a set of
-        cubes $C_2 \in S_2$.
-    \end{minipage}} 
-  \end{equation}
-\end{definition}
-Since, in general the $\sqsubseteq$ relation is not definable using
-available decidable (SMT) theories, we consider the following stronger
-relation: $S_1 \supsetforex S_2$ if and only if, for each set of cubes
-$C_1 \in S_1$, there exists a set of cubes $C_2 \in S_2$ such that
-$C_1 \supseteq C_2$.
-
-\begin{lemma}\label{lemma:coverage}
-  Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for any
-  sets of cubes $S_1, S_2 \subseteq \bigcup_{q \in Q}
-  \set{q(d_1,\ldots,d_{\#(q)}) \mid d_1,\ldots,d_{\#(q)} \in \Data}$
-  such that $S_1 \supsetforex S_2$, we have $S_1 \sqsubseteq S_2$.
-\end{lemma}
-\proof{  
-\qed}
-
-\subsection{Lazy Annotation}
+%% \begin{lemma}\label{lemma:coverage}
+%%   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for any
+%%   sets of cubes $S_1, S_2 \subseteq \bigcup_{q \in Q}
+%%   \set{q(d_1,\ldots,d_{\#(q)}) \mid d_1,\ldots,d_{\#(q)} \in \Data}$
+%%   such that $S_1 \supsetforex S_2$, we have $S_1 \sqsubseteq S_2$.
+%% \end{lemma}
+%% \proof{  
+%% \qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
