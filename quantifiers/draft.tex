@@ -1004,17 +1004,31 @@ tree.
   and only if every leaf from $\dom(U)$ is covered.
 \end{definition}
 
-A lazy annotation semi-algorithm can stop and report emptiness if it
-succeeds in building a closed and safe unfolding of the automaton. For
-instance, the \impact~ semi-algorithm \cite{McMillan06} 
+A lazy annotation semi-algorithm will stop and report emptiness
+provided that it succeeds in building a closed and safe unfolding of
+the automaton. For instance, the \impact~ semi-algorithm
+\cite{McMillan06} upon which our procedure is based, continuosly
+expands the domain of the unfolding, while partially recomputing its
+labeling and the coverage, and stops when a safe complete unfolding
+has been found. The following theorem proves the soundness of this
+method:
 
+\begin{theorem}\label{thm:soundness}
+  Given an automaton $\A$, if $\A$ has a nonempty safe closed
+  unfolding then $\lang{A} = \emptyset$. 
+\end{theorem}
+\proof{
+  
+\qed}
 
-The higher complexity of the first-order alternating automata model
-versus the automata considered in \cite{IosifXu18}, which uses boolean
-constants for control states and whose transition rules have no
-quantifiers, manifests itself within the method used to generate the
-labels of the unfolding, which is discussed in the rest of this
-section.
+As mentioned above, we check emptiness of first-order alternating
+automata using the same method previously used to check emptiness of a
+simpler model of alternating automata, which uses boolean constants
+for control states and whose transition rules have no quantifiers
+\cite{IosifXu18}. The higher complexity of the automata model
+considered here, manifests itself within the interpolant generation
+procedure, used to label the unfoldings. We shall discuss generation
+of interpolants in the remainder of this section.
 
 \subsection{Interpolant Generation}\label{sec:interpolants}
 
