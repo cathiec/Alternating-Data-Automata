@@ -920,24 +920,28 @@ use only equalities and disequalities, with no transition quantifiers
 \cite{Farzan15}. Since even such simple classes of alternating
 automata have no general decision procedure for emptiness, we use an
 abstraction-refinement semi-algorithm based on \emph{lazy annotation}
-\cite{McMillan06,McMillan14}. In a nutshell, a lazy annotation
-procedure systematically explores the set of execution traces of a
-program in search for a counterexample. When a spurious counterexample
-is found, the search backtracks and the program path is annotated with
-a set of learned facts, that excludes the path from future
-searches. These facts are interpolants extracted from the proof of
-spuriousness of the given (finite) path. The emptiness checking
-semi-algorithm uses moreover a coverage relation to ensure that a
-spurious counterexample is never explore twice, thus making progress
-towards either finding a real counterexample or a proof of emptiness.
+\cite{McMillan06,McMillan14}. 
 
-Our implementation is a version of the \impact~ lazy annotation
-semi-algorithm \cite{McMillan06}. The detailed pseudocode has been
-given for a simpler model of boolean alternating automata extended
-with variables, in \cite{IosifXu18} and is reported, for
-self-completeness, in Appendix \ref{app:pseudocode}. For the time
-being, we shall content ourselves of a high-level definition of the
-data structure used to prove emptiness of an automaton.
+In a nutshell, a lazy annotation procedure systematically explores the
+set of execution paths (in our case, sequences of input events) in
+search of an accepting execution. Each path has a corresponding path
+formula that defines all words accepted along that path. If the
+current path formula is satisfiable, the automaton accepts a word and
+is not empty. Otherwise, the path is \emph{spurious}. When a spurious
+path is encountered, the search backtracks and the path is annotated
+with a set of learned facts, that marks this path as spurious in all
+future searches. The semi-algorithm uses moreover a coverage relation
+between paths, that optimize the search (the continuations of already
+covered paths are never explored) and sometimes provide a sound
+termination argument, when the automaton is empty.
+
+We check emptiness of first-order alternating automata using a version
+of the \impact~ lazy annotation semi-algorithm \cite{McMillan06}. The
+detailed pseudocode has been given for a simpler model of boolean
+alternating automata extended with variables \cite{IosifXu18}. To save
+space, we do not present the details of this algorithm (given in
+Appendix \ref{app:pseudocode}) and shall content ourselves of several
+high-level definitions. 
 
 Given a finite input event alphabet $\Sigma$, for two sequences
 $\alpha, \beta \in \Sigma^*$, we say that $\alpha$ is a prefix of
@@ -959,8 +963,8 @@ each input event $a \in \Sigma$.
 \begin{definition}\label{def:unfolding}
   An \emph{unfolding} of an automaton $\A =
   \tuple{\Sigma,X,Q,\iota,F,\Delta}$ is a finite partial mapping $U :
-  \Sigma^* \rightharpoonup_{\mathit{fin}} \posforms(Q,X)$, such
-  that: \begin{compactenum}
+  \Sigma^* \rightharpoonup_{\mathit{fin}} \posforms(Q,\emptyset)$,
+  such that: \begin{compactenum}
   \item\label{it1:unfolding} $\dom(U)$ is a finite prefix-closed
     complete set,
     %
@@ -970,7 +974,7 @@ each input event $a \in \Sigma$.
     such that $\alpha \in \Sigma^*$ and $a \in \Sigma$:
     \[\stamp{U(\alpha)}{0} \wedge
     \bigwedge_{q(\vec{y}) \arrow{a(X)}{} \psi} \forall y_1 \ldots
-    \forall y_{\#q} ~.~ \stamp{q}{0}(\vec{y}) \arrow{a(X)}{}
+    \forall y_{\#q} ~.~ \stamp{q}{0}(\vec{y}) \rightarrow
     \stamp{\psi}{1} \models \stamp{U(\alpha a)}{1}\]
   \end{compactenum}
   Moreover, $U$ is \emph{safe} if for each $\alpha \in \dom(U)$, the
@@ -979,15 +983,15 @@ each input event $a \in \Sigma$.
   unsatisfiable. 
 \end{definition}
 
-Lazy annotation semi-algorithms \cite{McMillan06,McMillan14}
-essentially build unfoldings of automata trying to discover
-counterexamples for emptiness. If the automaton $\A$ in question is
-non-empty, a systematic enumeration of the input event
-sequences\footnote{For instance, using breadth-first search.} from
-$\Sigma^*$ will suffice to discover a word $w \in \lang{\A}$, provided
-that the first-order theory of the data domain $\Data$ is decidable
-(Lemma \ref{lemma:acceptance}). However, if $\lang{\A} = \emptyset$,
-the enumeration of input event sequences may, in principle, run
+Lazy annotation semi-algorithms \cite{McMillan06,McMillan14} build
+unfoldings of automata trying to discover counterexamples for
+emptiness. If the automaton $\A$ in question is non-empty, a
+systematic enumeration of the input event sequences\footnote{For
+  instance, using breadth-first search.} from $\Sigma^*$ will suffice
+to discover a word $w \in \lang{\A}$, provided that the first-order
+theory of the data domain $\Data$ is decidable (Lemma
+\ref{lemma:acceptance}). However, if $\lang{\A} = \emptyset$, the
+enumeration of input event sequences may, in principle, run
 forever. The typical way of fighting this divergence problem is to
 define a \emph{coverage} relation between the nodes of the unfolding
 tree.
@@ -1006,18 +1010,57 @@ tree.
 
 A lazy annotation semi-algorithm will stop and report emptiness
 provided that it succeeds in building a closed and safe unfolding of
-the automaton. For instance, the \impact~ semi-algorithm
-\cite{McMillan06} upon which our procedure is based, continuosly
-expands the domain of the unfolding, while partially recomputing its
-labeling and the coverage, and stops when a safe complete unfolding
-has been found. The following theorem proves the soundness of this
-method:
+the automaton. Notice that, by Definition \ref{def:coverage}, for any
+three nodes of an unfolding $U$, say $\alpha,\beta,\gamma \in
+\dom(U)$, if $\alpha \prec \beta$ and $\alpha \cover \gamma$, then
+$\beta \cover \gamma$ as well. As we show next (Theorem
+\ref{thm:soundness}), there is no need to expand covered nodes,
+because, intuitively, there is a word $w \in \lang{\A}$ such that
+$\alpha \preceq \event{w}$ and $\alpha \cover \gamma$ only if there
+exists another word $u \in \lang{\A}$ such that $\gamma \preceq
+\event{u}$.
+
+An unfolding node $\alpha \in \dom(U)$ is said to be \emph{spurious}
+if and only if $\accform{\alpha}$ is unsatisfiable. In this case, we
+change (refine) the labels $U(\beta)$ of (some of the) prefixes $\beta
+\prefix \alpha$, including $\alpha$ itself, such that $U(\alpha)$
+becomes $\bot$, thus indicating that there is no real execution of the
+automaton along that input event sequence. As a result of the change
+of labels, if a node $\gamma \prefix \alpha$ used to cover another
+node from $\dom(U)$, it might not cover it with the new
+label. Therefore, the coverage relation has to be recomputed after
+each refinement of the labeling. For a detailed presentation of the
+emptiness procedure, we refer the reader to \cite{IosifXu18} or
+Appendix \ref{app:pseudocode}.
+
+The semi-algorithm stops when (and if) a safe complete unfolding has
+been found. The following theorem proves the soundness of this
+termination argument:
 
 \begin{theorem}\label{thm:soundness}
   Given an automaton $\A$, if $\A$ has a nonempty safe closed
   unfolding then $\lang{A} = \emptyset$. 
 \end{theorem}
-\proof{
+\proof{ Let $U$ be a safe and complete unfolding of $\A$, such that
+  $\dom(U) \neq \emptyset$. Suppose, by contradiction, that there
+  exists a word $w \in \lang{A}$ and let $\alpha \isdef
+  \event{w}$. 
+
+  Since $w \in \lang{A}$, by Lemma \ref{lemma:acceptance}, that there
+  exists an interpretation $\I$ such that $\I,\data{w} \models
+  \accform{\alpha}$. If $\alpha \in \dom(U)$ then one can show, by
+  induction on the length $n\geq0$ of $w$, that $\pathform{\alpha}
+  \models \stamp{U(\alpha)}{n}$, thus $\I,\data{w} \models
+  \stamp{U(\alpha)}{n}$. But $\I,\data{w} \models \bigwedge_{q \in Q
+    \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+  \stamp{q}{n}(\vec{y}) \rightarrow \bot$, hence $\stamp{U(\alpha)}{n}
+  \wedge \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
+  y_{\#(q)} ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot$. By renaming
+  $\stamp{q}{n}$ with $q$ in the previous formula, we obtain that
+  $U(\alpha) \wedge \forall y_1 \ldots \forall y_{\#(q)} ~.~
+  q(\vec{y}) \rightarrow \bot$ is satisfiable, thus $U$ is not safe,
+  contradiction.
+
   
 \qed}
 
@@ -1027,10 +1070,10 @@ simpler model of alternating automata, which uses boolean constants
 for control states and whose transition rules have no quantifiers
 \cite{IosifXu18}. The higher complexity of the automata model
 considered here, manifests itself within the interpolant generation
-procedure, used to label the unfoldings. We shall discuss generation
-of interpolants in the remainder of this section.
+procedure, used to refine the labeling of the unfolding. We discuss
+generation of interpolants in the next section.
 
-\subsection{Interpolant Generation}\label{sec:interpolants}
+\section{Interpolant Generation}\label{sec:interpolants}
 
 Typically, when checking the unreachability of a set of program
 configurations or, more generally, the infeasability of a set of Horn
