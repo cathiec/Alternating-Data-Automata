@@ -1041,7 +1041,9 @@ termination argument:
   Given an automaton $\A$, if $\A$ has a nonempty safe closed
   unfolding then $\lang{A} = \emptyset$. 
 \end{theorem}
-\proof{ Let $U$ be a safe and complete unfolding of $\A$, such that
+\proof{ 
+  \todo{
+  Let $U$ be a safe and complete unfolding of $\A$, such that
   $\dom(U) \neq \emptyset$. Suppose, by contradiction, that there
   exists a word $w \in \lang{A}$ and let $\alpha \isdef
   \event{w}$. 
@@ -1060,8 +1062,7 @@ termination argument:
   $U(\alpha) \wedge \forall y_1 \ldots \forall y_{\#(q)} ~.~
   q(\vec{y}) \rightarrow \bot$ is satisfiable, thus $U$ is not safe,
   contradiction.
-
-  
+  }
 \qed}
 
 As mentioned above, we check emptiness of first-order alternating
