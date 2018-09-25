@@ -914,26 +914,27 @@ automata under all boolean operations:
 \section{The Emptiness Problem}
 \label{sec:emptiness}
 
-The problem of checking emptiness of a given automata is undecidable,
+The problem of checking emptiness of a given automaton is undecidable,
 even for automata with predicates of arity two, whose transition rules
-use only equalities and disequalities, with no transition quantifiers
-\cite{Farzan15}. Since even such simple classes of alternating
-automata have no general decision procedure for emptiness, we use an
-abstraction-refinement semi-algorithm based on \emph{lazy annotation}
-\cite{McMillan06,McMillan14}. 
+use only equalities and disequalities, having no transition
+quantifiers \cite{Farzan15}. Since even such simple classes of
+alternating automata have no general decision procedure for emptiness,
+we use an abstraction-refinement semi-algorithm based on \emph{lazy
+  annotation} \cite{McMillan06,McMillan14}.
 
 In a nutshell, a lazy annotation procedure systematically explores the
 set of execution paths (in our case, sequences of input events) in
 search of an accepting execution. Each path has a corresponding path
 formula that defines all words accepted along that path. If the
 current path formula is satisfiable, the automaton accepts a word and
-is not empty. Otherwise, the path is \emph{spurious}. When a spurious
-path is encountered, the search backtracks and the path is annotated
-with a set of learned facts, that marks this path as spurious in all
-future searches. The semi-algorithm uses moreover a coverage relation
-between paths, that optimize the search (the continuations of already
-covered paths are never explored) and sometimes provide a sound
-termination argument, when the automaton is empty.
+is not empty. Otherwise, the path is said to be \emph{spurious}. When
+a spurious path is encountered, the search backtracks and the path is
+annotated with a set of learned facts, that marks this path as
+spurious in all future searches. The semi-algorithm uses moreover a
+coverage relation between paths, that optimize the search (the
+continuations of already covered paths are never explored) and
+sometimes provide a sound termination argument, when the automaton is
+empty.
 
 We check emptiness of first-order alternating automata using a version
 of the \impact~ lazy annotation semi-algorithm \cite{McMillan06}. The
@@ -1015,55 +1016,67 @@ three nodes of an unfolding $U$, say $\alpha,\beta,\gamma \in
 \dom(U)$, if $\alpha \prec \beta$ and $\alpha \cover \gamma$, then
 $\beta \cover \gamma$ as well. As we show next (Theorem
 \ref{thm:soundness}), there is no need to expand covered nodes,
-because, intuitively, there is a word $w \in \lang{\A}$ such that
+because, intuitively, there exists a word $w \in \lang{\A}$ such that
 $\alpha \preceq \event{w}$ and $\alpha \cover \gamma$ only if there
 exists another word $u \in \lang{\A}$ such that $\gamma \preceq
-\event{u}$.
+\event{u}$. Hence, exploring only those input event sequences that are
+continuations of $\gamma$ (and ignoring those of $\alpha$) suffices in
+order to find a counterexample for emptiness, if one exists.
 
 An unfolding node $\alpha \in \dom(U)$ is said to be \emph{spurious}
 if and only if $\accform{\alpha}$ is unsatisfiable. In this case, we
-change (refine) the labels $U(\beta)$ of (some of the) prefixes $\beta
-\prefix \alpha$, including $\alpha$ itself, such that $U(\alpha)$
-becomes $\bot$, thus indicating that there is no real execution of the
-automaton along that input event sequence. As a result of the change
-of labels, if a node $\gamma \prefix \alpha$ used to cover another
-node from $\dom(U)$, it might not cover it with the new
-label. Therefore, the coverage relation has to be recomputed after
-each refinement of the labeling. For a detailed presentation of the
-emptiness procedure, we refer the reader to \cite{IosifXu18} or
-Appendix \ref{app:pseudocode}.
+change (refine) the labels of (some of the) prefixes of $\alpha$ (and
+that of $\alpha$), such that $U(\alpha)$ becomes $\bot$, thus
+indicating that there is no real execution of the automaton along that
+input event sequence. As a result of the change of labels, if a node
+$\gamma \prefix \alpha$ used to cover another node from $\dom(U)$, it
+might not cover it with the new label. Therefore, the coverage
+relation has to be recomputed after each refinement of the
+labeling. For a detailed presentation of the emptiness procedure, we
+refer the reader to \cite{IosifXu18} (or Appendix
+\ref{app:pseudocode}).
 
 The semi-algorithm stops when (and if) a safe complete unfolding has
 been found. The following theorem proves the soundness of this
 termination argument:
 
 \begin{theorem}\label{thm:soundness}
-  Given an automaton $\A$, if $\A$ has a nonempty safe closed
-  unfolding then $\lang{A} = \emptyset$. 
+  If an automaton $\A$ has a nonempty safe closed unfolding then
+  $\lang{A} = \emptyset$.
 \end{theorem}
 \proof{ 
-  \todo{
   Let $U$ be a safe and complete unfolding of $\A$, such that
   $\dom(U) \neq \emptyset$. Suppose, by contradiction, that there
   exists a word $w \in \lang{A}$ and let $\alpha \isdef
   \event{w}$. 
 
-  Since $w \in \lang{A}$, by Lemma \ref{lemma:acceptance}, that there
+  Since $w \in \lang{A}$, by Lemma \ref{lemma:acceptance}, there
   exists an interpretation $\I$ such that $\I,\data{w} \models
-  \accform{\alpha}$. If $\alpha \in \dom(U)$ then one can show, by
-  induction on the length $n\geq0$ of $w$, that $\pathform{\alpha}
-  \models \stamp{U(\alpha)}{n}$, thus $\I,\data{w} \models
-  \stamp{U(\alpha)}{n}$. But $\I,\data{w} \models \bigwedge_{q \in Q
+  \accform{\alpha}$. Assume first that $\alpha \in \dom(U)$.  In this
+  case, one can show, by induction on the length $n\geq0$ of $w$, that
+  $\pathform{\alpha} \models \stamp{U(\alpha)}{n}$, thus $\I,\data{w}
+  \models \stamp{U(\alpha)}{n}$. Since $\I,\data{w} \models
+  \accform{\alpha}$, we have $\I,\data{w} \models \bigwedge_{q \in Q
     \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
   \stamp{q}{n}(\vec{y}) \rightarrow \bot$, hence $\stamp{U(\alpha)}{n}
   \wedge \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
   y_{\#(q)} ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot$. By renaming
-  $\stamp{q}{n}$ with $q$ in the previous formula, we obtain that
+  $\stamp{q}{n}$ with $q$ in the previous formula, we obtain
   $U(\alpha) \wedge \forall y_1 \ldots \forall y_{\#(q)} ~.~
   q(\vec{y}) \rightarrow \bot$ is satisfiable, thus $U$ is not safe,
-  contradiction.
-  }
-\qed}
+  contradiction.  
+
+  We proceed thus under the assumption that $\alpha \not\in
+  \dom(U)$. Since $\dom(U)$ is a nonempty prefix-closed set, there
+  exists a strict prefix $\alpha'$ of $\alpha$ that is a leaf of
+  $\dom(U)$. Since $U$ is closed, $\alpha'$ is closed and let
+  $\alpha_1 \prefix \alpha' \prefix \alpha$ such that $\alpha_1 \cover
+  \beta_1$, for some node $\beta_1 \in \dom(U)$. Let $\gamma_1$ be the
+  unique sequence such that $\alpha_1\gamma_1 = \alpha$. By Definition
+  \ref{def:coverage}, since $\alpha_1 \cover \beta_1$ and $\event{w} =
+  \alpha_1\gamma_1 \in \lang{\A}$, there exists a word $w_1$ and a
+  cube $c_1 \in \cube{\sem{U(\beta_1)}}$ such that $\event{w_1} =
+  \gamma_1$ and $\A$ accepts $w_1$ starting with $c_1$. \qed}
 
 As mentioned above, we check emptiness of first-order alternating
 automata using the same method previously used to check emptiness of a
