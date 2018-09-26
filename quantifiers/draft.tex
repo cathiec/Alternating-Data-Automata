@@ -925,24 +925,24 @@ we use an abstraction-refinement semi-algorithm based on \emph{lazy
 In a nutshell, a lazy annotation procedure systematically explores the
 set of execution paths (in our case, sequences of input events) in
 search of an accepting execution. Each path has a corresponding path
-formula that defines all words accepted along that path. If the
-current path formula is satisfiable, the automaton accepts a word and
-is not empty. Otherwise, the path is said to be \emph{spurious}. When
-a spurious path is encountered, the search backtracks and the path is
-annotated with a set of learned facts, that marks this path as
-spurious in all future searches. The semi-algorithm uses moreover a
-coverage relation between paths, that optimize the search (the
-continuations of already covered paths are never explored) and
-sometimes provide a sound termination argument, when the automaton is
-empty.
+formula that defines all words accepted along that path. If the path
+formula is satisfiable, the automaton accepts a word. Otherwise, the
+path is said to be \emph{spurious}. When a spurious path is
+encountered, the search backtracks and the path is annotated with a
+set of learned facts, that marks this path as infeasible. The
+semi-algorithm uses moreover a coverage relation between paths,
+ensuring that the continuations of already covered paths are never
+explored. Sometimes this coverage relation provides a sound
+termination argument, when the automaton is empty.
 
 We check emptiness of first-order alternating automata using a version
-of the \impact~ lazy annotation semi-algorithm \cite{McMillan06}. The
-detailed pseudocode has been given for a simpler model of boolean
-alternating automata extended with variables \cite{IosifXu18}. To save
-space, we do not present the details of this algorithm (given in
-Appendix \ref{app:pseudocode}) and shall content ourselves of several
-high-level definitions. 
+of the \impact~ lazy annotation semi-algorithm \cite{McMillan06}. An
+analogous procedure is given in \cite{IosifXu18}, for a simpler model
+of alternating automata, that uses only predicates or arity zero
+(booleans) and no transition quantifiers. For simplicity, we do not
+present the details of this algorithm (see Appendix
+\ref{app:pseudocode}) and shall content ourselves of several
+high-level definitions.
 
 Given a finite input event alphabet $\Sigma$, for two sequences
 $\alpha, \beta \in \Sigma^*$, we say that $\alpha$ is a prefix of
