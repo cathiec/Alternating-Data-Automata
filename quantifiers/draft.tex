@@ -1006,7 +1006,8 @@ tree.
   $c \in \cube{\sem{U(\alpha')}}$, if $\A$ accepts $w$ started in $c$
   then there exists a cube $d \in \cube{\sem{U(\beta)}}$ such that
   $\A$ accepts $w$ started in $d$. Moreover, $U$ is \emph{closed} if
-  and only if every leaf from $\dom(U)$ is covered.
+  and only if every leaf from $\dom(U)$ is covered by an uncovered
+  node.
 \end{definition}
 
 A lazy annotation semi-algorithm will stop and report emptiness
@@ -1069,14 +1070,31 @@ termination argument:
   We proceed thus under the assumption that $\alpha \not\in
   \dom(U)$. Since $\dom(U)$ is a nonempty prefix-closed set, there
   exists a strict prefix $\alpha'$ of $\alpha$ that is a leaf of
-  $\dom(U)$. Since $U$ is closed, $\alpha'$ is closed and let
-  $\alpha_1 \prefix \alpha' \prefix \alpha$ such that $\alpha_1 \cover
-  \beta_1$, for some node $\beta_1 \in \dom(U)$. Let $\gamma_1$ be the
-  unique sequence such that $\alpha_1\gamma_1 = \alpha$. By Definition
-  \ref{def:coverage}, since $\alpha_1 \cover \beta_1$ and $\event{w} =
-  \alpha_1\gamma_1 \in \lang{\A}$, there exists a word $w_1$ and a
-  cube $c_1 \in \cube{\sem{U(\beta_1)}}$ such that $\event{w_1} =
-  \gamma_1$ and $\A$ accepts $w_1$ starting with $c_1$. \qed}
+  $\dom(U)$. Since $U$ is closed, the leaf $\alpha'$ must be covered
+  and let $\alpha_1 \prefix \alpha' \prefix \alpha$ be a node such
+  that, for some uncovered node $\beta_1 \in \dom(U)$, for every word
+  $w'$ and every cube $c \in \cube{\sem{U(\alpha_1)}}$ such that $\A$
+  accepts $w'$ starting with $c$, there exists a cube $d \in
+  \cube{\sem{U(\beta_1)}}$ such that $\A$ accepts $w'$ starting with
+  $d$. Let $\gamma_1$ be the unique sequence such that
+  $\alpha_1\gamma_1 = \alpha$. By Definition \ref{def:coverage}, since
+  $\alpha_1 \cover \beta_1$ and $\event{w} = \alpha_1\gamma_1 \in
+  \lang{\A}$, there exists a word $w_1$ and a cube $c_1 \in
+  \cube{\sem{U(\beta_1)}}$ such that $\event{w_1} = \gamma_1$ and $\A$
+  accepts $w_1$ starting with $c_1$. If $\beta_1\gamma_1 \in \dom(U)$,
+  we obtain a contradiction by a similar argument as above. Hence
+  $\beta_1\gamma_1 \not\in \dom(U)$ and there exists a leaf of
+  $\dom(U)$ which is also a prefix of $\beta_1\gamma_1$. Since $U$ is
+  closed, this leaf is covered by an uncovered node $\beta_2 \in
+  \dom(U)$ and let $\alpha_2 \in \dom(U)$ be the minimal (in the
+  prefix partial order) node such that $\beta_1 \prefix \alpha_2
+  \prefix \beta_1\gamma_1$ and $\alpha_2 \cover \beta_2$. Let
+  $\gamma_2$ be the unique sequence such that $\alpha_2\gamma_2 =
+  \beta_1\gamma_1$. Since $\beta_1$ is uncovered, we have $\beta_1
+  \neq \alpha_2$ and thus $\len{\gamma_1} > \len{\gamma_2}$. By
+  repeating the above reasoning for $\alpha_2$, $\beta_2$ and
+  $\gamma_2$, we obtain an infinite sequence $\len{\gamma_1} >
+  \len{\gamma_2} > \ldots$, which is again a contradiction. \qed}
 
 As mentioned above, we check emptiness of first-order alternating
 automata using the same method previously used to check emptiness of a
