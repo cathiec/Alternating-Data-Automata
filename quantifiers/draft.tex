@@ -1112,7 +1112,8 @@ configurations or, more generally, the infeasability of a set of Horn
 clauses \cite{BjornerGurfinkelMcMillanRybalchenko15}, the interpolants
 used to annotate the unfolded control structure are assertions about
 the values of the program variables in a given control state, at a
-certain step of a given execution. It is useful to distinguish between
+certain step of a given execution. However, in an alternating model of
+computation, it is useful to distinguish between
 \begin{inparaenum}[(i)]
 \item locality of interpolants w.r.t. a given control state (control
   locality) and
@@ -1184,7 +1185,10 @@ instance, such interpolating decision procedures exist for linear real
 and integer arithmetic, with uninterpreted function symbols (UFLRA and
 UFLIA) \cite{RybalchenkoSofronieStokkermans}. In the rest of this
 section, let us fix an automaton $\A =
-\tuple{\Sigma,X,Q,\iota,F,\Delta}$.
+\tuple{\Sigma,X,Q,\iota,F,\Delta}$. Due to the above observation, none
+of the interpolants considered will be control-local and we shall use
+the term \emph{local} to denote time-local interpolants, with no free
+variables.
 
 \begin{definition}\label{def:generalized-lyndon-interpolant}
   Given a non-empty sequence of input events $\alpha = a_1 \ldots a_n
@@ -1201,9 +1205,9 @@ section, let us fix an automaton $\A =
     \item $I_n \wedge \bigwedge_{q \in Q \setminus F} \forall y_1
       \ldots \forall y_{\#(q)} ~.~ q(\vec{y})$ is unsatisfiable.
   \end{compactenum}
-  Moreover, the GLI is \emph{local} iff $\voc{I_k} \cap \stamp{Q}{\leq n}
-  \subseteq \stamp{Q}{k}$ and $\voc{I_k} \cap \stamp{X}{\leq n}
-  \subseteq \stamp{X}{k}$, for all $k \in [n]$.
+  Moreover, the GLI is \emph{local} iff $\voc{I_k} \cap \stamp{Q}{\leq
+    n} \subseteq \stamp{Q}{k}$ and $\voc{I_k} \cap \stamp{X}{\leq n} =
+  \emptyset$, for all $k \in [n]$.
 \end{definition}
 The following proposition states the existence of local GLI for the
 theories in which Lyndon's Interpolation Theorem holds.
