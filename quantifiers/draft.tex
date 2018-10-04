@@ -1205,9 +1205,8 @@ variables.
     \item $I_n \wedge \bigwedge_{q \in Q \setminus F} \forall y_1
       \ldots \forall y_{\#(q)} ~.~ q(\vec{y})$ is unsatisfiable.
   \end{compactenum}
-  Moreover, the GLI is \emph{local} iff $\voc{I_k} \cap \stamp{Q}{\leq
-    n} \subseteq \stamp{Q}{k}$ and $\voc{I_k} \cap \stamp{X}{\leq n} =
-  \emptyset$, for all $k \in [n]$.
+  Moreover, the GLI is \emph{local} if and only if $\voc{I_k}
+  \subseteq \stamp{Q}{k}$, for all $k \in [n]$.
 \end{definition}
 The following proposition states the existence of local GLI for the
 theories in which Lyndon's Interpolation Theorem holds.
@@ -1265,7 +1264,14 @@ an interpolant for an unsatisfiable conjunction of formulae $\phi
 \wedge \psi$ is typically the job of the decision procedure that
 proves the unsatisfiability and, in general, there is no such
 procedure, when $\phi$ and $\psi$ contain predicates and have
-non-trivial quantifier alternation.
+non-trivial quantifier alternation. In this case, some provers use
+instantiation heuristics for the universal quantifiers that are
+sufficient for proving unsatisfiability, however these heuristics are
+not always suitable for interpolant generation. Consequently, from now
+on, we assume the existence of an effective Lyndon interpolation
+procedure only for decidable theories, such as the quantifier-free
+linear (integer) arithmetic with uninterpreted functions (QFLIA,
+QFLRA, etc.).
 
 This is where the predicate-free path formulae (Definition
 \ref{def:substform}) come into play. For a given event sequence
@@ -1323,9 +1329,11 @@ Examples of witness-producing quantifier elimination procedures can be
 found in the literature for e.g. linear integer (real) arithmetic
 (LIA,LRA), Presburger arithmetic and boolean algebra of sets and
 Presburger cardinality constraints (BAPA)
-\cite{KuncakMayerPiskacSuter12}. Furthermore, we describe a cubic-time
-witness generation for difference bounds constraints, a simple subset
-of linear integer (real) arithmetic (\S\ref{sec:applications}).
+\cite{KuncakMayerPiskacSuter12}.  
+
+%% Furthermore, we describe a cubic-time witness generation for
+%% difference bounds constraints, a simple subset of linear integer
+%% (real) arithmetic (\S\ref{sec:applications}).
 
 Under the assumption that witness terms can be effectively built, let
 us describe the generation of a non-local GLI for a given input event
@@ -1334,42 +1342,38 @@ the acceptance formula $\accform{\alpha}$ and its equisatisfiable
 forms $\quantform{\alpha} = Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$
 and $\substform{\alpha} = Q_1x_1 \ldots Q_mx_m ~.~ \overline{\Phi}$,
 both written in prenex form, with matrices $\widehat{\Phi}$ and
-$\overline{\Phi}$, respectively. W.l.o.g. we consider a monotonic
-mapping $\xi : [1,m] \rightarrow [n]$ assigning each transition
-quantifier from $\substform{\alpha}$ its corresponding time-stamp from
-$\accform{\alpha}$. Because we assumed that the first-order theory of
-$\Data$ has quantifier elimination, the satisfiability problem for
-$\substform{\alpha}$ is decidable. If $\substform{\alpha}$ is
-satisfiable, we build a counterexample for emptiness $w$ such that
-$\event{w}=\alpha$ and $\data{w}$ is a satisfying assignment for
-$\substform{\alpha}$. Otherwise, $\substform{\alpha}$ is unsatisfiable
-and there exist witness terms $\tau_{i_1} \ldots \tau_{i_\ell}$, such
-that $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq\xi(i_j)}$ (Theorem
-\ref{thm:skolem}) and the formula $\overline{\Phi}[\tau_{i_1}/x_{i_1},
-  \ldots, \tau_{i_\ell}/x_{i_\ell}]$, obtained from the matrix of
-$\substform{\alpha}$, by replacing the universally quantified
-variables with witness terms, is unsatisfiable. Then it turns out that
-the formula $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+$\overline{\Phi}$, respectively. Because we assumed that the
+first-order theory of $\Data$ has quantifier elimination, the
+satisfiability problem for $\substform{\alpha}$ is decidable. If
+$\substform{\alpha}$ is satisfiable, we build a counterexample for
+emptiness $w$ such that $\event{w}=\alpha$ and $\data{w}$ is a
+satisfying assignment for $\substform{\alpha}$. Otherwise,
+$\substform{\alpha}$ is unsatisfiable and there exist witness terms
+$\tau_{i_1} \ldots \tau_{i_\ell}$, where $\set{i_1, \ldots, i_\ell} =
+\set{j \in [1,m] \mid Q_j = \forall}$, such that
+$\overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+  \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable (Theorem
+\ref{thm:skolem}). Then it turns out that the formula
+$\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
   \tau_{i_\ell}/x_{i_\ell}]$, obtained analogously from the matrix of
 $\quantform{\alpha}$, is unsatisfiable as well (Lemma
-\ref{lemma:subst-quant}).
+\ref{lemma:subst-quant}). Because this latter formula is structured as
+a conjunction of formulae $\stamp{\iota}{0} \wedge \phi_1 \ldots
+\wedge \phi_n \wedge \psi$, where $\voc{\phi_k} \cap \stamp{Q}{\leq n}
+\subseteq \stamp{Q}{k-1} \cup \stamp{Q}{k}$ and $\voc{\psi} \cap
+\stamp{Q}{\leq n} \subseteq \stamp{Q}{n}$, it is now possible to use
+an existing interpolation procedure for the quantifier-free theory of
+$\Data$, extended with uninterpreted function symbols, to compute a
+sequence of non-local GLI $(I_0, \ldots, I_n)$ such that $\voc{I_k}
+\cap \stamp{Q}{\leq n} \subseteq \stamp{Q}{k}$, for all $k \in [n]$.
 
-Because this latter formula is structured as a conjunction of formulae
-$\stamp{\iota}{0} \wedge \phi_1 \ldots \wedge \phi_n \wedge \psi$,
-where $\voc{\phi_k} \subseteq \stamp{Q}{k-1} \cup \stamp{Q}{k} \cup
-\stamp{X}{\leq k}$ for all $k \in [1,n]$ and $\voc{\psi} \subseteq
-\stamp{Q}{n}$, it is now possible to use an existing interpolation
-procedure for the quantifier-free theory of $\Data$, extended with
-uninterpreted function symbols, to compute a sequence of non-local GLI
-$(I_0, \ldots, I_n)$ such that $\voc{I_k} \cap \stamp{Q}{\leq n}
-\subseteq \stamp{Q}{k}$ and $\voc{I_k} \cap \stamp{X}{\leq n}
-\subseteq \stamp{X}{\leq k}$, for all $k \in [n]$. Since each formula
-$I_k$ of the GLI may refer to the current predicates $\stamp{Q}{k}$
-and to the past and current input variables $\stamp{X}{\leq k}$, we
-further give up on the locality of interpolants and work with
-non-local GLI that are effectively computable by a combination of
-quantifier elimination with interpolation for quantifier-free data
-theories with uninterpreted functions.
+%% Since each formula $I_k$ of the GLI may refer to the current
+%% predicates $\stamp{Q}{k}$ and to the past and current input variables
+%% $\stamp{X}{\leq k}$, we further give up on the locality of
+%% interpolants and work with non-local GLI that are effectively
+%% computable by a combination of quantifier elimination with
+%% interpolation for quantifier-free data theories with uninterpreted
+%% functions.
 
 \begin{example}[Contd. from Examples \ref{ex:quant-elim} and \ref{ex:pred-elim}]\label{ex:gli}
 The formula $\substform{\alpha}$ (Example \ref{ex:pred-elim}) is
@@ -1394,21 +1398,23 @@ construction.
   Given a non-empty input event sequence $\alpha = a_1 \ldots a_n \in
   \Sigma^*$, such that $\accform{\alpha}$ is unsatisfiable, let
   $Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$ be a prenex form of
-  $\quantform{\alpha}$, where $Q_ix_i$ are transition quantifiers and
-  $\xi : [1,m] \rightarrow [n]$ is a monotonic function mapping each
-  quantified variable to the time-stamp of the step where it occurs in
-  $\accform{\alpha}$. Then the following hold: \begin{compactenum}
-  \item\label{it1:subst-quant} there exist witness terms $\tau_{i_1},
-    \ldots, \tau_{i_\ell}$, where $1 \leq i_1 < \ldots < i_\ell \leq
-    m$ and $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq \xi(i_j)}$ for
-    all $j \in [1,\ell]$, such that $\widehat{\Phi}[\tau_{i_1}/x_{i_1},
-      \ldots, \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable, and
+  $\quantform{\alpha}$ and let $\xi : [1,m] \rightarrow [n]$ be a
+  monotonic function mapping each transition quantifier to the minimal
+  index from the sequence $\quantformn{\alpha_0}, \ldots,
+  \quantformn{\alpha_n}$ where it occurs. Then the following
+  hold: \begin{compactenum}
+  \item\label{it1:subst-quant} one can effectively build witness terms
+    $\tau_{i_1}, \ldots, \tau_{i_\ell}$, where $\set{i_1, \ldots,
+    i_\ell} = \set{j \in [1,m] \mid Q_j = \forall}$ and
+    $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq \xi(i_j)} \cup \set{x_k
+    \mid k < i_j, Q_k = \exists}$, for all $j \in [1,\ell]$, such that
+    $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+    \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable, and
     %
   \item\label{it2:subst-quant} one can effectively build a GLI $(I_0,
-    \ldots, I_n)$ for $\alpha$, such that $\voc{I_k} \cap
-    \stamp{Q}{\leq n} \subseteq \stamp{Q}{k}$ and $\voc{I_k} \cap
-    \stamp{X}{\leq n} \subseteq \stamp{X}{\leq k}$, for all $k \in
-          [n]$.
+    \ldots, I_n)$ for $\alpha$, such that $\voc{I_k} \subseteq
+    \stamp{Q}{k} \cup \stamp{X}{\leq k} \cup \set{x_j \mid j <
+      \max(\xi^{-1}(k)),~ Q_j = \exists}$, for all $k \in [n]$.
   \end{compactenum}
 \end{lemma}
 \proof{(\ref{it1:subst-quant}) If $\accform{\alpha}$ is unsatisfiable,
@@ -1416,23 +1422,26 @@ construction.
   successively $\quantform{\alpha}$ and $\substform{\alpha}$ are
   unsatisfiable. Let $Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$ and
   $Q_1x_1 \ldots Q_mx_m ~.~ \overline{\Phi}$ be prenex forms for
-  $\quantform{\alpha}$ and $\substform{\alpha}$,
-  respectively. Further, let $\xi : [1,m] \rightarrow [n]$ be the
-  monotone function mapping of each quantified variable to time-stamp
-  where it was introduced. Then there exist witness terms $\tau_{i_1},
-  \ldots, \tau_{i_\ell}$, where $\set{i_1,\ldots,i_\ell}=\set{i \in
-    [1,m] \mid Q_i=\forall}$, such that $\voc{\tau_{i_j}} \subseteq
-  \stamp{X}{\xi(i_j)}$, for all $j \in [1,\ell]$ and
-  $\overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
-    \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable. 
-
+  $\quantform{\alpha}$ and $\substform{\alpha}$, respectively. Since
+  we assumed that the first-order theory of the data domain has
+  witness-producing quantifier elimination, using Theorem
+  \ref{thm:skolem} one can effectively build witness terms
+  $\tau_{i_1}, \ldots, \tau_{i_\ell}$, where
+  $\set{i_1,\ldots,i_\ell}=\set{i \in [1,m] \mid Q_i=\forall}$, such
+  that: \begin{compactitem}
+  \item $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq \xi(i_j)} \cup
+    \set{x_k \mid k < i_j, Q_k = \exists}$, for all $j \in [1,\ell]$ and
+    %
+  \item $\overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+    \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable.
+  \end{compactitem}
   Let $\widehat{\Phi}_0$, \ldots, $\widehat{\Phi}_n$ be the sequence
   of quantifier-free formulae, defined as follows: \begin{compactitem}
-  \item $\widehat{\Phi}_0$ is the matrix of the prenex form of
+  \item $\widehat{\Phi}_0$ is the matrix of some prenex form of
     $\stamp{\iota}{0}$,
     %
-  \item for all $i=1,\ldots,n$, let $\widehat{\Phi}_i$ be a prenex
-    form matrix of the formula:
+  \item for all $i=1,\ldots,n$, let $\widehat{\Phi}_i$ be the matrix
+    of some prenex form of the formula:
     \[\widehat{\Phi}_i \isdef \widehat{\Phi}_{i-1} \wedge
      \underbrace{\bigwedge_{\begin{array}{l}
          \scriptstyle{\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \widehat{\Phi}_{i-1}} \\
@@ -1440,7 +1449,8 @@ construction.
      \end{array}} \stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \rightarrow 
      \stamp{\psi}{i}[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]}_{\isdef \phi_i}\]  
   \end{compactitem}
-  It is easy to see that $\widehat{\Phi}$ is a prenex form matrix of the formula:   
+  It is easy to see that $\widehat{\Phi}$ is the matrix of some prenex
+  form of the formula:
   \[\widehat{\Phi}_n \wedge \underbrace{\bigwedge_{\begin{array}{l}
         \scriptstyle{\stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \widehat{\Phi}_n} \\
         \scriptstyle{q \in Q \setminus F}
@@ -1462,28 +1472,36 @@ construction.
   point (\ref{it1:subst-quant}), we have $\widehat{\Phi} =
   \widehat{\Phi}_0 \wedge \bigwedge_{i=1}^n \phi_i \wedge
   \psi$. Consider the sequence of witness terms $\tau_{i_1}, \ldots,
-  \tau_{i_\ell}$, such that $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq
-    \xi(i_j)}$, for all $j \in [1,\ell]$, whose existence is proved by
-  point (\ref{it1:subst-quant}). By the definition of $\xi$, we obtain
-  the following: \begin{compactitem}
-  \item $\voc{\widehat{\Phi}_0[\tau_{i_1}/x_{i_1}, \ldots, \tau_{i_\ell}/x_{i_\ell}]} \subseteq 
-    \stamp{Q}{0} \cup \stamp{X}{0}$, 
+  \tau_{i_\ell}$, whose existence is proved by point
+  (\ref{it1:subst-quant}). Because $\voc{\tau_{i_j}} \subseteq
+  \stamp{X}{\leq \xi(i_j)} \cup \set{x_k \mid k < i_j, Q_k =
+    \exists}$, for all $j \in [1,\ell]$, and moreover $\xi$ is
+  monotonic, we obtain: \begin{compactitem}
+  \item $\voc{\widehat{\Phi}_0[\tau_{i_1}/x_{i_1}, \ldots,
+      \tau_{i_\ell}/x_{i_\ell}]} \subseteq \stamp{Q}{0} \cup
+    \stamp{X}{0} \cup \set{x_j \mid j < \max(\xi^{-1}(0)), Q_j =
+      \exists}$,
     %
-  \item $\voc{\phi_i[\tau_{i_1}/x_{i_1}, \ldots, \tau_{i_\ell}/x_{i_\ell}]} \subseteq 
-    \stamp{Q}{i-1} \cup \stamp{Q}{i} \cup \stamp{X}{\leq i}$, for all $i \in [1,n]$,
+  \item $\voc{\phi_i[\tau_{i_1}/x_{i_1}, \ldots,
+      \tau_{i_\ell}/x_{i_\ell}]} \subseteq \stamp{Q}{i-1} \cup
+    \stamp{Q}{i} \cup \stamp{X}{\leq i} \cup \set{x_j \mid j <
+      \max(\xi^{-1}(i)), Q_j = \exists}$, for all $i \in [1,n]$,
     %
-  \item $\voc{\psi[\tau_{i_1}/x_{i_1}, \ldots, \tau_{i_\ell}/x_{i_\ell}]} \subseteq 
-    \stamp{Q}{n} \cup \stamp{X}{\leq n}$. 
+  \item $\voc{\psi[\tau_{i_1}/x_{i_1}, \ldots,
+      \tau_{i_\ell}/x_{i_\ell}]} \subseteq \stamp{Q}{n} \cup
+    \stamp{X}{\leq n} \cup \set{x_j \mid j \in [1,m], Q_j = \exists}$.
   \end{compactitem}
   By repeatedly applying Lyndon's Interpolation Theorem, we obtain a
   sequence of formulae $(I_0, \ldots, I_n)$ such that: \begin{compactitem}
     \item $\widehat{\Phi}_0[\tau_{i_1}/x_{i_1}, \ldots,
       \tau_{i_\ell}/x_{i_\ell}] \models I_0$ and $\voc{I_0} \subseteq
-      \stamp{Q}{0} \cup \stamp{X}{0}$,
+      \stamp{Q}{0} \cup \stamp{X}{0} \cup \set{x_j \mid j <
+        \max(\xi^{-1}(0)), Q_j = \exists}$,
       %
     \item $I_{k-1} \wedge \phi_i[\tau_{i_1}/x_{i_1}, \ldots,
       \tau_{i_\ell}/x_{i_\ell}] \models I_k$ and $\voc{I_k} \subseteq
-      \stamp{Q}{k} \cup \stamp{X}{\leq k}$, for all $k \in [1,n]$,
+      \stamp{Q}{k} \cup \stamp{X}{\leq k} \cup \set{x_j \mid j <
+        \max(\xi^{-1}(k)), Q_j = \exists}$, for all $k \in [1,n]$,
       %
     \item $I_n \wedge \psi[\tau_{i_1}/x_{i_1}, \ldots,
       \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable.
@@ -1498,15 +1516,35 @@ construction.
       %
     \item $I_{k-1} \wedge \Big(\bigwedge_{q(\vec{y}) \arrow{a_k(X)}{}
       \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
-      \stamp{q}{k}(\vec{y}) \rightarrow \stamp{\psi}{k+1} \models
-      \phi_k\Big) \models I_k$, and 
+      \stamp{q}{k}(\vec{y}) \rightarrow \stamp{\psi}{k+1}\Big) \models
+      I_{k-1} \wedge \phi_k \models I_k$, and 
       %
-    \item $I_n \wedge \bigwedge_{q \in Q \setminus F} \forall y_1
-      \ldots \forall y_{\#(q)} ~.~ q(\vec{y})$ is
-      unsatisfiable,
+    \item $I_n \wedge \Big(\bigwedge_{q \in Q \setminus F} \forall y_1
+      \ldots \forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \bot\Big)
+      \models I_n \wedge \psi \models \bot$,     
   \end{compactitem}
   as required by Definition
   \ref{def:generalized-lyndon-interpolant}. \qed}
+
+In conclusion, under two assumptions about the first-order theory of
+the data domain, namely \begin{inparaenum}[(i)]
+\item witness-producing quantifier elimination, and
+\item Lyndon interpolation for the quantifier-free fragment with
+  uninterpreted functions,
+\end{inparaenum}
+we developped a rather generic method that produces generalized Lyndon
+interpolants for unfeasible input event sequences. Moreover, each
+formula $I_k$ in the interpolant refers only to the current predicate
+symbols $\stamp{Q}{I_k}$, the current and past input variables
+$\stamp{X}{\leq k}$ and the existentially quantified transition
+variables introduced at the previous steps $\set{x_j \mid j <
+  \max(\xi^{-1}(k)), Q_j = \exists}$. The remaining question is how to
+use such non-local interpolants for the coverage between the nodes of
+the unfolding of an automaton (Definition \ref{def:coverage}).
+
+\subsection{Coverage with Non-local Interpolants}
+
+
 
 %% \subsection{Coverage} 
 
