@@ -1642,15 +1642,15 @@ becomes undecidable when the data theory subsumes Presburger
 arithmetic \cite{Halpern91}.
 
 Nevertheless, if we require just a yes/no answer (i.e.\ not an
-interpolant) recently developped quantifier instantiation heuristics,
-such as \cite{ReynoldsKK17}, perform rather well in answering a large
-number of queries in this class. Observe, moreover, that coverage does
-not need to rely on a complete decision procedure. If the prover fails
-in answering the above satisfiability query, then the semi-algorithm
+interpolant) recently developped quantifier instantiation heuristics
+\cite{ReynoldsKK17} perform rather well in answering a large number of
+queries in this class. Observe, moreover, that coverage does not need
+to rely on a complete decision procedure. If the prover fails in
+answering the above satisfiability query, then the semi-algorithm
 assumes the node is not covered and continues exploring its
 successors. Failure to compute complete coverage may lead to
 divergence (non-termination) and failure to prove emptiness, but the
-soundness of the procedure is preserved. 
+soundness of the procedure is not affected.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
