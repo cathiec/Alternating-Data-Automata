@@ -1195,15 +1195,18 @@ variables.
   \in \Sigma^*$, a \emph{generalized Lyndon interpolant (GLI)} is a
   sequence $(I_0,\ldots,I_n)$ of formulae such that, for all $k \in
   [n-1]$: \begin{compactenum}
-    \item $\pset{-}{I_k} = \emptyset$,
+    \item\label{it1:generalized-lyndon-interpolant} $\pset{-}{I_k} =
+      \emptyset$,
       %
-    \item $\stamp{\iota}{0} \models I_0$ and \(I_k \wedge
-      \Big(\bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in \Delta}
-      \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{k}(\vec{y})
-      \rightarrow \stamp{\psi}{k+1}\Big) \models I_{k+1}\),
+    \item\label{it2:generalized-lyndon-interpolant} $\stamp{\iota}{0}
+      \models I_0$ and \(I_k \wedge \Big(\bigwedge_{q(\vec{y})
+        \arrow{a_i(X)}{} \psi \in \Delta} \forall y_1 \ldots \forall
+      y_{\#(q)} ~.~ \stamp{q}{k}(\vec{y}) \rightarrow
+      \stamp{\psi}{k+1}\Big) \models I_{k+1}\),
       %
-    \item $I_n \wedge \bigwedge_{q \in Q \setminus F} \forall y_1
-      \ldots \forall y_{\#(q)} ~.~ q(\vec{y})$ is unsatisfiable.
+    \item\label{it3:generalized-lyndon-interpolant} $I_n \wedge
+      \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
+      y_{\#(q)} ~.~ q(\vec{y})$ is unsatisfiable.
   \end{compactenum}
   Moreover, the GLI is \emph{local} if and only if $\voc{I_k}
   \subseteq \stamp{Q}{k}$, for all $k \in [n]$.
@@ -1381,10 +1384,10 @@ unsatisfiable and let $\tau_2 = z_1$ be the witness term for the
 universally quantified variable $z_2$. Replacing $z_2$ with $\tau_2$
 in the matrix of $\quantform{\alpha}$ (Example \ref{ex:quant-elim})
 yields the unsatisfiable conjunction: 
-\[\begin{array}{l}
-z_1 \geq 0 \wedge \stamp{q}{0}(z_1) ~\wedge \\
-\stamp{q}{0}(z_1) \rightarrow \stamp{x}{1} \geq 0 \wedge (z_2 \geq z_1 \rightarrow \stamp{q}{1}(\stamp{x}{1}+z_2)) ~\wedge \\
-\stamp{q}{1}(\stamp{x}{1}+z_2) \rightarrow \stamp{x}{1}+z_2 < 0 \wedge \stamp{q_f}{2}(\stamp{x}{2}+\stamp{x}{1}+z_2)
+\[\begin{array}{c}
+z_1 \geq 0 \wedge \stamp{q}{0}(z_1)  \\ \wedge \\
+\stamp{q}{0}(z_1) \rightarrow \stamp{x}{1} \geq 0 \wedge (z_1 \geq z_1 \rightarrow \stamp{q}{1}(\stamp{x}{1}+z_1)) \\ \wedge \\
+\stamp{q}{1}(\stamp{x}{1}+z_1) \rightarrow \stamp{x}{1}+z_1 < 0 \wedge \stamp{q_f}{2}(\stamp{x}{2}+\stamp{x}{1}+z_1)
 \end{array}\]
 A non-local GLI for the above is $(\stamp{q}{0}(z_1) \wedge
 z_1\geq 0,~ \stamp{x}{1} \geq 0 \wedge \stamp{q}{1}(\stamp{x}{1}+z_1)
@@ -1527,7 +1530,7 @@ construction.
   \ref{def:generalized-lyndon-interpolant}. \qed}
 
 In conclusion, under two assumptions about the first-order theory of
-the data domain, namely \begin{inparaenum}[(i)]
+the data domain, namely\begin{inparaenum}[(i)]
 \item witness-producing quantifier elimination, and
 \item Lyndon interpolation for the quantifier-free fragment with
   uninterpreted functions,
@@ -1539,10 +1542,52 @@ symbols $\stamp{Q}{I_k}$, the current and past input variables
 $\stamp{X}{\leq k}$ and the existentially quantified transition
 variables introduced at the previous steps $\set{x_j \mid j <
   \max(\xi^{-1}(k)), Q_j = \exists}$. The remaining question is how to
-use such non-local interpolants for the coverage between the nodes of
-the unfolding of an automaton (Definition \ref{def:coverage}).
+use such non-local interpolants to label the unfolding of an automaton
+(Definition \ref{def:unfolding}) and to compute the coverage between
+nodes of the unfolding (Definition \ref{def:coverage}).
 
-\subsection{Coverage with Non-local Interpolants}
+\subsection{Unfolding with Non-local Interpolants}
+
+As required by Definition \ref{def:unfolding}, the unfolding $U$ of an
+automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ is labeled by
+formulae $U(\alpha) \in \posforms(Q,\emptyset)$, with no free symbols,
+other than predicate symbols, such that the labeling is compatible
+with the transition relation of the automaton (point
+\ref{it3:unfolding} of Definition \ref{def:unfolding}). 
+
+Suppose that a given input event sequence $\alpha \in \dom(U)$ is
+labeled with a sequence of formulae $U(\alpha_0) = \iota, U(\alpha_1),
+\ldots U(\alpha_n) = U(\alpha)$ in a way that fulfills the requirement
+from Definition \ref{def:unfolding} (\ref{it3:unfolding}) and,
+moreover, it has a non-local GLI $(I_0, \ldots, I_n)$, such that
+$\voc{I_k} \subseteq \stamp{Q}{k} \cup \stamp{X}{\leq k} \cup
+\set{x_{i_1},\ldots,x_{i_k}}$, where $x_{i_1},\ldots,x_{i_n}$ are the
+renamed variables occurring in the rules of $\Delta$ under the scope
+of existential transition quantifiers (formally these are the
+existentially quantified variables from the prenex normal form of
+$\quantform{\alpha_k}$). The interpolant is used in refining the
+labeling of the sequence as follows, for all $k \in [n]$: \begin{compactitem}
+\item let $J_k \in \posforms(Q,\emptyset)$ be the formula obtained
+  from $I_k$ by\begin{inparaenum}[(i)]
+    \item replacing each time-stamped predicate symbol $\stamp{q}{k}$ by $q$, and
+      %
+    \item existentially quantifying each variable $y \in
+      \stamp{X}{\leq k} \cup \set{x_{i_1},\ldots,x_{i_k}}$.
+  \end{inparaenum}
+%
+\item define the new labeling as $U'(\alpha_k) = U(\alpha_k) \wedge J_k$. 
+\end{compactitem}
+To see that the new set of formulae $U'(\alpha_0), \ldots,
+U'(\alpha_n)$ complies with Definition \ref{def:unfolding}, it is
+enough to notice the following facts: \begin{compactitem}
+\item $U'(\alpha_0) \equiv \iota$, because\footnote{By point
+  \ref{it2:generalized-lyndon-interpolant} of Definition
+  \ref{def:generalized-lyndon-interpolant}.} $\stamp{\iota}{0} \models
+  I_0$, thus $\iota \models J_0$ and $U'(\alpha_0) = U(\alpha_0)
+  \wedge J_0 \equiv \iota \wedge J_0$.
+%
+\item 
+\end{compactitem}
 
 
 
