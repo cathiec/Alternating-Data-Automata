@@ -1002,13 +1002,15 @@ tree.
   \tuple{\Sigma,X,Q,\iota,F,\Delta}$ a node $\alpha \in \dom(U)$ is
   \emph{covered} by another node $\beta \in \dom(U)$, denoted $\alpha
   \cover \beta$, if and only if there exists a node $\alpha' \prefix
-  \alpha$ such that, for all words $w \in \Sigma[X]^*$ and all cubes
-  $c \in \cube{\sem{U(\alpha')}}$, if $\A$ accepts $w$ started in $c$
-  then there exists a cube $d \in \cube{\sem{U(\beta)}}$ such that
-  $\A$ accepts $w$ started in $d$. Moreover, $U$ is \emph{closed} if
-  and only if every leaf from $\dom(U)$ is covered by an uncovered
-  node.
+  \alpha$ such that $U(\alpha') \models U(\beta)$. Moreover, $U$ is
+  \emph{closed} if and only if every leaf from $\dom(U)$ is covered by
+  an uncovered node.
 \end{definition}
+
+%% , for all words $w \in \Sigma[X]^*$ and all cubes $c \in
+%% \cube{\sem{U(\alpha')}}$, if $\A$ accepts $w$ started in $c$ then
+%% there exists a cube $d \in \cube{\sem{U(\beta)}}$ such that $\A$
+%% accepts $w$ started in $d$.
 
 A lazy annotation semi-algorithm will stop and report emptiness
 provided that it succeeds in building a closed and safe unfolding of
@@ -1033,26 +1035,20 @@ input event sequence. As a result of the change of labels, if a node
 $\gamma \prefix \alpha$ used to cover another node from $\dom(U)$, it
 might not cover it with the new label. Therefore, the coverage
 relation has to be recomputed after each refinement of the
-labeling. For a detailed presentation of the emptiness procedure, we
-refer the reader to \cite{IosifXu18} (or Appendix
-\ref{app:pseudocode}).
-
-The semi-algorithm stops when (and if) a safe complete unfolding has
-been found. The following theorem proves the soundness of this
-termination argument:
+labeling. The semi-algorithm stops when (and if) a safe complete
+unfolding has been found. For a detailed presentation of the emptiness
+procedure, we refer the reader to \cite{IosifXu18} (or Appendix
+\ref{app:pseudocode}). 
 
 \begin{theorem}\label{thm:soundness}
   If an automaton $\A$ has a nonempty safe closed unfolding then
   $\lang{A} = \emptyset$.
 \end{theorem}
-\proof{ 
-  Let $U$ be a safe and complete unfolding of $\A$, such that
+\proof{ Let $U$ be a safe and complete unfolding of $\A$, such that
   $\dom(U) \neq \emptyset$. Suppose, by contradiction, that there
   exists a word $w \in \lang{A}$ and let $\alpha \isdef
-  \event{w}$. 
-
-  Since $w \in \lang{A}$, by Lemma \ref{lemma:acceptance}, there
-  exists an interpretation $\I$ such that $\I,\data{w} \models
+  \event{w}$. Since $w \in \lang{A}$, by Lemma \ref{lemma:acceptance},
+  there exists an interpretation $\I$ such that $\I,\data{w} \models
   \accform{\alpha}$. Assume first that $\alpha \in \dom(U)$.  In this
   case, one can show, by induction on the length $n\geq0$ of $w$, that
   $\pathform{\alpha} \models \stamp{U(\alpha)}{n}$, thus $\I,\data{w}
@@ -1065,36 +1061,39 @@ termination argument:
   $\stamp{q}{n}$ with $q$ in the previous formula, we obtain
   $U(\alpha) \wedge \forall y_1 \ldots \forall y_{\#(q)} ~.~
   q(\vec{y}) \rightarrow \bot$ is satisfiable, thus $U$ is not safe,
-  contradiction.  
+  contradiction.
 
   We proceed thus under the assumption that $\alpha \not\in
   \dom(U)$. Since $\dom(U)$ is a nonempty prefix-closed set, there
   exists a strict prefix $\alpha'$ of $\alpha$ that is a leaf of
   $\dom(U)$. Since $U$ is closed, the leaf $\alpha'$ must be covered
   and let $\alpha_1 \prefix \alpha' \prefix \alpha$ be a node such
-  that, for some uncovered node $\beta_1 \in \dom(U)$, for every word
-  $w'$ and every cube $c \in \cube{\sem{U(\alpha_1)}}$ such that $\A$
-  accepts $w'$ starting with $c$, there exists a cube $d \in
-  \cube{\sem{U(\beta_1)}}$ such that $\A$ accepts $w'$ starting with
-  $d$. Let $\gamma_1$ be the unique sequence such that
-  $\alpha_1\gamma_1 = \alpha$. By Definition \ref{def:coverage}, since
-  $\alpha_1 \cover \beta_1$ and $\event{w} = \alpha_1\gamma_1 \in
-  \lang{\A}$, there exists a word $w_1$ and a cube $c_1 \in
-  \cube{\sem{U(\beta_1)}}$ such that $\event{w_1} = \gamma_1$ and $\A$
-  accepts $w_1$ starting with $c_1$. If $\beta_1\gamma_1 \in \dom(U)$,
-  we obtain a contradiction by a similar argument as above. Hence
-  $\beta_1\gamma_1 \not\in \dom(U)$ and there exists a leaf of
-  $\dom(U)$ which is also a prefix of $\beta_1\gamma_1$. Since $U$ is
-  closed, this leaf is covered by an uncovered node $\beta_2 \in
-  \dom(U)$ and let $\alpha_2 \in \dom(U)$ be the minimal (in the
-  prefix partial order) node such that $\beta_1 \prefix \alpha_2
-  \prefix \beta_1\gamma_1$ and $\alpha_2 \cover \beta_2$. Let
-  $\gamma_2$ be the unique sequence such that $\alpha_2\gamma_2 =
-  \beta_1\gamma_1$. Since $\beta_1$ is uncovered, we have $\beta_1
-  \neq \alpha_2$ and thus $\len{\gamma_1} > \len{\gamma_2}$. By
-  repeating the above reasoning for $\alpha_2$, $\beta_2$ and
-  $\gamma_2$, we obtain an infinite sequence $\len{\gamma_1} >
-  \len{\gamma_2} > \ldots$, which is again a contradiction. \qed}
+  that $U(\alpha_1) \models U(\beta_1)$, for some uncovered node
+  $\beta_1 \in \dom(U)$.
+  %% for every word $w'$ and every cube $c \in
+  %% \cube{\sem{U(\alpha_1)}}$ such that $\A$ accepts $w'$ starting
+  %% with $c$, there exists a cube $d \in \cube{\sem{U(\beta_1)}}$
+  %% such that $\A$ accepts $w'$ starting with $d$.
+  Let $\gamma_1$ be the unique sequence such that $\alpha_1\gamma_1 =
+  \alpha$. By Definition \ref{def:coverage}, since $\alpha_1 \cover
+  \beta_1$ and $\event{w} = \alpha_1\gamma_1 \in \lang{\A}$, there
+  exists a word $w_1$ and a cube $c_1 \in \cube{\sem{U(\alpha_1)}}
+  \subseteq \cube{\sem{U(\beta_1)}}$, such that $\event{w_1} =
+  \gamma_1$ and $\A$ accepts $w_1$ starting with $c_1$. If
+  $\beta_1\gamma_1 \in \dom(U)$, we obtain a contradiction by a
+  similar argument as above. Hence $\beta_1\gamma_1 \not\in \dom(U)$
+  and there exists a leaf of $\dom(U)$ which is also a prefix of
+  $\beta_1\gamma_1$. Since $U$ is closed, this leaf is covered by an
+  uncovered node $\beta_2 \in \dom(U)$ and let $\alpha_2 \in \dom(U)$
+  be the minimal (in the prefix partial order) node such that $\beta_1
+  \prefix \alpha_2 \prefix \beta_1\gamma_1$ and $\alpha_2 \cover
+  \beta_2$. Let $\gamma_2$ be the unique sequence such that
+  $\alpha_2\gamma_2 = \beta_1\gamma_1$. Since $\beta_1$ is uncovered,
+  we have $\beta_1 \neq \alpha_2$ and thus $\len{\gamma_1} >
+  \len{\gamma_2}$. By repeating the above reasoning for $\alpha_2$,
+  $\beta_2$ and $\gamma_2$, we obtain an infinite sequence
+  $\len{\gamma_1} > \len{\gamma_2} > \ldots$, which is again a
+  contradiction. \qed}
 
 As mentioned above, we check emptiness of first-order alternating
 automata using the same method previously used to check emptiness of a
@@ -1519,7 +1518,7 @@ construction.
       %
     \item $I_{k-1} \wedge \Big(\bigwedge_{q(\vec{y}) \arrow{a_k(X)}{}
       \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
-      \stamp{q}{k}(\vec{y}) \rightarrow \stamp{\psi}{k+1}\Big) \models
+      \stamp{q}{k-1}(\vec{y}) \rightarrow \stamp{\psi}{k}\Big) \models
       I_{k-1} \wedge \phi_k \models I_k$, and 
       %
     \item $I_n \wedge \Big(\bigwedge_{q \in Q \setminus F} \forall y_1
@@ -1577,62 +1576,82 @@ labeling of the sequence as follows, for all $k \in [n]$: \begin{compactitem}
 %
 \item define the new labeling as $U'(\alpha_k) = U(\alpha_k) \wedge J_k$. 
 \end{compactitem}
-To see that the new set of formulae $U'(\alpha_0), \ldots,
-U'(\alpha_n)$ complies with Definition \ref{def:unfolding}, it is
-enough to notice the following facts: \begin{compactitem}
+
+Observe that, by Lemma \ref{lemma:subst-quant}
+(\ref{it2:subst-quant}), the set of free variables of a GLI formula
+$I_k$ consists of\begin{inparaenum}[(i)]
+\item variables $\stamp{X}{\leq k}$ keeping track of data
+values seen in the input at some earlier moment in time, or 
+%
+\item variables $\set{x_{i_1},\ldots,x_{i_k}}$ that track past choices
+  made within the transition rules. 
+\end{inparaenum}
+From the present point of view, it is not important when exactly in
+the past a certain input has been read or when a choice has been made,
+but rather the (symbolic) value and its associated data
+constraints. Intuitively, existential quantification of these
+variables does the job of ignoring the particular moments in the past
+when they have been encountered. Formally, to see that the new set of
+formulae $U'(\alpha_0), \ldots, U'(\alpha_n)$ complies with Definition
+\ref{def:unfolding}, it is enough to notice the following
+facts: \begin{compactitem}
 \item $U'(\alpha_0) \equiv \iota$, because\footnote{By point
   \ref{it2:generalized-lyndon-interpolant} of Definition
   \ref{def:generalized-lyndon-interpolant}.} $\stamp{\iota}{0} \models
   I_0$, thus $\iota \models J_0$ and $U'(\alpha_0) = U(\alpha_0)
   \wedge J_0 \equiv \iota \wedge J_0$.
 %
-\item 
+\item by Definition \ref{def:generalized-lyndon-interpolant}
+  (\ref{it3:generalized-lyndon-interpolant}) we have, for all $k \in
+  [n-1]$:
+  \[I_k \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
+  \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{k}(\vec{y})
+  \leftarrow \stamp{\psi}{k+1} \models I_{k+1}\] By slightly abusing
+  notation, let $\stamp{I}{n}_\ell$ be the formula in which every
+  predicate symbol $\stamp{q}{\ell}$ has been replaced with
+  $\stamp{q}{n}$. Then the following entailment holds: 
+  \[\stamp{I}{0}_k \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
+  \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{0}(\vec{y})
+  \leftarrow \stamp{\psi}{1} \models \stamp{I}{1}_{k+1}\]
+  Because $J_k$ is obtained by existentially quantifying the free variables of $I_k$, we also obtain: 
+  \[\stamp{J}{0}_k \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
+  \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{0}(\vec{y})
+  \leftarrow \stamp{\psi}{1} \models \stamp{J}{1}_{k+1}\] Since $U$
+  satisfies the labeling condition of Definition \ref{def:unfolding}
+  (\ref{it3:unfolding}) and $U'(\alpha_k) = U(\alpha_k) \wedge J_k$,
+  we obtain, as required: 
+  \[\stamp{U'(\alpha_k)}{0} \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
+  \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{0}(\vec{y})
+  \leftarrow \stamp{\psi}{1} \models
+  \stamp{U'(\alpha_{k+1})}{1}\enspace.\]
 \end{compactitem}
 
+The last ingredient of the lazy annotation semi-algorithm based on
+unfolding refinement with coverage consist in the implementation of
+the coverage check, when the unfolding of an automaton is labeled with
+conjunctions of existentially quantified formulae with predicate
+symbols, obtained from interpolation. By Definition
+\ref{def:coverage}, checking whether a given node $\alpha \in \dom(U)$
+is covered amounts to finding a prefix $\alpha' \prefix \alpha$ and a
+node $\beta \in \dom(U)$ such that $U(\alpha') \models U(\beta)$, or
+equivalently, the formula $U(\alpha') \wedge \neg U(\beta)$ is
+unsatisfiable. However, the latter formula, in prenex form, has
+quantifier prefix in the language $\exists^*\forall^*$ and, as
+previously mentioned, the satisfiability problem for such formulae
+becomes undecidable when the data theory subsumes Presburger
+arithmetic \cite{Halpern91}.
 
+Nevertheless, if we require just a yes/no answer (i.e.\ not an
+interpolant) recently developped quantifier instantiation heuristics,
+such as \cite{ReynoldsKK17}, perform rather well in answering a large
+number of queries in this class. Observe, moreover, that coverage does
+not need to rely on a complete decision procedure. If the prover fails
+in answering the above satisfiability query, then the semi-algorithm
+assumes the node is not covered and continues exploring its
+successors. Failure to compute complete coverage may lead to
+divergence (non-termination) and failure to prove emptiness, but the
+soundness of the procedure is preserved. 
 
-%% \subsection{Coverage} 
-
-%% Assuming that the data domain is countable, the set of finite words
-%% $\Sigma[X]^*$ is countable and the emptiness problem is recursively
-%% enumerable. Moreover, by Lemma \ref{lemma:acceptance}, a systematic
-%% enumeration of sequences of input events $\alpha \in \Sigma^*$ will
-%% eventually discover an accepted word, provided that all path formulae
-%% $\pathform{\alpha}$ belong to a decidable first-order theory.
-
-%% However, if the automaton is empty, the enumeration of input event
-%% sequences will fail to terminate, in general. The classical way to
-%% fight this divergence problem is to consider a \emph{coverage} partial
-%% order, which is a subset of the following relation: 
-
-%% \begin{definition}\label{def:coverage}
-%%   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ and
-%%   $S_1, S_2 \subseteq \bigcup_{q \in Q} \set{q(d_1,\ldots,d_{\#(q)})
-%%     \mid d_1,\ldots,d_{\#(q)} \in \Data}$, we have $S_1 \sqsubseteq
-%%   S_2$ if and only if 
-%%   \begin{equation}\label{eq:po}
-%%     \text{
-%%       \begin{minipage}{0.7\textwidth}
-%%         $\A$ accepts a word $w$ when started in a set of cubes $C_1
-%%         \in S_1$ only if $\A$ accepts $w$ when started in a set of
-%%         cubes $C_2 \in S_2$.
-%%     \end{minipage}} 
-%%   \end{equation}
-%% \end{definition}
-%% Since, in general the $\sqsubseteq$ relation is not definable using
-%% available decidable (SMT) theories, we consider the following stronger
-%% relation: $S_1 \supsetforex S_2$ if and only if, for each set of cubes
-%% $C_1 \in S_1$, there exists a set of cubes $C_2 \in S_2$ such that
-%% $C_1 \supseteq C_2$.
-
-%% \begin{lemma}\label{lemma:coverage}
-%%   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for any
-%%   sets of cubes $S_1, S_2 \subseteq \bigcup_{q \in Q}
-%%   \set{q(d_1,\ldots,d_{\#(q)}) \mid d_1,\ldots,d_{\#(q)} \in \Data}$
-%%   such that $S_1 \supsetforex S_2$, we have $S_1 \sqsubseteq S_2$.
-%% \end{lemma}
-%% \proof{  
-%% \qed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
