@@ -154,23 +154,22 @@ $\sem{\phi}_\nu$ and $\sem{\phi}$, respectively.
 \section{First Order Alternating Automata}
 
 Let $\Sigma$ be a finite alphabet $\Sigma$ of \emph{input
-  events}. Given a finite set of variables $X \subseteq \vars$, we denote by $X
-\mapsto \Data$ the set of valuations of the variables $X$ and
-$\Sigma[X] = \Sigma \times (X \mapsto \Data)$ be the possibly infinite
-set of \emph{data symbols} $(a,\nu)$, where $a$ is an input symbol and
-$\nu$ is a valuation. A \emph{data word} (simply called word in the
-following) is a finite sequence $w=(a_1,\nu_1)(a_2,\nu_2) \ldots
-(a_n,\nu_n)$ of data symbols. Given a word $w$, we denote by
+  events}. Given a finite set of variables $X \subseteq \vars$, we
+denote by $X \mapsto \Data$ the set of valuations of the variables $X$
+and $\Sigma[X] = \Sigma \times (X \mapsto \Data)$ be the possibly
+infinite set of \emph{data symbols} $(a,\nu)$, where $a$ is an input
+symbol and $\nu$ is a valuation. A \emph{data word} (simply called
+word in the following) is a finite sequence $w=(a_1,\nu_1)(a_2,\nu_2)
+\ldots (a_n,\nu_n)$ of data symbols. Given a word $w$, we denote by
 $\event{w} \isdef a_1\ldots a_n$ its sequence of input events and by
 $\data{w}$ the valuation associating each time-stamped variable
 $\stamp{x}{i}$ the value $\nu_i(x)$, for all $x \in \vars$ and
 $i\in[1,n]$. We denote by $\varepsilon$ the empty sequence, by
 $\Sigma^*$ the set of finite sequences of input events and by
-$\Sigma[X]^*$ the set of data words over the variables $X$.
-
-A \emph{first-order alternating automaton} (automaton) is a tuple $\A
-= \tuple{\Sigma,X,Q,\iota,F,\Delta}$, where: \begin{compactitem}
-\item $\Sigma$ is the finite set of input events, 
+$\Sigma[X]^*$ the set of data words over the variables $X$. A
+\emph{first-order alternating automaton} is a tuple $\A =
+\tuple{\Sigma,X,Q,\iota,F,\Delta}$, where: \begin{compactitem}
+\item $\Sigma$ is a finite set of input events, 
 \item $X$ is a finite set of input variables, 
 \item $Q$ is a finite set of predicates denoting control states, 
 \item $\iota \in \posforms(Q,\emptyset)$ is a sentence defining initial configurations,
@@ -1551,27 +1550,27 @@ As required by Definition \ref{def:unfolding}, the unfolding $U$ of an
 automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ is labeled by
 formulae $U(\alpha) \in \posforms(Q,\emptyset)$, with no free symbols,
 other than predicate symbols, such that the labeling is compatible
-with the transition relation of the automaton (point
-\ref{it3:unfolding} of Definition \ref{def:unfolding}). 
-
-Suppose that a given input event sequence $\alpha \in \dom(U)$ is
-labeled with a sequence of formulae $U(\alpha_0) = \iota, U(\alpha_1),
-\ldots U(\alpha_n) = U(\alpha)$ in a way that fulfills the requirement
-from Definition \ref{def:unfolding} (\ref{it3:unfolding}) and,
-moreover, it has a non-local GLI $(I_0, \ldots, I_n)$, such that
-$\voc{I_k} \subseteq \stamp{Q}{k} \cup \stamp{X}{\leq k} \cup
+with the transition relation of the automaton, according to the point
+(\ref{it3:unfolding}) of Definition \ref{def:unfolding}. Suppose that
+a given input event sequence $\alpha \in \dom(U)$ is labeled with a
+sequence of formulae $U(\alpha_0) = \iota, U(\alpha_1), \ldots
+U(\alpha_n) = U(\alpha)$ in a way that fulfills the requirement from
+Definition \ref{def:unfolding} (\ref{it3:unfolding}) and, moreover, it
+has a non-local GLI $(I_0, \ldots, I_n)$, such that $\voc{I_k}
+\subseteq \stamp{Q}{k} \cup \stamp{X}{\leq k} \cup
 \set{x_{i_1},\ldots,x_{i_k}}$, where $x_{i_1},\ldots,x_{i_n}$ are the
 renamed variables occurring in the rules of $\Delta$ under the scope
-of existential transition quantifiers (formally these are the
-existentially quantified variables from the prenex normal form of
-$\quantform{\alpha_k}$). The interpolant is used in refining the
-labeling of the sequence as follows, for all $k \in [n]$: \begin{compactitem}
+of existential transition quantifiers\footnote{These are the
+  existentially quantified variables from the prenex normal form of
+  $\quantform{\alpha_k}$.}. The interpolant is used to refine the
+labeling of the sequence as follows, for all $k \in
+[n]$: \begin{compactitem}
 \item let $J_k \in \posforms(Q,\emptyset)$ be the formula obtained
-  from $I_k$ by\begin{inparaenum}[(i)]
+  from $I_k$ by \begin{inparaenum}[(i)]
     \item replacing each time-stamped predicate symbol $\stamp{q}{k}$ by $q$, and
       %
     \item existentially quantifying each variable $y \in
-      \stamp{X}{\leq k} \cup \set{x_{i_1},\ldots,x_{i_k}}$.
+      \stamp{X}{\leq k} \cup \set{x_{i_1},\ldots,x_{i_k}}$,
   \end{inparaenum}
 %
 \item define the new labeling as $U'(\alpha_k) = U(\alpha_k) \wedge J_k$. 
@@ -1579,50 +1578,46 @@ labeling of the sequence as follows, for all $k \in [n]$: \begin{compactitem}
 
 Observe that, by Lemma \ref{lemma:subst-quant}
 (\ref{it2:subst-quant}), the set of free variables of a GLI formula
-$I_k$ consists of\begin{inparaenum}[(i)]
+$I_k$ consists of \begin{inparaenum}[(i)]
 \item variables $\stamp{X}{\leq k}$ keeping track of data
 values seen in the input at some earlier moment in time, or 
 %
 \item variables $\set{x_{i_1},\ldots,x_{i_k}}$ that track past choices
   made within the transition rules. 
 \end{inparaenum}
-From the present point of view, it is not important when exactly in
-the past a certain input has been read or when a choice has been made,
-but rather the (symbolic) value and its associated data
-constraints. Intuitively, existential quantification of these
-variables does the job of ignoring the particular moments in the past
-when they have been encountered. Formally, to see that the new set of
+Basically, it is not important when exactly in the past a certain
+input has been read or when a choice has been made, as only the value
+of the variable determines the future behavior. Intuitively,
+existential quantification of these variables does the job of ignoring
+when in the past these values have been seen. Formally, the new set of
 formulae $U'(\alpha_0), \ldots, U'(\alpha_n)$ complies with Definition
-\ref{def:unfolding}, it is enough to notice the following
-facts: \begin{compactitem}
-\item $U'(\alpha_0) \equiv \iota$, because\footnote{By point
+\ref{def:unfolding}, because: \begin{compactitem}
+\item $U'(\alpha_0) \equiv \iota$, since, by point
   \ref{it2:generalized-lyndon-interpolant} of Definition
-  \ref{def:generalized-lyndon-interpolant}.} $\stamp{\iota}{0} \models
-  I_0$, thus $\iota \models J_0$ and $U'(\alpha_0) = U(\alpha_0)
-  \wedge J_0 \equiv \iota \wedge J_0$.
+  \ref{def:generalized-lyndon-interpolant}, we have $\stamp{\iota}{0}
+  \models I_0$, thus $\iota \models J_0$ and $U'(\alpha_0) =
+  U(\alpha_0) \wedge J_0 \equiv \iota \wedge J_0 \equiv \iota$, and
 %
 \item by Definition \ref{def:generalized-lyndon-interpolant}
   (\ref{it3:generalized-lyndon-interpolant}) we have, for all $k \in
   [n-1]$:
   \[I_k \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
   \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{k}(\vec{y})
-  \leftarrow \stamp{\psi}{k+1} \models I_{k+1}\] By slightly abusing
-  notation, let $\stamp{I}{n}_\ell$ be the formula in which every
-  predicate symbol $\stamp{q}{\ell}$ has been replaced with
-  $\stamp{q}{n}$. Then the following entailment holds: 
+  \rightarrow \stamp{\psi}{k+1} \models I_{k+1}\] Then the following
+  entailment holds:
   \[\stamp{I}{0}_k \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
   \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{0}(\vec{y})
-  \leftarrow \stamp{\psi}{1} \models \stamp{I}{1}_{k+1}\]
+  \rightarrow \stamp{\psi}{1} \models \stamp{I}{1}_{k+1}\]
   Because $J_k$ is obtained by existentially quantifying the free variables of $I_k$, we also obtain: 
   \[\stamp{J}{0}_k \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
   \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{0}(\vec{y})
-  \leftarrow \stamp{\psi}{1} \models \stamp{J}{1}_{k+1}\] Since $U$
+  \rightarrow \stamp{\psi}{1} \models \stamp{J}{1}_{k+1}\] Since $U$
   satisfies the labeling condition of Definition \ref{def:unfolding}
   (\ref{it3:unfolding}) and $U'(\alpha_k) = U(\alpha_k) \wedge J_k$,
   we obtain, as required: 
   \[\stamp{U'(\alpha_k)}{0} \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
   \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{0}(\vec{y})
-  \leftarrow \stamp{\psi}{1} \models
+  \rightarrow \stamp{\psi}{1} \models
   \stamp{U'(\alpha_{k+1})}{1}\enspace.\]
 \end{compactitem}
 
@@ -1649,9 +1644,314 @@ to rely on a complete decision procedure. If the prover fails in
 answering the above satisfiability query, then the semi-algorithm
 assumes the node is not covered and continues exploring its
 successors. Failure to compute complete coverage may lead to
-divergence (non-termination) and failure to prove emptiness, but the
-soundness of the procedure is not affected.
+divergence (non-termination) and failure to prove emptiness, but does
+not affect the soundness of the semi-algorithm (real counterexamples
+will still be found).
 
+\section{Applications}
+\label{sec:applications}
+
+The main application of first-order alternating automata is checking
+inclusion between various classes of automata extended with variables
+ranging over infinite domains that recognize languages over infinite
+alphabets. The most widely known such classes are \emph{timed
+  automata} \cite{AlurDill94} and \emph{finite-memory (register)
+  automata} \cite{KaminskiFrancez94}. In both cases, complementation
+is not possible inside the class and inclusion is undecidable. Our
+contribution is providing a systematic semi-algorithm for these
+decision problems. In addition, we can extend our previous
+\emph{generic register automata} \cite{HolikIosifRogalewiczVojnar18}
+inclusion checking framework, by allowing monitor (right-hand side)
+automata to have local variables, that are not visible in the
+language\footnote{We conjecture that hidden computations using
+  invisible variables (clocks) are the reason for which timed and
+  register automata cannot be complemented within their class.}. 
+
+Another application is checking safety (mutual exclusion, absence of
+deadlocks, etc.) and liveness (termination, lack of starvation, etc.)
+properties of parameterized concurrent programs, consisting of an
+unbounded number of replicated threads that communicate via a fixed
+set of global variables (locks, counters, etc.). The verification of
+parametric programs has been reduced to checking the emptiness of a
+(possibly infinite) sequence of first-order alternating automata,
+called \emph{predicate automata} \cite{Farzan15,Farzan16}, encoding
+the inclusion of the set of traces of a parametric concurrent program
+into increasingly general \emph{proof spaces}, obtained by
+generalization of counterexamples. The program and the proof spaces
+are first-order alternating automata over the infinite alphabet of
+pairs consisting of program statements and thread identifiers.
+
+\subsection{Timed Automata}
+\label{sec:ta}
+
+The standard definition of a finite \emph{timed word} is a sequence of
+pairs $(a_1,\tau_1), \ldots, (a_n,\tau_n) \in (\Sigma \times
+\real)^*$, where $\real$ is the set of real numbers, such that $0 \leq
+\tau_i < \tau_{i+1}$, for all $i \in [1,n-1]$. Intuitively, $\tau_i$
+is the moment in time where the input event $a_i$ occurs. Given a set
+$C$ of \emph{clocks}, the set $\Phi(C)$ of \emph{clock constraints} is
+defined inductively as the set of formulae $x \leq c$, $x \geq c$,
+$\neg\delta$, $\delta_1 \wedge \delta_2$, where $x \in C$, $c \in
+\rat$ is a rational constant and $\delta,\delta_1,\delta_2 \in
+\Phi(X)$. 
+
+A \emph{timed automaton} is a tuple $T = \tuple{\Sigma,S,S_0,F,C,E}$,
+where: $\Sigma$ is a finite set of input events, $S$ is a finite set
+of states, $S_0, F \subseteq S$ are sets of initial and final states,
+respectively, $C$ is a finite set of clocks and $E \subseteq S \times
+\Sigma \times S \times 2^C \times \Phi(C)$ is the set of transitions
+$(s,a,s',\lambda,\delta)$ from state $s$ to state $s'$ with symbol
+$a$, $\lambda$ is the set of clocks to be reset and $\delta$ is a
+clock constraint. A run of $T$ over a timed word $w = (a_1,\tau_1)
+\ldots (a_n,\tau_n)$ is a sequence $(s_0,\gamma_0) \ldots
+(s_n,\gamma_n)$, where $s_i \in S$, $\gamma_i : C \rightarrow \real$
+are clock valuations, for all $i \in [n]$, and: \begin{compactitem}
+\item $s_0 \in S_0$ and $\gamma_0(x)$ for all $x \in C$, 
+%
+\item for all $i \in [n]$, there exists a transition
+  $(s_i,a_i,s_{i+1},\lambda_i,\delta_i) \in E$ such that $\gamma_i +
+  \tau_{i+1} - \tau_i \models \delta_i$, and for all $x \in C$,
+  $\gamma_{i+1}(x) = 0$ if $x \in \lambda_i$ and $\gamma_{i+1}(x) = \gamma_i(x)
+  + \tau_{i+1}-\tau_i$, otherwise. Here $\tau_0 \isdef 0$ and $\gamma_i +
+  \tau_{i+1} - \tau_i$ is the valuation mapping each $x \in C$ to
+  $\gamma_i(x) + \tau_{i+1} - \tau_i$.
+\end{compactitem}
+The run is accepting iff $s_n \in F$, in which case $T$ accepts
+$w$. As usual, we denote by $\lang{T}$ the set of finite words
+accepted by $T$. It is well-known \cite{AlurDill94} that, in general,
+there is no timed automaton accepting the complement language
+$(\Sigma\times\real)^* \setminus \lang{T}$ and, moreover, the language
+inclusion problem is undecidable. 
+
+Given a timed automaton $T = \tuple{\Sigma,S,S_0,F,C,E}$, we define a
+first-order alternating automaton $\A_T =
+\tuple{\Sigma,\set{t},Q_T,\iota_T,F_T,\Delta_T}$, with a single input
+variable $t$, ranging over $\real$, such that each timed word $w =
+(a_1,\tau_1) \ldots (a_n,\tau_n)$ corresponds to a unique data word
+$d(w) = (a_1,\nu_1) \ldots (a_n,\nu_n)$ such that $\nu_i(t) = \tau_i$
+for all $i \in [1,n]$ and $\lang{\A_T} = \set{d(w) \mid
+  w\in\lang{T}}$. The only difficulty here is capturing the fact that
+all the clocks of $T$ evolve at the same pace, which is easily done
+using a technique from \cite{Fribourg98}, that consists in replacing
+each clock $x_i$ of $T$ by a variable $y_i$ who tracks the difference
+between the values of $t$ and $x_i$, instead of the value of $x_i$
+directly.
+
+Formally, if $C = \set{x_1,\ldots,x_k}$ and $S =
+\set{s_1,\ldots,s_m}$, we define $Q_T \isdef \set{q_1, \ldots, q_m}$ ,
+where $\#(q_i) = k+1$ for all $i \in [1,m]$, $\iota_T \isdef
+\bigvee_{s_i \in S_0} q_i(0,\ldots,0)$, $F_T \isdef \set{q_i \mid s_i
+  \in F}$ and, for each transition $(s_i,a,s_j,\lambda,\delta) \in E$,
+$\Delta_T$ contains the rule:
+\[\begin{array}{rcl}
+q_i(y_1,\ldots,y_k,z) \arrow{a(t)}{} \exists y'_1 \ldots \exists y'_k
+~.~ t > z \wedge \delta(z-y_1,\ldots,z-y_k) & \wedge & 
+ \bigwedge_{x_i \in \lambda} y'_i = z \wedge \bigwedge_{x_i \not\in \lambda} y'_i = y_i \\ 
+& \wedge & q_j(y'_1,\ldots,y'_k,t)
+\end{array}\]
+Moreover, nothing else is in $\Delta_T$. We establish the following
+connection between a timed automaton and its corresponding first-order
+alternating automaton.
+
+\begin{proposition}\label{prop:timed-alternating}
+  Given a timed automaton $T = \tuple{\Sigma,S,S_0,F,C,E}$, the
+  first-order alternating automaton $\A_T =
+  \tuple{\Sigma,\set{t},Q_T,\iota_T,F_T,\Delta_T}$ recognizes the
+  language $\lang{\A_T} = \set{d(w) \mid w \in \lang{T}}$. 
+\end{proposition}
+\proof{ ``$\subseteq$'' Let $w = (a_1,\nu_1) \ldots (a_n,\nu_n) \in
+  \lang{\A_T}$ be a data word. We show the existence of a timed word
+  $(a_1,\tau_1) \ldots (a_n,\tau_n) \in \lang{T}$ such that
+  $\nu_i(t)=\tau_i$, for all $i \in [1,n]$, by induction on
+  $n\geq0$. In fact we shall prove the following stronger
+  statements: \begin{compactenum}
+  \item each execution of $\A_T$ over $w$ starting with a cube $c \in
+    \cube{\minsem{\iota_T}}$ is a linear tree, in which each node has
+    at most one child.
+    %
+  \item for each execution $q_{i_0}(d^0_1,\ldots,d^0_k,\tau_0) \ldots
+    q_{i_n}(d^n_1,\ldots,d^n_k,\tau_n)$ of $\A_T$, $T$ has an
+    execution $(s_{i_0}, \gamma_0) \ldots (s_{i_n}, \gamma_n)$ over
+    the timed word $(a_1, \tau_1) \ldots (a_n, \tau_n)$, such that,
+    for all $i \in [1,n]$ and all $\ell \in [1,k]$, we have
+    $\gamma_i(x_\ell) = \tau_{i-1} - d^i_\ell$.
+  \end{compactenum}
+  The first point above is by inspection of $\iota_T = \bigvee_{s_i
+    \in S_0} q_i(0,\ldots,0)$ and of the rules from
+  $\Delta_T$. Indeed, each minimal model of $\iota_T$ corresponds to a
+  cube $q(0,\ldots,0)$ and each rule has exactly one predicate atom on
+  its right-hand side, thus each node of the execution will have at
+  most one successor. The second point is by induction on $n\geq0$. 
+
+  ``$\supseteq$'' Let $w = (a_1,\tau_1) \ldots (a_n,\tau_n) \in
+  \lang{T}$ be a timed word. By induction on $n\geq0$, we show that
+  for each run $(s_{i_0}, \gamma_0) \ldots (s_{i_n}, \gamma_n)$ of $T$
+  over $w$, $\A_T$ has a linear execution
+  $q_{i_0}(d^0_1,\ldots,d^0_k,\tau_0) \ldots
+  q_{i_n}(d^n_1,\ldots,d^n_k,\tau_n)$ such that, for all $i \in [1,n]$
+  and all $\ell \in [1,k]$, we have $\gamma_i(x_\ell) = \tau_{i-1} -
+  d^i_\ell$. \qed}
+
+An easy consequence is that the timed language inclusion problem
+``given timed automata $T_1$ and $T_2$, does $\lang{T_1} \subseteq
+\lang{T_2}$ ?'' is reduced in polynomial time to the emptiness problem
+$\lang{\A_{T_1}} \cap \lang{\overline{\A_{T_2}}} = \emptyset$, for
+which (\S\ref{sec:emptiness}) provides a semi-algorithm. Observe
+further that the transition quantifiers from the encoding of timed
+automata into first-order alternating automata can be easily
+eliminated by substitution as in $\exists x ~.~ x = t \wedge \phi
+\equiv \phi[t/x]$. 
+
+\subsection{Register Automata}
+\label{sec:ra}
+
+Finite-memory automata, most commonly referred to as register automata
+\cite{KaminskiFrancez94} are among the first attempts at lifting the
+finite alphabet restriction of classical Rabin-Scott automata. In a
+nutshell, a register automaton is a finite-state automaton equipped
+with a finite set of registers $x_1,\ldots,x_r$ able to copy input
+values and compare them with later the input. Consequently, basic
+results from classical automata theory, such as the pumping lemma or
+the closure under complement do not hold in this model and inclusion
+of languages recognized by register automata is undecidable
+\cite{NevenSchwentickVianu03}.
+
+Let $\Sigma$ be an infinite alphabet, $\#$ be a symbol not in $\Sigma$
+and $r>0$ be an integer constant. An \emph{assignment} is a word
+$\vec{v} = v_1 \ldots v_r$ such that if $v_i = v_j$ and $i \neq j$
+then $v_i = \#$, for all $i,j \in [1,r]$. We write $[\vec{v}]$ for the
+set $\set{v_i \mid i \in [1,r]}$. A \emph{finite-memory (register)
+  automaton} is a tuple $R = \tuple{S,q_0,\vec{u}, \rho, \mu, F}$,
+where $S$ is a finite set of states, $q_0 \in S$ is the initial state,
+$\vec{u} = u_1 \ldots u_r$ is the initial assignment, $\rho : S
+\rightarrow [1,r]$ is the reassignment partial function, $\mu
+\subseteq S \times [1,r] \times S$ is the transition relation and $F
+\subseteq S$ is the set of final states. A run of $A$ over an input
+word $a_1 \ldots a_n \in \Sigma^*$ is a sequence $(s_0,\vec{v}_0)
+\ldots (s_n,\vec{v}_n)$ such that $\vec{v}_0 = \vec{u}$ and, for all
+$i \in [1,n]$, exactly one of the following holds: \begin{compactitem}
+\item if there exists $k\in[1,r]$ such that $a_i=(\vec{v}_{i-1})_k$
+  then $\vec{v}_i = \vec{v}_{i-1}$ and $(s_{i-1},k,s_i) \in \mu$, 
+%
+\item otherwise $a_i\not\in[\vec{v}_{i-1}]$, $\rho(s_{i-1})$ is
+  defined, $(\vec{v}_i)_{\rho(s_{i-1})} = a_i$, for each $k \in
+  [1,r] \setminus \set{\rho(s_{i-1})}$, we have $(\vec{v}_i)_k =
+  (\vec{v}_{i-1})_k$ and $(s_{i-1},\rho(s_{i-1}),s_i) \in \mu$.
+\end{compactitem}
+Intuitively, if the input symbol is already stored in some register,
+the automaton moves to the next state if, moreover, the transition
+relation allows it, otherwise it copies the input to the register
+indicated by the reassignment, erasing its the previous value, and
+moves according to the transition relation.
+
+The translation of register automata to first-order alternating
+automata is quite natural, because registers can be encoded as
+arguments of predicate atoms. Formally, given a register automaton $R
+= \tuple{S,s_0,\vec{u},\rho,\mu,F}$, such that $S =
+\set{s_0,\ldots,s_m}$, we define the alternating automaton $\A_R =
+\tuple{\set{\bullet},\set{x},Q_R,\iota_R,F_R,\Delta_R}$, where
+$\bullet \not\in \Sigma$, $Q_R \isdef \set{q_0,\ldots,q_m}$ and
+$\#(q_i) = r$ for all $i \in [m]$, $\iota_R \isdef q_0(\vec{u})$, $F_R
+\isdef \set{q_i \mid s_i \in F}$ and, for each transition $(s_i, k,
+s_j) \in \mu$, $\Delta_T$ contains the rule:
+\[q_i(y_1,\ldots,y_r) \arrow{a(x)}{} y_k=x \wedge q_j(y_1,\ldots,y_r) ~\vee~
+\bigwedge_{i=1}^r x \neq y_i \wedge q_j(y_1,\ldots,y_{k-1},x,y_{k+1},
+\ldots, y_r)\] Moreover, nothing else is in $\Delta_R$. The connection
+between register automata and first-order alternating automata is
+stated below.
+
+\begin{proposition}\label{prop:register-alternating}
+  Given a register automaton $R = \tuple{S,s_0,\vec{u},\rho,\mu,F}$
+  over an infinite alphabet $\Sigma$, the first-order alternating
+  automaton $\A_R = \tuple{\set{\bullet},Q_R,\iota_R,F_R,\Delta_R}$
+  recognizes the languge $\lang{\A_R} = \set{ (\bullet,a_1) \ldots
+    (\bullet,a_n) \mid a_1 \ldots a_n \in \lang{R} }$. 
+\end{proposition}
+\proof{ ``$\subseteq$'' Let $w = (\bullet,a_1) \ldots (\bullet,a_n)
+  \in \lang{\A_R}$. First, it is easy to show that each execution of
+  $\A_R$, that starts in some cube $c \in \cube{\minsem{\iota_R}}$, is
+  a linear tree with labels $q_0(\vec{v}_0), \ldots, q_n(\vec{v}_0)$
+  such that $\vec{v}_0 = \vec{u}$. Second by induction on $n\geq0$, we
+  prove that $\A_R$ has a run as above over $w$ only if $R$ has a run
+  $(q_0,\vec{v}_0), \ldots, (q_n,\vec{v}_n)$ over $a_1 \ldots
+  a_n$. ``$\supseteq$'' Let $w = a_1 \ldots a_n \in \lang{R}$ and
+  $q_0(\vec{v}_0), \ldots, q_n(\vec{v}_0)$ be a run of $R$ over $w$,
+  such that $\vec{v}_0 = \vec{u}$. By induction on $n\geq0$, we can
+  build an execution of $\A_R$ over $(\bullet,a_1) \ldots
+  (\bullet,a_n)$ that is a linear tree with labels $q_0(\vec{v}_0),
+  \ldots, q_n(\vec{v}_n)$. \qed}
+
+Consequently, the language inclusion problem ``given register automata
+$R_1$ and $R_2$, does $\lang{R_1} \subseteq \lang{R_2}$?'' is reduced
+in polynomial time to emptiness problem $\lang{\A_{R_1}} \cap
+\lang{\overline{\A_{R_2}}} = \emptyset$, for which
+(\S\ref{sec:emptiness}) provides a semi-algorithm. Notice further that
+the encoding of register automata uses no transition quantifiers.
+
+\subsection{Predicate Automata}
+\label{sec:pa}
+
+The model of \emph{predicate automata} \cite{Farzan15,Farzan16} has
+emerged recently as a tool for checking safety and liveness properties
+of parameterized concurrent programs, in which there is an unbounded
+number of replicated threads that communicate via global
+variables. Predicate automata recognize finite sequences of actions
+that are pairs $(\sigma,i)$, where $\sigma$ is from a finite set
+$\Sigma$ of program statements and $i \in \nat$ ranges over an
+unbounded set of thread identifiers. To avoid clutter, we shall view a
+pair $(\sigma,i)$ as a data symbol $(\sigma,\nu)$ where $\nu(x)=i$,
+for a designated input variable $x$.
+
+Since thread identifiers can only be compared for equality, the data
+theory of predicate automata is the first-order theory of
+equality. Moreover, transition quantifiers are only needed for
+checking termination and, generally, liveness properties
+\cite{Farzan16}. Thus, syntactically speaking, predicate automata are
+a subset of first-order alternating automata. 
+
+However, the execution semantics of predicate automata differs from
+that of first-order automata with respect to the following detail:
+initial configurations and successors of predicate automata are
+defined using the entire sets of models of the initial sentence and
+transition rules, not just the minimal ones, as in our case. Formally,
+a run of a predicate automaton $P =
+\tuple{\Sigma,\set{x},Q,\iota,F,\Delta}$ over a word $(a_1,\nu_1)
+\ldots$ $(a_n,\nu_n)$ is a sequence of interpretations $\I_0, \ldots,
+\I_n$ such that $\I_0 \in \sem{\iota}$ and for each $i \in [1,n]$,
+each $q \in Q$ and each tuple $\tuple{d_1,\ldots,d_{\#(q)}} \in
+\I_{i-1}(q)$, we have $\I_i \in \sem{\psi}_\mu$, for each rule
+$q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(x)}{} \psi \in \Delta$, where
+$\mu=\nu_i[y_1\leftarrow d_1, \ldots, y_{\#(q)} \leftarrow
+  d_{\#(q)}]$. The run is accepting if and only if $\I(q)=\emptyset$
+for all $q \in Q \setminus F$.
+
+In fact, as shown next, this more simple execution semantics is
+equivalent, from the language point of view, with the semantics given
+by Definitions \ref{def:execution} and \ref{def:accepting}. However,
+the semantics of first-order alternating automata based on minimal
+models is important for its relation to the classical textbook
+semantics of boolean alternating automata
+\cite{ChandraKozenStockmeyer81}. 
+
+\begin{proposition}
+  Given a predicate automaton $P =
+  \tuple{\Sigma,\set{x},Q,\iota,F,\Delta}$, let $\A_P$ be the
+  first-order alternating automaton that has the same description as
+  $P$. Then $\lang{P} = \lang{\A_P}$. 
+\end{proposition}
+\proof{
+  
+\qed}
+
+As before, this result enables using the semi-algorithm of
+(\S\ref{sec:emptiness}) for checking emptiness of predicate automata.
+We point out that, although quantifier-free predicate automata with
+predicates of arity one are decidable for emptiness \cite{Farzan15},
+currently there is no method for checking emptiness of predicate
+automata with \begin{inparaenum}[(i)]
+\item predicates of arity greater than one, or 
+\item transition quantifiers. 
+\end{inparaenum}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
