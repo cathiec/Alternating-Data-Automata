@@ -166,23 +166,22 @@ $\data{w}$ the valuation associating each time-stamped variable
 $\stamp{x}{i}$ the value $\nu_i(x)$, for all $x \in \vars$ and
 $i\in[1,n]$. We denote by $\varepsilon$ the empty sequence, by
 $\Sigma^*$ the set of finite sequences of input events and by
-$\Sigma[X]^*$ the set of data words over the variables $X$. A
-\emph{first-order alternating automaton} is a tuple $\A =
-\tuple{\Sigma,X,Q,\iota,F,\Delta}$, where: \begin{compactitem}
-\item $\Sigma$ is a finite set of input events, 
-\item $X$ is a finite set of input variables, 
-\item $Q$ is a finite set of predicates denoting control states, 
-\item $\iota \in \posforms(Q,\emptyset)$ is a sentence defining initial configurations,
-\item $F \subseteq Q$ is the set of predicates denoting final states, and 
-\item $\Delta$ is a set of \emph{transition rules} of the form
-  \(q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \psi\), where $q \in Q$ is
-  a predicate, $a \in \Sigma$ is an input event and $\psi \in
-  \posforms(Q,X \cup \set{y_1,\ldots,y_{\#(q)}})$ is a positive
-  formula, where $X \cap \set{y_1,\ldots,y_{\#(q)}} = \emptyset$.
-\end{compactitem}
-The quantifiers occurring in the right-hand side formula of a
-transition rule are referred to as \emph{transition quantifiers}. The
-\emph{size} of $\A$ is defined as $\len{\A} = \len{\iota} +
+$\Sigma[X]^*$ the set of data words over the variables $X$. 
+
+Formally, a \emph{first-order alternating automaton} is a tuple $\A =
+\tuple{\Sigma,X,Q,\iota,F,\Delta}$, where $\Sigma$ is a finite set of
+input events, $X$ is a finite set of input variables, $Q$ is a finite
+set of predicates denoting control states, $\iota \in
+\posforms(Q,\emptyset)$ is a sentence defining initial configurations,
+$F \subseteq Q$ is the set of predicates denoting final states, and
+$\Delta$ is a set of \emph{transition rules} of the form
+\(q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \psi\), where $q \in Q$ is a
+predicate, $a \in \Sigma$ is an input event and $\psi \in
+\posforms(Q,X \cup \set{y_1,\ldots,y_{\#(q)}})$ is a positive formula,
+where $X \cap \set{y_1,\ldots,y_{\#(q)}} = \emptyset$. The quantifiers
+occurring in the right-hand side formula of a transition rule are
+referred to as \emph{transition quantifiers}. The \emph{size} of $\A$
+is defined as $\len{\A} = \len{\iota} +
 \sum_{\scriptscriptstyle{q(\vec{y}) \arrow{a(X)}{} \psi \in \Delta}}
 \len{\psi}$.
 
@@ -192,8 +191,8 @@ are the input data values that trigger the transition, whereas $q$ and
 $y_1,\ldots,y_{\#(q)}$ are the current control state and data values
 in that state, respectively. Without loss of generality, we consider,
 for each predicate $q \in Q$ and each input event $a \in \Sigma$, at
-most one such rule --- two or more rules can be joined using
-disjunction. 
+most one such rule, as two or more rules can be joined using
+disjunction.
 
 The execution semantics of automata is given in close analogy with the
 case of boolean alternating automata, with transition rules of the
@@ -207,10 +206,10 @@ formulae. In this case, both $\set{q_1 \leftarrow \top, q_2 \leftarrow
   \top, q_3 \leftarrow \bot}$ and $\set{q_1 \leftarrow \bot, q_2
   \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models, however
 $\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow \top}$,
-is a model but is not minimal\footnote{To avoid the confusion of
-  considering potentially non-minimal models, the original definition
-  of alternating finite-state automata \cite{ChandraKozenStockmeyer81}
-  uses boolean valuations instead of formulae.}.
+is a model but is not minimal. The original definition of alternating
+finite-state automata \cite{ChandraKozenStockmeyer81} works around
+this problem by considering boolean valuations (models) instead of
+formulae.
 
 Given a predicate $q \in Q$ and a tuple of data values
 $d_1,\ldots,d_{\#(q)}$, the tuple $q(d_1,\ldots,d_{\#(q)})$ is called
@@ -1106,12 +1105,11 @@ generation of interpolants in the next section.
 \section{Interpolant Generation}\label{sec:interpolants}
 
 Typically, when checking the unreachability of a set of program
-configurations or, more generally, the infeasability of a set of Horn
-clauses \cite{BjornerGurfinkelMcMillanRybalchenko15}, the interpolants
-used to annotate the unfolded control structure are assertions about
-the values of the program variables in a given control state, at a
-certain step of a given execution. However, in an alternating model of
-computation, it is useful to distinguish between
+configurations \cite{mcmillan06}, the interpolants used to annotate
+the unfolded control structure are assertions about the values of the
+program variables in a given control state, at a certain step of a
+given execution. However, in an alternating model of computation, it
+is useful to distinguish between
 \begin{inparaenum}[(i)]
 \item locality of interpolants w.r.t. a given control state (control
   locality) and
@@ -1138,12 +1136,11 @@ q_2(y) & \arrow{a(x)}{} & q_2(y-x)
 Started in an initial configuration $q_0(0)$ with an input word
 $(a,\nu_1) \ldots (a,\nu_{n-1}) (a,\nu_n)$, such that $\nu_i(x)=k_i$,
 the automaton executes as follows:
-\[\begin{array}{l}
-q_0(0) \arrow{(a,\nu_1)}{} q_1(k_1)
-\wedge q_2(-k_1) \ldots \arrow{(a,\nu_{n-1})}{} 
-q_1(\sum_{i=1}^{n-1} k_i) \wedge q_2(-\sum_{i=1}^{n-1} k_i) \arrow{(a,\nu_n)}{} \\
-\sum_{i=1}^{n} k_i > 0 \wedge \sum_{i=1}^{n} k_i < 0 \wedge q_f \equiv \bot
-\end{array}\] 
+\[\begin{array}{c}
+q_0(0) \arrow{(a,\nu_1)}{} \set{q_1(k_1),q_2(-k_1)} \ldots \arrow{(a,\nu_{n-1})}{} 
+\set{q_1(\sum_{i=1}^{n-1} k_i),q_2(-\sum_{i=1}^{n-1} k_i)}
+\arrow{(a,\nu_n)}{} \emptyset
+\end{array}\]
 An overapproximation of the set of cubes generated after one or more
 steps is defined by the formula: $\exists x_1 \exists x_2 ~.~ q_1(x_1)
 \wedge q_2(x_2) \wedge x_1+x_2 \teq 0$. Observe that a control-local
@@ -1172,17 +1169,18 @@ $\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$, $\pset{+}{I} \subseteq
 \pset{+}{\phi} \cap \pset{+}{\psi}$ and $\pset{-}{I} \subseteq
 \pset{-}{\phi} \cap \pset{-}{\psi}$.
 \end{definition}
-The existence of Lyndon interpolants for first-order logic, with no
-predefined interpretation of function symbols\footnote{A model
-  specifies the universe and the interpretation of function symbols.},
-was proved by a non-constructive model-theoretic argument
-\cite{Lyndon59}. In the following, we shall consider only those
-theories of the data domain $\Data$, for which there exists a decision
-procedure for satisfiability, able to produce Lyndon interpolants. For
-instance, such interpolating decision procedures exist for linear real
-and integer arithmetic, with uninterpreted function symbols (UFLRA and
-UFLIA) \cite{RybalchenkoSofronieStokkermans}. In the rest of this
-section, let us fix an automaton $\A =
+%% The existence of Lyndon interpolants for first-order logic, with no
+%% predefined interpretation of function symbols\footnote{A model
+%%   specifies the universe and the interpretation of function symbols.},
+%% was proved by a non-constructive model-theoretic argument
+%% \cite{Lyndon59}. In the following, we shall consider only those
+%% theories of the data domain $\Data$, for which there exists a decision
+%% procedure for satisfiability, able to produce Lyndon interpolants. For
+%% instance, such interpolating decision procedures exist for linear real
+%% and integer arithmetic, with uninterpreted function symbols (UFLRA and
+%% UFLIA). 
+
+In the rest of this section, let us fix an automaton $\A =
 \tuple{\Sigma,X,Q,\iota,F,\Delta}$. Due to the above observation, none
 of the interpolants considered will be control-local and we shall use
 the term \emph{local} to denote time-local interpolants, with no free
@@ -1271,8 +1269,8 @@ sufficient for proving unsatisfiability, however these heuristics are
 not always suitable for interpolant generation. Consequently, from now
 on, we assume the existence of an effective Lyndon interpolation
 procedure only for decidable theories, such as the quantifier-free
-linear (integer) arithmetic with uninterpreted functions (QFLIA,
-QFLRA, etc.).
+linear (integer) arithmetic with uninterpreted functions (UFLIA,
+UFLRA, etc.) \cite{RybalchenkoSofronieStokkermans}. 
 
 This is where the predicate-free path formulae (Definition
 \ref{def:substform}) come into play. For a given event sequence
@@ -1392,8 +1390,15 @@ z_1\geq 0,~ \stamp{x}{1} \geq 0 \wedge \stamp{q}{1}(\stamp{x}{1}+z_1)
 \wedge z_1\geq0,~\bot)$. \hfill$\blacksquare$
 \end{example}
 
-The following lemma gives the formal proof of correctness for this
-construction. 
+A function $\xi : \nat \rightarrow \nat$ is [strictly]
+\emph{monotonic} iff for each $n < m$ we have $\xi(n) \leq \xi(m)$
+     [$\xi(n) < \xi(m)$] and \emph{finite-range} iff for each $n \in
+     \nat$ the set $\set{m \mid \xi(m)=n}$ is finite. If $\xi$ is
+     finite-range, we denote by $\xi^{-1}(n) \in \nat$ the maximal
+     value $m$ such that $\xi(m)=n$. It is easy to see that $\xi^{-1}$
+     is strictly monotonic if $\xi$ is monotonic and finite-range. The
+     lemma below gives the proof of correctness for the previous
+     construction of non-local GLI.
 
 \begin{lemma}\label{lemma:subst-quant}
   Given a non-empty input event sequence $\alpha = a_1 \ldots a_n \in
@@ -1405,17 +1410,19 @@ construction.
   \quantformn{\alpha_n}$ where it occurs. Then the following
   hold: \begin{compactenum}
   \item\label{it1:subst-quant} one can effectively build witness terms
-    $\tau_{i_1}, \ldots, \tau_{i_\ell}$, where $\set{i_1, \ldots,
-    i_\ell} = \set{j \in [1,m] \mid Q_j = \forall}$ and
-    $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq \xi(i_j)} \cup \set{x_k
-    \mid k < i_j, Q_k = \exists}$, for all $j \in [1,\ell]$, such that
-    $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
-    \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable, and
+    $\tau_{i_1}, \ldots, \tau_{i_\ell}$, where 
+    \[\begin{array}{l}   
+    \set{i_1, \ldots,i_\ell} = \set{j \in [1,m] \mid Q_j = \forall} \text{ and} \\
+    \voc{\tau_{i_j}} \subseteq \stamp{X}{\leq \xi(i_j)} \cup \set{x_k
+    \mid k < i_j, Q_k = \exists},~ \forall j \in [1,\ell]
+    \end{array}\]
+    such that $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+      \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable, and
     %
   \item\label{it2:subst-quant} one can effectively build a GLI $(I_0,
-    \ldots, I_n)$ for $\alpha$, such that $\voc{I_k} \subseteq
+    \ldots, I_n)$ for $\alpha$, such that \[\voc{I_k} \subseteq
     \stamp{Q}{k} \cup \stamp{X}{\leq k} \cup \set{x_j \mid j <
-      \max(\xi^{-1}(k)),~ Q_j = \exists}$, for all $k \in [n]$.
+      \xi^{-1}(k),~ Q_j = \exists},~ \forall k \in [n]\enspace.\]
   \end{compactenum}
 \end{lemma}
 \proof{(\ref{it1:subst-quant}) If $\accform{\alpha}$ is unsatisfiable,
@@ -1428,8 +1435,8 @@ construction.
   witness-producing quantifier elimination, using Theorem
   \ref{thm:skolem} one can effectively build witness terms
   $\tau_{i_1}, \ldots, \tau_{i_\ell}$, where
-  $\set{i_1,\ldots,i_\ell}=\set{i \in [1,m] \mid Q_i=\forall}$, such
-  that: \begin{compactitem}
+  $\set{i_1,\ldots,i_\ell}=\set{i \in [1,m] \mid Q_i=\forall}$
+  and: \begin{compactitem}
   \item $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq \xi(i_j)} \cup
     \set{x_k \mid k < i_j, Q_k = \exists}$, for all $j \in [1,\ell]$ and
     %
@@ -1442,7 +1449,7 @@ construction.
     $\stamp{\iota}{0}$,
     %
   \item for all $i=1,\ldots,n$, let $\widehat{\Phi}_i$ be the matrix
-    of some prenex form of the formula:
+    of some prenex form of:
     \[\widehat{\Phi}_i \isdef \widehat{\Phi}_{i-1} \wedge
      \underbrace{\bigwedge_{\begin{array}{l}
          \scriptstyle{\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \widehat{\Phi}_{i-1}} \\
@@ -1451,7 +1458,7 @@ construction.
      \stamp{\psi}{i}[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]}_{\isdef \phi_i}\]  
   \end{compactitem}
   It is easy to see that $\widehat{\Phi}$ is the matrix of some prenex
-  form of the formula:
+  form of:
   \[\widehat{\Phi}_n \wedge \underbrace{\bigwedge_{\begin{array}{l}
         \scriptstyle{\stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \widehat{\Phi}_n} \\
         \scriptstyle{q \in Q \setminus F}
@@ -1476,12 +1483,11 @@ construction.
   \tau_{i_\ell}$, whose existence is proved by point
   (\ref{it1:subst-quant}). Because $\voc{\tau_{i_j}} \subseteq
   \stamp{X}{\leq \xi(i_j)} \cup \set{x_k \mid k < i_j, Q_k =
-    \exists}$, for all $j \in [1,\ell]$, and moreover $\xi$ is
-  monotonic, we obtain: \begin{compactitem}
+    \exists}$, for all $j \in [1,\ell]$, and moreover $\xi^{-1}$ is
+  strictly monotonic, we obtain: \begin{compactitem}
   \item $\voc{\widehat{\Phi}_0[\tau_{i_1}/x_{i_1}, \ldots,
       \tau_{i_\ell}/x_{i_\ell}]} \subseteq \stamp{Q}{0} \cup
-    \stamp{X}{0} \cup \set{x_j \mid j < \max(\xi^{-1}(0)), Q_j =
-      \exists}$,
+    \stamp{X}{0} \cup \set{x_j \mid j < \xi^{-1}(0), Q_j = \exists}$,
     %
   \item $\voc{\phi_i[\tau_{i_1}/x_{i_1}, \ldots,
       \tau_{i_\ell}/x_{i_\ell}]} \subseteq \stamp{Q}{i-1} \cup
