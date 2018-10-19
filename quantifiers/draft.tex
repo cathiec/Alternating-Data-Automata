@@ -53,6 +53,122 @@
 \begin{abstract}
 \end{abstract}
 
+\section{Introduction}
+
+Many results in formal language theory rely on the assumption that
+languages are defined over finite alphabets. In practice, this
+assumption is not realistic when attempting to model real-time
+hardware and communication protocols or even simple programs, whose
+input and observable output requires taking into account data values,
+ranging over very large domains, better viewed as infinite
+mathematical abstractions.
+
+Alternating automata are a generalization of nondeterministic automata
+with universal transitions, that create several copies of the
+automaton, which synchronize on the same input word. Alternating
+automata are appealing for verification because they allow encoding of
+problems such as temporal logic model checking in linear time, as
+opposed to the exponential time required by nondeterministic automata
+\cite{Vardi95}. 
+
+%% However, checking the emptiness of an alternating automaton over a
+%% finite alphabet is \pspace-complete, instead of
+%% \nlogspace-complete, which is the case for nondeterministic automata.
+%% In practice, this complexity can be dealt with using efficient
+%% antichain algorithms \cite{Ganty09}.
+
+A finite-alphabet alternating automaton is typically described by
+transitions $q \arrow{a}{} \phi$, where $q$ is a state, $a$ is an
+input symbol and $\phi$ is a positive boolean combinations of states,
+viewed as propositional variables. Here we introduce a generalized
+alternating automata model in which states are predicate symbols
+$q(y_1,\ldots,y_k)$, the input has associated data variables
+$x_1,\ldots,x_n$, ranging over an infinite domain and transitions are
+of the form $q(y_1,\ldots,y_k) \arrow{a(x_1,\ldots,x_n)}{} \phi$,
+where $\phi$ is any formula in the first-order theory of the data
+domain, in which each state predicate occurs under an even number of
+negations. In this model, the arguments of a predicate atom
+$q(y_1,\ldots,y_k)$ track the values of the \emph{internal variables}
+associated with the state. Together with the input values
+$x_1,\ldots,x_n$, these values are used to compute the successor
+states and are invisible in the input sequence.
+
+Previous attempts to generalized classical Rabin-Scott automata to
+infinite alphabets, such as timed automata \cite{AlurDill94} and
+finite-memory (register) automata \cite{KaminskiFrancez94} face the
+\emph{complement closure} problem: there exist automata for which the
+complement language cannot be recognized by an automaton in the same
+class. This excludes the possibility of encoding a language inclusion
+problem $\lang{A} \subseteq \lang{B}$ as the emptiness of an automaton
+recognizing the language $\lang{A} \cap \clang{B}$, where $\clang{B}$
+denotes the complement of $\lang{B}$. However, when all internal
+variables are made visible in the input, determinization and
+complementation are possible, for data theories closed under negation,
+such as integer or real arithmetics \cite{IosifRV16}.
+
+The solution we adopt is a tight coupling of internal variables to
+control states. As we show, this allows for linear-time
+complementation just as in the case of boolean alternating
+automata. Complementation is, moreover, possible when the transition
+formulae contain first-order quantifiers, generating
+infinitely-branching executions.
+
+The price to be paid for this expressivity is that emptiness of
+first-order alternating automata is undecidable, even for the simplest
+data theory of equality \cite{Farzan15}. We work around this problem
+by developing an abstraction refinement lazy annotation semi-algorithm
+in the spirit of the \impact~procedure for checking safety of
+nondeterministic integer programs \cite{McMillan06}. However, checking
+emptiness of first-order alternating automata by lazy annotation with
+interpolants faces two problems: \begin{compactenum}
+\item Quantified transition rules are problematic to decide if a given
+  trace is spurious, mainly because adding uninterpreted predicate
+  symbols to decidable first-order theories, such as Presburger
+  arithmetic, results in undecidability \cite{Halpern91}. We deal with
+  this problem by assuming that the first-order data theory, without
+  uninterpreted predicate symbols, has an effective quantifier
+  elimination procedure, that instantiates quantifers with witness
+  terms.
+%
+\item The interpolants used to prove the spuriousness of an input
+  sequence are not \emph{local} anymore, as they may refer to input
+  values encountered in the past. However, the future executions are
+  oblivious to when these values have been seen in the past and depend
+  only on the data constraints between the values. We use this
+  observation to define a labeling of nodes visited by the lazy
+  annotation semi-algorithm as conjunctions of existentially
+  quantified interpolants that combine predicate symbols with data
+  constraints.
+\end{compactenum}
+
+The main contribution of this paper is an effective emptiness checking
+semi-algorithm for first-order alternating automata. Further, we
+describe applications of this method to several undecidable but
+recursively enumerable problems, for which no effective
+semi-algorithms exist, to date: inclusion between recognizable timed
+languages \cite{AlurDill94} and between languages recognized by
+finite-memory automata \cite{KaminskiFrancez94}, as well as emptiness
+of predicate automata, a model of first-order alternating automata
+used to check safety and liveness properties of parameterized
+concurrent programs \cite{Farzan15,Farzan16}.
+
+\paragraph{\bf Related Work} 
+The first-order alternating automata model presented in this paper
+stems from our previous work on boolean alternating automata extended
+with variables ranging over infinite data \cite{IosifXu18}. There we
+considered that states are propositional variables, as in the
+classical textbook alternating automata model, and that all the
+variables of the automaton are reflected in the input. The model in
+this paper overcomes this latter restriction by allowing for internal
+variables, whose variables are not visible in the language. This
+solves an older language inclusion problem $\bigcap_{i=1}^n\lang{A_i}
+\subseteq \lang{B}$, between finite-state automata with data variables
+\cite{IosifRV16}. There, we assumed that all variables of the observer
+automaton $B$ must be declared in the automata $A_1, \ldots, A_n$ that
+model the concurrent components of the system under check.
+
+
+
 \section{Preliminaries}
 
 For two integers $0 \leq i \leq j$, we denote by $[i,j]$ the set
@@ -1105,7 +1221,7 @@ generation of interpolants in the next section.
 \section{Interpolant Generation}\label{sec:interpolants}
 
 Typically, when checking the unreachability of a set of program
-configurations \cite{mcmillan06}, the interpolants used to annotate
+configurations \cite{McMillan06}, the interpolants used to annotate
 the unfolded control structure are assertions about the values of the
 program variables in a given control state, at a certain step of a
 given execution. However, in an alternating model of computation, it
@@ -1680,12 +1796,9 @@ is not possible inside the class and inclusion is undecidable. Our
 contribution is providing a systematic semi-algorithm for these
 decision problems. In addition, the method described in
 \S\ref{sec:emptiness} can extend our previous \emph{generic register
-  automata} \cite{HolikIosifRogalewiczVojnar18} inclusion checking
-framework, by allowing monitor (right-hand side) automata to have
-local variables, that are not visible in the language\footnote{We
-  conjecture that hidden computations using invisible variables
-  (clocks) are the reason for which timed and register automata cannot
-  be complemented within their class.}.
+  automata} \cite{IosifRV16} inclusion checking framework, by allowing
+monitor (right-hand side) automata to have local variables, that are
+not visible in the language.
 
 Another application is checking safety (mutual exclusion, absence of
 deadlocks, etc.) and liveness (termination, lack of starvation, etc.)
@@ -1937,9 +2050,9 @@ Formally, a run of a predicate automaton $P =
 \ldots$ $(a_n,\nu_n)$ is a sequence of interpretations $\I_0, \ldots,
 \I_n$ such that $\I_0 \in \sem{\iota}$ and for each $i \in [1,n]$,
 each $q \in Q$ and each tuple $\tuple{d_1,\ldots,d_{\#(q)}} \in
-\I_{i-1}(q)$, we have $\I_i \in \sem{\psi}_\mu$, for each rule
+\I_{i-1}(q)$, we have $\I_i \in \sem{\psi}_\nu$, for each rule
 $q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(x)}{} \psi \in \Delta$, where
-$\mu=\nu_i[y_1\leftarrow d_1, \ldots, y_{\#(q)} \leftarrow
+$\nu=\nu_i[y_1\leftarrow d_1, \ldots, y_{\#(q)} \leftarrow
   d_{\#(q)}]$. The run is accepting if and only if $\I(q)=\emptyset$
 for all $q \in Q \setminus F$.
 
@@ -1957,16 +2070,36 @@ semantics of boolean alternating automata
   first-order alternating automaton that has the same description as
   $P$. Then $\lang{P} = \lang{\A_P}$. 
 \end{proposition}
-\proof{
-\qed}
-As before, this result enables using the semi-algorithm from
-\S\ref{sec:emptiness} for checking emptiness of predicate automata.
-We point out that, although quantifier-free predicate automata with
-predicates of arity one are decidable for emptiness \cite{Farzan15},
-currently there is no method for checking emptiness of predicate
-automata with predicates of arity greater than one, other than the
-explicit enumeration of cubes. Moreover, no method for dealing with
-emptiness in the presence of transition quantifiers is known to exist.
+\proof{ ``$\subseteq$'' Let $w = (a_1,\nu_1) \ldots (a_n,\nu_n) \in
+  \lang{P}$ be a word and $\I_0, \ldots, \I_n$ be an accepting
+  execution of $P$ over $w$. Let $\stamp{\I}{i}_j$ be the
+  interpretation that associates each predicate $\stamp{q}{i}$ the set
+  $\I_j(q)$, for $i,j \in [n]$. Then one builds, by induction on
+  $n\geq0$, an execution $\T$ of $\A_P$ such that $\I_\T \subseteq
+  \bigcup_{i=0}^n \stamp{\I}{i}_i$, where $\I_\T$ is the unique
+  interpretation associated with $\T$. Since $\I_0, \ldots, \I_n$ is
+  accepting, we have $\stamp{\I}{n}_n(\stamp{q}{n}) = \emptyset$, for
+  all $q \in Q \setminus F$ and hence $\I_\T(\stamp{q}{n}) =
+  \emptyset$, for all $q \in Q \setminus F$ and, consequently $w \in
+  \lang{\A_P}$. ``$\supseteq$'' Let $w = (a_1,\nu_1) \ldots
+  (a_n,\nu_n) \in \lang{\A_P}$ be a word and $\T$ be an accepting
+  execution of $\A_P$ over $w$. We define the sequence of
+  interpretations $\I_0, \ldots, \I_n$ as $\I_i(q) =
+  \I_\T(\stamp{q}{i})$, for each $i \in [n]$ and each $q \in Q$. By
+  induction on $n\geq0$ one shows that $\I_0, \ldots, \I_n$ is an
+  execution $P$. Moreover, since $\T$ is accepting, we have $\I_n(q) =
+  \I_\T(\stamp{q}{n}) = \emptyset$, for each $q \in Q \setminus F$,
+  thus $w \in \lang{P}$. \qed}
+
+As before, this result enables using the
+semi-algorithm from \S\ref{sec:emptiness} for checking emptiness of
+predicate automata.  We point out that, although quantifier-free
+predicate automata with predicates of arity one are decidable for
+emptiness \cite{Farzan15}, currently there is no method for checking
+emptiness of predicate automata with predicates of arity greater than
+one, other than the explicit enumeration of cubes. Moreover, no method
+for dealing with emptiness in the presence of transition quantifiers
+is known to exist.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrv} \bibliography{refs}
