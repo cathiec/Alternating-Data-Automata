@@ -51,6 +51,22 @@
 \maketitle
 
 \begin{abstract}
+We introduce first order alternating automata, a generalization of
+boolean alternating automata, in which transition rules are described
+by multisorted first order formulae, with states and internal
+variables given by uninterpreted predicate terms. The model is closed
+under union, intersection and complement, and its emptiness problem is
+undecidable, even for the simplest data theory of equality. To cope
+with this limitation, we develop an abstraction refinement
+semi-algorithm based on lazy annotation of the symbolic execution
+paths with interpolants, obtained by applying (i) quantifier
+elimination with witness term generation and (ii) Lyndon interpolation
+in the quantifier-free data theory with uninterpreted predicate
+symbols. This provides a method for checking inclusion of timed and
+finite-memory register automata, and emptiness of quantified predicate
+automata, previously used in the verification of parameterized
+concurrent programs, composed of replicated threads, with a
+shared-memory communication model.
 \end{abstract}
 
 \section{Introduction}
@@ -69,31 +85,24 @@ automaton, which synchronize on the same input word. Alternating
 automata are appealing for verification because they allow encoding of
 problems such as temporal logic model checking in linear time, as
 opposed to the exponential time required by nondeterministic automata
-\cite{Vardi95}. 
+\cite{Vardi95}. A finite-alphabet alternating automaton is typically
+described by a set of transition rules $q \arrow{a}{} \phi$, where $q$
+is a state, $a$ is an input symbol and $\phi$ is a positive boolean
+combinations of states, viewed as propositional variables.
 
-%% However, checking the emptiness of an alternating automaton over a
-%% finite alphabet is \pspace-complete, instead of
-%% \nlogspace-complete, which is the case for nondeterministic automata.
-%% In practice, this complexity can be dealt with using efficient
-%% antichain algorithms \cite{Ganty09}.
+Here we introduce a generalized alternating automata model in which
+states are predicate symbols $q(y_1,\ldots,y_k)$, the input has
+associated data variables $x_1,\ldots,x_n$, ranging over an infinite
+domain and transitions are of the form $q(y_1,\ldots,y_k)
+\arrow{a(x_1,\ldots,x_n)}{} \phi$, where $\phi$ is any formula in the
+first-order theory of the data domain, in which each state predicate
+occurs under an even number of negations. In this model, the arguments
+of a predicate atom $q(y_1,\ldots,y_k)$ track the values of the
+\emph{internal variables} associated with the state. Together with the
+input values $x_1,\ldots,x_n$, these values are used to compute the
+successor states and are invisible in the input sequence.
 
-A finite-alphabet alternating automaton is typically described by
-transitions $q \arrow{a}{} \phi$, where $q$ is a state, $a$ is an
-input symbol and $\phi$ is a positive boolean combinations of states,
-viewed as propositional variables. Here we introduce a generalized
-alternating automata model in which states are predicate symbols
-$q(y_1,\ldots,y_k)$, the input has associated data variables
-$x_1,\ldots,x_n$, ranging over an infinite domain and transitions are
-of the form $q(y_1,\ldots,y_k) \arrow{a(x_1,\ldots,x_n)}{} \phi$,
-where $\phi$ is any formula in the first-order theory of the data
-domain, in which each state predicate occurs under an even number of
-negations. In this model, the arguments of a predicate atom
-$q(y_1,\ldots,y_k)$ track the values of the \emph{internal variables}
-associated with the state. Together with the input values
-$x_1,\ldots,x_n$, these values are used to compute the successor
-states and are invisible in the input sequence.
-
-Previous attempts to generalized classical Rabin-Scott automata to
+Previous attempts to generalize classical Rabin-Scott automata to
 infinite alphabets, such as timed automata \cite{AlurDill94} and
 finite-memory (register) automata \cite{KaminskiFrancez94} face the
 \emph{complement closure} problem: there exist automata for which the
@@ -101,51 +110,46 @@ complement language cannot be recognized by an automaton in the same
 class. This excludes the possibility of encoding a language inclusion
 problem $\lang{A} \subseteq \lang{B}$ as the emptiness of an automaton
 recognizing the language $\lang{A} \cap \clang{B}$, where $\clang{B}$
-denotes the complement of $\lang{B}$. However, when all internal
-variables are made visible in the input, determinization and
-complementation are possible, for data theories closed under negation,
-such as integer or real arithmetics \cite{IosifRV16}.
+denotes the complement of $\lang{B}$. 
 
-The solution we adopt is a tight coupling of internal variables to
-control states. As we show, this allows for linear-time
-complementation just as in the case of boolean alternating
-automata. Complementation is, moreover, possible when the transition
-formulae contain first-order quantifiers, generating
-infinitely-branching executions.
-
-The price to be paid for this expressivity is that emptiness of
-first-order alternating automata is undecidable, even for the simplest
-data theory of equality \cite{Farzan15}. We work around this problem
-by developing an abstraction refinement lazy annotation semi-algorithm
-in the spirit of the \impact~procedure for checking safety of
-nondeterministic integer programs \cite{McMillan06}. However, checking
-emptiness of first-order alternating automata by lazy annotation with
-interpolants faces two problems: \begin{compactenum}
-\item Quantified transition rules are problematic to decide if a given
-  trace is spurious, mainly because adding uninterpreted predicate
-  symbols to decidable first-order theories, such as Presburger
-  arithmetic, results in undecidability \cite{Halpern91}. We deal with
-  this problem by assuming that the first-order data theory, without
-  uninterpreted predicate symbols, has an effective quantifier
-  elimination procedure, that instantiates quantifers with witness
-  terms.
-%
-\item The interpolants used to prove the spuriousness of an input
-  sequence are not \emph{local} anymore, as they may refer to input
-  values encountered in the past. However, the future executions are
-  oblivious to when these values have been seen in the past and depend
-  only on the data constraints between the values. We use this
-  observation to define a labeling of nodes visited by the lazy
-  annotation semi-algorithm as conjunctions of existentially
-  quantified interpolants that combine predicate symbols with data
-  constraints.
-\end{compactenum}
+The solution we adopt here is a tight coupling of internal variables
+to control states, using uninterpreted predicate symbols. As we show,
+this allows for linear-time complementation just as in the case of
+boolean alternating automata. Complementation is, moreover, possible
+when the transition formulae contain first-order quantifiers,
+generating infinitely-branching execution trees. The price to be paid
+for this expressivity is that emptiness of first-order alternating
+automata is undecidable, even for the simplest data theory of equality
+\cite{Farzan15}.
 
 The main contribution of this paper is an effective emptiness checking
-semi-algorithm for first-order alternating automata. Further, we
-describe applications of this method to several undecidable but
-recursively enumerable problems, for which no effective
-semi-algorithms exist, to date: inclusion between recognizable timed
+semi-algorithm for first-order alternating automata, in the spirit of
+the \impact~procedure, originally developed for checking safety of
+nondeterministic integer programs \cite{McMillan06}. Essentially,
+checking emptiness of first-order alternating automata by lazy
+annotation with interpolants faces two problems: \begin{compactenum}
+\item Quantified transition rules make it hard, or even impossible, to
+  decide if a given symbolic trace is spurious. This is mainly because
+  adding uninterpreted predicate symbols to decidable first-order
+  theories, such as Presburger arithmetic, results in undecidability
+  \cite{Halpern91}. To deal with this problem, we assume that the
+  first order data theory, without uninterpreted predicate symbols,
+  has a quantifier elimination procedure, that instantiates quantifers
+  with effectively computable \emph{witness terms}.
+%
+\item The interpolants that prove the spuriousness of a symbolic path
+  are not \emph{local}, as they may refer to input values encountered
+  in the past. However, the future executions are oblivious to
+  \emph{when} these values have been seen in the past and depend only
+  on the data constraints between the values. We use this fact to
+  define a labeling of nodes, visited by the lazy annotation
+  procedure, with conjunctions of existentially quantified
+  interpolants combining predicate atoms with data constraints.
+\end{compactenum}
+
+We describe applications of this semi-algorithmic method to several
+undecidable but recursively enumerable problems, for which no
+effective method exist, to date: inclusion between recognizable timed
 languages \cite{AlurDill94} and between languages recognized by
 finite-memory automata \cite{KaminskiFrancez94}, as well as emptiness
 of predicate automata, a model of first-order alternating automata
@@ -153,21 +157,39 @@ used to check safety and liveness properties of parameterized
 concurrent programs \cite{Farzan15,Farzan16}.
 
 \paragraph{\bf Related Work} 
-The first-order alternating automata model presented in this paper
+The first order alternating automata model presented in this paper
 stems from our previous work on boolean alternating automata extended
 with variables ranging over infinite data \cite{IosifXu18}. There we
-considered that states are propositional variables, as in the
-classical textbook alternating automata model, and that all the
-variables of the automaton are reflected in the input. The model in
-this paper overcomes this latter restriction by allowing for internal
-variables, whose variables are not visible in the language. This
-solves an older language inclusion problem $\bigcap_{i=1}^n\lang{A_i}
-\subseteq \lang{B}$, between finite-state automata with data variables
+considered states to be propositional variables, as in the classical
+textbook alternating automata model, and all variables of the
+automaton to be observable in the input. The model in this paper
+overcomes this latter restriction by allowing for internal variables,
+whose variables are not visible in the language. 
+
+This solves an older language inclusion problem
+$\bigcap_{i=1}^n\lang{A_i} \subseteq \lang{B}$, between finite-state
+automata with data variables, whose languages are alternating
+sequences of input events and variable valuations
 \cite{IosifRV16}. There, we assumed that all variables of the observer
 automaton $B$ must be declared in the automata $A_1, \ldots, A_n$ that
 model the concurrent components of the system under check.
 
-
+The work probably closest to the one reported here concerns the model
+of predicate automata (PA) \cite{Farzan15,Farzan16,KincaidPhD},
+applied to the verification of parameterized concurrent programs with
+shared memory. In this model, the alphabet consists of pairs of
+program statements and thread identifiers, thus being infinite because
+the number of threads is unbounded. Because thread identifiers can
+only be compared for (dis-)equality, the data theory in PA is the
+theory of equality. Even with this simplification, the emptiness
+problem is undecidable when either the predicates have arity greater
+than one \cite{Farzan15} or quantified transition rules
+\cite{KincaidPhD}. Checking emptiness of quantifier free PA is
+possible semi-algorithmically, by explicitly enumerating reachable
+configurations and checking coverage by looking for permuations of
+argument values. However, no semi-algorithm is given for quantified
+PA.  Dealing with quantified transition rules is one of the
+contributions of the work reported in this paper. 
 
 \section{Preliminaries}
 
@@ -195,7 +217,7 @@ interpretations.
 Let $\vars = \set{x,y,z,\ldots}$ be an infinite countable set of
 variables, ranging over $\Data$. Terms are either constants of sort
 $\Data$, variables or function applications $f(t_1,\ldots,t_{\#(f)})$,
-where $t_1,\ldots,t_{\#(f)}$ are terms. The set of first-order
+where $t_1,\ldots,t_{\#(f)}$ are terms. The set of first order
 formulae is defined by the syntax below:
 \[\phi := t \teq s \mid p(t_1,\ldots,t_{\#(p)}) 
 \mid \neg \phi_1 \mid \phi_1 \wedge \phi_2 \mid \exists x ~.~
@@ -217,7 +239,7 @@ and free variables from the set $X \subseteq \vars$.
 A formula is in \emph{prenex form} if it is of the form $\varphi =
 Q_1x_1 \ldots Q_nx_n ~.~ \phi$, where $\phi$ has no quantifiers. In
 this case we call $\phi$ the \emph{matrix} of $\varphi$. Every
-first-order formula can be written in prenex form, by renaming each
+first order formula can be written in prenex form, by renaming each
 quantified variable to a unique name and moving the quantifiers
 upfront.
 
@@ -284,7 +306,7 @@ $i\in[1,n]$. We denote by $\varepsilon$ the empty sequence, by
 $\Sigma^*$ the set of finite sequences of input events and by
 $\Sigma[X]^*$ the set of data words over the variables $X$. 
 
-Formally, a \emph{first-order alternating automaton} is a tuple $\A =
+Formally, a \emph{first order alternating automaton} is a tuple $\A =
 \tuple{\Sigma,X,Q,\iota,F,\Delta}$, where $\Sigma$ is a finite set of
 input events, $X$ is a finite set of input variables, $Q$ is a finite
 set of predicates denoting control states, $\iota \in
@@ -332,7 +354,7 @@ $d_1,\ldots,d_{\#(q)}$, the tuple $q(d_1,\ldots,d_{\#(q)})$ is called
 a \emph{configuration}\footnote{Note that a configuration is not a
   logical term since data values cannot be written in logic.}. To
 formalize the execution semantics of automata, we relate sets of
-configurations to models of first-order sentences, as follows. Given a
+configurations to models of first order sentences, as follows. Given a
 formula $\phi$ and a valuation of its free variables $\nu$, each
 interpretation $\I \in \sem{\phi}_\nu$ corresponds to a set of
 configurations $\cube{\I} \isdef \set{q(d_1,\ldots,d_{\#(q)}) \mid q
@@ -615,7 +637,7 @@ satisfiability-preserving transformations. The result of applying
 these transformations is a formula with no predicate symbols, whose
 only quantifiers are those introduced by the transition rules of the
 automaton, referred to as transition quantifiers. We shall further
-assume (\S\ref{sec:emptiness}) that the first-order theory of the data
+assume (\S\ref{sec:emptiness}) that the first order theory of the data
 sort $\Data$ has quantifier elimination, which allows to effectively
 decide the satisfiability of such formulae.
 
@@ -1049,7 +1071,7 @@ ensuring that the continuations of already covered paths are never
 explored. Sometimes this coverage relation provides a sound
 termination argument, when the automaton is empty.
 
-We check emptiness of first-order alternating automata using a version
+We check emptiness of first order alternating automata using a version
 of the \impact~ lazy annotation semi-algorithm \cite{McMillan06}. An
 analogous procedure is given in \cite{IosifXu18}, for a simpler model
 of alternating automata, that uses only predicates or arity zero
@@ -1103,7 +1125,7 @@ unfoldings of automata trying to discover counterexamples for
 emptiness. If the automaton $\A$ in question is non-empty, a
 systematic enumeration of the input event sequences\footnote{For
   instance, using breadth-first search.} from $\Sigma^*$ will suffice
-to discover a word $w \in \lang{\A}$, provided that the first-order
+to discover a word $w \in \lang{\A}$, provided that the first order
 theory of the data domain $\Data$ is decidable (Lemma
 \ref{lemma:acceptance}). However, if $\lang{\A} = \emptyset$, the
 enumeration of input event sequences may, in principle, run
@@ -1209,7 +1231,7 @@ procedure, we refer the reader to \cite{IosifXu18} (or Appendix
   $\len{\gamma_1} > \len{\gamma_2} > \ldots$, which is again a
   contradiction. \qed}
 
-As mentioned above, we check emptiness of first-order alternating
+As mentioned above, we check emptiness of first order alternating
 automata using the same method previously used to check emptiness of a
 simpler model of alternating automata, which uses boolean constants
 for control states and whose transition rules have no quantifiers
@@ -1285,7 +1307,7 @@ $\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$, $\pset{+}{I} \subseteq
 \pset{+}{\phi} \cap \pset{+}{\psi}$ and $\pset{-}{I} \subseteq
 \pset{-}{\phi} \cap \pset{-}{\psi}$.
 \end{definition}
-%% The existence of Lyndon interpolants for first-order logic, with no
+%% The existence of Lyndon interpolants for first order logic, with no
 %% predefined interpretation of function symbols\footnote{A model
 %%   specifies the universe and the interpretation of function symbols.},
 %% was proved by a non-constructive model-theoretic argument
@@ -1393,7 +1415,7 @@ This is where the predicate-free path formulae (Definition
 $\alpha$, the automaton $\A$ accepts a word $w$ such that $\event{w} =
 \alpha$ if and only if $\substform{\alpha}$ is satisfiable. Assuming
 further that the equality atoms in the transition rules of $\A$ are
-written in the language of a decidable first-order theory, such as
+written in the language of a decidable first order theory, such as
 Presburger arithmetic, Lemma \ref{lemma:quant-pred-acceptance} gives
 us an effective way of checking emptiness of $\A$, relative to a given
 event sequence. However, this method does not cope well with lazy
@@ -1458,7 +1480,7 @@ forms $\quantform{\alpha} = Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$
 and $\substform{\alpha} = Q_1x_1 \ldots Q_mx_m ~.~ \overline{\Phi}$,
 both written in prenex form, with matrices $\widehat{\Phi}$ and
 $\overline{\Phi}$, respectively. Because we assumed that the
-first-order theory of $\Data$ has quantifier elimination, the
+first order theory of $\Data$ has quantifier elimination, the
 satisfiability problem for $\substform{\alpha}$ is decidable. If
 $\substform{\alpha}$ is satisfiable, we build a counterexample for
 emptiness $w$ such that $\event{w}=\alpha$ and $\data{w}$ is a
@@ -1547,7 +1569,7 @@ A function $\xi : \nat \rightarrow \nat$ is [strictly]
   unsatisfiable. Let $Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$ and
   $Q_1x_1 \ldots Q_mx_m ~.~ \overline{\Phi}$ be prenex forms for
   $\quantform{\alpha}$ and $\substform{\alpha}$, respectively. Since
-  we assumed that the first-order theory of the data domain has
+  we assumed that the first order theory of the data domain has
   witness-producing quantifier elimination, using Theorem
   \ref{thm:skolem} one can effectively build witness terms
   $\tau_{i_1}, \ldots, \tau_{i_\ell}$, where
@@ -1649,7 +1671,7 @@ A function $\xi : \nat \rightarrow \nat$ is [strictly]
   as required by Definition
   \ref{def:generalized-lyndon-interpolant}. \qed}
 
-In conclusion, under two assumptions about the first-order theory of
+In conclusion, under two assumptions about the first order theory of
 the data domain, namely the \begin{inparaenum}[(i)]
 \item witness-producing quantifier elimination, and
 \item Lyndon interpolation for the quantifier-free fragment with
@@ -1786,7 +1808,7 @@ emptiness, but does not affect the soundness of the semi-algorithm
 \section{Applications}
 \label{sec:applications}
 
-The main application of first-order alternating automata is checking
+The main application of first order alternating automata is checking
 inclusion between various classes of automata extended with variables
 ranging over infinite domains that recognize languages over infinite
 alphabets. The most widely known such classes are \emph{timed
@@ -1806,12 +1828,12 @@ properties of parameterized concurrent programs, consisting of an
 unbounded number of replicated threads that communicate via a fixed
 set of global variables (locks, counters, etc.). The verification of
 parametric programs has been reduced to checking the emptiness of a
-(possibly infinite) sequence of first-order alternating automata,
+(possibly infinite) sequence of first order alternating automata,
 called \emph{predicate automata} \cite{Farzan15,Farzan16}, encoding
 the inclusion of the set of traces of a parametric concurrent program
 into increasingly general \emph{proof spaces}, obtained by
 generalization of counterexamples. The program and the proof spaces
-are first-order alternating automata over the infinite alphabet of
+are first order alternating automata over the infinite alphabet of
 pairs consisting of program statements and thread identifiers.
 
 \subsection{Timed Automata}
@@ -1857,7 +1879,7 @@ automaton accepting the complement language $(\Sigma\times\real)^*
 undecidable \cite{AlurDill94}.
 
 Given a timed automaton $T = \tuple{\Sigma,S,S_0,F,C,E}$, we define a
-first-order alternating automaton $\A_T =
+first order alternating automaton $\A_T =
 \tuple{\Sigma,\set{t},Q_T,\iota_T,F_T,\Delta_T}$, with a single input
 variable $t$, ranging over $\real$, such that each timed word $w =
 (a_1,\tau_1) \ldots (a_n,\tau_n)$ corresponds to a unique data word
@@ -1879,11 +1901,11 @@ $\Delta_T$ contains the rule:
 where $y'_i$ stands for $z$ if $x_i \in \lambda$ and for $y_i$, 
 otherwise.  Moreover, nothing else is in $\Delta_T$. We establish the
 following connection between a timed automaton and its corresponding
-first-order alternating automaton.
+first order alternating automaton.
 
 \begin{proposition}\label{prop:timed-alternating}
   Given a timed automaton $T = \tuple{\Sigma,S,S_0,F,C,E}$, the
-  first-order alternating automaton $\A_T =
+  first order alternating automaton $\A_T =
   \tuple{\Sigma,\set{t},Q_T,\iota_T,F_T,\Delta_T}$ recognizes the
   language $\lang{\A_T} = \set{d(w) \mid w \in \lang{T}}$. 
 \end{proposition}
@@ -1926,7 +1948,7 @@ An easy consequence is that the timed language inclusion problem
 $\lang{\A_{T_1}} \cap \lang{\overline{\A_{T_2}}} = \emptyset$, for
 which (\S\ref{sec:emptiness}) provides a semi-algorithm. Observe,
 moreover, that no transition quantifiers are needed to encode timed
-automata as first-order alternating automata.
+automata as first order alternating automata.
 
 \subsection{Register Automata}
 \label{sec:ra}
@@ -1974,7 +1996,7 @@ relation allows it, otherwise it copies the input to the register
 indicated by the reassignment, erasing its the previous value, and
 moves according to the transition relation.
 
-The translation of register automata to first-order alternating
+The translation of register automata to first order alternating
 automata is quite natural, because registers can be encoded as
 arguments of predicate atoms. Formally, given a register automaton $R
 = \tuple{S,s_0,\vec{u},\rho,\mu,F}$, such that $S =
@@ -1987,12 +2009,12 @@ s_j) \in \mu$, $\Delta_T$ contains the rule:
 \[q_i(y_1,\ldots,y_r) \arrow{\alpha(x)}{} y_k=x \wedge q_j(y_1,\ldots,y_r) ~\vee~
 \bigwedge_{i=1}^r x \neq y_i \wedge q_j(y_1,\ldots,y_{k-1},x,y_{k+1},
 \ldots, y_r)\] Moreover, nothing else is in $\Delta_R$. The connection
-between register automata and first-order alternating automata is
+between register automata and first order alternating automata is
 stated below.
 
 \begin{proposition}\label{prop:register-alternating}
   Given a register automaton $R = \tuple{S,s_0,\vec{u},\rho,\mu,F}$
-  over an infinite alphabet $\Sigma$, the first-order alternating
+  over an infinite alphabet $\Sigma$, the first order alternating
   automaton $\A_R = \tuple{\set{\alpha},Q_R,\iota_R,F_R,\Delta_R}$
   recognizes the languge $\lang{\A_R} = \set{ (\alpha,a_1) \ldots
     (\alpha,a_n) \mid a_1 \ldots a_n \in \lang{R} }$. 
@@ -2016,7 +2038,7 @@ $R_1$ and $R_2$, does $\lang{R_1} \subseteq \lang{R_2}$?'' is reduced
 in polynomial time to emptiness problem $\lang{\A_{R_1}} \cap
 \lang{\overline{\A_{R_2}}} = \emptyset$, for which
 (\S\ref{sec:emptiness}) provides a semi-algorithm. Notice further that
-the encoding of register automata as first-order alternating automata
+the encoding of register automata as first order alternating automata
 uses no transition quantifiers.
 
 \subsection{Predicate Automata}
@@ -2034,13 +2056,13 @@ pair $(\sigma,i)$ as a data symbol $(\sigma,\nu)$ where $\nu(x)=i$,
 for a designated input variable $x$.
 
 Since thread identifiers can only be compared for equality, the data
-theory of predicate automata is the first-order theory of
+theory of predicate automata is the first order theory of
 equality. Moreover, transition quantifiers are only needed for
 checking termination and, generally, liveness properties
 \cite{Farzan16}.
 
 However, the execution semantics of predicate automata differs from
-that of first-order automata with respect to the following detail:
+that of first order automata with respect to the following detail:
 initial configurations and successors of predicate automata are
 defined using the entire sets of models of the initial sentence and
 transition rules, not just the minimal ones, as in our case. 
@@ -2059,7 +2081,7 @@ for all $q \in Q \setminus F$.
 In fact, as shown next, this more simple execution semantics is
 equivalent, from the language point of view, with the semantics given
 by Definitions \ref{def:execution} and \ref{def:accepting}.  We
-believe that the semantics of first-order alternating automata based
+believe that the semantics of first order alternating automata based
 on minimal models is important for its relation to the textbook
 semantics of boolean alternating automata
 \cite{ChandraKozenStockmeyer81}.
@@ -2067,7 +2089,7 @@ semantics of boolean alternating automata
 \begin{proposition}
   Given a predicate automaton $P =
   \tuple{\Sigma,\set{x},Q,\iota,F,\Delta}$, let $\A_P$ be the
-  first-order alternating automaton that has the same description as
+  first order alternating automaton that has the same description as
   $P$. Then $\lang{P} = \lang{\A_P}$. 
 \end{proposition}
 \proof{ ``$\subseteq$'' Let $w = (a_1,\nu_1) \ldots (a_n,\nu_n) \in
