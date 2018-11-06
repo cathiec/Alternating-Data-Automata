@@ -183,12 +183,8 @@
 \newcommand{\Asterisk}{\mathop{\scalebox{1.7}{\raisebox{-0.2ex}{$\ast$}}}}%
 
 % proofs
-\newif\ifLongVersion\LongVersiontrue
-%\newcommand{\proof}[1]{\noindent {\em Proof}: {#1}}
-%\newcommand{\qed}{\hfill$\Box$}
-%\newcommand{\inproof}[1]{\ifLongVersion \proof{#1} \fi}
-%\newcommand{\outproof}[2]{\ifLongVersion \else \vspace*{\baselineskip}\noindent Proof of {#1}: \proof{#2} \fi}
-%\renewcommand{\subsubsection}[1]{\noindent{\bf #1}}
+\newif\ifLongVersion\LongVersionfalse
+\renewcommand{\proof}[1]{\ifLongVersion \noindent\emph{Proof}: {#1} \vspace*{\baselineskip}\else\fi}
 
 % multisorted first-order logic
 \newcommand{\sorts}[1]{#1^\mathrm{S}}
