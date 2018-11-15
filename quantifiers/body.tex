@@ -2059,3 +2059,46 @@ is known to exist.
 \fi
 
 \section{Experimental Results}
+
+We have implemented a version of the IMPACT semi-algorithm \cite{McMillan06} in a prototype tool called FOADA \footnote{The implementation is available on \url{https://github.com/cathiec/FOADA}.} that uses Z3 solver \footnote{\url{https://rise4fun.com/z3}} via the Java SMT interface \footnote{\url{https://github.com/sosy-lab/java-smt}} for the satisfiability queries and interpolant generation. We applied the tool to some predicate automata \cite{Farzan15} \footnote{\url{https://github.com/zkincaid/duet/tree/ark2/regression/predicateAutomata}} (*.pa), several array logic entailments (array\_rotation, array\_simple, array\_shift), two timed communication  (abp, train), hardware circuits safety proving (hw1, hw2) and a railroad crossing controller with hidden variables (rr-crossing). The results \footnote{The results were obtained on MacOS x64 - 1.3 GHz Intel Core i5 - 8 GB 1867 MHz LPDDR3.} are given in Table 1.
+
+\begin{table}[htb]
+\vspace*{-\baselineskip}
+\begin{center}
+{\fontsize{7}{8}\selectfont
+\begin{tabular}{||l|c|c|c|c|c||}
+\hline
+Example & $\len{\A}$ (bytes) & $L(\A)=\emptyset$ ? & Nodes Expanded & Nodes Visited & Times (ms) \\
+\hline
+incdec.pa & 499 & no & 13 & 7 & 273 \\
+\hline
+localdec.pa & 678 & no & 17 & 11 & 560 \\
+\hline
+ticket.pa & 4250 & no & 31 & 17 & 999 \\
+\hline
+count\_thread0.pa & 9767 & no & 100 & 76 & 6055 \\
+\hline
+count\_thread1.pa & 10925 & no & 766 & 692 & 74445 \\
+\hline
+array\_rotation.ada & 1834 & yes & 9 & 8 & 1543 \\
+\hline
+array\_simple.ada & 3440 & yes & 11 & 10 & 6787 \\
+\hline
+array\_shift.ada & 874 & yes & 6 & 5 & 413 \\
+\hline
+abp.ada & 6909 & no & 52 & 47 & 4788 \\
+\hline
+train.ada & 1823 & yes & 68 & 67 & 7319 \\
+\hline
+hw1.ada & 322 & Solver Error & / & / & / \\
+\hline
+hw2.ada & 674 & yes & 20 & 22 & 4974 \\
+\hline
+rr-crossing.foada & 1780 & yes & 67 & 67 & 7574 \\
+\hline
+\end{tabular}
+}
+\caption{}\label{tab:experiments}
+\end{center}
+\vspace*{-2\baselineskip}
+\end{table}
