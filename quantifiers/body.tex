@@ -2060,7 +2060,25 @@ is known to exist.
 
 \section{Experimental Results}
 
-We have implemented a version of the IMPACT semi-algorithm \cite{McMillan06} in a prototype tool called FOADA \footnote{The implementation is available on \url{https://github.com/cathiec/FOADA}.} that uses Z3 solver \footnote{\url{https://rise4fun.com/z3}} via the Java SMT interface \footnote{\url{https://github.com/sosy-lab/java-smt}} for the satisfiability queries and interpolant generation. We applied the tool to some predicate automata \cite{Farzan15} \footnote{\url{https://github.com/zkincaid/duet/tree/ark2/regression/predicateAutomata}} (*.pa), several array logic entailments (array\_rotation, array\_simple, array\_shift), two timed communication  (abp, train), hardware circuits safety proving (hw1, hw2) and a railroad crossing controller with hidden variables (rr-crossing). The results \footnote{The results were obtained on MacOS x64 - 1.3 GHz Intel Core i5 - 8 GB 1867 MHz LPDDR3.} are given in Table 1.
+We have implemented a version of the IMPACT semi-algorithm
+\cite{McMillan06} in a prototype tool called FOADA, which is avaliable
+online \cite{foada}. The tool is written in Java and uses the Z3 SMT
+solver \cite{z3}, via the JavaSMT interface \cite{javasmt}, for
+spuriousness and coverage queries and also for interpolant generation. 
+
+The experimental results, reported in Table \ref{tab:experiments},
+come from several sources, namely predicate automata models (*.pa)
+\cite{Farzan15,Farzan16} available online \cite{pa}, timed automata
+inclusion problems (abp.ada, train.ada, rr-crossing.foada), array
+logic entailments (array\_rotation.ada, array\_simple.ada,
+array\_shift.ada) and hardware circuit verification (hw1.ada,
+hw2.ada), initially considered in \cite{IosifRV16}. The main advantage
+of using FOADA over the INCLUDER \cite{includer} tool used in
+\cite{IosifRV16} is the possibility of checking inclusion between
+infinite alphabet automata with hidden (local) variables, whose values
+are not visible in the input. In particular, this is essential for
+checking inclusion of timed automata that use internal clocks to
+control the computation. 
 
 \begin{table}[htb]
 \vspace*{-\baselineskip}
@@ -2098,7 +2116,11 @@ rr-crossing.foada & 1780 & yes & 67 & 67 & 7574 \\
 \hline
 \end{tabular}
 }
-\caption{}\label{tab:experiments}
+\caption{Experiments with First Order Alternating Automata}
+\label{tab:experiments}
 \end{center}
 \vspace*{-2\baselineskip}
 \end{table}
+
+The experiments were carried out on a MacOS x64 - 1.3 GHz
+  Intel Core i5 - 8 GB 1867 MHz LPDDR3 machine. 
