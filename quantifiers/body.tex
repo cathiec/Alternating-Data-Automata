@@ -2088,15 +2088,19 @@ control the computation.
 \hline
 Example & $\len{\A}$ (bytes) & $L(\A)=\emptyset$ ? & Nodes Expanded & Nodes Visited & Times (ms) \\
 \hline
-incdec.pa & 499 & no & 13 & 7 & 273 \\
+incdec.pa & 499 & no & 21 & 17 & 779 \\
 \hline
-localdec.pa & 678 & no & 17 & 11 & 560 \\
+localdec.pa & 678 & no & 49 & 35 & 1814 \\
 \hline
-ticket.pa & 4250 & no & 31 & 17 & 999 \\
+ticket.pa & 4250 & no & 229 & 91 & 9543 \\
 \hline
-count\_thread0.pa & 9767 & no & 100 & 76 & 6055 \\
+count\_thread0.pa & 9767 & no & 154 & 128 & 8553 \\
 \hline
-count\_thread1.pa & 10925 & no & 766 & 692 & 74445 \\
+count\_thread1.pa & 10925 & no & 766 & 692 & 76771 \\
+\hline
+local0.pa & 10595 & no & 73 & 27 & 1431 \\
+\hline
+local1.pa & 11385 & no & 1135 & 858 & 101042 \\
 \hline
 array\_rotation.ada & 1834 & yes & 9 & 8 & 1543 \\
 \hline
@@ -2113,6 +2117,14 @@ hw1.ada & 322 & Solver Error & / & / & / \\
 hw2.ada & 674 & yes & 20 & 22 & 4974 \\
 \hline
 rr-crossing.foada & 1780 & yes & 67 & 67 & 7574 \\
+\hline
+running2.foada & 1217 & yes & 13 & 13 & 788 \\
+\hline
+train-simple1.foada & 5421 & yes & 43 & 44 & 2893 \\
+\hline
+train-simple2.foada & 10177 & yes & 111 & 113 & 8386 \\
+\hline
+train-simple3.foada & 15961 & yes & 196 & 200 & 15041 \\
 \hline
 \end{tabular}
 }
