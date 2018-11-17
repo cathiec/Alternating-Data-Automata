@@ -2,11 +2,10 @@
 
 Many results in formal language theory rely on the assumption that
 languages are defined over finite alphabets. In practice, this
-assumption is not realistic when attempting to model real-time
-hardware and communication protocols or even simple programs, whose
-input and observable output requires taking into account data values,
-ranging over very large domains, better viewed as infinite
-mathematical abstractions.
+assumption is problematic when attempting to use automata as models of
+real-time systems or even simple programs, whose input and observable
+output requires taking into account data values, ranging over very
+large domains, better viewed as infinite mathematical abstractions.
 
 Alternating automata are a generalization of nondeterministic automata
 with universal transitions, that create several copies of the
@@ -54,9 +53,9 @@ automata is undecidable, even for the simplest data theory of equality
 The main contribution of this paper is an effective emptiness checking
 semi-algorithm for first-order alternating automata, in the spirit of
 the \impact~procedure, originally developed for checking safety of
-nondeterministic integer programs \cite{McMillan06}. Essentially,
-checking emptiness of first-order alternating automata by lazy
-annotation with interpolants faces two problems: \begin{compactenum}
+nondeterministic integer programs \cite{McMillan06}. However, checking
+emptiness of first-order alternating automata by lazy annotation with
+interpolants faces two problems: \begin{compactenum}
 \item Quantified transition rules make it hard, or even impossible, to
   decide if a given symbolic trace is spurious. This is mainly because
   adding uninterpreted predicate symbols to decidable first-order
@@ -104,7 +103,9 @@ automata with data variables, whose languages are alternating
 sequences of input events and variable valuations
 \cite{IosifRV16}. There, we assumed that all variables of the observer
 automaton $B$ must be declared in the automata $A_1, \ldots, A_n$ that
-model the concurrent components of the system under check.
+model the concurrent components of the system under check. Using
+first-order alternating automata allows to bypass this limitation of
+our previous work.
 
 The work probably closest to the one reported here concerns the model
 of predicate automata (PA) \cite{Farzan15,Farzan16,KincaidPhD},
@@ -282,21 +283,20 @@ $\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow \top}$,
 is a model but is not minimal. The original definition of alternating
 finite-state automata \cite{ChandraKozenStockmeyer81} works around
 this problem by considering boolean valuations (models) instead of
-formulae.
+formulae. However, describing first-order alternating automata using
+interpretations instead of formulae would be rather hard to follow.
 
 Given a predicate $q \in Q$ and a tuple of data values
 $d_1,\ldots,d_{\#(q)}$, the tuple $q(d_1,\ldots,d_{\#(q)})$ is called
 a \emph{configuration}\footnote{Note that a configuration is not a
   logical term since data values cannot be written in logic.}. To
 formalize the execution semantics of automata, we relate sets of
-configurations to models of first order sentences, as follows. Given a
-formula $\phi$ and a valuation of its free variables $\nu$, each
-interpretation $\I \in \sem{\phi}_\nu$ corresponds to a set of
-configurations $\cube{\I} \isdef \set{q(d_1,\ldots,d_{\#(q)}) \mid q
-  \in Q,~ \tuple{d_1,\ldots,d_{\#(q)}} \in q^\I}$, called a
-\emph{cube}. For a set $\mathcal{S}$ of interpretations, we define
-$\cube{\mathcal{S}} \isdef \set{\cube{\I} \mid \I \in
-  \mathcal{S}}$. 
+configurations to models of first order sentences, as follows. Each
+first-order interpretation $\I$ corresponds to a set of configurations
+$\cube{\I} \isdef \set{q(d_1,\ldots,d_{\#(q)}) \mid q \in Q,~
+  \tuple{d_1,\ldots,d_{\#(q)}} \in q^\I}$, called a \emph{cube}. For a
+set $\mathcal{S}$ of interpretations, we define $\cube{\mathcal{S}}
+\isdef \set{\cube{\I} \mid \I \in \mathcal{S}}$.
 
 \begin{definition}\label{def:execution}
 Given a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n) \in \Sigma[X]^*$ and a cube $c$, an
@@ -369,8 +369,8 @@ those symbols) are replaced by their time-stamped counterparts. As a
 shorthand, we shall write $q(\vec{y})$ for $q(y_1,\ldots,y_{\#(q)})$,
 when no confusion arises.
 
-Given a sequence of input events $\alpha = a_1 \ldots a_n$, the
-\emph{path formula} of $\alpha$ is defined as:
+Given a sequence of input events $\alpha = a_1 \ldots a_n \in
+\Sigma^*$, the \emph{path formula} of $\alpha$ is:
 \begin{equation}\label{eq:pathform}
 \pathform{\alpha} \isdef \stamp{\iota}{0} \wedge 
 \bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{}
@@ -380,10 +380,10 @@ Given a sequence of input events $\alpha = a_1 \ldots a_n$, the
 The automaton $\A$, to which $\pathform{\alpha}$ refers, will always
 be clear from the context. To formalize the relation between the
 low-level configuration-based execution semantics and the symbolic
-path formulae, consider a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n)$. Any
-execution forest $\T$ of $\A$ over $w$ is associated an interpretation
-$\I_{\T}$ of the set of time-stamped predicates $\stamp{Q}{\leq n}$,
-defined as:
+path formulae, consider a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n) \in
+\Sigma[X]^*$. Any execution forest $\T$ of $\A$ over $w$ is associated
+an interpretation $\I_{\T}$ of the set of time-stamped predicates
+$\stamp{Q}{\leq n}$, defined as:
 \[\I_{\T}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
   q(d_1,\ldots,d_{\#(q)}) \text{ labels a node on level $i$ in $\T$}} 
 ,~\forall q\in Q ~\forall i \in [n]\]
@@ -553,7 +553,7 @@ non-alternating infinite-state models of computation, such as counter
 automata (nondeterministic programs with integer variables), the
 satisfiability query for an acceptance (path) formula falls outside of
 known decidable theories, supported by standard SMT solvers. There are
-basically two reasons for this, namely \begin{inparaenum}[(i)]
+basically two reasons for this, namely\begin{inparaenum}[(i)]
 \item the presence of predicate symbols, and
 \item the non-trivial alternation of quantifiers.
 \end{inparaenum}
@@ -864,10 +864,10 @@ Finally, we define the acceptance of a word with a given input event
 sequence by means of a formula in which no predicate atom occurs. As
 previously discussed, several decidable theories, such as Presburger
 arithmetic, become undecidable if predicate atoms are added to
-them. Therefore, the result below makes a step towards deciding
-whether the automaton accepts a word with a given input sequence, by
-reducing this problem to the satisfiability of a quantified formula
-without predicates. 
+them. Therefore, the result below makes a step forward towards
+deciding whether the automaton accepts a word with a given input
+sequence, by reducing this problem to the satisfiability of a
+quantified formula without predicates.
 
 \begin{lemma}\label{lemma:quant-pred-acceptance}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
@@ -1110,7 +1110,7 @@ might not cover it with the new label. Therefore, the coverage
 relation has to be recomputed after each refinement of the
 labeling. The semi-algorithm stops when (and if) a safe complete
 unfolding has been found. For a detailed presentation of the emptiness
-procedure, we refer the reader to \cite{IosifXu18}. 
+procedure, we refer to \cite{IosifXu18}.
 
 \begin{theorem}\label{thm:soundness}
   If an automaton $\A$ has a nonempty safe closed unfolding then
@@ -1181,9 +1181,9 @@ generation of interpolants in the next section.
 Typically, when checking the unreachability of a set of program
 configurations \cite{McMillan06}, the interpolants used to annotate
 the unfolded control structure are assertions about the values of the
-program variables in a given control state, at a certain step of a
-given execution. However, in an alternating model of computation, it
-is useful to distinguish between
+program variables in a given control state, at a certain step of an
+execution. However, in an alternating model of computation, it is
+useful to distinguish between
 \begin{inparaenum}[(i)]
 \item locality of interpolants w.r.t. a given control state (control
   locality) and
@@ -1383,7 +1383,7 @@ terms, called \emph{witness terms} in the following, are actual
 definitions of the Skolem function symbols from the following folklore
 theorem:
 
-\begin{theorem}\label{thm:skolem}
+\begin{theorem}[\cite{BorgerGraedelGurevich97}]\label{thm:skolem}
   Given $Q_1 x_1 \ldots Q_n x_n ~.~ \phi$ a first order sentence,
   where $Q_1, \ldots, Q_n \in \set{\exists,\forall}$ and $\phi$ is
   quantifier-free, let $\eta_i \isdef f_i(y_1,\ldots,y_{k_i})$ if $Q_i
@@ -1468,10 +1468,8 @@ A function $\xi : \nat \rightarrow \nat$ is [strictly]
      [$\xi(n) < \xi(m)$] and \emph{finite-range} iff for each $n \in
      \nat$ the set $\set{m \mid \xi(m)=n}$ is finite. If $\xi$ is
      finite-range, we denote by $\xi_{\max}^{-1}(n) \in \nat$ the
-     maximal value $m$ such that $\xi(m)=n$. It is easy to see that
-     $\xi_{\max}^{-1}$ is strictly monotonic if $\xi$ is monotonic and
-     finite-range. The lemma below gives the proof of correctness for
-     the previous construction of non-local GLI.
+     maximal value $m$ such that $\xi(m)=n$. The lemma below gives the
+     proof of correctness for the construction of non-local GLI.
 
 \begin{lemma}\label{lemma:subst-quant}
   Given a non-empty input event sequence $\alpha = a_1 \ldots a_n \in
@@ -1480,20 +1478,20 @@ A function $\xi : \nat \rightarrow \nat$ is [strictly]
   $\quantform{\alpha}$ and let $\xi : [1,m] \rightarrow [n]$ be a
   monotonic function mapping each transition quantifier to the minimal
   index from the sequence $\quantformn{\alpha_0}, \ldots,
-  \quantformn{\alpha_n}$ where it occurs. Then the following
-  hold: \begin{compactenum}
-  \item\label{it1:subst-quant} one can effectively build witness terms
-    $\tau_{i_1}, \ldots, \tau_{i_\ell}$, where \(\set{i_1,
-    \ldots,i_\ell} = \set{j \in [1,m] \mid Q_j = \forall}\) and
-    \(\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq \xi(i_j)} \cup
-    \set{x_k \mid k < i_j, Q_k = \exists},~ \forall j \in [1,\ell]\)
-    such that $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+  \quantformn{\alpha_n}$ where it occurs. Then one can effectively build:
+  \begin{compactenum}
+  \item\label{it1:subst-quant} witness terms $\tau_{i_1}, \ldots,
+    \tau_{i_\ell}$, where \(\set{i_1, \ldots,i_\ell} = \set{j \in
+      [1,m] \mid Q_j = \forall}\) and \(\voc{\tau_{i_j}} \subseteq
+    \stamp{X}{\leq \xi(i_j)} \cup \set{x_k \mid k < i_j, Q_k =
+      \exists},~ \forall j \in [1,\ell]\) such that
+    $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
       \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable, and
     %
-  \item\label{it2:subst-quant} one can effectively build a GLI $(I_0,
-    \ldots, I_n)$ for $\alpha$, such that \(\voc{I_k} \subseteq
-    \stamp{Q}{k} \cup \stamp{X}{\leq k} \cup \set{x_j \mid j <
-      \xi^{-1}(k),~ Q_j = \exists},~ \forall k \in [n]\).
+  \item\label{it2:subst-quant} a GLI $(I_0, \ldots, I_n)$ for
+    $\alpha$, such that \(\voc{I_k} \subseteq \stamp{Q}{k} \cup
+    \stamp{X}{\leq k} \cup \set{x_j \mid j < \xi^{-1}(k),~ Q_j =
+      \exists}\), for all $k \in [n]$. 
   \end{compactenum}
 \end{lemma}
 \proof{(\ref{it1:subst-quant}) If $\accform{\alpha}$ is unsatisfiable,
@@ -1605,7 +1603,7 @@ A function $\xi : \nat \rightarrow \nat$ is [strictly]
   \ref{def:generalized-lyndon-interpolant}. \qed}
 
 In conclusion, under two assumptions about the first order theory of
-the data domain, namely the \begin{inparaenum}[(i)]
+the data domain, namely the\begin{inparaenum}[(i)]
 \item witness-producing quantifier elimination, and
 \item Lyndon interpolation for the quantifier-free fragment with
   uninterpreted functions,
