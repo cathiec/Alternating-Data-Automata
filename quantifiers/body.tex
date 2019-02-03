@@ -158,7 +158,7 @@ q_2(y,u) & \arrow{a(t),b(t)}{} & t < u \vee u - y = 1 \vee q_2(y,t)
 \end{minipage}
 \end{center}
 \vspace*{-\baselineskip}
-\caption{First Order Alternating Automata for Solving Inclusion of Timed Automata}
+\caption{First Order Alternating Automata Checking Inclusion of Timed Automata}
 \label{fig:ta}
 \vspace*{-\baselineskip}
 \end{figure}
@@ -188,9 +188,9 @@ must be declared in the automata $A_1, \ldots, A_n$ under check. First
 order alternating automata bypass this limitation, since the emptiness
 checking semi-algorithm handles invisible variables. 
 
-The work probably closest to the one reported here concerns the model
-of predicate automata (PA) \cite{Farzan15,Farzan16,KincaidPhD}, used
-in the verification of parameterized concurrent programs with shared
+The work probably closest to ours concerns the model of predicate
+automata (PA) \cite{Farzan15,Farzan16,KincaidPhD}, used in the
+verification of parameterized concurrent programs with shared
 memory. In this model, the alphabet consists of pairs of program
 statements and thread identifiers, thus being infinite because the
 number of threads is unbounded. Because thread identifiers can only be
@@ -207,55 +207,49 @@ contributions.
 
 \section{Preliminaries}
 
-For two integers $0 \leq i \leq j$, we denote by $[i,j]$ the set
-$\set{i,i+1,\ldots,j}$ and by $[i]$ the set $[0,i]$. We consider two
+For two integers $0 \leq i \leq j$, we define $[i,j] \isdef
+\set{i,\ldots,j}$ and $[i] \isdef [0,i]$. We consider two disjoint
 sorts $\Data$ and $\Bool$, where $\Data$ is an infinite domain and
 $\Bool = \set{\top,\bot}$ is the set of boolean values true ($\top$)
 and false ($\bot$), respectively. The $\Data$ sort is equipped with
-finitely many function symbols $f : \Data^{\#(f)} \rightarrow \Data$,
-where $\#(f)\geq0$ denotes the number of arguments (arity) of
-$f$. When $\#(f)=0$, we say that $f$ is a constant. A \emph{predicate}
-is a function symbol $p : \Data^{\#(p)} \rightarrow \Bool$, denoting a
-relation of arity $\#(p)$ and we write $\preds$ for the set of
-predicates. 
+countably many function symbols $f : \Data^{\#(f)} \rightarrow \Data
+\cup \Bool$, where $\#(f)\geq0$ denotes the number of arguments
+(arity) of $f$. A \emph{predicate} is a function symbol $p :
+\Data^{\#(p)} \rightarrow \Bool$ that is, a $\#(p)$-ary relation.
 
-In the following, we shall consider that the interpretation of all
-function symbols $f : \Data^{\#(f)} \rightarrow \Data$ that are not
-predicates is fixed by the interpretation of the $\Data$ sort,
-e.g.\ if $\Data$ is the set of integers $\zed$, the function symbols
-are zero, the successor function and the arithmetic operations of
-addition and multiplication. For simplicity, we further blur the
-notational distinction between function symbols and their
-interpretations.
+We consider the interpretation of all function symbols $f :
+\Data^{\#(f)} \rightarrow \Data$ to be fixed by the interpretation of
+the $\Data$ sort, for instance if $\Data$ is the set of integers
+$\zed$, these are zero, the successor function and the arithmetic
+operations of addition and multiplication. We extend this convention
+to several predicates over $\Data$, such as the inequality relation
+over $\zed$, and write $\preds$ for the set of \emph{uninterpreted
+  predicates}.
 
-Let $\vars = \set{x,y,z,\ldots}$ be an infinite countable set of
+Let $\vars = \set{x,y,z,\ldots}$ be a countably infinite set of
 variables, ranging over $\Data$. Terms are either constants of sort
 $\Data$, variables or function applications $f(t_1,\ldots,t_{\#(f)})$,
 where $t_1,\ldots,t_{\#(f)}$ are terms. The set of first order
 formulae is defined by the syntax below:
-\[\phi := t \teq s \mid p(t_1,\ldots,t_{\#(p)}) 
+\[\phi := t = s \mid p(t_1,\ldots,t_{\#(p)}) 
 \mid \neg \phi_1 \mid \phi_1 \wedge \phi_2 \mid \exists x ~.~
-\phi_1 \] where $t,s,t_1,\ldots,t_{\#(p)}$ denote terms. We write
-$\phi_1 \vee \phi_2$, $\phi_1 \rightarrow \phi_2$ and $\forall x ~.~
-\phi_1$ for $\neg(\neg\phi_1 \wedge \neg\phi_2)$, $\neg\phi_1 \vee
-\phi_2$ and $\neg\exists x ~.~ \neg\phi_1$, respectively. We denote by
-$\fv{}{\phi}$ the set of free variables in $\phi$. The size
-$\len{\phi}$ of a formula $\phi$ is the number of symbols needed to
-write it down.
-
-A \emph{sentence} is a formula $\phi$ in which each variable occurs
-under the scope of a quantifier, i.e. $\fv{}{\phi} = \emptyset$.  A
-formula is \emph{positive} if each predicate symbol occurs under an
-even number of negations and we denote by $\posforms(Q,X)$ the set of
-positive formulae with predicates from the set $Q \subseteq \preds$
-and free variables from the set $X \subseteq \vars$.
-
-A formula is in \emph{prenex form} if it is of the form $\varphi =
-Q_1x_1 \ldots Q_nx_n ~.~ \phi$, where $\phi$ has no quantifiers. In
-this case we call $\phi$ the \emph{matrix} of $\varphi$. Every
-first order formula can be written in prenex form, by renaming each
-quantified variable to a unique name and moving the quantifiers
-upfront.
+\phi_1 \] where $t,s,t_1,\ldots,t_{\#(p)}$ denote terms and $p$ is a
+predicate symbol. We write $\phi_1 \vee \phi_2$, $\phi_1 \rightarrow
+\phi_2$ and $\forall x ~.~ \phi_1$ for $\neg(\neg\phi_1 \wedge
+\neg\phi_2)$, $\neg\phi_1 \vee \phi_2$ and $\neg\exists x ~.~
+\neg\phi_1$, respectively. $\fv{}{\phi}$ is the set of free variables
+in $\phi$ and the size $\len{\phi}$ of a formula $\phi$ is the number
+of symbols needed to write it down. A \emph{sentence} is a formula
+$\phi$ with no free variables. A formula is \emph{positive} if each
+uninterpreted predicate symbol occurs under an even number of
+negations and we denote by $\posforms(Q,X)$ the set of positive
+formulae with predicates from the set $Q \subseteq \preds$ and free
+variables from the set $X \subseteq \vars$. A formula is in
+\emph{prenex form} if it is of the form $\varphi = Q_1x_1 \ldots
+Q_nx_n ~.~ \phi$, where $\phi$ has no quantifiers. In this case we
+call $\phi$ the \emph{matrix} of $\varphi$. Every first order formula
+can be written in prenex form, by renaming each quantified variable to
+a unique name and moving the quantifiers upfront.
 
 %% For a variable $x \in \fv{}{\phi}$ and a term $t$, let $\phi[t/x]$ be
 %% the result of replacing each occurrence of $x$ by $t$. For indexed
@@ -264,15 +258,17 @@ upfront.
 %% obtained by simultaneously replacing each occurrence of $x_i$ with
 %% $t_i$ in $\phi$, for all $i\in[n]$.
 
-An \emph{interpretation} $\I$ maps each predicate $p$ into a set $p^\I
-\subseteq \Data^{\#(p)}$, if $\#(p)>0$, or into an element of $\Data$
-if $\#(p)=0$. A \emph{valuation} $\nu$ maps each variable $x$ into an
-element of $\Data$. Given a term $t$, we denote by $t^\nu$ the value
-obtained by replacing each variable $x$ by the value $\nu(x)$ and
-evaluating each function application. For a formula $\phi$, we define
-the forcing relation $\I,\nu \models \phi$ recursively on the
-structure of $\phi$, as usual. 
+An \emph{interpretation} $\I$ maps each predicate symbol $p$ into a
+set $p^\I \subseteq \Data^{\#(p)}$, if $\#(p)>0$, or into an element
+of $\Bool$ if $\#(p)=0$. A \emph{valuation} $\nu$ maps each variable
+$x$ into an element of $\Data$. Given a term $t$, we denote by $t^\nu$
+the value obtained by replacing each variable $x$ by the value
+$\nu(x)$ and evaluating each function application. For a formula
+$\phi$, we define the forcing relation $\I,\nu \models \phi$
+recursively on the structure of $\phi$, as usual.  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ifLongVersion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \[
 \begin{array}{rcl}
 \I,\nu \models t \teq s & \iff & t^\nu=s^\nu \\
@@ -284,27 +280,25 @@ structure of $\phi$, as usual.
 \]
 where $\nu[x\leftarrow d]$ is the valuation which assigns $d$ to $x$
 and behaves like $\nu$ elsewhere.  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \fi 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 For a formula $\phi$ and a valuation $\nu$, we define $\sem{\phi}_\nu
 \isdef \set{\I \mid \I,\nu \models \phi}$ and drop the $\nu$ subscript
-for sentences. A sentence $\phi$ is \emph{satisfiable}
-(\emph{unsatisfiable}) if $\sem{\phi}\neq\emptyset$
-($\sem{\phi}=\emptyset$). An element of $\sem{\phi}$ is called a
+for sentences. A sentence $\phi$ is \emph{satisfiable} if
+$\sem{\phi}\neq\emptyset$. An element of $\sem{\phi}$ is called a
 \emph{model} of $\phi$. A formula $\phi$ is \emph{valid} if $\I,\nu
 \models \phi$ for every interpretation $\I$ and every valuation
-$\nu$. For two formulae $\phi$ and $\psi$ we write $\phi \models \psi$
-for $\sem{\phi} \subseteq \sem{\psi}$, in which case we say that
-$\phi$ \emph{entails} $\psi$.
+$\nu$. We say that $\phi$ \emph{entails} $\psi$, written $\phi \models
+\psi$ if and only if $\sem{\phi} \subseteq \sem{\psi}$.
 
 Interpretations are partially ordered by the pointwise subset order,
 defined as $\I_1 \subseteq \I_2$ if and only if $p^{\I_1} \subseteq
-p^{\I_2}$ for each predicate $p \in \preds$. Given a set $\mathcal{S}$
-of interpretations, a minimal element $\I \in \mathcal{S}$ is an
-interpretation such that for no other interpretation $\I' \in
-\mathcal{S} \setminus \set{\I}$ do we have $\I' \subseteq \I$. For a
-formula $\phi$ and a valuation $\nu$, we denote by $\minsem{\phi}_\nu$
-and $\minsem{\phi}$ the set of minimal interpretations from
-$\sem{\phi}_\nu$ and $\sem{\phi}$, respectively.
+p^{\I_2}$ for each predicate symbol $p \in \preds$. Given a formula
+$\phi$ and a valuation $\nu$, we define $\minsem{\phi}_\nu \isdef
+\set{\I \mid \I,\nu \models \phi,~ \forall \I' \subseteq \I ~.~
+  \I',\nu \not\models \phi}$ the set of minimal interpretations that,
+together with $\nu$, form models of $\phi$. 
 
 \section{First Order Alternating Automata}
 
@@ -318,12 +312,12 @@ word in the following) is a finite sequence $w=(a_1,\nu_1)(a_2,\nu_2)
 \ldots (a_n,\nu_n)$ of data symbols. Given a word $w$, we denote by
 $\event{w} \isdef a_1\ldots a_n$ its sequence of input events and by
 $\data{w}$ the valuation associating each time-stamped variable
-$\stamp{x}{i}$ the value $\nu_i(x)$, for all $x \in \vars$ and
+$\stamp{x}{i}$, where $x \in \vars$, the value $\nu_i(x)$, for all
 $i\in[1,n]$. We denote by $\varepsilon$ the empty sequence, by
-$\Sigma^*$ the set of finite sequences of input events and by
-$\Sigma[X]^*$ the set of data words over the variables $X$. 
+$\Sigma^*$ the set of finite input sequences and by $\Sigma[X]^*$ the
+set of finite data words over the variables $X$.
 
-Formally, a \emph{first order alternating automaton} is a tuple $\A =
+A \emph{first order alternating automaton} is a tuple $\A =
 \tuple{\Sigma,X,Q,\iota,F,\Delta}$, where $\Sigma$ is a finite set of
 input events, $X$ is a finite set of input variables, $Q$ is a finite
 set of predicates denoting control states, $\iota \in
@@ -336,9 +330,8 @@ predicate, $a \in \Sigma$ is an input event and $\psi \in
 where $X \cap \set{y_1,\ldots,y_{\#(q)}} = \emptyset$. The quantifiers
 occurring in the right-hand side formula of a transition rule are
 referred to as \emph{transition quantifiers}. The \emph{size} of $\A$
-is defined as $\len{\A} = \len{\iota} +
-\sum_{\scriptscriptstyle{q(\vec{y}) \arrow{a(X)}{} \psi \in \Delta}}
-\len{\psi}$.
+is $\len{\A} \isdef \len{\iota} + \sum \set{\len{\psi} \mid q(\vec{y})
+  \arrow{a(X)}{} \psi \in \Delta}$.
 
 The intuition of a transition rule \(q(y_1,\ldots,y_{\#(q)})
 \arrow{a(X)}{} \psi\) is the following: $a$ is the input event and $X$
@@ -350,68 +343,60 @@ most one such rule, as two or more rules can be joined using
 disjunction.
 
 The execution semantics of automata is given in close analogy with the
-case of boolean alternating automata, with transition rules of the
-form $q \arrow{a}{} \phi$, where $q$ is a boolean constant and $\phi$
-a positive boolean combination of such constants. For instance, $q_0
-\arrow{a}{} q_1 \wedge q_2 \vee q_3$ means that the automaton can
-choose to transition in either both $q_1$ and $q_2$ or in $q_3$
-alone. This intuition leads to saying that the steps of the automaton
-are defined by the minimal boolean models of the transition
-formulae. In this case, both $\set{q_1 \leftarrow \top, q_2 \leftarrow
-  \top, q_3 \leftarrow \bot}$ and $\set{q_1 \leftarrow \bot, q_2
-  \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models, however
-$\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow \top}$,
-is a model but is not minimal. The original definition of alternating
-finite-state automata \cite{ChandraKozenStockmeyer81} works around
-this problem by considering boolean valuations (models) instead of
-formulae. However, describing first-order alternating automata using
-interpretations instead of formulae would be rather hard to follow.
+classical definition of propositional alternating automata, with
+transition rules of the form $q \arrow{a}{} \phi$, where $q$ is a
+propositional variable and $\phi$ a positive boolean combination of
+propositional variables. For instance, $q_0 \arrow{a}{} q_1 \wedge q_2
+\vee q_3$ means that the automaton can choose to transition in either
+both $q_1$ and $q_2$ or in $q_3$ alone. This intuition leads to saying
+that a transition is a \emph{minimal model} of a right hand side
+formula of a rule. In our example, both $\set{q_1 \leftarrow \top, q_2
+  \leftarrow \top, q_3 \leftarrow \bot}$ and $\set{q_1 \leftarrow
+  \bot, q_2 \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models,
+however $\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow
+  \top}$, is a model but is not minimal. The original definition of
+alternating finite-state automata \cite{ChandraKozenStockmeyer81}
+works around this problem by considering boolean valuations (models)
+instead of formulae. However, a finite description of a first order
+alternating automaton must use formulae, because there can be
+infinitely many satisfying interpretations that are incomparable
+w.r.t. the pointwise subset ordering. 
 
-Given a predicate $q \in Q$ and a tuple of data values
-$d_1,\ldots,d_{\#(q)}$, the tuple $q(d_1,\ldots,d_{\#(q)})$ is called
-a \emph{configuration}\footnote{Note that a configuration is not a
-  logical term since data values cannot be written in logic.}. To
-formalize the execution semantics of automata, we relate sets of
-configurations to models of first order sentences, as follows. Each
-first-order interpretation $\I$ corresponds to a set of configurations
-$\cube{\I} \isdef \set{q(d_1,\ldots,d_{\#(q)}) \mid q \in Q,~
-  \tuple{d_1,\ldots,d_{\#(q)}} \in q^\I}$, called a \emph{cube}. For a
-set $\mathcal{S}$ of interpretations, we define $\cube{\mathcal{S}}
-\isdef \set{\cube{\I} \mid \I \in \mathcal{S}}$.
+Given an uninterpreted predicate symbol $q \in Q$ and a tuple of data
+values $d_1,\ldots,d_{\#(q)}$, the tuple $(q, d_1,\ldots,d_{\#(q)})$
+is called a \emph{configuration}, sometimes written
+$q(d_1,\ldots,d_{\#(q)})$, when no confusion arises. A configuration
+is \emph{final} if $q \in F$. An interpretation $\I$ corresponds to a
+set of configurations $\cube{\I} \isdef \set{(q, d_1,\ldots,d_{\#(q)})
+  \mid q \in Q,~ (d_1,\ldots,d_{\#(q)}) \in q^\I}$, called a
+\emph{cube}. This notation is lifted to sets of configurations in the
+usual way.
 
 \begin{definition}\label{def:execution}
-Given a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n) \in \Sigma[X]^*$ and a cube $c$, an
-\emph{execution} of $\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$, starting with $c$, is
-a (possibly infinite) forest $\T = \set{T_1,T_2,\ldots}$, where each
-$T_i$ is a tree labeled with configurations, such that:
+Given a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n) \in \Sigma[X]^*$ and a
+cube $c$, an \emph{execution} of
+$\A=\tuple{\Sigma,X,Q,\iota,F,\Delta}$ over $w$, starting with $c$, is
+a forest $\T = \set{T_1,T_2,\ldots}$, where each $T_i$ is a tree
+labeled with configurations, such that:
 \begin{compactenum}
 \item\label{it1:execution} $c = \set{T(\epsilon) \mid T \in \T}$ is the set of
   configurations labeling the roots of $T_1,T_2,\ldots$ and
 %
-\item\label{it2:execution} if $q(d_1,\ldots,d_{\#(q)})$ labels a node on the level $j \in
-  [n-1]$ in $T_i$, then the labels of its children form a cube from
-  $\cube{\minsem{\psi}_{\eta}}$, where $\eta = \nu_{j+1}[y_1
-    \leftarrow d_1,\ldots,y_{\#(q)} \leftarrow d_{\#(q)}]$ and
-  \(q(y_1,\ldots,y_{\#(q)}) \arrow{a_{j+1}(X)}{} \psi \in \Delta\) is
-  a transition rule of $\A$.
+\item\label{it2:execution} if $(q,d_1,\ldots,d_{\#(q)})$ labels a node
+  on the level $j \in [n-1]$ in $T_i$, then the labels of its children
+  form a cube from $\cube{\minsem{\psi}_{\eta}}$, where $\eta =
+  \nu_{j+1}[y_1 \leftarrow d_1,\ldots,y_{\#(q)} \leftarrow d_{\#(q)}]$
+  and \(q(y_1,\ldots,y_{\#(q)}) \arrow{a_{j+1}(X)}{} \psi \in \Delta\)
+  is a transition rule of $\A$.
 \end{compactenum}
 \end{definition}
-
-\begin{definition}\label{def:accepting}
 An execution $\T$ over $w$, starting with $c$, is \emph{accepting} if
-and only if \begin{compactitem}
-\item\label{it1:accepting} all paths in $\T$ have the same length $n$,
-  and
-  %
-\item\label{it2:accepting} the frontier of each tree $T \in \T$ is
-  labeled with \emph{final configurations} $q(d_1,\ldots,d_{\#(q)})$,
-  where $q \in F$.
-\end{compactitem} 
-If $\A$ has an accepting execution over $w$ starting with a cube $c
-\in \cube{\minsem{\iota}}$, then $\A$ \emph{accepts} $w$ and let
-$\lang{\A}$ be the set of words accepted by $\A$.
-\end{definition}
-In this paper, we address the following questions: \begin{compactenum}
+and only if all paths in $\T$ have the same length and the frontier of
+each tree $T \in \T$ is labeled with final configurations.  If $\A$
+has an accepting execution over $w$ starting with a cube $c \in
+\cube{\minsem{\iota}}$, then $\A$ \emph{accepts} $w$ and let
+$\lang{\A}$ be the set of words accepted by $\A$. We consider the
+following problems: \begin{compactenum}
 \item \emph{boolean closure}: given automata $\A_i =
   \tuple{\Sigma,X,Q_i,\iota_i,F_i,\Delta_i}$, for $i=1,2$, do there
   exist automata $\A_\cap$, $\A_\cup$ and $\overline{\A}_1$ such that
@@ -419,10 +404,18 @@ In this paper, we address the following questions: \begin{compactenum}
   L(\A_2)$ and $L(\overline{\A}_1) = \Sigma[X]^* \setminus L(\A_1)$ ?
 %
 \item \emph{emptiness}: given an automaton $\A$, is $L(\A) =
-  \emptyset$?
+  \emptyset$ ?
 \end{compactenum}
+For technical reasons, we address the following \emph{relative
+  acceptance} problem first: given an automaton $\A$ and an input
+sequence $\alpha \in \Sigma^*$, does there exists a word $w \in
+\lang{\A}$ such that $\event{w} = \alpha$ ?  By solving this problem
+first, we develop the machinery required to prove that first order
+alternating automata are closed under all boolean operations and,
+further, set up the ground for a semi-algorithm for the emptiness
+problem.
 
-\subsection{Symbolic Execution}
+\subsection{Path Formulae}
 
 In the upcoming developments it is sometimes more convenient to work
 with logical formulae defining executions of automata, than with
@@ -434,39 +427,44 @@ $\pathform{\alpha}$ to an \emph{acceptance formula}
 $\accform{\alpha}$, which defines only accepting executions over words
 that share a given input sequence. Otherwise stated,
 $\accform{\alpha}$ is satisfiable if and only if the automaton accepts
-a word $w$ such that $\event{w} = \alpha$.
+a word $w$ such that $\event{w} = \alpha$. We reduce thus the relative
+acceptance problem to the satisfiability of an effectively computable
+formula in the first order theory of data with uninterpreted predicate
+symbols.
 
 Let $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ be an automaton for the
 rest of this section. For any $i \in \nat$, we denote by $\stamp{Q}{i}
 = \set{\stamp{q}{i} \mid q \in Q}$ and $\stamp{X}{i} =
-\set{\stamp{x}{i} \mid x \in X}$ the sets of time-stamped predicates
-and variables, respectively. As a shorthand, we write $\stamp{Q}{\leq
-  n}$ (resp.  $\stamp{X}{\leq n}$) for the set $\set{\stamp{q}{i} \mid
-  q \in Q, i \in [n]}$ (resp. $\set{\stamp{x}{i} \mid x \in X, i \in
-  [n]}$). For a formula $\psi$ and $i \in \nat$, we define
-$\stamp{\psi}{i} \isdef \psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$ the
-formula in which all input variables and state predicates (and only
-those symbols) are replaced by their time-stamped counterparts. As a
-shorthand, we shall write $q(\vec{y})$ for $q(y_1,\ldots,y_{\#(q)})$,
-when no confusion arises.
+\set{\stamp{x}{i} \mid x \in X}$ the sets of time-stamped predicate
+symbols and variables, respectively. As a shorthand, we write
+$\stamp{Q}{\leq n}$ (resp.  $\stamp{X}{\leq n}$) for the set
+$\set{\stamp{q}{i} \mid q \in Q, i \in [n]}$ (resp. $\set{\stamp{x}{i}
+  \mid x \in X, i \in [n]}$). For a formula $\psi$ and $i \in \nat$,
+we define $\stamp{\psi}{i} \isdef \psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$
+the formula in which all input variables and state predicates (and
+only those symbols) are replaced by their time-stamped
+counterparts. As a shorthand, we shall write $q(\vec{y})$ for
+$q(y_1,\ldots,y_{\#(q)})$, when no confusion arises.
 
 Given a sequence of input events $\alpha = a_1 \ldots a_n \in
 \Sigma^*$, the \emph{path formula} of $\alpha$ is:
 \begin{equation}\label{eq:pathform}
+\begin{array}{c}
 \pathform{\alpha} \isdef \stamp{\iota}{0} \wedge 
 \bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{}
   \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
 \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i}
+\end{array}
 \end{equation}
 The automaton $\A$, to which $\pathform{\alpha}$ refers, will always
 be clear from the context. To formalize the relation between the
-low-level configuration-based execution semantics and the symbolic
-path formulae, consider a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n) \in
-\Sigma[X]^*$. Any execution forest $\T$ of $\A$ over $w$ is associated
-an interpretation $\I_{\T}$ of the set of time-stamped predicates
-$\stamp{Q}{\leq n}$, defined as:
-\[\I_{\T}(\stamp{q}{i}) \isdef \set{\tuple{d_1,\ldots,d_{\#(q)}} \mid
-  q(d_1,\ldots,d_{\#(q)}) \text{ labels a node on level $i$ in $\T$}} 
+low-level configuration-based execution semantics and path formulae,
+consider a word $w=(a_1,\nu_1) \ldots (a_n,\nu_n) \in
+\Sigma[X]^*$. Any execution $\T$ of $\A$ over $w$ has an associated
+interpretation $\I_{\T}$ of time-stamped predicates $\stamp{Q}{\leq
+  n}$:
+\[\I_{\T}(\stamp{q}{i}) \isdef \set{(d_1,\ldots,d_{\#(q)}) \mid
+  (q,d_1,\ldots,d_{\#(q)}) \text{ labels a node on level $i$ in $\T$}}
 ,~\forall q\in Q ~\forall i \in [n]\]
 
 \begin{lemma}\label{lemma:path-formula}
@@ -558,9 +556,11 @@ constrain the path formula $\pathform{\alpha}$ by requiring that only
 final states of $\A$ occur on the last level of the execution.  The
 result is the \emph{acceptance formula} for $\alpha$:
 \begin{equation}\label{eq:accform}
+\begin{array}{c}
 \accform{\alpha} \isdef \pathform{\alpha} \wedge \bigwedge_{q
   \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
 \stamp{q}{n}(\vec{y}) \rightarrow \bot
+\end{array}
 \end{equation}
 The top-level universal quantifiers from a subformula $\forall y_1
 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{i}(\vec{y}) \rightarrow \psi$
@@ -568,12 +568,8 @@ of $\accform{\alpha}$ will be referred to as \emph{path quantifiers},
 in the following. Notice that path quantifiers are distinct from the
 transition quantifiers that occur within a formula $\psi$ of a
 transition rule $q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \psi$ of $\A$.
-
-The acceptance formula $\accform{\A}$ is false in every interpretation
-of the predicates that assigns a non-empty set to a non-final
-predicate occurring on the last level in the execution forest. The
-relation between the words accepted by $\A$ and the acceptance formula
-above, is formally captured by the following lemma:
+The relation between the words accepted by $\A$ and the acceptance
+formula above, is formally captured by the following lemma:
 
 \begin{lemma}\label{lemma:acceptance}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
@@ -648,14 +644,14 @@ style congruence closure argument \cite{NelsonOppen80}.
 
 To tackle this problem, we start from the observation that acceptance
 formulae have a particular form, which allows the elimination of path
-quantifiers and of predicates, by a couple of
+quantifiers and uninterpreted predicate symbols, by a couple of
 satisfiability-preserving transformations. The result of applying
 these transformations is a formula with no predicate symbols, whose
 only quantifiers are those introduced by the transition rules of the
-automaton, referred to as transition quantifiers. We shall further
-assume (\S\ref{sec:emptiness}) that the first order theory of the data
-sort $\Data$ has quantifier elimination, which allows to effectively
-decide the satisfiability of such formulae.
+automaton. Next, in \S\ref{sec:emptiness} we assume that the first
+order theory of the data sort $\Data$ has quantifier elimination,
+which allows to effectively decide satisfiability of acceptance
+formulae.
 
 For the time being, let us formally define the elimination of
 transition quantifiers and predicates, respectively. Consider a given
@@ -663,11 +659,13 @@ sequence of input events $\alpha = a_1 \ldots a_n$ and denote by
 $\alpha_i$ the prefix $a_1 \ldots a_i$ of $\alpha$, for $i \in [n]$,
 where $\alpha_0=\epsilon$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifLongVersion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{definition}\label{def:quantform}
   Let $\quantformn{\alpha_0}, \ldots, \quantformn{\alpha_n}$ be the
   sequence of formulae defined by $\quantformn{\alpha_0} \isdef
   \stamp{\iota}{0}$ and, for all $i \in [1,n]$:
-  \vspace*{-.5\baselineskip}
   \[\quantformn{\alpha_i} \isdef \quantformn{\alpha_{i-1}} \wedge
   \bigwedge_{\begin{array}{l}
       \scriptstyle{\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \quantformn{\alpha_{i-1}}} \\
@@ -675,7 +673,6 @@ where $\alpha_0=\epsilon$.
   \end{array}} \stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \rightarrow 
     \stamp{\psi}{i}[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]
       \]  
-      \vspace*{-.5\baselineskip}
       We write
     $\quantform{\alpha}$ for the prenex normal form of the formula: 
       \[\quantformn{\alpha_n} \wedge \bigwedge_{\begin{array}{l}
@@ -683,10 +680,29 @@ where $\alpha_0=\epsilon$.
           \scriptstyle{q \in Q \setminus F}
       \end{array}} \stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \rightarrow \bot \enspace.\]
 \end{definition}
-Observe that $\quantform{\alpha}$ contains no path quantifiers, as
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\else
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Let $\quantformn{\alpha_0}, \ldots, \quantformn{\alpha_n}$ be the
+sequence of formulae defined by $\quantformn{\alpha_0} \isdef
+\stamp{\iota}{0}$ and, for all $i \in [1,n]$, let
+$\quantformn{\alpha_i}$ be the conjunction of
+$\quantformn{\alpha_{i-1}}$ with all formulae
+$\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \rightarrow
+\stamp{\psi}{i}[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$, such that
+$\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)})$ occurs in
+$\quantformn{\alpha_{i-1}}$. Next, we write $\quantform{\alpha}$ for
+the conjunction of $\quantformn{\alpha_n}$ with all
+$\stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \rightarrow \bot$, such that
+$\stamp{q}{n}(t_1,\ldots,t_{\#(q)})$ occurs in
+$\quantformn{\alpha_n}$, for some $q \in Q \setminus F$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Note that $\quantform{\alpha}$ contains no path quantifiers, as
 required. On the other hand, the scope of the transition quantifiers
 in $\quantform{\alpha}$ exceeds the right-hand side formulae from the
-transition rules, as shown by the following example. 
+transition rules, as shown by the following example.
 
 \begin{example}\label{ex:quant-elim}
   Consider the automaton $\A = \tuple{\set{a_1,a_2}, \set{x},
@@ -714,11 +730,6 @@ transition rules, as shown by the following example.
   \enspace\enspace\hfill\blacksquare
   \end{array}\]
 \end{example}
-
-The next lemma establishes a formal relation between the
-satisfiability of an acceptance formula $\accform{\alpha}$ and that of
-the formula $\quantform{\alpha}$, obtained by eliminating the path
-quantifiers from $\accform{\alpha}$.
 
 \begin{lemma}\label{lemma:quant}
   For any input event sequence $\alpha=a_1\ldots a_n$ and each
@@ -773,9 +784,9 @@ quantifiers from $\accform{\alpha}$.
   
   \noindent This concludes the proof. \qed}
 
-We proceed with the elimination of predicate atoms from
-$\quantform{\alpha}$, defined below. 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifLongVersion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{definition}\label{def:substform}
   Let $\substformn{\alpha_0}, \ldots, \substformn{\alpha_n}$ be the
   sequence of formulae defined by $\substformn{\alpha_0} \isdef
@@ -790,7 +801,23 @@ $\quantform{\alpha}$, defined below.
   $\stamp{q}{n}$, such that $q \in Q \setminus F$ (resp. $q \in F$),
   by $\bot$ (resp. $\top$).
 \end{definition}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\else
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Further, we eliminate the predicate atoms from $\quantform{\alpha}$,
+by considering the sequence of formulae $\substformn{\alpha_0} \isdef
+\stamp{\iota}{0}$ and, for all $i \in [1,n]$, $\substformn{\alpha_i}$
+is obtained by substituting each predicate atom
+$\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)})$ in $\substformn{\alpha_{i-1}}$
+by $\stamp{\psi}{i}[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$, where
+$q(\vec{y}) \arrow{a_{i}(X)}{} \psi \in \Delta$. We write
+$\substform{\alpha}$ for the formula obtained by replacing, in
+$\substformn{\alpha}$, each occurrence of a predicate $\stamp{q}{n}$,
+such that $q \in Q \setminus F$ (resp. $q \in F$), by $\bot$
+(resp. $\top$).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{example}[Contd. from Example \ref{ex:quant-elim}]\label{ex:pred-elim}
   The result of the elimination of predicate atoms from the acceptance
   formula in Example \ref{ex:quant-elim} is shown below:
@@ -942,13 +969,8 @@ This concludes the proof. \qed}
 %%   \end{compactitem}}
 
 Finally, we define the acceptance of a word with a given input event
-sequence by means of a formula in which no predicate atom occurs. As
-previously discussed, several decidable theories, such as Presburger
-arithmetic, become undecidable if predicate atoms are added to
-them. Therefore, the result below makes a step forward towards
-deciding whether the automaton accepts a word with a given input
-sequence, by reducing this problem to the satisfiability of a
-quantified formula without predicates.
+sequence by means of a quantifier free formula in which no predicate
+atom occurs.
 
 \begin{lemma}\label{lemma:quant-pred-acceptance}
   Given an automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$, for
@@ -971,18 +993,16 @@ quantified formula without predicates.
 Given a positive formula $\phi$, we define the \emph{dual} formula
 $\dual{\phi}$ recursively as follows:
 \[\begin{array}{rclcrclcrcl}
-\dual{(\phi_1 \vee \phi_2)} & = & \dual{\phi_1} \wedge \dual{\phi_2} && 
-\dual{(\phi_1 \wedge \phi_2)} & = & \dual{\phi_1} \vee \dual{\phi_2} &&
-\dual{(t \teq s)} & = & \neg(t \teq s) \\
-\dual{(\exists x ~.~ \phi_1)} & = & \forall x ~.~ \dual{\phi_1} && 
-\dual{(\forall x ~.~ \phi_1)} & = & \exists x ~.~ \dual{\phi_1} && 
-\dual{(\neg(t \teq s))} & = & t \teq s \\
-\dual{(q(x_1,\ldots,x_{\#(q)}))} & = & q(x_1,\ldots,x_{\#(q)})
+\dual{(\phi_1 \vee \phi_2)} & \isdef & \dual{\phi_1} \wedge \dual{\phi_2} && 
+\dual{(\phi_1 \wedge \phi_2)} & \isdef & \dual{\phi_1} \vee \dual{\phi_2} &&
+\dual{(t = s)} & \isdef & t \neq s \\
+\dual{(\exists x ~.~ \phi_1)} & \isdef & \forall x ~.~ \dual{\phi_1} && 
+\dual{(\forall x ~.~ \phi_1)} & \isdef & \exists x ~.~ \dual{\phi_1} && 
+\dual{(t \neq s)} & \isdef & t = s \\
+&&&& \dual{q(x_1,\ldots,x_{\#(q)})} & \isdef & q(x_1,\ldots,x_{\#(q)})
 \end{array}\]
-Observe that, because predicate atoms do not occur negated in $\phi$,
-there is no need to define dualization for formulae of the form $\neg
-q(x_1,\ldots,x_{\#(q)})$. The following theorem shows closure of
-automata under all boolean operations:
+The following theorem shows closure of automata under all boolean
+operations:
 
 %% The dualization operation has the following property:
 %% \begin{lemma}\label{lemma:dual}
@@ -1011,6 +1031,40 @@ automata under all boolean operations:
   Moreover, $\len{\A_\cap} = \bigO{\len{\A_1}+\len{\A_2}}$ and
   $\len{\overline{\A_i}} = \bigO{\len{\A_i}}$, for all $i=1,2$.
 \end{theorem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifLongVersion\else
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{\em Proof sketch.} (\ref{it1:thm:closure}) The construction of $\A_\cap$ 
+and $\A_\cup$ resembles the standard intersection and union of
+propositional alternating automata
+\cite{Arxiv}. (\ref{it2:thm:closure}) Let $w \in \Sigma[X]^*$ be a
+word. We denote by $\accformA{\A_1}{\event{w}}$ and
+$\substformA{\A_1}{\event{w}}$
+[resp. $\accformA{\overline{\A}_1}{\event{w}}$ and
+  $\substformA{\overline{\A}_1}{\event{w}}$] the formulae
+$\accform{\event{w}}$ and $\substform{\event{w}}$ for $\A_1$ and
+$\overline{\A}_1$, respectively. It is enough to show that
+$\substformA{\overline{\A}_1}{\event{w}} =
+\neg\substformA{\A_1}{\event{w}}$ and apply Lemma
+\ref{lemma:quant-pred-acceptance} to prove that $w \in \lang{\A_1}
+\iff w \not\in \lang{\overline{\A}_1}$. Since the choice of $w$ was
+arbitrary, this proves $\lang{\overline{\A}_1} = \Sigma[X]^* \setminus
+\lang{\A_1}$. By induction on the number of predicate atoms in
+$\accformA{\A_1}{\event{w}}$ that are replaced during the generation
+of $\substformA{\A_1}{\event{w}}$. The proof relies on the following
+fact, proved by induction on the structure of $\phi$:
+  \begin{fact}\label{fact:dual-neg}
+    Let $\phi$ be a positive formula and let $q(t_1,\ldots,t_{\#(q)})$
+    be the only occurrence of a predicate symbol within $\phi$. Then,
+    we have the equivalence:
+    \[\neg\phi[\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]
+    \equiv
+    \dual{\phi}[\neg\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]\]
+  \end{fact}
+\qed
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \proof{ (\ref{it1:thm:closure}) ``$\subseteq$'' Let $w \in
   \lang{\A_\cap}$ be a word and $\T$ be an execution of $\A_\cap$ over
   $w$. Since $Q_1 \cap Q_2 = \emptyset$, it is possible to partition
