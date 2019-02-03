@@ -29,13 +29,15 @@
 
 \usepackage[draft]{commenting}
 
+\usepackage{setspace}
+
 \pagestyle{plain}
 
 \newif\ifLongVersion\LongVersionfalse
 
 \include{commands-lncs}
 
-\renewcommand{\baselinestretch}{0.96}
+% \renewcommand{\baselinestretch}{0.96}
 
 \declareauthor{ri}{Radu}{blue}
 \declareauthor{xx}{Xiao}{red}
@@ -44,21 +46,33 @@
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\setlength{\belowdisplayskip}{2pt} \setlength{\belowdisplayshortskip}{1pt}
+\setlength{\abovedisplayskip}{2pt} \setlength{\abovedisplayshortskip}{1pt}
+
 \title{First Order Alternation}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifLongVersion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \author{Radu Iosif and Xiao Xu}
 \institute{
   CNRS, Verimag, Universit\'e de Grenoble Alpes \\
   Email: \{Radu.Iosif,Xiao.Xu\}@univ-grenoble-alpes.fr
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\else
+\author{ }
+\institute{ }
+\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \maketitle
-
+\vspace*{-2\baselineskip}
 \input abstract
 \input body
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\bibliographystyle{abbrv} \bibliography{refs}
+\bibliographystyle{splncs03} \bibliography{refs}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

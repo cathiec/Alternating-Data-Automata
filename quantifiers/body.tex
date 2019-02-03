@@ -1,93 +1,187 @@
 \section{Introduction}
 
-Many results in formal language theory rely on the assumption that
-languages are defined over finite alphabets. In practice, this
-assumption is problematic when attempting to use automata as models of
-real-time systems or even simple programs, whose input and observable
-output requires taking into account data values, ranging over very
-large domains, better viewed as infinite mathematical abstractions.
+Many results in automata theory rely on the finite alphabet
+hypothesis, which guarantees, in some cases, the existence of
+determinization, complementation and inclusion checking
+methods. However, this hypothesis prevents the use of automata as
+models of real-time systems or even simple programs, whose input and
+output are data values ranging over very large domains, typically
+viewed as infinite mathematical abstractions.
 
-Alternating automata are a generalization of nondeterministic automata
-with universal transitions, that create several copies of the
-automaton, which synchronize on the same input word. Alternating
-automata are appealing for verification because they allow encoding of
-problems such as temporal logic model checking in linear time, as
-opposed to the exponential time required by nondeterministic automata
-\cite{Vardi95}. A finite-alphabet alternating automaton is typically
-described by a set of transition rules $q \arrow{a}{} \phi$, where $q$
-is a state, $a$ is an input symbol and $\phi$ is a positive boolean
-combinations of states, viewed as propositional variables.
-
-Here we introduce a generalized alternating automata model in which
-states are predicate symbols $q(y_1,\ldots,y_k)$, the input has
-associated data variables $x_1,\ldots,x_n$, ranging over an infinite
-domain and transitions are of the form $q(y_1,\ldots,y_k)
-\arrow{a(x_1,\ldots,x_n)}{} \phi$, where $\phi$ is any formula in the
-first-order theory of the data domain, in which each state predicate
-occurs under an even number of negations. In this model, the arguments
-of a predicate atom $q(y_1,\ldots,y_k)$ track the values of the
-\emph{internal variables} associated with the state. Together with the
-input values $x_1,\ldots,x_n$, these values are used to compute the
-successor states and are invisible in the input sequence.
-
-Previous attempts to generalize classical Rabin-Scott automata to
+Traditional attempts to generalize classical Rabin-Scott automata to
 infinite alphabets, such as timed automata \cite{AlurDill94} and
-finite-memory (register) automata \cite{KaminskiFrancez94} face the
+finite-memory automata \cite{KaminskiFrancez94} face the
 \emph{complement closure} problem: there exist automata for which the
 complement language cannot be recognized by an automaton in the same
 class. This excludes the possibility of encoding a language inclusion
 problem $\lang{A} \subseteq \lang{B}$ as the emptiness of an automaton
 recognizing the language $\lang{A} \cap \clang{B}$, where $\clang{B}$
-denotes the complement of $\lang{B}$. 
+denotes the complement of $\lang{B}$.
 
-The solution we adopt here is a tight coupling of internal variables
-to control states, using uninterpreted predicate symbols. As we show,
-this allows for linear-time complementation just as in the case of
-boolean alternating automata. Complementation is, moreover, possible
-when the transition formulae contain first-order quantifiers,
-generating infinitely-branching execution trees. The price to be paid
-for this expressivity is that emptiness of first-order alternating
-automata is undecidable, even for the simplest data theory of equality
+Even when assuming the alphabet to be finite, complementation of a
+finite-state automaton faces an inherent exponential blowup due to
+nondeterminism. However, if we allow universal nondeterminsim, in
+addition to the classical existential nondeterminism, complementation
+is possible is linear time. The automata having both existential and
+universal nondeterminism are called \emph{alternating automata}
+\cite{ChandraKozenStockmeyer81}. A finite-alphabet alternating
+automaton is described by a set of transition rules $q \arrow{a}{}
+\phi$, where $q$ is a state, $a$ is an input symbol and $\phi$ is a
+boolean formula, whose propositional variables denote successor
+states.
+
+\paragraph{\em Our Contribution}
+We extend the alternating automata model to infinite data alphabets,
+by defining a model of computation in which all boolean operations,
+including complementation, can be done in linear time.  The control
+states are given by $k$-ary predicate symbols $q(y_1,\ldots,y_k)$, the
+input consists of an event $a$ from a finite alphabet and a tuple of
+data variables $x_1,\ldots,x_n$, ranging over an infinite domain, and
+transitions are of the form $q(y_1,\ldots,y_k)
+\arrow{a(x_1,\ldots,x_n)}{} \phi(x_1, \ldots, x_n, y_1, \ldots, y_k)$,
+where $\phi$ is a formula in the first-order theory of the data
+domain. In this model, the arguments of a predicate atom
+$q(y_1,\ldots,y_k)$ represent the values of the \emph{internal
+  variables} associated with the state. Together with the input values
+$x_1,\ldots,x_n$, these values define the next configurations, but
+remain invisible in the input sequence.
+
+The tight coupling of internal values and control states, by means of
+uninterpreted predicate symbols, allows for linear-time
+complementation just as in the case of classical propositional
+alternating automata. Complementation is, moreover, possible when the
+transition formulae contain first-order quantifiers, generating
+infinitely-branching execution trees. The price to be paid for this
+expressivity is that emptiness of first-order alternating automata is
+undecidable, even for the simplest data theory of equality
 \cite{Farzan15}.
 
 The main contribution of this paper is an effective emptiness checking
 semi-algorithm for first-order alternating automata, in the spirit of
-the \impact~procedure, originally developed for checking safety of
-nondeterministic integer programs \cite{McMillan06}. However, checking
-emptiness of first-order alternating automata by lazy annotation with
-interpolants faces two problems: \begin{compactenum}
-\item Quantified transition rules make it hard, or even impossible, to
-  decide if a given symbolic trace is spurious. This is mainly because
-  adding uninterpreted predicate symbols to decidable first-order
-  theories, such as Presburger arithmetic, results in undecidability
+the \impact~lazy annotation procedure, originally developed for
+checking safety of nondeterministic integer programs
+\cite{McMillan06,McMillan14}. In a nutshell, a lazy annotation
+procedure unfolds an automaton $A$ trying to find an execution that
+recognizes a word $w \in \lang{A}$. If a path that reaches a final
+state does not correspond to a concrete run of the automaton, the
+positions on the path are labeled with interpolants from the proof of
+infeasibility, thus marking this path and all continuations as
+infeasible for future searches.
+
+Checking emptiness of first-order alternating automata by lazy
+annotation with interpolants faces two problems: \begin{compactenum}
+\item Quantified transition rules make it hard, if not impossible, to
+  decide if a path is infeasible. This is mainly because adding
+  uninterpreted predicate symbols to decidable first-order theories,
+  such as Presburger arithmetic, results in undecidability
   \cite{Halpern91}. To deal with this problem, we assume that the
   first order data theory, without uninterpreted predicate symbols,
   has a quantifier elimination procedure, that instantiates quantifers
   with effectively computable \emph{witness terms}.
 %
-\item The interpolants that prove the spuriousness of a symbolic path
-  are not \emph{local}, as they may refer to input values encountered
-  in the past. However, the future executions are oblivious to
-  \emph{when} these values have been seen in the past and depend only
-  on the data constraints between the values. We use this fact to
+\item The interpolants that prove the infeasibility of a path are not
+  \emph{local}, as they may refer to input values encountered in the
+  past. However, the future executions are oblivious to \emph{when}
+  these values have been seen in the past and depend only on the
+  relation between the past and current values. We use this fact to
   define a labeling of nodes, visited by the lazy annotation
   procedure, with conjunctions of existentially quantified
   interpolants combining predicate atoms with data constraints.
 \end{compactenum}
 
-As applications of first order alternating automata, we identified
-several undecidable problems for which no semi-algorithmic methods
-exist: inclusion between recognizable timed languages
-\cite{AlurDill94}, languages recognized by finite-memory automata
+\paragraph{\em Applications}
+We use first order alternating automata to develop practical
+semi-algorithms for a number of known undecidable problems, such as:
+inclusion of regular timed languages \cite{AlurDill94}, inclusion of
+quasi-regular languages recognized by finite-memory automata
 \cite{KaminskiFrancez94} and emptiness of predicate automata, a
-subclass of first-order alternating automata used to check safety and
-liveness properties of parameterized concurrent programs
-\cite{Farzan15,Farzan16}.
+subclass of first-order alternating automata used to verify
+parameterized concurrent programs \cite{Farzan15,Farzan16}.
 
-For reasons of space, all proofs of technical results in this paper
-are given in \cite{IosifXu18ArXiv}.
+Consider, for instance the problem of proving that $\lang{A} \subseteq
+\lang{B}$, where $A$ and $B$ are the timed automata in
+Fig. \ref{fig:ta}. The automaton $A$ ($B$) has a single clock $x$
+($y$) which is reset on the transition from $s_1$ to $s_2$ ($q_1$ to
+$q_2$). Intuititvely, $A$ recognizes the sequences in which all events
+are $a$ and the second event occurs after at least $2$ time units,
+whereas $B$ recognizes the sequences in which there exists an event
+$a$ such that no event occurs after it in exactly $1$ time
+unit. Formally, $\lang{A} = \set{a, t_1, \ldots a, t_n \mid t_1,
+  \ldots, t_n \in \real,~ t_1 \geq 2}$ and $\lang{B} = \set{\sigma_1,
+  t_1 \ldots \sigma_{i-1}, t_{i-1}, a, t_i, \ldots \sigma_n, t_n \mid
+  \sigma_1, \ldots, \sigma_n \in \set{a,b},~ t_1, \ldots, t_n \in
+  \real,~ t_i-t_{i-1} \neq 1}$. It is proved\footnote{See
+  \cite[Theorem 1]{AlurMadhusudan04} for a proof.} that $\clang{B}$ is
+not recognized by a timed automaton, thus the inclusion cannot be
+proved in the framework of timed regular languages, as $\lang{A} \cap
+\clang{B} = \emptyset$.
 
-\paragraph{\bf Related Work} 
+We encode timed automata as first order alternating automata and uses
+closure of the latter class under intersection and complement to
+compute an alternating automaton whose emptiness proves the inclusion
+$\lang{A} \subseteq \lang{B}$ between timed regular languages. The
+idea is to represent each control state of $A$ and $B$ by a binary
+predicate symbol with the same name. Consider the encoding of $A$ in
+Fig. \ref{fig:ta} (right) inspired by a translation of timed automata
+into Datalog programs \cite{Fribourg98}. The first argument of
+$s_1(x,z)$ is used to track the value of the $x$ clock of $A$, whereas
+$z$ is the current time value. The time stamp of the input event is
+the input variable $t$, which is bigger or equal than the current time
+$z$, since the lapse of time between two consequtive events is always
+positive. The current value of the clock is $z-x$, thus the guard $x
+\geq 2$ on the $s_2 \arrow{}{} s_2$ transition of $A$ from becomes
+$z-x \geq 2$ in the second rule, and the reset of $x$ on the $s_1
+\arrow{}{} s_2$ transition is encoded by passing $z$ as the first
+parameter of $s_2$, in the first rule. Note that the time increment
+equals the increment of the clocks that are not reset.
+
+\begin{figure}[htb]
+\vspace*{-\baselineskip}
+\begin{center}
+\begin{tabular}{ccc}
+\begin{minipage}{3cm}
+\input ta.pdf_t
+\end{minipage} 
+&&
+\begin{minipage}{5cm}
+\small{\[A \left\{\begin{array}{rcl}
+s_1(x,z) & \arrow{a(t)}{} & t \geq z \wedge s_2(z,t) \\
+s_2(x,z) & \arrow{a(t)}{} & t \geq z \wedge z-x \geq 2 \wedge s_2(x,t)
+\end{array}\right.\] 
+\[B \left\{\begin{array}{rcl}
+q_1(y,u) & \arrow{a(t),b(t)}{} & t \geq u \wedge q_1(y,t) \\
+q_1(y,u) & \arrow{a(t)}{} & t \geq u \wedge q_2(u,t) \\
+q_2(y,u) & \arrow{a(t),b(t)}{} & t \geq u \wedge u - y \neq 1 \wedge q_2(y,t)
+\end{array}\right.\]}
+\end{minipage} \\
+&& 
+\begin{minipage}{5cm}
+{\small\[\overline{B}\left\{\begin{array}{rcl}
+q_1(y,u) & \arrow{a(t),b(t)}{} & t < u \vee q_1(y,t) \\
+q_1(y,u) & \arrow{a(t)}{} & t < u \vee q_2(u,t) \\
+q_2(y,u) & \arrow{a(t),b(t)}{} & t < u \vee u - y = 1 \vee q_2(y,t)
+\end{array}\right.\]}
+\end{minipage}
+\end{tabular}
+\end{center}
+\vspace*{-\baselineskip}
+\caption{First Order Alternating Automata for Solving Inclusion of Timed Automata}
+\label{fig:ta}
+\vspace*{-\baselineskip}
+\end{figure}
+
+The first order alternating automaton recognizing the (encoding of
+the) $\clang{B}$ language is simply obtained by negating the theory
+atoms $t \geq u$ and $u - y \neq 1$ and interchanging conjunctions
+with disjunctions in the rules of the alternating automaton encoding
+$B$, denoted as $\overline{B}$ in Fig. \ref{fig:ta} (bottom
+right). Finally, we check the emptiness of the alternating automaton
+consisting of the rules of $A$ and $\overline{B}$, started in the
+initial configuration $s_1(0,0) \wedge q_1(0,0)$. Our lazy annotation
+semi-algorithm finds that this automaton is empty in \comment[ri]{...}
+seconds. 
+
+\paragraph{\em Related Work} 
 The first order alternating automata model presented in this paper
 stems from our previous work on boolean alternating automata extended
 with variables ranging over infinite data \cite{IosifXu18}. There we
