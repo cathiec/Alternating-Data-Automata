@@ -22,13 +22,12 @@ Even for finite alphabets, complementation of finite-state automata
 faces inherent exponential blowup, due to nondeterminism. However, if
 we allow universal nondeterminism, in addition to the classical
 existential nondeterminism, complementation is possible is linear
-time. The automata having both existential and universal
-nondeterminism are called \emph{alternating automata}
-\cite{ChandraKozenStockmeyer81}. A finite-alphabet alternating
-automaton is described by a set of transition rules $q \arrow{a}{}
-\phi$, where $q$ is a state, $a$ is an input symbol and $\phi$ is a
-boolean formula, whose propositional variables denote successor
-states.
+time. Having both existential and universal nondeterminism defines the
+\emph{alternating automata} model \cite{ChandraKozenStockmeyer81}. A
+finite-alphabet alternating automaton is described by a set of
+transition rules $q \arrow{a}{} \phi$, where $q$ is a state, $a$ is an
+input symbol and $\phi$ is a boolean formula, whose propositional
+variables denote successor states.
 
 \paragraph{\em Our Contribution}
 We extend the alternating automata model to infinite data alphabets,
