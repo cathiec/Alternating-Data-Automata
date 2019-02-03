@@ -18,12 +18,12 @@ problem $\lang{A} \subseteq \lang{B}$ as the emptiness of an automaton
 recognizing the language $\lang{A} \cap \clang{B}$, where $\clang{B}$
 denotes the complement of $\lang{B}$.
 
-Even when assuming the alphabet to be finite, complementation of a
-finite-state automaton faces an inherent exponential blowup due to
-nondeterminism. However, if we allow universal nondeterminsim, in
-addition to the classical existential nondeterminism, complementation
-is possible is linear time. The automata having both existential and
-universal nondeterminism are called \emph{alternating automata}
+Even for finite alphabets, complementation of finite-state automata
+faces inherent exponential blowup, due to nondeterminism. However, if
+we allow universal nondeterminism, in addition to the classical
+existential nondeterminism, complementation is possible is linear
+time. The automata having both existential and universal
+nondeterminism are called \emph{alternating automata}
 \cite{ChandraKozenStockmeyer81}. A finite-alphabet alternating
 automaton is described by a set of transition rules $q \arrow{a}{}
 \phi$, where $q$ is a state, $a$ is an input symbol and $\phi$ is a
