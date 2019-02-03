@@ -30,12 +30,12 @@ input symbol and $\phi$ is a boolean formula, whose propositional
 variables denote successor states.
 
 \paragraph{\em Our Contribution}
-We extend the alternating automata model to infinite data alphabets,
-by defining a model of computation in which all boolean operations,
-including complementation, can be done in linear time.  The control
-states are given by $k$-ary predicate symbols $q(y_1,\ldots,y_k)$, the
-input consists of an event $a$ from a finite alphabet and a tuple of
-data variables $x_1,\ldots,x_n$, ranging over an infinite domain, and
+We extend alternating automata to infinite data alphabets, by defining
+a model of computation in which all boolean operations, including
+complementation, can be done in linear time.  The control states are
+given by $k$-ary predicate symbols $q(y_1,\ldots,y_k)$, the input
+consists of an event $a$ from a finite alphabet and a tuple of data
+variables $x_1,\ldots,x_n$, ranging over an infinite domain, and
 transitions are of the form $q(y_1,\ldots,y_k)
 \arrow{a(x_1,\ldots,x_n)}{} \phi(x_1, \ldots, x_n, y_1, \ldots, y_k)$,
 where $\phi$ is a formula in the first-order theory of the data
@@ -137,13 +137,11 @@ equals the increment of the clocks that are not reset.
 \begin{figure}[htb]
 \vspace*{-\baselineskip}
 \begin{center}
-\begin{tabular}{ccc}
-\begin{minipage}{3cm}
+\begin{minipage}{5cm}
 \input ta.pdf_t
 \end{minipage} 
-&&
 \begin{minipage}{5cm}
-\small{\[A \left\{\begin{array}{rcl}
+\footnotesize{\[A \left\{\begin{array}{rcl}
 s_1(x,z) & \arrow{a(t)}{} & t \geq z \wedge s_2(z,t) \\
 s_2(x,z) & \arrow{a(t)}{} & t \geq z \wedge z-x \geq 2 \wedge s_2(x,t)
 \end{array}\right.\] 
@@ -151,17 +149,13 @@ s_2(x,z) & \arrow{a(t)}{} & t \geq z \wedge z-x \geq 2 \wedge s_2(x,t)
 q_1(y,u) & \arrow{a(t),b(t)}{} & t \geq u \wedge q_1(y,t) \\
 q_1(y,u) & \arrow{a(t)}{} & t \geq u \wedge q_2(u,t) \\
 q_2(y,u) & \arrow{a(t),b(t)}{} & t \geq u \wedge u - y \neq 1 \wedge q_2(y,t)
-\end{array}\right.\]}
-\end{minipage} \\
-&& 
-\begin{minipage}{5cm}
-{\small\[\overline{B}\left\{\begin{array}{rcl}
+\end{array}\right.\]
+\[\overline{B}\left\{\begin{array}{rcl}
 q_1(y,u) & \arrow{a(t),b(t)}{} & t < u \vee q_1(y,t) \\
 q_1(y,u) & \arrow{a(t)}{} & t < u \vee q_2(u,t) \\
 q_2(y,u) & \arrow{a(t),b(t)}{} & t < u \vee u - y = 1 \vee q_2(y,t)
 \end{array}\right.\]}
 \end{minipage}
-\end{tabular}
 \end{center}
 \vspace*{-\baselineskip}
 \caption{First Order Alternating Automata for Solving Inclusion of Timed Automata}
@@ -182,40 +176,34 @@ seconds.
 
 \paragraph{\em Related Work} 
 The first order alternating automata model presented in this paper
-stems from our previous work on boolean alternating automata extended
-with variables ranging over infinite data \cite{IosifXu18}. There we
-considered states to be propositional variables, as in the classical
-textbook alternating automata model, and all variables of the
-automaton to be observable in the input. The model in this paper
-overcomes this latter restriction by allowing for internal variables,
-whose variables are not visible in the language. 
-
-This solves an older language inclusion problem
-$\bigcap_{i=1}^n\lang{A_i} \subseteq \lang{B}$, between finite-state
-automata with data variables, whose languages are alternating
-sequences of input events and variable valuations
-\cite{IosifRV16}. There, we assumed that all variables of the observer
-automaton $B$ must be declared in the automata $A_1, \ldots, A_n$ that
-model the concurrent components of the system under check. Using
-first-order alternating automata allows to bypass this limitation of
-our previous work.
+extends the alternating automata with variables ranging over infinite
+data considered in \cite{IosifXu18}. There all variables were required
+to be observable in the input. We overcome this restriction by
+allowing internal (invisible) variables. Another closely related work
+\cite{IosifRV16} considers an inclusion between an asynchronous
+product of automata $A_1 \times \ldots \times A_n$, extended with data
+variables, and a monitor automaton $B$. The semi-algorithm defined
+here relies on the assumption that all variables of the observer $B$
+must be declared in the automata $A_1, \ldots, A_n$ under check. First
+order alternating automata bypass this limitation, since the emptiness
+checking semi-algorithm handles invisible variables. 
 
 The work probably closest to the one reported here concerns the model
-of predicate automata (PA) \cite{Farzan15,Farzan16,KincaidPhD},
-applied to the verification of parameterized concurrent programs with
-shared memory. In this model, the alphabet consists of pairs of
-program statements and thread identifiers, thus being infinite because
-the number of threads is unbounded. Because thread identifiers can
-only be compared for (dis-)equality, the data theory in PA is the
-theory of equality. Even with this simplification, the emptiness
-problem is undecidable when either the predicates have arity greater
-than one \cite{Farzan15} or quantified transition rules
+of predicate automata (PA) \cite{Farzan15,Farzan16,KincaidPhD}, used
+in the verification of parameterized concurrent programs with shared
+memory. In this model, the alphabet consists of pairs of program
+statements and thread identifiers, thus being infinite because the
+number of threads is unbounded. Because thread identifiers can only be
+compared for (dis-)equality, the data theory in PA is the theory of
+equality. Even with this simplification, the emptiness problem is
+undecidable when either the predicates have arity greater than one
+\cite{Farzan15} or quantified transition rules
 \cite{KincaidPhD}. Checking emptiness of quantifier free PA is
 possible semi-algorithmically, by explicitly enumerating reachable
 configurations and checking coverage by looking for permuations of
 argument values. However, no semi-algorithm is given for quantified
-PA.  Dealing with quantified transition rules is one of the
-contributions of the work reported in this paper. 
+PA.  Dealing with quantified transition rules is one of our
+contributions.
 
 \section{Preliminaries}
 
