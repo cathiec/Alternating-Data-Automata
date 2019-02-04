@@ -136,7 +136,7 @@ $z-x \geq 2$ in the second rule, and the reset of $x$ on the $s_1
 parameter of $s_2$, in the first rule.
 
 \begin{figure}[htb]
-\vspace*{-\baselineskip}
+\vspace*{-2\baselineskip}
 \begin{center}
 \begin{minipage}{5cm}
 \input ta.pdf_t
@@ -365,33 +365,56 @@ labeled with configurations, such that:
   is a transition rule of $\A$.
 \end{compactenum}
 \end{definition}
+
 The execution semantics of automata is given in close analogy with the
 classical definition of propositional alternating automata, with
 transition rules of the form $q \arrow{a}{} \phi$, where $q$ is a
 propositional variable and $\phi$ a positive boolean combination of
-propositional variables. For instance, $q_0 \arrow{a}{} q_1 \wedge q_2
-\vee q_3$ means that the automaton can choose to transition in either
-both $q_1$ and $q_2$ or in $q_3$ alone. This intuition leads to saying
-that a transition is a \emph{minimal model} of a right hand side
-formula of a rule. In our example, both $\set{q_1 \leftarrow \top, q_2
-  \leftarrow \top, q_3 \leftarrow \bot}$ and $\set{q_1 \leftarrow
-  \bot, q_2 \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models,
-however $\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow
-  \top}$, is a model but is not minimal. The original definition of
-alternating finite-state automata \cite{ChandraKozenStockmeyer81}
-works around this problem by considering boolean valuations (models)
-instead of formulae. In contrast, a finite description of a first
-order alternating automaton must be symbolic (in terms of formulae)
-because here, a given configuration can have infinitely many
-successors.
+propositional variables. For instance, $q_0 \arrow{a}{} (q_1 \wedge
+q_2) \vee q_3$ means that the automaton can choose to transition in
+either both $q_1$ and $q_2$ or in $q_3$ alone. This intuition leads to
+saying that a transition is a \emph{minimal model} of a right hand
+side formula of a rule. In our example, both $\set{q_1 \leftarrow
+  \top, q_2 \leftarrow \top, q_3 \leftarrow \bot}$ and $\set{q_1
+  \leftarrow \bot, q_2 \leftarrow \bot, q_3 \leftarrow \top}$ are
+minimal models, however $\set{q_1 \leftarrow \top, q_2 \leftarrow
+  \top, q_3 \leftarrow \top}$, is a model but is not minimal. The
+original definition of alternating finite-state automata
+\cite{ChandraKozenStockmeyer81} works around this problem by
+considering boolean valuations (models) instead of formulae. In
+contrast, a finite description of a first order alternating automaton
+must be symbolic (in terms of formulae) because here, a given
+configuration can have infinitely many successors.
 
 An execution $\T$ over $w$, starting with $c$, is \emph{accepting} if
 and only if all paths in $\T$ have the same length and the frontier of
 each tree $T \in \T$ is labeled with final configurations.  If $\A$
 has an accepting execution over $w$ starting with a cube $c \in
 \cube{\minsem{\iota}}$, then $\A$ \emph{accepts} $w$ and let
-$\lang{\A}$ be the set of words accepted by $\A$. We consider the
-following problems: \begin{compactenum}
+$\lang{\A}$ be the set of words accepted by $\A$.
+
+\begin{example}\label{ex:foada}
+  Consider the automaton $\A = \tuple{\set{a}, \set{x},
+    \set{q_0,q_1,q_2,q_f}, q_0(0), \set{q_f}, \Delta}$, where $\Delta$
+  consists of the rules below:
+  \[\begin{array}{rclcrclcrcl}
+  q_0(y) & \arrow{a(x)}{} & q_1(y+x) \wedge q_2(y-x) & \hspace*{2mm} &
+  q_1(y) & \arrow{a(x)}{} & q_1(y+x) \hspace*{2mm} &
+  q_1(y) & \arrow{a(x)}{} & y > 0 \wedge q_f \\ 
+  &&&& q_2(y) & \arrow{a(x)}{} & q_2(y-x) &
+  q_2(y) & \arrow{a(x)}{} & y > 0 \wedge q_f
+  \end{array}\]
+  A possible execution tree of this automaton is the following:
+  \begin{center}
+    \input exec.pdf_t
+  \end{center}
+  The execution is not accepting, since its frontier is not labeled
+  with final configurations everywhere. It is not hard to see that
+  this automaton has no accepting execution. \hfill$\blacksquare$
+\end{example}
+
+In the rest of this paper, we are concerned with the following
+problems: \begin{compactenum}
 \item \emph{boolean closure}: given automata $\A_i =
   \tuple{\Sigma,X,Q_i,\iota_i,F_i,\Delta_i}$, for $i=1,2$, do there
   exist automata $\A_\cap$, $\A_\cup$ and $\overline{\A}_1$ such that
@@ -1321,30 +1344,24 @@ $\stamp{x}{i}$, for a single $i \geq 0$.
 When considering alternating executions, control-local interpolants
 are not always enough to prove emptiness, because of the
 synchronization of several branches of the computation on the same
-input word. Consider, for instance, an automaton with the following
-transition rules and final state $q_f$:
-\[\begin{array}{rclcrclcrcl}
-q_0(y) & \arrow{a(x)}{} & q_1(y+x) \wedge q_2(y-x) & \hspace*{2mm} & 
-q_1(y) & \arrow{a(x)}{} & y+x > 0 \wedge q_f & \hspace*{2mm} & 
-q_1(y) & \arrow{a(x)}{} & q_1(y+x) \\ 
-&&&& q_2(y) & \arrow{a(x)}{} & y-x > 0 \wedge q_f
-&& q_2(y) & \arrow{a(x)}{} & q_2(y-x)
-\end{array}\]
-Started in an initial configuration $q_0(0)$ with an input word
-$(a,\nu_1) \ldots (a,\nu_{n-1}) (a,\nu_n)$, such that $\nu_i(x)=k_i$,
-the automaton executes as follows:
+input word. Consider, for instance, the automaton from Example
+\ref{ex:foada}, started in an initial configuration $q_0(0)$, on an
+input word $(a,\nu_1) \ldots (a,\nu_n)$, such that $\nu_i(x)=k_i$, for
+all $i \in [1,n]$, the automaton executes as follows:
 \[\begin{array}{c}
-q_0(0) \arrow{(a,\nu_1)}{} \set{q_1(k_1),q_2(-k_1)} \ldots
-\arrow{(a,\nu_{n-1})}{} 
-\set{q_1(\sum_{i=1}^{n-1} k_i),q_2(-\sum_{i=1}^{n-1} k_i)}
-\arrow{(a,\nu_n)}{} \emptyset
+\set{(q_0,0)} \arrow{(a,\nu_1)}{} \set{(q_1,k_1),(q_2,-k_1)} \ldots
+\arrow{(a,\nu_{n})}{} 
+\set{(q_1,\sum_{i=1}^{n} k_i),(q_2,-\sum_{i=1}^{n} k_i)}
 \end{array}\]
 An overapproximation of the set of cubes generated after one or more
 steps is defined by the formula $\exists x_1 \exists x_2 ~.~ q_1(x_1)
-\wedge q_2(x_2) \wedge x_1+x_2 = 0$. Note that a control-local formula
+\wedge q_2(x_2) \wedge x_1+x_2 \geq 0$. Note that a control-local formula
 using one occurrence of a predicate would give a too rough
 overapproximation of this set, unable to prove the emptiness of the
-automaton. \hfill$\blacksquare$
+automaton. This is because any formula with a single occurrence of an
+atom of the form $q(x)$ would lose the constraint $x_1+x_2 \geq 0$
+between the values occurring at the same level, on both branches of
+the execution. \hfill$\blacksquare$
 
 First, let us give the formal definition of the class of interpolants
 we shall work with. Given a formula $\phi$, the \emph{vocabulary} of
@@ -1417,13 +1434,15 @@ theories in which Lyndon's Interpolation Theorem holds.
   \Sigma^*$, such that $\accform{\alpha}$ is unsatisfiable, has a
   local GLI $(I_0,\ldots,I_n)$.
 \end{proposition}
-\proof{ By definition, $\accform{\alpha}$ is the formula:
-  \[\stamp{\iota}{0} \wedge 
+\paragraph{\em Proof.} By definition, $\accform{\alpha}$ is the formula:
+\[\begin{array}{c}
+\stamp{\iota}{0} \wedge 
  \bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in
    \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
  \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i} \wedge
  \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
- ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot\]
+ ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot
+ \end{array}\]
  We define the formulae: 
  \[\begin{array}{rcl}
  \varphi_i & \isdef & \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
@@ -1453,7 +1472,7 @@ theories in which Lyndon's Interpolation Theorem holds.
        \stamp{Q}{1}$ and $\pset{-}{I_1} \subseteq (\pset{-}{I_0} \cup
        \pset{-}{\varphi_1}) \cap (\bigcup_{i=2}^n \pset{-}{\varphi_i}
        \cup \pset{-}{\psi}) = \emptyset$. Continuing in this way, we
-       obtain formulae $I_0, I_1, \ldots, I_{n}$ as required. \qed}
+       obtain formulae $I_0, I_1, \ldots, I_{n}$ as required. \qed
 
 A problematic point of the above proposition is that the existence of
 Lyndon interpolants (Definition \ref{def:lyndon-interpolant}) is
@@ -1577,7 +1596,7 @@ $\Data$, extended with uninterpreted function symbols, to compute a
     \ref{ex:pred-elim}]\label{ex:gli} The formula $\substform{\alpha}$
   (Example \ref{ex:pred-elim}) is unsatisfiable and let $\tau_2 \isdef
   z_1$ be the witness term for the universally quantified variable
-  $z_2$. Replacing $z_2$ with $\tau_2$ in the matrix of
+  $z_2$. Replacing $z_2$ with $\tau_2$ ($z_1$) in the matrix of
   $\quantform{\alpha}$ (Example \ref{ex:quant-elim}) yields the
   unsatisfiable conjunction below, obtained after trivial
   simplifications:
@@ -2214,7 +2233,7 @@ in the input. In particular, this is essential for checking inclusion
 of timed automata that use internal clocks to control the computation.
 
 \begin{table}[htb]
-\vspace*{-\baselineskip}
+%\vspace*{-\baselineskip}
 \begin{center}
 {\fontsize{7}{8}\selectfont
 \begin{tabular}{||l|c|c|c|c|c||}
