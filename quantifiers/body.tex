@@ -13,7 +13,7 @@ infinite alphabets, such as timed automata \cite{AlurDill94} and
 finite-memory automata \cite{KaminskiFrancez94} face the
 \emph{complement closure} problem: there exist automata for which the
 complement language cannot be recognized by an automaton in the same
-class. This excludes the possibility of encoding a language inclusion
+class. This makes it impossible to encode a language inclusion
 problem $\lang{A} \subseteq \lang{B}$ as the emptiness of an automaton
 recognizing the language $\lang{A} \cap \clang{B}$, where $\clang{B}$
 denotes the complement of $\lang{B}$.
@@ -61,14 +61,16 @@ the \impact~lazy annotation procedure, originally developed for
 checking safety of nondeterministic integer programs
 \cite{McMillan06,McMillan14}. In a nutshell, a lazy annotation
 procedure unfolds an automaton $A$ trying to find an execution that
-recognizes a word $w \in \lang{A}$. If a path that reaches a final
+recognizes a word from $\lang{A}$. If a path that reaches a final
 state does not correspond to a concrete run of the automaton, the
 positions on the path are labeled with interpolants from the proof of
 infeasibility, thus marking this path and all continuations as
-infeasible for future searches.
-
-Checking emptiness of first-order alternating automata by lazy
-annotation with interpolants faces two problems: \begin{compactenum}
+infeasible for future searches. Termination of lazy annotation
+procedures is not guaranteed, but having a suitable coverage relation
+between the nodes of the search tree may ensure convergence of some
+real-life examples. Applying lazy annotation to first order
+alternating automata faces two nontrivial
+problems: \begin{compactenum}
 \item Quantified transition rules make it hard, if not impossible, to
   decide if a path is infeasible. This is mainly because adding
   uninterpreted predicate symbols to decidable first-order theories,
@@ -115,24 +117,23 @@ not recognized by a timed automaton, thus the inclusion cannot be
 proved in the framework of timed regular languages, as $\lang{A} \cap
 \clang{B} = \emptyset$.
 
-We encode timed automata as first order alternating automata and uses
-closure of the latter class under intersection and complement to
-compute an alternating automaton whose emptiness proves the inclusion
-$\lang{A} \subseteq \lang{B}$ between timed regular languages. The
-idea is to represent each control state of $A$ and $B$ by a binary
-predicate symbol with the same name. Consider the encoding of $A$ in
+Our approach is to encode timed automata as first order alternating
+automata and use closure of the latter class under intersection and
+complement to compute an alternating automaton, whose emptiness proves
+that $\lang{A} \subseteq \lang{B}$. Consider the encoding of $A$ in
 Fig. \ref{fig:ta} (right) inspired by a translation of timed automata
-into Datalog programs \cite{Fribourg98}. The first argument of
-$s_1(x,z)$ is used to track the value of the $x$ clock of $A$, whereas
-$z$ is the current time value. The time stamp of the input event is
-the input variable $t$, which is bigger or equal than the current time
-$z$, since the lapse of time between two consequtive events is always
-positive. The current value of the clock is $z-x$, thus the guard $x
+into Datalog programs \cite{Fribourg98}.  Each control state of $A$
+and $B$ is represented by a binary predicate symbol with the same
+name. The first argument of $s_1(x,z)$ tracks the last moment in time
+when the $\mathsf{x}$ clock of $A$ was reset and $z$ is the current
+time value. The time stamp of the input event $a$ is the input
+variable $t$, which must be bigger or equal to $z$, as the lapse of
+time between two consequtive events is always positive. The current
+value of the $\mathsf{x}$ clock is $z-x$, thus the guard $\mathsf{x}
 \geq 2$ on the $s_2 \arrow{}{} s_2$ transition of $A$ from becomes
 $z-x \geq 2$ in the second rule, and the reset of $x$ on the $s_1
 \arrow{}{} s_2$ transition is encoded by passing $z$ as the first
-parameter of $s_2$, in the first rule. Note that the time increment
-equals the increment of the clocks that are not reset.
+parameter of $s_2$, in the first rule.
 
 \begin{figure}[htb]
 \vspace*{-\baselineskip}
@@ -198,7 +199,7 @@ compared for (dis-)equality, the data theory in PA is the theory of
 equality. Even with this simplification, the emptiness problem is
 undecidable when either the predicates have arity greater than one
 \cite{Farzan15} or quantified transition rules
-\cite{KincaidPhD}. Checking emptiness of quantifier free PA is
+\cite{KincaidPhD}. Checking emptiness of quantifier-free PA is
 possible semi-algorithmically, by explicitly enumerating reachable
 configurations and checking coverage by looking for permuations of
 argument values. However, no semi-algorithm is given for quantified
@@ -327,40 +328,14 @@ $\Delta$ is a set of \emph{transition rules} of the form
 \(q(y_1,\ldots,y_{\#(q)}) \arrow{a(X)}{} \psi\), where $q \in Q$ is a
 predicate, $a \in \Sigma$ is an input event and $\psi \in
 \posforms(Q,X \cup \set{y_1,\ldots,y_{\#(q)}})$ is a positive formula,
-where $X \cap \set{y_1,\ldots,y_{\#(q)}} = \emptyset$. The quantifiers
-occurring in the right-hand side formula of a transition rule are
-referred to as \emph{transition quantifiers}. The \emph{size} of $\A$
-is $\len{\A} \isdef \len{\iota} + \sum \set{\len{\psi} \mid q(\vec{y})
+where $X \cap \set{y_1,\ldots,y_{\#(q)}} = \emptyset$.  Without loss
+of generality, we consider, for each predicate $q \in Q$ and each
+input event $a \in \Sigma$, at most one such rule, as two or more
+rules can be joined using disjunction. The quantifiers occurring in
+the right-hand side formula of a transition rule are referred to as
+\emph{transition quantifiers}. The \emph{size} of $\A$ is $\len{\A}
+\isdef \len{\iota} + \sum \set{\len{\psi} \mid q(\vec{y})
   \arrow{a(X)}{} \psi \in \Delta}$.
-
-The intuition of a transition rule \(q(y_1,\ldots,y_{\#(q)})
-\arrow{a(X)}{} \psi\) is the following: $a$ is the input event and $X$
-are the input data values that trigger the transition, whereas $q$ and
-$y_1,\ldots,y_{\#(q)}$ are the current control state and data values
-in that state, respectively. Without loss of generality, we consider,
-for each predicate $q \in Q$ and each input event $a \in \Sigma$, at
-most one such rule, as two or more rules can be joined using
-disjunction.
-
-The execution semantics of automata is given in close analogy with the
-classical definition of propositional alternating automata, with
-transition rules of the form $q \arrow{a}{} \phi$, where $q$ is a
-propositional variable and $\phi$ a positive boolean combination of
-propositional variables. For instance, $q_0 \arrow{a}{} q_1 \wedge q_2
-\vee q_3$ means that the automaton can choose to transition in either
-both $q_1$ and $q_2$ or in $q_3$ alone. This intuition leads to saying
-that a transition is a \emph{minimal model} of a right hand side
-formula of a rule. In our example, both $\set{q_1 \leftarrow \top, q_2
-  \leftarrow \top, q_3 \leftarrow \bot}$ and $\set{q_1 \leftarrow
-  \bot, q_2 \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models,
-however $\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow
-  \top}$, is a model but is not minimal. The original definition of
-alternating finite-state automata \cite{ChandraKozenStockmeyer81}
-works around this problem by considering boolean valuations (models)
-instead of formulae. However, a finite description of a first order
-alternating automaton must use formulae, because there can be
-infinitely many satisfying interpretations that are incomparable
-w.r.t. the pointwise subset ordering. 
 
 Given an uninterpreted predicate symbol $q \in Q$ and a tuple of data
 values $d_1,\ldots,d_{\#(q)}$, the tuple $(q, d_1,\ldots,d_{\#(q)})$
@@ -390,6 +365,26 @@ labeled with configurations, such that:
   is a transition rule of $\A$.
 \end{compactenum}
 \end{definition}
+The execution semantics of automata is given in close analogy with the
+classical definition of propositional alternating automata, with
+transition rules of the form $q \arrow{a}{} \phi$, where $q$ is a
+propositional variable and $\phi$ a positive boolean combination of
+propositional variables. For instance, $q_0 \arrow{a}{} q_1 \wedge q_2
+\vee q_3$ means that the automaton can choose to transition in either
+both $q_1$ and $q_2$ or in $q_3$ alone. This intuition leads to saying
+that a transition is a \emph{minimal model} of a right hand side
+formula of a rule. In our example, both $\set{q_1 \leftarrow \top, q_2
+  \leftarrow \top, q_3 \leftarrow \bot}$ and $\set{q_1 \leftarrow
+  \bot, q_2 \leftarrow \bot, q_3 \leftarrow \top}$ are minimal models,
+however $\set{q_1 \leftarrow \top, q_2 \leftarrow \top, q_3 \leftarrow
+  \top}$, is a model but is not minimal. The original definition of
+alternating finite-state automata \cite{ChandraKozenStockmeyer81}
+works around this problem by considering boolean valuations (models)
+instead of formulae. In contrast, a finite description of a first
+order alternating automaton must be symbolic (in terms of formulae)
+because here, a given configuration can have infinitely many
+successors.
+
 An execution $\T$ over $w$, starting with $c$, is \emph{accepting} if
 and only if all paths in $\T$ have the same length and the frontier of
 each tree $T \in \T$ is labeled with final configurations.  If $\A$
@@ -406,16 +401,16 @@ following problems: \begin{compactenum}
 \item \emph{emptiness}: given an automaton $\A$, is $L(\A) =
   \emptyset$ ?
 \end{compactenum}
-For technical reasons, we address the following \emph{relative
-  acceptance} problem first: given an automaton $\A$ and an input
-sequence $\alpha \in \Sigma^*$, does there exists a word $w \in
-\lang{\A}$ such that $\event{w} = \alpha$ ?  By solving this problem
-first, we develop the machinery required to prove that first order
-alternating automata are closed under all boolean operations and,
-further, set up the ground for a semi-algorithm for the emptiness
-problem.
+For technical reasons, we address the following problem next: given an
+automaton $\A$ and an input sequence $\alpha \in \Sigma^*$, does there
+exists a word $w \in \lang{\A}$ such that $\event{w} = \alpha$ ?  By
+solving this problem first, we develop the machinery required to prove
+that first order alternating automata are closed under all boolean
+operations and, further, set up the ground for a semi-algorithm for
+the emptiness problem.
 
 \subsection{Path Formulae}
+\label{sec:path-formulae}
 
 In the upcoming developments it is sometimes more convenient to work
 with logical formulae defining executions of automata, than with
@@ -425,26 +420,22 @@ the executions of an automaton, over words that share a given sequence
 $\alpha$ of input events.  Second, we restrict a path formula
 $\pathform{\alpha}$ to an \emph{acceptance formula}
 $\accform{\alpha}$, which defines only accepting executions over words
-that share a given input sequence. Otherwise stated,
-$\accform{\alpha}$ is satisfiable if and only if the automaton accepts
-a word $w$ such that $\event{w} = \alpha$. We reduce thus the relative
-acceptance problem to the satisfiability of an effectively computable
-formula in the first order theory of data with uninterpreted predicate
-symbols.
+that share a given input sequence, i.e.\ $\accform{\alpha}$ is
+satisfiable if and only if the automaton accepts a word $w$ such that
+$\event{w} = \alpha$.
 
 Let $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ be an automaton for the
 rest of this section. For any $i \in \nat$, we denote by $\stamp{Q}{i}
 = \set{\stamp{q}{i} \mid q \in Q}$ and $\stamp{X}{i} =
 \set{\stamp{x}{i} \mid x \in X}$ the sets of time-stamped predicate
-symbols and variables, respectively. As a shorthand, we write
-$\stamp{Q}{\leq n}$ (resp.  $\stamp{X}{\leq n}$) for the set
-$\set{\stamp{q}{i} \mid q \in Q, i \in [n]}$ (resp. $\set{\stamp{x}{i}
-  \mid x \in X, i \in [n]}$). For a formula $\psi$ and $i \in \nat$,
-we define $\stamp{\psi}{i} \isdef \psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$
-the formula in which all input variables and state predicates (and
-only those symbols) are replaced by their time-stamped
-counterparts. As a shorthand, we shall write $q(\vec{y})$ for
-$q(y_1,\ldots,y_{\#(q)})$, when no confusion arises.
+symbols and variables, respectively. We also define $\stamp{Q}{\leq n}
+\isdef \set{\stamp{q}{i} \mid q \in Q, i \in [n]}$ and $\stamp{X}{\leq
+  n} \isdef \set{\stamp{x}{i} \mid x \in X, i \in [n]}$. For a formula
+$\psi$ and $i \in \nat$, we define $\stamp{\psi}{i} \isdef
+\psi[\stamp{X}{i}/X,\stamp{Q}{i}/Q]$ the formula in which all input
+variables and state predicates (and only those symbols) are replaced
+by their time-stamped counterparts. Moreover, we write $q(\vec{y})$
+for $q(y_1,\ldots,y_{\#(q)})$, when no confusion arises.
 
 Given a sequence of input events $\alpha = a_1 \ldots a_n \in
 \Sigma^*$, the \emph{path formula} of $\alpha$ is:
@@ -630,7 +621,7 @@ non-alternating infinite-state models of computation, such as counter
 automata (nondeterministic programs with integer variables), the
 satisfiability query for an acceptance (path) formula falls outside of
 known decidable theories, supported by standard SMT solvers. There are
-basically two reasons for this, namely\begin{inparaenum}[(i)]
+basically two reasons for this, namely\ \begin{inparaenum}[(i)]
 \item the presence of predicate symbols, and
 \item the non-trivial alternation of quantifiers.
 \end{inparaenum}
@@ -654,11 +645,10 @@ which allows to effectively decide satisfiability of acceptance
 formulae.
 
 For the time being, let us formally define the elimination of
-transition quantifiers and predicates, respectively. Consider a given
-sequence of input events $\alpha = a_1 \ldots a_n$ and denote by
-$\alpha_i$ the prefix $a_1 \ldots a_i$ of $\alpha$, for $i \in [n]$,
+transition quantifiers and predicates, respectively. Let $\alpha = a_1
+\ldots a_n$ be a given sequence of input events and let
+$\alpha_i$ be the prefix $a_1 \ldots a_i$ of $\alpha$, for $i \in [n]$,
 where $\alpha_0=\epsilon$.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ifLongVersion
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -683,8 +673,8 @@ where $\alpha_0=\epsilon$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \else
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Let $\quantformn{\alpha_0}, \ldots, \quantformn{\alpha_n}$ be the
-sequence of formulae defined by $\quantformn{\alpha_0} \isdef
+We consider the sequence of formulae $\quantformn{\alpha_0}, \ldots,
+\quantformn{\alpha_n}$ defined as $\quantformn{\alpha_0} \isdef
 \stamp{\iota}{0}$ and, for all $i \in [1,n]$, let
 $\quantformn{\alpha_i}$ be the conjunction of
 $\quantformn{\alpha_{i-1}}$ with all formulae
@@ -766,7 +756,7 @@ transition rules, as shown by the following example.
     \phi \wedge \forall y_1 \ldots \forall y_{\#(q)} ~.~
     q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$.
   \end{fact}
-  \proof{Assume w.l.o.g. that $\phi$ is quantifier free. The proof can
+  \proof{Assume w.l.o.g. that $\phi$ is quantifier-free. The proof can
     be easily generalized to the case $\phi$ has quantifiers. Let
     $\J(q) = \set{\langle t_1^\nu, \ldots, t_{\#(q)}^\nu \rangle \in
       \I(q) \mid q(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \phi}$ and
@@ -969,7 +959,7 @@ This concludes the proof. \qed}
 %%   \end{compactitem}}
 
 Finally, we define the acceptance of a word with a given input event
-sequence by means of a quantifier free formula in which no predicate
+sequence by means of a quantifier-free formula in which no predicate
 atom occurs.
 
 \begin{lemma}\label{lemma:quant-pred-acceptance}
@@ -1002,7 +992,11 @@ $\dual{\phi}$ recursively as follows:
 &&&& \dual{q(x_1,\ldots,x_{\#(q)})} & \isdef & q(x_1,\ldots,x_{\#(q)})
 \end{array}\]
 The following theorem shows closure of automata under all boolean
-operations:
+operations. Note that it is sufficient to show closure under
+intersection and negation because $\lang{\A_1} \cup \lang{\A_2} =
+\Sigma[X]^* (\clang{\A_1} \cap \clang{\A_2})$, for any two automata
+$\A_1$ and $\A_2$ with input event alphabet $\Sigma$ and input
+variables $X$.
 
 %% The dualization operation has the following property:
 %% \begin{lemma}\label{lemma:dual}
@@ -1034,11 +1028,11 @@ operations:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ifLongVersion\else
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{\em Proof sketch.} (\ref{it1:thm:closure}) The construction of $\A_\cap$ 
-and $\A_\cup$ resembles the standard intersection and union of
-propositional alternating automata
-\cite{Arxiv}. (\ref{it2:thm:closure}) Let $w \in \Sigma[X]^*$ be a
-word. We denote by $\accformA{\A_1}{\event{w}}$ and
+\paragraph{\em Proof sketch.} (\ref{it1:thm:closure})
+The proof for $\A_\cap$ resembles the standard proof for the
+intersection of propositional alternating automata
+\cite{IosifXu18Arxiv} (\ref{it2:thm:closure}) Let $w \in \Sigma[X]^*$
+be a word. We denote by $\accformA{\A_1}{\event{w}}$ and
 $\substformA{\A_1}{\event{w}}$
 [resp. $\accformA{\overline{\A}_1}{\event{w}}$ and
   $\substformA{\overline{\A}_1}{\event{w}}$] the formulae
@@ -1049,10 +1043,10 @@ $\substformA{\overline{\A}_1}{\event{w}} =
 \ref{lemma:quant-pred-acceptance} to prove that $w \in \lang{\A_1}
 \iff w \not\in \lang{\overline{\A}_1}$. Since the choice of $w$ was
 arbitrary, this proves $\lang{\overline{\A}_1} = \Sigma[X]^* \setminus
-\lang{\A_1}$. By induction on the number of predicate atoms in
-$\accformA{\A_1}{\event{w}}$ that are replaced during the generation
-of $\substformA{\A_1}{\event{w}}$. The proof relies on the following
-fact, proved by induction on the structure of $\phi$:
+\lang{\A_1}$. The proof is by induction on the number of predicate
+atoms in $\accformA{\A_1}{\event{w}}$ that are replaced during the
+generation of $\substformA{\A_1}{\event{w}}$ and relies on the
+following fact, itself proved by induction on the structure of $\phi$:
   \begin{fact}\label{fact:dual-neg}
     Let $\phi$ be a positive formula and let $q(t_1,\ldots,t_{\#(q)})$
     be the only occurrence of a predicate symbol within $\phi$. Then,
@@ -1122,73 +1116,67 @@ fact, proved by induction on the structure of $\phi$:
 \section{The Emptiness Problem}
 \label{sec:emptiness}
 
-The problem of checking emptiness of a given automaton is undecidable,
-even for automata with predicates of arity two, whose transition rules
-use only equalities and disequalities, having no transition
-quantifiers \cite{Farzan15}. Since even such simple classes of
-alternating automata have no general decision procedure for emptiness,
-we use an abstraction-refinement semi-algorithm based on \emph{lazy
-  annotation} \cite{McMillan06,McMillan14}.
+The emptiness problem is undecidable even for automata with predicates
+of arity two, whose transition rules use only equalities and
+disequalities, having no transition quantifiers \cite{Farzan15}. Since
+even such simple classes of alternating automata have no general
+decision procedure for emptiness, we use an abstraction-refinement
+semi-algorithm based on \emph{lazy annotation}
+\cite{McMillan06,McMillan14}.
 
 In a nutshell, a lazy annotation procedure systematically explores the
-set of execution paths (in our case, sequences of input events) in
-search of an accepting execution. Each path has a corresponding path
-formula that defines all words accepted along that path. If the path
-formula is satisfiable, the automaton accepts a word. Otherwise, the
-path is said to be \emph{spurious}. When a spurious path is
-encountered, the search backtracks and the path is annotated with a
-set of learned facts, that marks this path as infeasible. The
-semi-algorithm uses moreover a coverage relation between paths,
-ensuring that the continuations of already covered paths are never
-explored. Sometimes this coverage relation provides a sound
-termination argument, when the automaton is empty.
+set of finite input event sequences searching for an accepting
+execution. For an input sequence, if the path formula is satisfiable,
+we compute a word in the language of the automaton, from the model of
+the path formula. Otherwise, i.e.\ the sequence is \emph{spurious},
+the search backtracks and each position in the sequence is annotated
+with a tuple of interpolants, that marks the entire sequence as
+infeasible. The semi-algorithm uses moreover a coverage relation
+between sequences, ensuring that the continuations of already covered
+sequences are never explored. Sometimes this coverage relation
+provides a sound termination argument, in case when the automaton is
+empty.
 
 We check emptiness of first order alternating automata using a version
 of the \impact~ lazy annotation semi-algorithm \cite{McMillan06}. An
 analogous procedure is given in \cite{IosifXu18}, for a simpler model
 of alternating automata, that uses only predicates or arity zero
-(booleans) and no transition quantifiers. For simplicity, we do not
-present the details of this algorithm and shall content ourselves of
-several high-level definitions.
+(propositional variables) and no transition quantifiers. For
+simplicity, we do not present the details of the semi-algorithm and
+shall content ourselves of several high-level definitions. The
+interested reader is referred to \cite{IosifXu18} for a detailed
+presentation.
 
-Given a finite input event alphabet $\Sigma$, for two sequences
-$\alpha, \beta \in \Sigma^*$, we say that $\alpha$ is a prefix of
-$\beta$, written $\alpha \prefix \beta$, if $\alpha=\beta\gamma$ for
-some sequence $\gamma\in\Sigma^*$. A set $S$ of sequences
-is: \begin{compactitem}
-\item \emph{prefix-closed} if for each $\alpha \in S$, if $\beta \prefix
-\alpha$ then $\beta \in S$, and
-\item \emph{complete} if for each $\alpha \in S$, there exists $a \in
-  \Sigma$ such that $\alpha a \in S$ if and only if $\alpha b \in S$
-  for all $b \in \Sigma$. 
-\end{compactitem}
-Observe that a prefix-closed set is the backbone of a tree whose edges
-are labeled with input events. If the set is, moreover, complete, then
-every node of the tree has either zero successors, in which case it is
-called a \emph{leaf}, or it has a successor edge labeled with $a$ for
-each input event $a \in \Sigma$. 
+For two input event sequences $\alpha, \beta \in \Sigma^*$, we say
+that $\alpha$ is a prefix of $\beta$, written $\alpha \prefix \beta$,
+if $\alpha=\beta\gamma$ for some sequence $\gamma\in\Sigma^*$. A set
+$S$ of sequences is \emph{prefix-closed} if for each $\alpha \in S$,
+if $\beta \prefix \alpha$ then $\beta \in S$, and \emph{complete} if
+for each $\alpha \in S$, there exists $a \in \Sigma$ such that $\alpha
+a \in S$ if and only if $\alpha b \in S$ for all $b \in \Sigma$. A
+prefix-closed set is the backbone of a tree whose edges are labeled
+with input events. If the set is, moreover, complete, then every node
+of the tree has either zero successors, in which case it is called a
+\emph{leaf}, or it has a successor edge labeled with $a$ for each
+input event $a \in \Sigma$.
 
 \begin{definition}\label{def:unfolding}
   An \emph{unfolding} of an automaton $\A =
   \tuple{\Sigma,X,Q,\iota,F,\Delta}$ is a finite partial mapping $U :
   \Sigma^* \rightharpoonup_{\mathit{fin}} \posforms(Q,\emptyset)$,
-  such that: \begin{compactenum}
-  \item\label{it1:unfolding} $\dom(U)$ is a finite prefix-closed
-    complete set,
-    %
-  \item\label{it2:unfolding} $U(\epsilon) = \iota$, and
-    %
-  \item\label{it3:unfolding} for each sequence $\alpha a \in \dom(U)$,
-    such that $\alpha \in \Sigma^*$ and $a \in \Sigma$:
-    \[\stamp{U(\alpha)}{0} \wedge
-    \bigwedge_{q(\vec{y}) \arrow{a(X)}{} \psi} \forall y_1 \ldots
-    \forall y_{\#q} ~.~ \stamp{q}{0}(\vec{y}) \rightarrow
-    \stamp{\psi}{1} \models \stamp{U(\alpha a)}{1}\]
-  \end{compactenum}
+  whose domain $\dom(U)$ is a finite prefix-closed complete set, such
+  that $U(\epsilon) = \iota$, and for each sequence $\alpha a \in
+  \dom(U)$, such that $\alpha \in \Sigma^*$ and $a \in \Sigma$:
+  \[\begin{array}{c}
+  \stamp{U(\alpha)}{0} \wedge
+  \bigwedge_{q(\vec{y}) \arrow{a(X)}{} \psi} \forall y_1 \ldots
+  \forall y_{\#q} ~.~ \stamp{q}{0}(\vec{y}) \rightarrow
+  \stamp{\psi}{1} \models \stamp{U(\alpha a)}{1}
+  \end{array}\]  
   Moreover, $U$ is \emph{safe} if for each $\alpha \in \dom(U)$, the
   formula $U(\alpha) \wedge \bigwedge_{q \in Q \setminus F} \forall
   y_1 \ldots \forall_{y_{\#(q)}} ~.~ q(\vec{y}) \rightarrow \bot$ is
-  unsatisfiable. 
+  unsatisfiable.
 \end{definition}
 
 Lazy annotation semi-algorithms \cite{McMillan06,McMillan14} build
@@ -1302,13 +1290,13 @@ procedure, we refer to \cite{IosifXu18}.
   contradiction. \qed}
 
 As mentioned above, we check emptiness of first order alternating
-automata using the same method previously used to check emptiness of a
-simpler model of alternating automata, which uses boolean constants
-for control states and whose transition rules have no quantifiers
-\cite{IosifXu18}. The higher complexity of the automata model
-considered here, manifests itself within the interpolant generation
-procedure, used to refine the labeling of the unfolding. We discuss
-generation of interpolants in the next section.
+automata using a semi-algorithm previously used to check emptiness of
+a simpler model of alternating automata, which uses propositional
+variables for control states and whose transition rules have no
+quantifiers \cite{IosifXu18}. The higher complexity of the automata
+model considered here, manifests itself within the interpolant
+generation procedure, used to refine the labeling of the unfolding. We
+discuss generation of interpolants in the next section.
 
 \section{Interpolant Generation}\label{sec:interpolants}
 
@@ -1316,44 +1304,45 @@ Typically, when checking the unreachability of a set of program
 configurations \cite{McMillan06}, the interpolants used to annotate
 the unfolded control structure are assertions about the values of the
 program variables in a given control state, at a certain step of an
-execution. However, in an alternating model of computation, it is
-useful to distinguish between
+execution. Because we consider alternating computation trees
+(forests), we must distinguish between
 \begin{inparaenum}[(i)]
 \item locality of interpolants w.r.t. a given control state (control
   locality) and
 %
 \item locality w.r.t. a given time stamp (time locality).
 \end{inparaenum} 
-In logical terms, \emph{control-local} interpolants are defined by
-formulae involving a single predicate symbol, whereas
-\emph{time-local} interpolants involve only predicates $\stamp{q}{i}$
-and variables $\stamp{x}{i}$, for a single $i \geq 0$.
+In logical terms, \emph{control-local} interpolants are formulae
+involving a single predicate symbol, whereas \emph{time-local}
+interpolants involve only predicates $\stamp{q}{i}$ and variables
+$\stamp{x}{i}$, for a single $i \geq 0$.
 
-\paragraph{Remark}
-When considering an alternating model of computation, control-local
-interpolants are not always enough to prove emptiness, because of the
+\paragraph{\em Remark}
+When considering alternating executions, control-local interpolants
+are not always enough to prove emptiness, because of the
 synchronization of several branches of the computation on the same
-sequence of input values. Consider, for instance, an automaton with
-the following transition rules and final state $q_f$:
+input word. Consider, for instance, an automaton with the following
+transition rules and final state $q_f$:
 \[\begin{array}{rclcrclcrcl}
 q_0(y) & \arrow{a(x)}{} & q_1(y+x) \wedge q_2(y-x) & \hspace*{2mm} & 
 q_1(y) & \arrow{a(x)}{} & y+x > 0 \wedge q_f & \hspace*{2mm} & 
 q_1(y) & \arrow{a(x)}{} & q_1(y+x) \\ 
-q_2(y) & \arrow{a(x)}{} & y-x > 0 \wedge q_f && 
-q_2(y) & \arrow{a(x)}{} & q_2(y-x)
+&&&& q_2(y) & \arrow{a(x)}{} & y-x > 0 \wedge q_f
+&& q_2(y) & \arrow{a(x)}{} & q_2(y-x)
 \end{array}\]
 Started in an initial configuration $q_0(0)$ with an input word
 $(a,\nu_1) \ldots (a,\nu_{n-1}) (a,\nu_n)$, such that $\nu_i(x)=k_i$,
 the automaton executes as follows:
 \[\begin{array}{c}
-q_0(0) \arrow{(a,\nu_1)}{} \set{q_1(k_1),q_2(-k_1)} \ldots \arrow{(a,\nu_{n-1})}{} 
+q_0(0) \arrow{(a,\nu_1)}{} \set{q_1(k_1),q_2(-k_1)} \ldots
+\arrow{(a,\nu_{n-1})}{} 
 \set{q_1(\sum_{i=1}^{n-1} k_i),q_2(-\sum_{i=1}^{n-1} k_i)}
 \arrow{(a,\nu_n)}{} \emptyset
 \end{array}\]
 An overapproximation of the set of cubes generated after one or more
-steps is defined by the formula: $\exists x_1 \exists x_2 ~.~ q_1(x_1)
-\wedge q_2(x_2) \wedge x_1+x_2 \teq 0$. Observe that a control-local
-formula using one occurrence of a predicate would give a too rough
+steps is defined by the formula $\exists x_1 \exists x_2 ~.~ q_1(x_1)
+\wedge q_2(x_2) \wedge x_1+x_2 = 0$. Note that a control-local formula
+using one occurrence of a predicate would give a too rough
 overapproximation of this set, unable to prove the emptiness of the
 automaton. \hfill$\blacksquare$
 
@@ -1393,13 +1382,14 @@ In the rest of this section, let us fix an automaton $\A =
 \tuple{\Sigma,X,Q,\iota,F,\Delta}$. Due to the above observation, none
 of the interpolants considered will be control-local and we shall use
 the term \emph{local} to denote time-local interpolants, with no free
-variables.
+variables. The following definition generalizes interpolants from
+unsatisfiable conjunctions to sequences of input events: 
 
 \begin{definition}\label{def:generalized-lyndon-interpolant}
   Given a non-empty sequence of input events $\alpha = a_1 \ldots a_n
   \in \Sigma^*$, a \emph{generalized Lyndon interpolant (GLI)} is a
   sequence $(I_0,\ldots,I_n)$ of formulae such that, for all $k \in
-  [n-1]$: \begin{compactenum}
+  [n-1]$, the following hold: \begin{compactenum}
     \item\label{it1:generalized-lyndon-interpolant} $\pset{-}{I_k} =
       \emptyset$,
       %
@@ -1421,10 +1411,11 @@ theories in which Lyndon's Interpolation Theorem holds.
 
 \begin{proposition}\label{prop:local-gli}
   If there exists a Lyndon interpolant for any two formulae $\phi$ and
-  $\psi$, such that $\phi \wedge \psi$ is unsatisfiable, then any
-  sequence of input events $\alpha = a_1 \ldots a_n \in \Sigma^*$,
-  such that $\accform{\alpha}$ is unsatisfiable, has a local GLI
-  $(I_0,\ldots,I_n)$.
+  $\psi$, in the first order theory of data with uninterpreted
+  predicate symbols, such that $\phi \wedge \psi$ is unsatisfiable,
+  then any sequence of input events $\alpha = a_1 \ldots a_n \in
+  \Sigma^*$, such that $\accform{\alpha}$ is unsatisfiable, has a
+  local GLI $(I_0,\ldots,I_n)$.
 \end{proposition}
 \proof{ By definition, $\accform{\alpha}$ is the formula:
   \[\stamp{\iota}{0} \wedge 
@@ -1464,38 +1455,41 @@ theories in which Lyndon's Interpolation Theorem holds.
        \cup \pset{-}{\psi}) = \emptyset$. Continuing in this way, we
        obtain formulae $I_0, I_1, \ldots, I_{n}$ as required. \qed}
 
-The main problem with the local GLI construction described in the
-proof of Proposition \ref{prop:local-gli} is that the existence of
+A problematic point of the above proposition is that the existence of
 Lyndon interpolants (Definition \ref{def:lyndon-interpolant}) is
-guaranteed in principle, but the proof is non-constructive. Building
-an interpolant for an unsatisfiable conjunction of formulae $\phi
-\wedge \psi$ is typically the job of the decision procedure that
-proves the unsatisfiability and, in general, there is no such
-procedure, when $\phi$ and $\psi$ contain predicates and have
-non-trivial quantifier alternation. In this case, some provers use
-instantiation heuristics for the universal quantifiers that are
-sufficient for proving unsatisfiability, however these heuristics are
-not always suitable for interpolant generation. Consequently, from now
-on, we assume the existence of an effective Lyndon interpolation
-procedure only for decidable theories, such as the quantifier-free
-linear (integer) arithmetic with uninterpreted functions (UFLIA,
-UFLRA, etc.) \cite{RybalchenkoSofronieStokkermans}. 
+proved in principle, but the proof is non-constructive. In other
+words, the proof of Proposition \ref{prop:local-gli} does not yield an
+algorithm for computing GLIs, for the following reason. Building an
+interpolant for an unsatisfiable conjunction of formulae $\phi \wedge
+\psi$ is typically the job of the decision procedure that proves the
+unsatisfiability and, in general, there is no such procedure, when
+$\phi$ and $\psi$ contain predicates and have non-trivial quantifier
+alternation. In this case, some provers use instantiation heuristics
+for the universal quantifiers that are sufficient for proving
+unsatisfiability, however these heuristics are not always suitable for
+interpolant generation. Consequently, from now on, we assume the
+existence of an effective Lyndon interpolation procedure only for
+decidable theories, such as the quantifier-free linear (integer)
+arithmetic with uninterpreted functions (UFLIA, UFLRA, etc.)
+\cite{RybalchenkoSofronieStokkermans}.
 
-This is where the predicate-free path formulae (Definition
-\ref{def:substform}) come into play. For a given event sequence
-$\alpha$, the automaton $\A$ accepts a word $w$ such that $\event{w} =
-\alpha$ if and only if $\substform{\alpha}$ is satisfiable. Assuming
-further that the equality atoms in the transition rules of $\A$ are
-written in the language of a decidable first order theory, such as
-Presburger arithmetic, Lemma \ref{lemma:quant-pred-acceptance} gives
-us an effective way of checking emptiness of $\A$, relative to a given
-event sequence. However, this method does not cope well with lazy
+This is where the predicate-free path formulae (defined in
+\S\ref{sec:path-formulae}) come into play. Recall that, for a given
+event sequence $\alpha$, the automaton $\A$ accepts a word $w$ such
+that $\event{w} = \alpha$ if and only if $\substform{\alpha}$ is
+satisfiable (Lemma \ref{lemma:quant-pred-acceptance}). Assuming
+further that the equality and interpreted predicates
+(e.g.\ inequalities for integers) atoms from the transition rules of
+$\A$ belong to a decidable first order theory, such as Presburger
+arithmetic, Lemma \ref{lemma:quant-pred-acceptance} gives us an
+effective way of checking emptiness of $\A$, relative to a given event
+sequence. However, this method does not cope well with lazy
 annotation, because there is no way to extract, from the
 unsatisfiability proof of $\substform{\alpha}$, the interpolants
 needed to annotate $\alpha$. This is because \begin{inparaenum}[(i)]
 \item\label{it1:gli} the formula $\substform{\alpha}$, obtained by
-  repeated substitutions (Definition \ref{def:substform}) loses track
-  of the steps of the execution, and
+  repeated substitutions loses track of the steps of the execution,
+  and
 %
 \item\label{it2:gli} quantifiers that occur nested in
   $\substform{\alpha}$ make it difficult to write $\substform{\alpha}$
@@ -1547,16 +1541,15 @@ the acceptance formula $\accform{\alpha}$ and its equisatisfiable
 forms $\quantform{\alpha} = Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$
 and $\substform{\alpha} = Q_1x_1 \ldots Q_mx_m ~.~ \overline{\Phi}$,
 both written in prenex form, with matrices $\widehat{\Phi}$ and
-$\overline{\Phi}$, respectively. Because we assumed that the
-first order theory of $\Data$ has quantifier elimination, the
-satisfiability problem for $\substform{\alpha}$ is decidable. If
-$\substform{\alpha}$ is satisfiable, we build a counterexample for
-emptiness $w$ such that $\event{w}=\alpha$ and $\data{w}$ is a
-satisfying assignment for $\substform{\alpha}$. Otherwise,
-$\substform{\alpha}$ is unsatisfiable and there exist witness terms
-$\tau_{i_1} \ldots \tau_{i_\ell}$, where $\set{i_1, \ldots, i_\ell} =
-\set{j \in [1,m] \mid Q_j = \forall}$, such that
-$\overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+$\overline{\Phi}$, respectively. Because we assumed that the first
+order theory of $\Data$ has quantifier elimination, the satisfiability
+problem for $\substform{\alpha}$ is decidable. If $\substform{\alpha}$
+is satisfiable, we build a counterexample for emptiness $w$ such that
+$\event{w}=\alpha$ and $\data{w}$ is a satisfying assignment for
+$\substform{\alpha}$. Otherwise, $\substform{\alpha}$ is unsatisfiable
+and there exist witness terms $\tau_{i_1} \ldots \tau_{i_\ell}$, where
+$\set{i_1, \ldots, i_\ell} = \set{j \in [1,m] \mid Q_j = \forall}$,
+such that $\overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
   \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable (Theorem
 \ref{thm:skolem}). Then it turns out that the formula
 $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
@@ -1569,7 +1562,7 @@ a conjunction of formulae $\stamp{\iota}{0} \wedge \phi_1 \ldots
 \stamp{Q}{\leq n} \subseteq \stamp{Q}{n}$, it is now possible to use
 an existing interpolation procedure for the quantifier-free theory of
 $\Data$, extended with uninterpreted function symbols, to compute a
-sequence of non-local GLI $(I_0, \ldots, I_n)$ such that $\voc{I_k}
+(not necessarily local) GLI $(I_0, \ldots, I_n)$ such that $\voc{I_k}
 \cap \stamp{Q}{\leq n} \subseteq \stamp{Q}{k}$, for all $k \in [n]$.
 
 %% Since each formula $I_k$ of the GLI may refer to the current
@@ -1580,31 +1573,31 @@ sequence of non-local GLI $(I_0, \ldots, I_n)$ such that $\voc{I_k}
 %% interpolation for quantifier-free data theories with uninterpreted
 %% functions.
 
-\begin{example}[Contd. from Examples \ref{ex:quant-elim} and \ref{ex:pred-elim}]\label{ex:gli}
-The formula $\substform{\alpha}$ (Example \ref{ex:pred-elim}) is
-unsatisfiable and let $\tau_2 = z_1$ be the witness term for the
-universally quantified variable $z_2$. Replacing $z_2$ with $\tau_2$
-in the matrix of $\quantform{\alpha}$ (Example \ref{ex:quant-elim})
-yields the unsatisfiable conjunction: 
-\vspace*{-\baselineskip}
-\[\begin{array}{c}
-z_1 \geq 0 \wedge \stamp{q}{0}(z_1)  ~\wedge~
-\stamp{q}{0}(z_1) \rightarrow \stamp{x}{1} \geq 0 \wedge (z_1 \geq z_1 \rightarrow \stamp{q}{1}(\stamp{x}{1}+z_1)) ~\wedge~ \\
-\stamp{q}{1}(\stamp{x}{1}+z_1) \rightarrow \stamp{x}{1}+z_1 < 0 \wedge \stamp{q_f}{2}(\stamp{x}{2}+\stamp{x}{1}+z_1)
+\begin{example}[Contd. from Examples \ref{ex:quant-elim} and
+    \ref{ex:pred-elim}]\label{ex:gli} The formula $\substform{\alpha}$
+  (Example \ref{ex:pred-elim}) is unsatisfiable and let $\tau_2 \isdef
+  z_1$ be the witness term for the universally quantified variable
+  $z_2$. Replacing $z_2$ with $\tau_2$ in the matrix of
+  $\quantform{\alpha}$ (Example \ref{ex:quant-elim}) yields the
+  unsatisfiable conjunction below, obtained after trivial
+  simplifications:
+\[\begin{array}{lcll}
+           [z_1 \geq 0 \wedge \stamp{q}{0}(z_1)] & \wedge &
+           [\stamp{q}{0}(z_1) \rightarrow \stamp{x}{1} \geq 0 \wedge \stamp{q}{1}(\stamp{x}{1}+z_1)] ~\wedge \\
+           && [\stamp{q}{1}(\stamp{x}{1}+z_1) \rightarrow \stamp{x}{1}+z_1 < 0 \wedge \stamp{q_f}{2}(\stamp{x}{2}+\stamp{x}{1}+z_1)]
 \end{array}\]
-A non-local GLI for the above is $(\stamp{q}{0}(z_1) \wedge
-z_1\geq 0,~ \stamp{x}{1} \geq 0 \wedge \stamp{q}{1}(\stamp{x}{1}+z_1)
-\wedge z_1\geq0,~\bot)$. \hfill$\blacksquare$
+A non-local GLI for the above conjunction is the sequence of formulae: 
+\[(\stamp{q}{0}(z_1) \wedge z_1\geq 0,~ \stamp{x}{1} \geq 0 \wedge \stamp{q}{1}(\stamp{x}{1}+z_1)
+\wedge z_1\geq0,~\bot) \hspace*{4cm}\blacksquare\]
 \end{example}
 
-A function $\xi : \nat \rightarrow \nat$ is [strictly]
-\emph{monotonic} iff for each $n < m$ we have $\xi(n) \leq \xi(m)$
-     [$\xi(n) < \xi(m)$] and \emph{finite-range} iff for each $n \in
-     \nat$ the set $\set{m \mid \xi(m)=n}$ is finite. If $\xi$ is
-     finite-range, we denote by $\xi_{\max}^{-1}(n) \in \nat$ the
-     maximal value $m$ such that $\xi(m)=n$. The lemma below gives the
-     proof of correctness for the construction of non-local GLI.
-
+We formalize and prove the correctness for the above construction of
+non-local GLI. A function $\xi : \nat \rightarrow \nat$ is
+\emph{monotonic} iff for each $n < m$ we have $\xi(n) \leq \xi(m)$ and
+\emph{finite-range} iff for each $n \in \nat$ the set $\set{m \mid
+  \xi(m)=n}$ is finite. If $\xi$ is finite-range, we denote by
+$\xi_{\max}^{-1}(n) \in \nat$ the maximal value $m$ such that
+$\xi(m)=n$.
 \begin{lemma}\label{lemma:subst-quant}
   Given a non-empty input event sequence $\alpha = a_1 \ldots a_n \in
   \Sigma^*$, such that $\accform{\alpha}$ is unsatisfiable, let
@@ -1624,8 +1617,8 @@ A function $\xi : \nat \rightarrow \nat$ is [strictly]
     %
   \item\label{it2:subst-quant} a GLI $(I_0, \ldots, I_n)$ for
     $\alpha$, such that \(\voc{I_k} \subseteq \stamp{Q}{k} \cup
-    \stamp{X}{\leq k} \cup \set{x_j \mid j < \xi^{-1}(k),~ Q_j =
-      \exists}\), for all $k \in [n]$. 
+    \stamp{X}{\leq k} \cup \set{x_j \mid j < \xi_{\max}^{-1}(k),~ Q_j
+      = \exists}\), for all $k \in [n]$.
   \end{compactenum}
 \end{lemma}
 \proof{(\ref{it1:subst-quant}) If $\accform{\alpha}$ is unsatisfiable,
@@ -1737,21 +1730,21 @@ A function $\xi : \nat \rightarrow \nat$ is [strictly]
   \ref{def:generalized-lyndon-interpolant}. \qed}
 
 In conclusion, under two assumptions about the first order theory of
-the data domain, namely the\begin{inparaenum}[(i)]
+the data domain, namely the\ \begin{inparaenum}[(i)]
 \item witness-producing quantifier elimination, and
 \item Lyndon interpolation for the quantifier-free fragment with
   uninterpreted functions,
 \end{inparaenum}
-we developped a rather generic method that produces generalized Lyndon
-interpolants for unfeasible input event sequences. Moreover, each
-formula $I_k$ in the interpolant refers only to the current predicate
-symbols $\stamp{Q}{I_k}$, the current and past input variables
-$\stamp{X}{\leq k}$ and the existentially quantified transition
-variables introduced at the previous steps $\set{x_j \mid j <
-  \xi_{\max}^{-1}(k), Q_j = \exists}$. The remaining question is how
-to use such non-local interpolants to label the unfolding of an
-automaton (Definition \ref{def:unfolding}) and to compute the coverage
-between nodes of the unfolding (Definition \ref{def:coverage}).
+we developped a rather generic method that produces GLIs for
+unfeasible input event sequences. Moreover, each formula $I_k$ in the
+interpolant refers only to the current predicate symbols
+$\stamp{Q}{I_k}$, the current and past input variables $\stamp{X}{\leq
+  k}$ and the existentially quantified transition variables introduced
+at the previous steps $\set{x_j \mid j < \xi_{\max}^{-1}(k), Q_j =
+  \exists}$. The remaining question is how to use such non-local GLIs
+to label the sequences in the unfolding of an automaton (Definition
+\ref{def:unfolding}) and to compute the coverage (Definition
+\ref{def:coverage}) between nodes of this unfolding.
 
 \subsection{Unfolding with Non-local Interpolants}
 
@@ -1759,19 +1752,18 @@ As required by Definition \ref{def:unfolding}, the unfolding $U$ of an
 automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$ is labeled by
 formulae $U(\alpha) \in \posforms(Q,\emptyset)$, with no free symbols,
 other than predicate symbols, such that the labeling is compatible
-with the transition relation of the automaton, according to the point
-(\ref{it3:unfolding}) of Definition \ref{def:unfolding}. The following
-lemma describes the refinement of the labeling of an input sequence
-$\alpha$ of length $n$ by a non-local GLI $(I_0, \ldots, I_n)$, such
-that $\voc{I_k} \subseteq \stamp{Q}{k} \cup \stamp{X}{\leq k} \cup
-\vec{x}_k$, where $\vec{x}_k$ are the existentially quantified
-variables from the prenex normal form of $\quantform{\alpha_k}$. 
+with the transition relation of the automaton. Each newly expanded
+input sequence of $\A$ is initially labeled with $\top$ and the labels
+are refined using GLIs computed from proofs of spuriousness. The
+following lemma describes the refinement of the labeling of an input
+sequence by a non-local GLI:
 
 \begin{lemma}\label{lemma:refinement}
   Let $U$ be an unfolding of an automaton $\A =
   \tuple{\Sigma,X,Q,\iota,F,\Delta}$ such that $\alpha = a_1\ldots a_n
-  \in \dom(U)$ and $(I_0, \ldots, I_n)$ be a GLI for $\alpha$. The
-  mapping $U' : \dom(U) \rightarrow \posforms(Q,\emptyset)$ defined as: 
+  \in \dom(U)$ is an input event sequence and $(I_0, \ldots, I_n)$ be
+  a GLI for $\alpha$. Then the following mapping $U' : \dom(U)
+  \rightarrow \posforms(Q,\emptyset)$ is an unfolding of $\A$, where:
   \begin{compactitem}
   \item $U'(\alpha_k) = U(\alpha_k) \wedge J_k$, for all $k \in [n]$,
     where $J_k$ is the formula obtained from $I_k$ by replacing each
@@ -1781,7 +1773,6 @@ variables from the prenex normal form of $\quantform{\alpha_k}$.
 \item $U'(\beta) = U(\beta)$ if $\beta \in \dom(U)$ and $\beta
   \not\prefix \alpha$,
   \end{compactitem}
-  is an unfolding of $\A$. 
 \end{lemma}
 \proof{
   The new set of formulae $U'(\alpha_0), \ldots, U'(\alpha_n)$ complies
@@ -1839,10 +1830,11 @@ $I_k$ consists of \begin{inparaenum}[(i)]
   rules.
 \end{inparaenum}
 Basically, it is not important when exactly in the past a certain
-input has been read or when a choice has been made, as only the value
-of the variable determines the future behavior. Intuitively,
-existential quantification of these variables does the job of ignoring
-when in the past these values have been seen.
+input has been read or when a choice has been made, as only the
+relation between the values of these and the current variables
+determines the future behavior of the automaton. Intuitively,
+quantifying these variables existentially does the job of ignoring
+when exactly in the past these values have been seen.
 
 The last ingredient of the lazy annotation semi-algorithm based on
 unfoldings consist in the implementation of the coverage check, when
@@ -2280,3 +2272,16 @@ fischer-mutex3.foada & 4452 & yes & 33 & 33 & 1154 \\
 \end{center}
 \vspace*{-2\baselineskip}
 \end{table}
+
+\section{Conclusions}
+
+We present first order alternating automata, a model of computation
+that generalizes classical boolean alternating automata to first order
+theories. Due to their expressivity, first order alternating automata
+are closed under union, intersection and complement. However the
+emptiness problem is undecidable even in the most simple case, of the
+quantifier-free theory of equality with uninterpreted predicate
+symbols. We deal with the emptiness problem by developping a practical
+semi-algorithm that always terminates, when the automaton is not
+empty. In case of emptiness, termination of the semi-algorithm occurs
+in most practical test cases, as shown by a number of experiments.
