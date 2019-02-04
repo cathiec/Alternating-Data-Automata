@@ -2201,9 +2201,11 @@ for dealing with emptiness in the presence of transition quantifiers
 is known to exist.
 \fi
 
-\vspace*{-0.5\baselineskip}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\enlargethispage{6mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Experimental Results}
-\vspace*{-0.5\baselineskip}
 
 We have implemented a version of the IMPACT semi-algorithm
 \cite{McMillan06} in a prototype tool called FOADA, which is avaliable
@@ -2213,27 +2215,8 @@ spuriousness and coverage queries and also for interpolant generation.
 The experiments were carried out on a MacOS x64 - 1.3 GHz Intel Core
 i5 - 8 GB 1867 MHz LPDDR3 machine.
 
-The experimental results, reported in Table \ref{tab:experiments},
-come from several sources, namely predicate automata models (*.pa)
-\cite{Farzan15,Farzan16} available online \cite{pa}, timed automata
-inclusion problems ({\tt abp.ada}, {\tt train.ada}, {\tt
-  rr-crossing.foada}), array logic entailments ({\tt
-  array\_rotation.ada}, {\tt array\_simple.ada}, {\tt
-  array\_shift.ada}) and hardware circuit verification ({\tt hw1.ada},
-{\tt hw2.ada}), initially considered in \cite{IosifRV16}. The {\tt
-  train-simpleN.} {\tt foada} and {\tt fischer-mutexN.foada} examples are
-parametric verification problems in which one checks inclusions of the
-form $\bigcap_{i=1}^N\lang{A_i} \subseteq \lang{B}$, where $A_i$ is
-the $i$-th copy of the same template automaton.
-
-The advantage of using FOADA over the INCLUDER \cite{includer} tool
-from \cite{IosifRV16} is the possibility of having infinite alphabet
-automata with hidden (local) variables, whose values are not visible
-in the input. In particular, this is essential for checking inclusion
-of timed automata that use internal clocks to control the computation.
-
 \begin{table}[htb]
-%\vspace*{-\baselineskip}
+\vspace*{-\baselineskip}
 \begin{center}
 {\fontsize{7}{8}\selectfont
 \begin{tabular}{||l|c|c|c|c|c||}
@@ -2289,9 +2272,29 @@ fischer-mutex3.foada & 4452 & yes & 33 & 33 & 1154 \\
 \caption{Experiments with First Order Alternating Automata}
 \label{tab:experiments}
 \end{center}
-\vspace*{-2\baselineskip}
+\vspace*{-3\baselineskip}
 \end{table}
 
+The experimental results, reported in Table \ref{tab:experiments},
+come from several sources, namely predicate automata models (*.pa)
+\cite{Farzan15,Farzan16} available online \cite{pa}, timed automata
+inclusion problems ({\tt abp.ada}, {\tt train.ada}, {\tt
+  rr-crossing.foada}), array logic entailments ({\tt
+  array\_rotation.ada}, {\tt array\_simple.ada}, {\tt
+  array\_shift.ada}) and hardware circuit verification ({\tt hw1.ada},
+{\tt hw2.ada}), initially considered in \cite{IosifRV16}. The {\tt
+  train-simpleN.} {\tt foada} and {\tt fischer-mutexN.foada} examples are
+parametric verification problems in which one checks inclusions of the
+form $\bigcap_{i=1}^N\lang{A_i} \subseteq \lang{B}$, where $A_i$ is
+the $i$-th copy of the same template automaton.
+
+The advantage of using FOADA over the INCLUDER \cite{includer} tool
+from \cite{IosifRV16} is the possibility of having infinite alphabet
+automata with hidden (local) variables, whose values are not visible
+in the input. In particular, this is essential for checking inclusion
+of timed automata that use internal clocks to control the computation.
+
+\vspace*{-\baselineskip}
 \section{Conclusions}
 
 We present first order alternating automata, a model of computation
