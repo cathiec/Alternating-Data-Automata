@@ -1196,9 +1196,9 @@ input event $a \in \Sigma$.
   \forall y_{\#q} ~.~ \stamp{q}{0}(\vec{y}) \rightarrow
   \stamp{\psi}{1} \models \stamp{U(\alpha a)}{1}
   \end{array}\]  
-  Moreover, $U$ is \emph{safe} if for each $\alpha \in \dom(U)$, the
-  formula $U(\alpha) \wedge \bigwedge_{q \in Q \setminus F} \forall
-  y_1 \ldots \forall_{y_{\#(q)}} ~.~ q(\vec{y}) \rightarrow \bot$ is
+  $U$ is \emph{safe} if for each $\alpha \in \dom(U)$, the formula
+  $U(\alpha) \wedge \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots
+  \forall_{y_{\#(q)}} ~.~ q(\vec{y}) \rightarrow \bot$ is
   unsatisfiable.
 \end{definition}
 
@@ -1418,7 +1418,7 @@ unsatisfiable conjunctions to sequences of input events:
       %
     \item\label{it3:generalized-lyndon-interpolant} $I_n \wedge
       \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
-      y_{\#(q)} ~.~ q(\vec{y})$ is unsatisfiable.
+      y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \bot$ is unsatisfiable.
   \end{compactenum}
   Moreover, the GLI is \emph{local} if and only if $\voc{I_k}
   \subseteq \stamp{Q}{k}$, for all $k \in [n]$.
@@ -1540,8 +1540,8 @@ theorem:
   \ldots Q_n x_n ~.~ \phi \models \phi[\eta_1/x_1,\ldots,\eta_n/x_n]\)
   holds.
 \end{theorem}
-\proof{See \cite[Theorem 2.1.8]{BorgerGraedelGurevich97} and
-  \cite[Lemma 2.1.9]{BorgerGraedelGurevich97}. \qed}
+\paragraph{Proof.} See \cite[Theorem 2.1.8]{BorgerGraedelGurevich97} and
+  \cite[Lemma 2.1.9]{BorgerGraedelGurevich97}. \qed
 
 Examples of witness-producing quantifier elimination procedures can be
 found in the literature for e.g. linear integer (real) arithmetic

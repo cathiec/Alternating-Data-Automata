@@ -1,0 +1,45 @@
+\begin{picture}(0,0)%
+\includegraphics{exec.pdf}%
+\end{picture}%
+\setlength{\unitlength}{1973sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(7230,1857)(1636,-2848)
+\put(8851,-2761){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_2,-15)$}%
+}}}}
+\put(5626,-1486){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_1,6)$}%
+}}}}
+\put(5626,-2761){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_2,-6)$}%
+}}}}
+\put(7201,-1486){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_1,10)$}%
+}}}}
+\put(7201,-2761){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_2,-10)$}%
+}}}}
+\put(1801,-1186){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a,\set{x\leftarrow 1}$}%
+}}}}
+\put(3301,-1186){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a,\set{x\leftarrow 2}$}%
+}}}}
+\put(4876,-1186){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a,\set{x\leftarrow 3}$}%
+}}}}
+\put(6376,-1186){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a,\set{x\leftarrow 4}$}%
+}}}}
+\put(8026,-1186){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a,\set{x\leftarrow 5}$}%
+}}}}
+\put(2476,-1486){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_1,1)$}%
+}}}}
+\put(2476,-2761){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_2,-1)$}%
+}}}}
+\put(4051,-1486){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_1,3)$}%
+}}}}
+\put(4051,-2761){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_2,-3)$}%
+}}}}
+\put(1651,-2086){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$(q_0,0)$}%
+}}}}
+\put(8701,-1486){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$q_f$}%
+}}}}
+\end{picture}%
