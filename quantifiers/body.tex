@@ -1195,11 +1195,12 @@ input event $a \in \Sigma$.
   \bigwedge_{q(\vec{y}) \arrow{a(X)}{} \psi} \forall y_1 \ldots
   \forall y_{\#q} ~.~ \stamp{q}{0}(\vec{y}) \rightarrow
   \stamp{\psi}{1} \models \stamp{U(\alpha a)}{1}
-  \end{array}\]  
-  $U$ is \emph{safe} if for each $\alpha \in \dom(U)$, the formula
-  $U(\alpha) \wedge \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots
+  \end{array}\]
+  A path $\alpha$ is \emph{safe} in $U$ if and only if $U(\alpha)
+  \wedge \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots
   \forall_{y_{\#(q)}} ~.~ q(\vec{y}) \rightarrow \bot$ is
-  unsatisfiable.
+  unsatisfiable. The unfolding $U$ is safe if and only if every path
+  in $\dom(U)$ is safe in $U$.
 \end{definition}
 
 Lazy annotation semi-algorithms \cite{McMillan06,McMillan14} build
@@ -1437,41 +1438,41 @@ theories in which Lyndon's Interpolation Theorem holds.
 \paragraph{\em Proof.} By definition, $\accform{\alpha}$ is the formula:
 \[\begin{array}{c}
 \stamp{\iota}{0} \wedge 
- \bigwedge_{i=1}^n \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in
+ \bigwedge_{i=1}^n \underbrace{\bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in
    \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
- \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i} \wedge
- \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
- ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot
+ \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i}}_{\varphi_i} \wedge
+ \underbrace{\bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
+ ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot}_{\phi}
  \end{array}\]
- We define the formulae: 
- \[\begin{array}{rcl}
- \varphi_i & \isdef & \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
- \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i},~ \text{for all}~ i \in [1,n] \\
- \psi & \isdef & \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
- ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot
- \end{array}\]
+ %% We define the formulae: 
+ %% \[\begin{array}{rcl}
+ %% \varphi_i & \isdef & \bigwedge_{q(\vec{y}) \arrow{a_i(X)}{} \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+ %% \stamp{q}{i-1}(\vec{y}) \rightarrow \stamp{\psi}{i},~ \text{for all}~ i \in [1,n] \\
+ %% \phi & \isdef & \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall y_{\#(q)}
+ %% ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot
+ %% \end{array}\]
  Observe that $\voc{\stamp{\iota}{0}} \subseteq \stamp{Q}{0}$,
  $\voc{\varphi_i} \subseteq
  \stamp{Q}{i-1}\cup\stamp{Q}{i}\cup\stamp{X}{i}$, for all $i \in
-       [1,n]$, and $\voc{\psi} \subseteq \stamp{Q}{n}$.  We apply
+       [1,n]$, and $\voc{\phi} \subseteq \stamp{Q}{n}$.  We apply
        Lyndon's Interpolation Theorem for the formulae
        $\stamp{\iota}{0}$ and $\bigwedge_{i=1}^n \varphi_i \wedge
-       \psi$ and obtain a formula $I_0$, such that $\stamp{\iota}{0}
+       \phi$ and obtain a formula $I_0$, such that $\stamp{\iota}{0}
        \models I_0$, $I_0 \wedge \bigwedge_{i=1}^n \varphi_i \wedge
-       \psi$ is unsatisfiable, $\voc{I_0} \subseteq
+       \phi$ is unsatisfiable, $\voc{I_0} \subseteq
        \voc{\stamp{\iota}{0}} \cap (\bigcup_{i=1}^n \voc{\varphi_i}
-       \cup \voc{\psi}) \subseteq \stamp{Q}{0}$ and $\pset{-}{I_0}
+       \cup \voc{\phi}) \subseteq \stamp{Q}{0}$ and $\pset{-}{I_0}
        \subseteq \pset{-}{\stamp{\iota}{0}} \cap (\bigcup_{i=1}^n
-       \pset{-}{\varphi} \cup \pset{-}{\psi}) = \emptyset$. Repeating
+       \pset{-}{\varphi} \cup \pset{-}{\phi}) = \emptyset$. Repeating
        the reasoning for the formulae $I_0 \wedge \varphi_1$ and
-       $\bigwedge_{i=2}^n \varphi_i \wedge \psi$, we obtain $I_1$,
+       $\bigwedge_{i=2}^n \varphi_i \wedge \phi$, we obtain $I_1$,
        such that $I_0 \wedge \varphi_1 \models I_1$, $I_1 \wedge
-       \bigwedge_{i=2}^n \varphi_i \wedge \psi$ is unsatisfiable,
+       \bigwedge_{i=2}^n \varphi_i \wedge \phi$ is unsatisfiable,
        $\voc{I_1} \subseteq (\voc{I_0} \cup \voc{\varphi_1}) \cap
-       (\bigcup_{i=2}^n \voc{\varphi_i} \cup \voc{\psi}) \subseteq
+       (\bigcup_{i=2}^n \voc{\varphi_i} \cup \voc{\phi}) \subseteq
        \stamp{Q}{1}$ and $\pset{-}{I_1} \subseteq (\pset{-}{I_0} \cup
        \pset{-}{\varphi_1}) \cap (\bigcup_{i=2}^n \pset{-}{\varphi_i}
-       \cup \pset{-}{\psi}) = \emptyset$. Continuing in this way, we
+       \cup \pset{-}{\phi}) = \emptyset$. Continuing in this way, we
        obtain formulae $I_0, I_1, \ldots, I_{n}$ as required. \qed
 
 A problematic point of the above proposition is that the existence of
@@ -1792,6 +1793,7 @@ sequence by a non-local GLI:
 \item $U'(\beta) = U(\beta)$ if $\beta \in \dom(U)$ and $\beta
   \not\prefix \alpha$,
   \end{compactitem}
+  Moreover, $\alpha$ is safe in $U'$.
 \end{lemma}
 \proof{
   The new set of formulae $U'(\alpha_0), \ldots, U'(\alpha_n)$ complies
@@ -1853,7 +1855,10 @@ input has been read or when a choice has been made, as only the
 relation between the values of these and the current variables
 determines the future behavior of the automaton. Intuitively,
 quantifying these variables existentially does the job of ignoring
-when exactly in the past these values have been seen.
+when exactly in the past these values have been seen. Moreover, the
+last point of Lemma \ref{lemma:refinement} ensures that the refined
+path is safe in the new unfolding and thus will stay safe in all
+future unfoldings of $\A$. 
 
 The last ingredient of the lazy annotation semi-algorithm based on
 unfoldings consist in the implementation of the coverage check, when
@@ -2201,10 +2206,6 @@ for dealing with emptiness in the presence of transition quantifiers
 is known to exist.
 \fi
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\enlargethispage{6mm}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \section{Experimental Results}
 
 We have implemented a version of the IMPACT semi-algorithm
@@ -2294,7 +2295,6 @@ automata with hidden (local) variables, whose values are not visible
 in the input. In particular, this is essential for checking inclusion
 of timed automata that use internal clocks to control the computation.
 
-\vspace*{-\baselineskip}
 \section{Conclusions}
 
 We present first order alternating automata, a model of computation
