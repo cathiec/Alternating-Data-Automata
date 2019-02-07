@@ -1,10 +1,6 @@
 \section{Emptiness Checking for First Order Alternating Automata}
 \label{app:algorithm}
 
-The execution of Algorithm \ref{alg:impact} consists of three phases,
-corresponding to the \textsc{Close}, \textsc{Refine} and
-\textsc{Expand} of the original \impact\ procedure \cite{McMillan06}.
-
 \begin{algorithm}[t!]
 \begin{algorithmic}[0] \State {\bf input}: a first order
   alternating automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$
@@ -137,6 +133,9 @@ corresponding to the \textsc{Close}, \textsc{Refine} and
 \caption{The \textsc{Close} function from Algorithm \ref{alg:impact}}
 \end{algorithm}
 
+The execution of Algorithm \ref{alg:impact} consists of three phases,
+corresponding to the \textsc{Close}, \textsc{Refine} and
+\textsc{Expand} of the original \impact\ procedure \cite{McMillan06}.
 Let $n$ be a node removed from the worklist at line
 \ref{ln:impact-dequeue} and let $\alpha(n)$ be the input sequence
 labeling the path from the root node to $n$. If
