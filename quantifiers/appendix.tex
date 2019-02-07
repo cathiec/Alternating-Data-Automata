@@ -5,7 +5,7 @@ The execution of Algorithm \ref{alg:impact} consists of three phases,
 corresponding to the \textsc{Close}, \textsc{Refine} and
 \textsc{Expand} of the original \impact\ procedure \cite{McMillan06}.
 
-\begin{algorithm}[htb]
+\begin{algorithm}[t!]
 \begin{algorithmic}[0] \State {\bf input}: a first order
   alternating automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$
   
@@ -20,9 +20,7 @@ corresponding to the \textsc{Close}, \textsc{Refine} and
   \item $U : N \rightarrow \posforms(Q,\emptyset)$ is a labeling of
     nodes with positive sentences
   \item $\lhd \subseteq N \times N$ is a coverage relation,
-  \end{compactitem}
-  \State where, for a node $n$, $\alpha(n)$ is the input event
-  sequence on the path from $\rootNode$ to $n$ in $\mathcal{U}$.
+  \end{compactitem}  
 
   \State {\bf initially} $\worklist = \set{\rootNode}$ and
   $N=E=U=\lhd=\emptyset$.
@@ -58,8 +56,17 @@ corresponding to the \textsc{Close}, \textsc{Refine} and
 
   \If{$U(n_i) \not\models I_i$}
 
-  \State $\lhd \leftarrow \lhd \setminus \set{ m \in N \mid (m,n_i) \in \lhd }$
+  \State $\mathit{Uncover} \leftarrow \set{ m \in N \mid (m,n_i) \in \lhd }$
+  
+  \State $\lhd \leftarrow \lhd \setminus \set{(m,n_i) \mid m \in \mathit{Uncover}}$
   \Comment{uncover the nodes covered by $n_i$}
+
+  \For{$m \in \mathit{Uncover}$ such that $m$ is a leaf of $\mathcal{U}$}
+
+  \State enqueue $m$ into $\worklist$
+  \Comment{reactivate uncovered leaves}
+  
+  \EndFor
   
   \State $U(n_i) \leftarrow U(n_i) \wedge J_i$
   \Comment{strenghten the label of $n_i$ (Lemma \ref{lemma:refinement})}
