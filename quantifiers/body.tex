@@ -107,12 +107,12 @@ $q_2$). Intuititvely, $A$ recognizes the sequences in which all events
 are $a$ and the second event, if it occurs at all, it occurs after at
 least $2$ time units. On the other hand, $B$ recognizes the sequences
 in which there exists an event $a$ such that no event occurs after it
-in exactly $1$ time unit. Formally, $\lang{A} = \set{a,t \mid t \in
-  \real} \cup \set{a, t_1, \ldots a, t_n \mid t_1, \ldots, t_n \in
-  \real,~ n \geq 2,~ t_1 \geq 2}$ and $\lang{B} = \set{\sigma_1, t_1
-  \ldots \sigma_{i-1}, t_{i-1}, a, t_i, \ldots \sigma_n, t_n \mid
-  \sigma_1, \ldots, \sigma_n \in \set{a,b},~ n \geq 1,~ t_1, \ldots,
-  t_n \in \real,~ t_i-t_{i-1} \neq 1}$. It is proved\footnote{See
+in exactly $1$ time unit. Formally, $\lang{A} = \set{a, t_1, \ldots a,
+  t_n \mid t_1, \ldots, t_n \in \real,~ n > 1 \Rightarrow t_1 \geq 2}$
+and $\lang{B} = \set{\sigma_1, t_1 \ldots \sigma_{i-1}, t_{i-1}, a,
+  t_i, \ldots \sigma_n, t_n \mid \sigma_1, \ldots, \sigma_n \in
+  \set{a,b},~ n \geq 1,~ t_1, \ldots, t_n \in \real,~ 1 < i < n
+  \Rightarrow t_i-t_{i-1} \neq 1}$. It is proved\footnote{See
   \cite[Theorem 1]{AlurMadhusudan04} for a proof.}  that $\clang{B}$
 cannot be recognized by a timed automaton, thus the inclusion cannot
 be proved in the framework of timed regular languages, as $\lang{A}
@@ -2214,16 +2214,15 @@ is known to exist.
 
 We have implemented a version of the IMPACT semi-algorithm
 \cite{McMillan06} in a prototype tool, avaliable
-online\footnote{\url{http://nts.imag.fr/images/e/ea/Cav19b.tar.gz}}. The
-tool is written in Java and uses the Z3 SMT solver \cite{z3}, via the
-JavaSMT interface \cite{javasmt}, for spuriousness and coverage
-queries and also for interpolant generation. Table
-\ref{tab:experiments} reports the size of the input automaton in
-bytes, the numbers of Predicates, Variables and Transitions, the
-result of emptiness check, the number of Expanded and Visited Nodes
-during the unfolding and the Time in miliseconds.  The experiments
-were carried out on a MacOS x64 - 1.3 GHz Intel Core i5 - 8 GB 1867
-MHz LPDDR3 machine.
+online\footnote{\url{https://gofile.io/?c=7zB3g7}}. The tool is
+written in Java and uses the Z3 SMT solver \cite{z3}, via the JavaSMT
+interface \cite{javasmt}, for spuriousness and coverage queries and
+also for interpolant generation. Table \ref{tab:experiments} reports
+the size of the input automaton in bytes, the numbers of Predicates,
+Variables and Transitions, the result of emptiness check, the number
+of Expanded and Visited Nodes during the unfolding and the Time in
+miliseconds.  The experiments were carried out on a MacOS x64 - 1.3
+GHz Intel Core i5 - 8 GB 1867 MHz LPDDR3 machine.
 
 \begin{table}[htb]
 \vspace*{-\baselineskip}
