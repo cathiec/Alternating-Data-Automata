@@ -17,7 +17,6 @@
 \usepackage{makecell}
 \usepackage{url}
 \usepackage{tikz}
-% \usepackage{hyperref}
 \usetikzlibrary{automata,positioning, calc}
 \usepackage[inline,shortlabels]{enumitem}
 
@@ -27,7 +26,8 @@
 \usepackage{algorithmicx}
 \usepackage[noend]{algpseudocode}
 
-\usepackage[draft]{commenting}
+\usepackage[frenchlinks]{hyperref}
+\usepackage[final]{commenting}
 
 \usepackage{setspace}
 
@@ -49,7 +49,7 @@
 \setlength{\belowdisplayskip}{2pt} \setlength{\belowdisplayshortskip}{1pt}
 \setlength{\abovedisplayskip}{2pt} \setlength{\abovedisplayshortskip}{1pt}
 
-\title{First Order Alternation}
+\title{Alternating Automata Modulo First Order Theories}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \ifLongVersion
@@ -74,6 +74,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{splncs03} \bibliography{refs}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\appendix
+\input appendix
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
