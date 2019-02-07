@@ -1169,9 +1169,8 @@ of the \impact~ lazy annotation semi-algorithm \cite{McMillan06}. An
 analogous procedure is given in \cite{IosifXu18}, for a simpler model
 of alternating automata, that uses only predicates or arity zero
 (propositional variables) and no transition quantifiers. For
-simplicity, we defer the details of the semi-algorithm to Appendix
-\ref{app:algorithm} and content ourselves of several high-level
-definitions.
+simplicity, we defer the pseudocode of the semi-algorithm to Appendix
+\ref{app:algorithm} and give here several high-level definitions.
 
 For two input event sequences $\alpha, \beta \in \Sigma^*$, we say
 that $\alpha$ is a prefix of $\beta$, written $\alpha \prefix \beta$,
@@ -1259,7 +1258,7 @@ might not cover it with the new label. Therefore, the coverage
 relation has to be recomputed after each refinement of the
 labeling. The semi-algorithm stops when (and if) a safe complete
 unfolding has been found. For a detailed presentation of the emptiness
-procedure, we refer to \cite{IosifXu18}.
+procedure, we refer to Appendix \ref{app:algorithm}.
 
 \begin{theorem}\label{thm:soundness}
   If an automaton $\A$ has a nonempty safe closed unfolding then
@@ -1328,10 +1327,10 @@ discuss generation of interpolants in the next section.
 \section{Interpolant Generation}\label{sec:interpolants}
 
 Typically, when checking the unreachability of a set of program
-configurations \cite{McMillan06}, the interpolants used to annotate
-the unfolded control structure are assertions about the values of the
-program variables in a given control state, at a certain step of an
-execution. Because we consider alternating computation trees
+configurations, the interpolants used to annotate the unfolded control
+structure are assertions about the values of the program variables in
+a given control state, at a certain step of an execution
+\cite{McMillan06}. Because we consider alternating computation trees
 (forests), we must distinguish between
 \begin{inparaenum}[(i)]
 \item locality of interpolants w.r.t. a given control state (control
@@ -1399,12 +1398,12 @@ $\voc{I} \subseteq \voc{\phi} \cap \voc{\psi}$, $\pset{+}{I} \subseteq
 %% and integer arithmetic, with uninterpreted function symbols (UFLRA and
 %% UFLIA). 
 
-In the rest of this section, let us fix an automaton $\A =
-\tuple{\Sigma,X,Q,\iota,F,\Delta}$. Due to the above observation, none
-of the interpolants considered will be control-local and we shall use
-the term \emph{local} to denote time-local interpolants, with no free
+In the rest of this section, fix an automaton $\A =
+\tuple{\Sigma,X,Q,\iota,F,\Delta}$. Due to the above remark, none of
+the interpolants considered will be control-local and we shall use the
+term \emph{local} to denote time-local interpolants, with no free
 variables. The following definition generalizes interpolants from
-unsatisfiable conjunctions to sequences of input events: 
+unsatisfiable conjunctions to input sequences:
 
 \begin{definition}\label{def:generalized-lyndon-interpolant}
   Given a non-empty sequence of input events $\alpha = a_1 \ldots a_n
@@ -1509,15 +1508,16 @@ effective way of checking emptiness of $\A$, relative to a given event
 sequence. However, this method does not cope well with lazy
 annotation, because there is no way to extract, from the
 unsatisfiability proof of $\substform{\alpha}$, the interpolants
-needed to annotate $\alpha$. This is because \begin{inparaenum}[(i)]
+needed to annotate $\alpha$. This is because \begin{inparaenum}[(I)]
 \item\label{it1:gli} the formula $\substform{\alpha}$, obtained by
   repeated substitutions loses track of the steps of the execution,
   and
 %
 \item\label{it2:gli} quantifiers that occur nested in
   $\substform{\alpha}$ make it difficult to write $\substform{\alpha}$
-  as an unsatisfiable conjunction of formulae from which interpolants
-  are extracted (Definition \ref{def:lyndon-interpolant}).
+  as an unsatisfiable quantifier-free conjunction of formulae from
+  which interpolants are extracted (Definition
+  \ref{def:lyndon-interpolant}).
 \end{inparaenum}
 
 The solution we adopt for the first issue (\ref{it1:gli}) consists in
@@ -1545,20 +1545,20 @@ theorem:
   holds.
 \end{theorem}
 \paragraph{\em Proof.} See \cite[Theorem 2.1.8]{BorgerGraedelGurevich97} and
-  \cite[Lemma 2.1.9]{BorgerGraedelGurevich97}. \qed
-
+\cite[Lemma 2.1.9]{BorgerGraedelGurevich97}. \qed
+\noindent
 Examples of witness-producing quantifier elimination procedures can be
 found in the literature for e.g. linear integer (real) arithmetic
 (LIA,LRA), Presburger arithmetic and boolean algebra of sets and
 Presburger cardinality constraints (BAPA)
-\cite{KuncakMayerPiskacSuter12}.  
+\cite{KuncakMayerPiskacSuter12}.
 
 %% Furthermore, we describe a cubic-time witness generation for
 %% difference bounds constraints, a simple subset of linear integer
 %% (real) arithmetic (\S\ref{sec:applications}).
 
-Under the assumption that witness terms can be effectively built, let
-us describe the generation of a non-local GLI for a given input event
+Under the assumption that witness terms can be effectively built, we
+describe the generation of a non-local GLI for a given input event
 sequence $\alpha = a_1 \ldots a_n$. First, we generate successively
 the acceptance formula $\accform{\alpha}$ and its equisatisfiable
 forms $\quantform{\alpha} = Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$
@@ -1578,15 +1578,16 @@ such that $\overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
 $\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
   \tau_{i_\ell}/x_{i_\ell}]$, obtained analogously from the matrix of
 $\quantform{\alpha}$, is unsatisfiable as well (Lemma
-\ref{lemma:subst-quant}). Because this latter formula is structured as
-a conjunction of formulae $\stamp{\iota}{0} \wedge \phi_1 \ldots
-\wedge \phi_n \wedge \psi$, where $\voc{\phi_k} \cap \stamp{Q}{\leq n}
-\subseteq \stamp{Q}{k-1} \cup \stamp{Q}{k}$ and $\voc{\psi} \cap
-\stamp{Q}{\leq n} \subseteq \stamp{Q}{n}$, it is now possible to use
-an existing interpolation procedure for the quantifier-free theory of
-$\Data$, extended with uninterpreted function symbols, to compute a
-(not necessarily local) GLI $(I_0, \ldots, I_n)$ such that $\voc{I_k}
-\cap \stamp{Q}{\leq n} \subseteq \stamp{Q}{k}$, for all $k \in [n]$.
+\ref{lemma:subst-quant} below). Because this latter formula is
+structured as a conjunction of formulae $\stamp{\iota}{0} \wedge
+\phi_1 \ldots \wedge \phi_n \wedge \psi$, where $\voc{\phi_k} \cap
+\stamp{Q}{\leq n} \subseteq \stamp{Q}{k-1} \cup \stamp{Q}{k}$ and
+$\voc{\psi} \cap \stamp{Q}{\leq n} \subseteq \stamp{Q}{n}$, it is now
+possible to use an existing interpolation procedure for the
+quantifier-free theory of $\Data$, extended with uninterpreted
+function symbols, to compute a (not necessarily local) GLI $(I_0,
+\ldots, I_n)$ such that $\voc{I_k} \cap \stamp{Q}{\leq n} \subseteq
+\stamp{Q}{k}$, for all $k \in [n]$.
 
 %% Since each formula $I_k$ of the GLI may refer to the current
 %% predicates $\stamp{Q}{k}$ and to the past and current input variables
@@ -1752,22 +1753,22 @@ $\xi(m)=n$.
   as required by Definition
   \ref{def:generalized-lyndon-interpolant}. \qed}
 
-In conclusion, under two assumptions about the first order theory of
-the data domain, namely the\ \begin{inparaenum}[(i)]
+Consequently, under two assumptions about the first order theory of
+the data domain, namely\ \begin{inparaenum}[(i)]
 \item witness-producing quantifier elimination, and
 \item Lyndon interpolation for the quantifier-free fragment with
   uninterpreted functions,
 \end{inparaenum}
-we developped a rather generic method that produces GLIs for
-unfeasible input event sequences. Moreover, each formula $I_k$ in the
-interpolant refers only to the current predicate symbols
-$\stamp{Q}{I_k}$, the current and past input variables $\stamp{X}{\leq
-  k}$ and the existentially quantified transition variables introduced
-at the previous steps $\set{x_j \mid j < \xi_{\max}^{-1}(k), Q_j =
-  \exists}$. The remaining question is how to use such non-local GLIs
-to label the sequences in the unfolding of an automaton (Definition
-\ref{def:unfolding}) and to compute the coverage (Definition
-\ref{def:coverage}) between nodes of this unfolding.
+we developped a generic method that produces GLIs for unfeasible input
+event sequences. Moreover, each formula $I_k$ in the interpolant
+refers only to the current predicate symbols $\stamp{Q}{I_k}$, the
+current and past input variables $\stamp{X}{\leq k}$ and the
+existentially quantified transition variables introduced at the
+previous steps $\set{x_j \mid j < \xi_{\max}^{-1}(k), Q_j =
+  \exists}$. The remaining questions are how to use these GLIs to
+label the sequences in the unfolding of an automaton (Definition
+\ref{def:unfolding}) and compute coverage (Definition
+\ref{def:coverage}) between nodes of the unfolding.
 
 \subsection{Unfolding with Non-local Interpolants}
 
@@ -1784,14 +1785,14 @@ sequence by a non-local GLI:
 \begin{lemma}\label{lemma:refinement}
   Let $U$ be an unfolding of an automaton $\A =
   \tuple{\Sigma,X,Q,\iota,F,\Delta}$ such that $\alpha = a_1\ldots a_n
-  \in \dom(U)$ is an input event sequence and $(I_0, \ldots, I_n)$ be
-  a GLI for $\alpha$. Then the following mapping $U' : \dom(U)
-  \rightarrow \posforms(Q,\emptyset)$ is an unfolding of $\A$, where:
+  \in \dom(U)$ and $(I_0, \ldots, I_n)$ is a GLI for $\alpha$. Then
+  the mapping $U' : \dom(U) \rightarrow \posforms(Q,\emptyset)$ is an
+  unfolding of $\A$, where:
   \begin{compactitem}
   \item $U'(\alpha_k) = U(\alpha_k) \wedge J_k$, for all $k \in [n]$,
-    where $J_k$ is the formula obtained from $I_k$ by replacing each
-    time-stamped predicate symbol $\stamp{q}{k}$ by $q$ and
-    existentially quantifying each free variable in $I_k$,
+    where $J_k$ is the formula obtained from $I_k$ by removing the
+    time stamp of each predicate symbol $\stamp{q}{k}$ and
+    existentially quantifying each free variable in $I, _k$,
   %
 \item $U'(\beta) = U(\beta)$ if $\beta \in \dom(U)$ and $\beta
   \not\prefix \alpha$,
@@ -1854,14 +1855,14 @@ $I_k$ consists of \begin{inparaenum}[(i)]
   rules.
 \end{inparaenum}
 Basically, it is not important when exactly in the past a certain
-input has been read or when a choice has been made, as only the
+input has been read or when a choice has been made, because only the
 relation between the values of these and the current variables
-determines the future behavior of the automaton. Intuitively,
-quantifying these variables existentially does the job of ignoring
-when exactly in the past these values have been seen. Moreover, the
-last point of Lemma \ref{lemma:refinement} ensures that the refined
-path is safe in the new unfolding and thus will stay safe in all
-future unfoldings of $\A$. 
+determines the future behavior of the automaton. Quantifying these
+variables existentially does the job of ignoring when exactly in the
+past these values have been seen. Moreover, the last point of Lemma
+\ref{lemma:refinement} ensures that the refined path is safe in the
+new unfolding and will stay safe in all future refinements of this
+unfolding.
 
 The last ingredient of the lazy annotation semi-algorithm based on
 unfoldings consist in the implementation of the coverage check, when
@@ -2212,20 +2213,25 @@ is known to exist.
 \section{Experimental Results}
 
 We have implemented a version of the IMPACT semi-algorithm
-\cite{McMillan06} in a prototype tool called FOADA, which is avaliable
-online \cite{foada}. The tool is written in Java and uses the Z3 SMT
-solver \cite{z3}, via the JavaSMT interface \cite{javasmt}, for
-spuriousness and coverage queries and also for interpolant generation.
-The experiments were carried out on a MacOS x64 - 1.3 GHz Intel Core
-i5 - 8 GB 1867 MHz LPDDR3 machine.
+\cite{McMillan06} in a prototype tool, avaliable
+online\footnote{\url{http://nts.imag.fr/images/e/ea/Cav19b.tar.gz}}. The
+tool is written in Java and uses the Z3 SMT solver \cite{z3}, via the
+JavaSMT interface \cite{javasmt}, for spuriousness and coverage
+queries and also for interpolant generation. Table
+\ref{tab:experiments} reports the size of the input automaton in
+bytes, the numbers of Predicates, Variables and Transitions, the
+result of emptiness check, the number of Expanded and Visited Nodes
+during the unfolding and the Time in miliseconds.  The experiments
+were carried out on a MacOS x64 - 1.3 GHz Intel Core i5 - 8 GB 1867
+MHz LPDDR3 machine.
 
 \begin{table}[htb]
-%\vspace*{-\baselineskip}
+\vspace*{-\baselineskip}
 \begin{center}
 {\fontsize{7}{8}\selectfont
 \begin{tabular}{||l|c|c|c|c|c|c|c|c||}
 \hline
-Example & $\len{\A}$ (bytes) & Nb of Predicates & Nb of Variables & Nb of Transitions & $L(\A)=\emptyset$ ? & Nodes Expanded & Nodes Visited & Time (ms) \\
+Example & $\len{\A}$ (bytes) & Predicates & Variables & Transitions & $L(\A)=\emptyset$ ? & Nodes Expanded & Nodes Visited & Time (msec) \\
 \hline
 incdec.pa & 499 & 3 & 1 & 12 & no & 21 & 17 & 779 \\
 \hline
@@ -2276,21 +2282,21 @@ fischer-mutex3.foada & 4452 & 16 & 2 & 34 & yes & 33 & 33 & 1154 \\
 \caption{Experiments with First Order Alternating Automata}
 \label{tab:experiments}
 \end{center}
-%\vspace*{-3\baselineskip}
+\vspace*{-3\baselineskip}
 \end{table}
 
-The experimental results, reported in Table \ref{tab:experiments},
-come from several sources, namely predicate automata models (*.pa)
+The test cases shown in Table \ref{tab:experiments}, come from several
+sources, namely predicate automata models (*.pa)
 \cite{Farzan15,Farzan16} available online \cite{pa}, timed automata
 inclusion problems ({\tt abp.ada}, {\tt train.ada}, {\tt
   rr-crossing.foada}), array logic entailments ({\tt
-  array\_rotation.ada}, {\tt array\_simple.ada}, {\tt
+  array\_rota-} {\tt tion.ada}, {\tt array\_simple.ada}, {\tt
   array\_shift.ada}) and hardware circuit verification ({\tt hw1.ada},
 {\tt hw2.ada}), initially considered in \cite{IosifRV16}. The {\tt
-  train-simpleN.} {\tt foada} and {\tt fischer-mutexN.foada} examples are
-parametric verification problems in which one checks inclusions of the
-form $\bigcap_{i=1}^N\lang{A_i} \subseteq \lang{B}$, where $A_i$ is
-the $i$-th copy of the same template automaton.
+  train-simpleN.} {\tt foada} and {\tt fischer-mutexN.foada} examples
+are parametric verification problems in which one checks inclusions of
+the form $\bigcap_{i=1}^N\lang{A_i} \subseteq \lang{B}$, where $A_i$
+is the $i$-th copy of the same template automaton.
 
 The advantage of using FOADA over the INCLUDER \cite{includer} tool
 from \cite{IosifRV16} is the possibility of having infinite alphabet
