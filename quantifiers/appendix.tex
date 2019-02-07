@@ -1,7 +1,160 @@
 \section{Emptiness Checking for First Order Alternating Automata}
 \label{app:algorithm}
 
+The execution of Algorithm \ref{alg:impact} consists of three phases,
+corresponding to the \textsc{Close}, \textsc{Refine} and
+\textsc{Expand} of the original \impact\ procedure \cite{McMillan06}.
 
+\begin{algorithm}[htb]
+\begin{algorithmic}[0] \State {\bf input}: a first order
+  alternating automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$
+  
+  \State {\bf output}: $\top$ if $L(\A)=\emptyset$, or word $w \in
+  L(\A)$, otherwise
+
+  \State {\bf data structures}: $\worklist$ and unfolding tree
+  $\mathcal{U} = \tuple{N,E,\rootNode,U,\lhd}$,
+  where: \begin{compactitem}
+  \item $N$ is a set of nodes,
+  \item $E \subseteq N \times \Sigma \times N$ is a set of edges labeled by input events,
+  \item $U : N \rightarrow \posforms(Q,\emptyset)$ is a labeling of
+    nodes with positive sentences
+  \item $\lhd \subseteq N \times N$ is a coverage relation,
+  \end{compactitem}
+  \State {\bf initially} $\worklist = \set{\rootNode}$ and $N=E=U=\lhd=\emptyset$.
+\end{algorithmic}
+\begin{algorithmic}[1]   
+  \While{$\worklist \neq \emptyset$}
+  \label{ln:impact-while}
+
+  \State dequeue $n$ from $\worklist$ 
+  \label{ln:impact-dequeue}
+
+  \State $N \leftarrow N \cup \set{n}$
+
+  \State let $\alpha(n) = a_1, \ldots, a_k$ be the input event sequence
+  on the path from $\rootNode$ to $n$
+
+  \If{$\substform{\alpha}(\stamp{X}{1}, \ldots, \stamp{X}{k})$ is satisfiable} 
+  \Comment{counterexample is feasible}
+
+  \State get model $\nu$ of $\substform{\alpha}(\stamp{X}{1}, \ldots, \stamp{X}{k})$
+
+  \State {\bf return} $w = (a_1,\nu(\stamp{X}{1})) \ldots (a_k,\nu(\stamp{X}{k}))$
+  \label{ln:impact-nonempty}
+  \Comment{$w \in L(\A)$ by construction}
+
+  \Else \Comment{spurious counterexample}
+
+  \State let $(I_0,\ldots,I_k)$ be a GLI for $\alpha$
+  \label{ln:refine-begin}
+
+  \State $b \leftarrow \bot$
+
+  \For{$i=0,\ldots,k$}
+
+  \If{$U(n_i) \not\models I_i$}
+
+  \State $\lhd \leftarrow \lhd \setminus \set{ m \in N \mid (m,n_i) \in \lhd }$
+  \Comment{uncover the nodes covered by $n_i$}
+  
+  \State $U(n_i) \leftarrow U(n_i) \wedge J_i$
+  \Comment{strenghten the label of $n_i$ (Lemma \ref{lemma:refinement})}
+
+  \If{$\neg b$}
+
+  \State $b \leftarrow \Call{Close}{n_i}$
+  \label{ln:refine-end}
+
+  \EndIf % $\neg b$
+
+  \EndIf % $\Lambda(n_i) \not\models I_i$
+
+  \EndFor 
+
+  \EndIf % $\mu(n)$ is satisfiable
+
+  \If{$n$ is not covered}
+
+  \For{$a \in \Sigma$} 
+  \Comment{expand $n$}
+  \label{ln:expand-begin}
+
+  \State let $s$ be a fresh node and $e = (n,a,s)$ be a new edge
+
+  \State $E \leftarrow E \cup \set{e}$
+  \label{ln:edge-insert}
+
+  \State $U \leftarrow U \cup \set{(s,\top)}$
+
+  \State enqueue $s$ into $\worklist$
+  \label{ln:expand-end}
+
+  \EndFor
+
+  \EndIf % $n$ is not covered
+
+  \EndWhile  
+
+  \State {\bf return} $\top$
+\end{algorithmic}
+\caption{\impact-based Semi-algorithm for First Order Alternating Automata}
+\label{alg:impact}
+\end{algorithm}
+
+\begin{algorithm}[htb]
+\begin{algorithmic}[1]
+\Function{Close}{$x$} {\bf returns} $\Bool$
+
+\For{$y \in N$ such that $\alpha(y) \prec^* \alpha(x)$}
+
+\If{$U(x) \models U(y)$}
+
+\State $\lhd \leftarrow \left(\lhd \setminus \set{ (p,q) \in \lhd \mid
+  \text{$q$ is $x$ or a successor of $x$}}\right) \cup \set{(x,y)}$
+\label{ln:close-uncover}
+
+\State {\bf return} $\top$ 
+
+\EndIf
+
+\EndFor
+
+\State {\bf return} $\bot$
+
+\EndFunction
+\end{algorithmic}
+\caption{The \textsc{Close} function from Algorithm \ref{alg:impact}}
+\end{algorithm}
+
+Let $n$ be a node removed from the worklist at line
+\ref{ln:impact-dequeue} and let $\alpha(n)$ be the input sequence
+labeling the path from the root node to $n$. If
+$\substform{\alpha(n)}$ is satisfiable, the sequence $\alpha(n)$ is
+feasible, in which case a model of $\substform{\alpha(n)}$ is obtained
+and a word $w \in L(\A)$ is returned. Otherwise, $\alpha(n)$ is an
+infeasible input sequence and the procedure enters the refinement
+phase (lines \ref{ln:refine-begin}-\ref{ln:refine-end}). The GLI for
+$\alpha(n)$ is used to strenghten the labels of all the ancestors of
+$n$, by conjoining the formulae of the interpolant, changed according
+to Lemma \ref{lemma:refinement}, to the existing labels.
+
+In this process, the nodes on the path between $\rootNode$ and $n$,
+including $n$, might become eligible for coverage, therefore we
+attempt to close each ancestor of $n$ that is impacted by the
+refinement (line \ref{ln:refine-end}). Observe that, in this case the
+call to $\Call{Close}{}$ must uncover each node which is covered by a
+successor of $n$ (line \ref{ln:close-uncover} of the $\Call{Close}{}$
+function). This is required because, due to the over-approximation of
+the sets of reachable configurations, the covering relation is not
+transitive, as explained in \cite{McMillan06}. If $\Call{Close}{}$
+adds a covering edge $(n_i,m)$ to $\lhd$, it does not have to be
+called for the successors of $n_i$ on this path, which is handled via
+the boolean flag $b$. Finally, if $n$ is still uncovered (it has not
+been previously covered during the refinement phase) we expand $n$
+(lines \ref{ln:expand-begin}-\ref{ln:expand-end}) by creating a new
+node for each successor $s$ via the input event $a \in \Sigma$ and
+inserting it into the worklist.
 
 \section{Proofs of the Results in the Paper}
 \label{app:proofs}
