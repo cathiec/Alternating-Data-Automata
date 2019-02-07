@@ -21,7 +21,11 @@ corresponding to the \textsc{Close}, \textsc{Refine} and
     nodes with positive sentences
   \item $\lhd \subseteq N \times N$ is a coverage relation,
   \end{compactitem}
-  \State {\bf initially} $\worklist = \set{\rootNode}$ and $N=E=U=\lhd=\emptyset$.
+  \State where, for a node $n$, $\alpha(n)$ is the input event
+  sequence on the path from $\rootNode$ to $n$ in $\mathcal{U}$.
+
+  \State {\bf initially} $\worklist = \set{\rootNode}$ and
+  $N=E=U=\lhd=\emptyset$.
 \end{algorithmic}
 \begin{algorithmic}[1]   
   \While{$\worklist \neq \emptyset$}
@@ -32,8 +36,7 @@ corresponding to the \textsc{Close}, \textsc{Refine} and
 
   \State $N \leftarrow N \cup \set{n}$
 
-  \State let $\alpha(n) = a_1, \ldots, a_k$ be the input event sequence
-  on the path from $\rootNode$ to $n$
+  \State let $\alpha(n)$ be $a_1, \ldots, a_k$
 
   \If{$\substform{\alpha}(\stamp{X}{1}, \ldots, \stamp{X}{k})$ is satisfiable} 
   \Comment{counterexample is feasible}
@@ -110,8 +113,8 @@ corresponding to the \textsc{Close}, \textsc{Refine} and
 
 \If{$U(x) \models U(y)$}
 
-\State $\lhd \leftarrow \left(\lhd \setminus \set{ (p,q) \in \lhd \mid
-  \text{$q$ is $x$ or a successor of $x$}}\right) \cup \set{(x,y)}$
+\State $\lhd \leftarrow \left[\lhd \setminus \set{ (p,q) \in \lhd \mid
+  \text{$q$ is $x$ or a successor of $x$}}\right] \cup \set{(x,y)}$
 \label{ln:close-uncover}
 
 \State {\bf return} $\top$ 
@@ -156,5 +159,398 @@ been previously covered during the refinement phase) we expand $n$
 node for each successor $s$ via the input event $a \in \Sigma$ and
 inserting it into the worklist.
 
-\section{Proofs of the Results in the Paper}
+\section{Proofs of the Technical Results in the Paper}
 \label{app:proofs}
+
+\subsection{Proof of Lemma \ref{lemma:path-formula}}
+
+``$\subseteq$'' Let $\I$ be a minimal interpretation such that
+$\I,\data{w} \models \pathform{\event{w}}$. We show that there exists
+an execution $\T$ of $\A$ over $w$ such that $\I = \I_\T$, by
+induction on $n\geq 0$. For $n=0$, we have $w=\epsilon$ and
+$\pathform{\event{w}} = \stamp{\iota}{0}$. Because $\iota$ is a
+sentence, the valuation $\data{w}$ is not important in $\I,\data{w}
+\models \stamp{\iota}{0}$ and, moreover, since $\I$ is minimal, we
+have $\I \in \minsem{\stamp{\iota}{0}}$. We define the interpretation
+$\J(q)=\I(\stamp{q}{0})$, for all $q \in Q$. Then $\cube{\J}$ is an
+execution of $\A$ over $\epsilon$ and $\I = \I_{\cube{\J}}$ is
+immediate. For the inductive case $n>0$, we assume that
+$w=u\cdot(a_n,\nu_n)$ for a word $u$. Let $\J$ be the interpretation
+defined as $\I$ for all $\stamp{q}{i}$, with $q \in Q$ and $i \in
+[n-1]$, and $\emptyset$ everywhere else. Then $\J,u_\Data \models
+\pathform{u_\Sigma}$ and $\J$ is moreover minimal. By the induction
+hypothesis, there exists an execution $\G$ of $\A$ over $u$, such that
+$\J = \I_\G$. Consider a leaf of a tree $T \in \G$, labeled with a
+configuration $q(d_1,\ldots,d_{\#(q)})$ and let $\forall y_1 \ldots
+\forall y_{\#(q)} ~.~ \stamp{q}{n-1}(\vec{y}) \rightarrow
+\stamp{\psi}{n}$ be the subformula of $\pathform{\event{w}}$
+corresponding to the application(s) of the transition rule $q(\vec{y})
+\arrow{a_n}{} \psi$ at the $(n-1)$-th step. Let $\nu = \data{w}[y_1
+  \leftarrow d_1,\ldots,y_{\#(q)} \leftarrow d_{\#(q)}]$. Because $\I,
+\data{w} \models \forall y_1 \ldots \forall y_{\#(q)} ~.~
+\stamp{q}{n-1}(\vec{y}) \rightarrow \stamp{\psi}{n}$, we have $\I \in
+\sem{\stamp{\psi}{n}}_{\nu}$ and let $\K$ be one of the minimal
+interpretations such that $\K \subseteq \I$ and $\K \in
+\sem{\stamp{\psi}{n}}_{\nu}$. It is not hard to see that $\K$ exists
+and is unique, otherwise we could take the pointwise intersection of
+two or more such interpretations. We define the interpretation
+$\overline{\K}(q) = \overline{\K}(\stamp{q}{n})$ for all $q \in Q$. We
+have that $\overline{\K} \in \minsem{\psi}_{\nu}$ --- if
+$\overline{\K}$ was not minimal, $\K$ was not minimal to start with,
+contradiction. Then we extend the execution $\G$ by appending to each
+node labeled with a configuration $q(d_1, \ldots, d_{\#(q)})$ the cube
+$\cube{\overline{\K}}$. By repeating this step for all leaves of a
+tree in $\G$, we obtain an execution of $\A$ over $w$.
+
+``$\supseteq$'' Let $\T$ be an execution of $\A$ over $w$. We show
+that $\I_{\T}$ is a minimal interpretation such that $\I_{\T},
+\data{w} \models \pathform{\event{w}}$, by induction on $n \geq
+0$. For $n=0$, $\T$ is a cube from $\cube{\minsem{\iota}}$, by
+definition. Then $\I_{\T} \models \stamp{\iota}{0}$ and moreover, it
+is a minimal such interpretation. For the inductive case $n > 0$, let
+$w=u\cdot(a_n,\nu_n)$ for a word $u$. Let $\G$ be the restriction of
+$\T$ to $u$. Consequently, $\I_\G$ is the restriction of $\I_\T$ to
+$\stamp{Q}{\leq n-1}$. By the inductive hypothesis, $\I_{\G}$ is a
+minimal interpretation such that \(\I_{\G}, u_{\Data} \models
+\pathform{u_\Sigma}\). Since $\I_{\T}(\stamp{q}{n}) =
+\set{\tuple{d_1,\ldots,d_{\#(q)}} \mid q(d_1,\ldots,d_{\#(q)}) \text{
+    labels a node on the $n$-th level in $\T$}}$, we have $\I_{\T},
+\data{w} \models \varphi$, for each subformula $\varphi = \forall y_1
+\ldots \forall y_{\#(q)} ~.~ \stamp{q}{n-1}(\vec{y}) \rightarrow
+\stamp{\psi}{n}$ of $\pathform{\event{w}}$, by the execution semantics
+of $\A$. This is the case because the children of each node labeled
+with $q(d_1,\ldots,d_{\#(q)})$ on the $(n-1)$-th level of $\T$ form a
+cube from $\cube{\minsem{\psi}_\nu}$, where $\nu$ is a valuation that
+assigns each $y_i$ the value $d_i$ and behaves like $\data{w}$,
+otherwise. Now supppose, for a contradiction, that $\I_{\T}$ is not
+minimal and let $\J \subsetneq \I_{\T}$ be an interpretation such that
+$\J,\data{w} \models \pathform{\event{w}}$. First, we show that the
+restriction $\J'$ of $\J$ to $\bigcup_{i=0}^{n-1} \stamp{Q}{i}$ must
+coincide with $\I_{\G}$. Assuming this is not the case, i.e.\ $\J'
+\subsetneq \I_{\G}$, contradicts the minimality of $\I_{\G}$. Then the
+only possibility is that $\J(\stamp{q}{n}) \subsetneq
+\I_{\T}(\stamp{q}{n})$, for some $q \in Q$. Let
+$p_1(y_1,\ldots,y_{\#(p_1)}) \arrow{a_n}{} \psi_1, \ldots,
+p_k(y_1,\ldots,y_{\#(p_k)}) \arrow{a_n}{} \psi_k$ be the set of
+transition rules in which the predicate symbol $q$ occurs on the
+right-hand side. Then it must be the case that, for some node on the
+$(n-1)$-th level of $\G$, labeled with a configuration
+$p_i(d_1,\ldots,d_{\#(p_i)})$, the set of children does not form a
+minimal cube from $\cube{\minsem{\stamp{\psi_i}{n}}}$, which
+contradicts the execution semantics of $\A$. \qed
+
+\subsection{Proof of Lemma \ref{lemma:acceptance}}
+
+``$(\ref{it1:lemma:acceptance}) \Rightarrow
+(\ref{it2:lemma:acceptance})$'' Let $\I$ be an interpretation such
+that $\I,\data{w} \models \accform{\event{w}}$. By Lemma
+\ref{lemma:path-formula}, $\A$ has an execution $\T$ over $w$ such
+that $\I = \I_{\T}$. To prove that $\T$ is accepting, we show
+that \begin{inparaenum}[(i)]
+\item\label{it1:acceptance} all paths in $\T$ have length $n$ and
+  that
+\item\label{it2:acceptance} the frontier of $\T$ is labeled with final
+  configurations only. \end{inparaenum} First, assume that
+(\ref{it1:acceptance}) there exists a path in $\T$ of length $0 \leq m
+< n$. Then there exists a node on the $m$-th level, labeled with some
+configuration $q(d_1,\ldots,q_{\#(q)})$, that has no children. By the
+definition of the execution semantics of $\A$, we have
+$\cube{\minsem{\psi}_{\eta}} = \emptyset$, where $q(\vec{y})
+\arrow{a_{m+1}(X)}{} \psi$ is the transition rule of $\A$ that applies
+for $q$ and $a_{m+1}$ and $\eta= \data{w}[y_1 \leftarrow
+  d_1,\ldots,y_{\#(q)} \leftarrow d_{\#(q)}]$. Hence
+$\sem{\psi}_{\eta} = \emptyset$, and because $\I,\data{w} \models
+\accform{\alpha}$, we obtain that $\I,\eta \models q(\vec{y})
+\rightarrow \stamp{\psi}{m+1}$, thus $\tuple{d_1,\ldots,d_{\#(q)}}
+\not\in \I(q)$. However, this contradicts the fact that $\I=\I_{\T}$
+and that $q(d_1,\ldots,d_{\#(q)})$ labels a node of $\T$. Second,
+assume that (\ref{it2:acceptance}), there exists a frontier node of
+$\T$ labeled with a configuration $q(d_1,\ldots,d_{\#(q)})$ such that
+$q \in Q \setminus F$. Since $\I,\data{w} \models \forall y_1 \ldots
+\forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \bot$, by a similar
+reasoning as in the above case, we obtain that
+$\tuple{d_1,\ldots,d_{\#(q)}} \not\in \I(q)$, contradiction.
+
+``$(\ref{it2:lemma:acceptance}) \Rightarrow
+(\ref{it1:lemma:acceptance})$'' Let $\T$ be an accepting execution of
+$\A$ over $w$. We prove that $\I_\T,\data{w} \models
+\accform{\event{w}}$. By Lemma \ref{lemma:path-formula}, we obtain
+$\I_\T,\data{w} \models \pathform{\event{w}}$. Since every path in
+$\T$ is of length $n$ and all nodes on the $n$-th level of $\T$ are
+labeled by final configurations, we obtain that $\I_\T,\data{w}
+\models \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
+y_{\#(q)} ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot$, trivially.
+\qed
+
+\subsection{Proof of Lemma \ref{lemma:quant}}
+
+(\ref{it1:quant}) Trivial, since every subformula
+$q(t_1,\ldots,t_{\#(q)}) \rightarrow
+\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$ of $\quantform{\alpha}$ is
+entailed by a subformula $\forall y_1 \ldots \forall y_{\#(q)} ~.~
+q(y_1, \ldots, y_{\#(q)}) \rightarrow \psi$ of $\accform{\alpha}$.
+
+\noindent(\ref{it2:quant}) By repeated applications of the following
+fact:
+
+\begin{fact}
+  Given formulae $\phi$ and $\psi$, such that no predicate atom with
+  predicate symbol $q$ occurs in $\psi(y_1,\ldots,y_{\#(q)})$, for
+  each valuation $\nu$, if there exists an interpretation $\I$ such
+  that $\I,\nu \models \phi \wedge \bigwedge_{q(t_1,\ldots,t_{\#(q)})
+    \text{ occurs in } \phi} q(t_1,\ldots,t_{\#(q)}) \rightarrow
+  \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$ then there exists a
+  valuation $\J$ such that $\J(q) \subseteq \I(q)$ and $\J(q') =
+  \I(q')$ for all $q' \in Q \setminus \set{q}$ and $\J,\nu \models
+  \phi \wedge \forall y_1 \ldots \forall y_{\#(q)} ~.~
+  q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$.
+\end{fact}
+\paragraph{\em Proof.}
+Assume w.l.o.g. that $\phi$ is quantifier-free. The proof can be
+easily generalized to the case $\phi$ has quantifiers. Let $\J(q) =
+\set{\langle t_1^\nu, \ldots, t_{\#(q)}^\nu \rangle \in \I(q) \mid
+  q(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \phi}$ and $\J(q') =
+\I(q')$ for all $q' \in Q \setminus \set{q}$. Since $\I,\nu \models
+\phi$, we obtain that also $\J,\nu \models \phi$ because the tuples of
+values in $\I(q) \setminus \J(q)$ are not interpretations of terms
+that occur within subformulae $q(t_1,\ldots,t_{\#(q)})$ of
+$\phi$. Moreover, $\bigwedge_{q(t_1,\ldots,t_{\#(q)}) \text{ occurs in
+  } \phi} q(t_1,\ldots,t_{\#(q)}) \rightarrow
+\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$ and $\forall y_1 \ldots
+\forall y_{\#(q)} ~.~ q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$ are
+equivalent under $\J$, thus $\J,\nu \models \forall y_{\#(q)} ~.~
+q(y_1,\ldots,y_{\#(q)}) \rightarrow \psi$, as required. \qed
+
+\noindent This concludes the proof of Lemma \ref{lemma:quant}. \qed
+
+\subsection{Proof of Lemma \ref{lemma:subst}}
+
+By induction on $n\geq0$. The base case $n=0$ is trivial, since
+$\quantform{A} = \substform{A} = \stamp{\iota}{0}$. For the induction
+step, we rely on the following fact:
+
+ \begin{fact}\label{fact:subst}
+   Given formulae $\phi$ and $\psi$, such that $\phi$ is positive
+   $q(t_1,\ldots,t_{\#(q)})$ is the only one occurrence of the
+   predicate symbol $q$ in $\phi$ and no predicate atom with
+   predicate symbol $q$ occurs in $\psi(y_1,\ldots,y_{\#(q)})$, for
+   each interpretation $\I$ and each valuation $\nu$, we have:
+   \[\begin{array}{l} 
+   \I,\nu \models \phi \wedge q(t_1,\ldots,t_{\#(q)}) \rightarrow
+   \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}] \iff \\ \nu \models
+   \phi[\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]\enspace.
+   \end{array}\]
+ \end{fact}
+
+ \paragraph{\em Proof.}
+ We assume w.l.o.g. that $\phi$ is quantifier-free. The proof can be
+ easily generalized to the case $\phi$ has quantifiers.
+
+ \noindent''$\Rightarrow$'' 
+    We distinguish two cases: \begin{compactitem}
+    \item if $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \in \I(q)$ then
+      $\I,\nu \models \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$. Since
+      $\phi$ is positive, replacing $q(t_1,\ldots,t_{\#(q)})$ with
+      $\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$ does not change the
+      truth value of $\phi$ under $\nu$, thus $\nu \models
+      \phi[\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]$.
+      %
+    \item else, $\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \not\in
+      \I(q)$, thus $\nu \models
+      \phi[\bot/q(t_1,\ldots,t_{\#(q)})]$. Since $\phi$ is positive
+      and $\bot$ entails $\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]$,
+      we obtain $\nu \models
+      \phi[\psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]/q(t_1,\ldots,t_{\#(q)})]$
+      by monotonicity. 
+    \end{compactitem}
+
+    \noindent``$\Leftarrow$'' Let $\I$ be any interpretation such that
+    $\I(q) = \set{\tuple{t_1^\nu, \ldots, t_{\#(q)}^\nu} \mid \nu
+      \models \psi[t_1/y_1,\ldots,t_{\#(q)}/y_{\#(q)}]}$. We
+    distinguish two cases: \begin{compactitem}
+    \item if $\I(q) \not \emptyset$ then $\I,\nu \models
+      q(t_1,\ldots,t_{\#(q)})$ and $\nu \models \psi[t_1/y_1, \ldots,
+        t_{\#(q)}/y_{\#(q)}]$. Thus replacing $\psi[t_1/y_1, \ldots,
+        t_{\#(q)}/y_{\#(q)}]$ by $q(t_1,\ldots,t_{\#(q)})$ does not
+      change the truth value of $\phi$ under $\I$ and $\nu$, and we
+      obtain $\I,\nu \models \phi$. Moreover, $\I,\nu \models
+      \psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$ implies $\I,\nu
+      \models q(t_1,\ldots,t_{\#(q)}) \rightarrow \psi[t_1/y_1,
+        \ldots, t_{\#(q)}/y_{\#(q)}]$.
+        %
+    \item else $\I(q) = \emptyset$, hence $\nu \not\models
+      \psi[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]$, thus $\nu \models
+      \phi[\bot/q(t_1,\ldots,t_{\#(q)})]$. Because $\phi$ is positive,
+      we obtain $\I,\nu \models \phi$ by monotonicity. But $\I,\nu
+      \models q(t_1,\ldots,t_{\#(q)}) \rightarrow \psi[t_1/y_1,
+        \ldots, t_{\#(q)}/y_{\#(q)}]$ trivially, because $\I,\nu
+      \not\models q(t_1,\ldots,t_{\#(q)})$. \qed
+      \end{compactitem}
+      
+This concludes the proof of Lemma \ref{lemma:subst}. \qed
+
+\subsection{Proof of Lemma \ref{lemma:quant-pred-acceptance}}
+
+By Lemma \ref{lemma:acceptance}, $w \in \lang{\A}$ if and only if
+$\I,\data{w} \models \accform{\event{w}}$, for some interpretation
+$\I$. By Lemma \ref{lemma:quant}, there exists an interpretation $\I$
+such that $\I,\data{w} \models \accform{\event{w}}$ if and only if
+there exists an interpretation $\J$ such that $\J,\nu \models
+\quantform{\event{w}}$. By Lemma \ref{lemma:subst}, there exists an
+interpretation $\J$ such that $\J,\nu \models \quantform{\event{w}}$
+if and only if $\nu \models \substform{\event{w}}$. \qed
+
+\subsection{Proof of Theorem \ref{thm:soundness}}
+
+Let $U$ be a safe and complete unfolding of $\A$, such that $\dom(U)
+\neq \emptyset$. Suppose, by contradiction, that there exists a word
+$w \in \lang{A}$ and let $\alpha \isdef \event{w}$. Since $w \in
+\lang{A}$, by Lemma \ref{lemma:acceptance}, there exists an
+interpretation $\I$ such that $\I,\data{w} \models
+\accform{\alpha}$. Assume first that $\alpha \in \dom(U)$.  In this
+case, one can show, by induction on the length $n\geq0$ of $w$, that
+$\pathform{\alpha} \models \stamp{U(\alpha)}{n}$, thus $\I,\data{w}
+\models \stamp{U(\alpha)}{n}$. Since $\I,\data{w} \models
+\accform{\alpha}$, we have $\I,\data{w} \models \bigwedge_{q \in Q
+  \setminus F} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+\stamp{q}{n}(\vec{y}) \rightarrow \bot$, hence $\stamp{U(\alpha)}{n}
+\wedge \bigwedge_{q \in Q \setminus F} \forall y_1 \ldots \forall
+y_{\#(q)} ~.~ \stamp{q}{n}(\vec{y}) \rightarrow \bot$. By renaming
+$\stamp{q}{n}$ with $q$ in the previous formula, we obtain $U(\alpha)
+\wedge \forall y_1 \ldots \forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow
+\bot$ is satisfiable, thus $U$ is not safe, contradiction.
+
+We proceed thus under the assumption that $\alpha \not\in
+\dom(U)$. Since $\dom(U)$ is a nonempty prefix-closed set, there
+exists a strict prefix $\alpha'$ of $\alpha$ that is a leaf of
+$\dom(U)$. Since $U$ is closed, the leaf $\alpha'$ must be covered and
+let $\alpha_1 \prefix \alpha' \prefix \alpha$ be a node such that
+$U(\alpha_1) \models U(\beta_1)$, for some uncovered node $\beta_1 \in
+\dom(U)$. Let $\gamma_1$ be the unique sequence such that
+$\alpha_1\gamma_1 = \alpha$. By Definition \ref{def:coverage}, since
+$\alpha_1 \cover \beta_1$ and $\event{w} = \alpha_1\gamma_1 \in
+\lang{\A}$, there exists a word $w_1$ and a cube $c_1 \in
+\cube{\sem{U(\alpha_1)}} \subseteq \cube{\sem{U(\beta_1)}}$, such that
+$\event{w_1} = \gamma_1$ and $\A$ accepts $w_1$ starting with
+$c_1$. If $\beta_1\gamma_1 \in \dom(U)$, we obtain a contradiction by
+a similar argument as above. Hence $\beta_1\gamma_1 \not\in \dom(U)$
+and there exists a leaf of $\dom(U)$ which is also a prefix of
+$\beta_1\gamma_1$. Since $U$ is closed, this leaf is covered by an
+uncovered node $\beta_2 \in \dom(U)$ and let $\alpha_2 \in \dom(U)$ be
+the minimal (in the prefix partial order) node such that $\beta_1
+\prefix \alpha_2 \prefix \beta_1\gamma_1$ and $\alpha_2 \cover
+\beta_2$. Let $\gamma_2$ be the unique sequence such that
+$\alpha_2\gamma_2 = \beta_1\gamma_1$. Since $\beta_1$ is uncovered, we
+have $\beta_1 \neq \alpha_2$ and thus $\len{\gamma_1} >
+\len{\gamma_2}$. By repeating the above reasoning for $\alpha_2$,
+$\beta_2$ and $\gamma_2$, we obtain an infinite sequence
+$\len{\gamma_1} > \len{\gamma_2} > \ldots$, which is again a
+contradiction. \qed
+
+\subsection{Proof of Lemma \ref{lemma:subst-quant}}
+
+(\ref{it1:subst-quant}) If $\accform{\alpha}$ is unsatisfiable, by
+Lemmas \ref{lemma:quant} and \ref{lemma:subst}, we obtain that,
+successively $\quantform{\alpha}$ and $\substform{\alpha}$ are
+unsatisfiable. Let $Q_1x_1 \ldots Q_mx_m ~.~ \widehat{\Phi}$ and
+$Q_1x_1 \ldots Q_mx_m ~.~ \overline{\Phi}$ be prenex forms for
+$\quantform{\alpha}$ and $\substform{\alpha}$, respectively. Since we
+assumed that the first order theory of the data domain has
+witness-producing quantifier elimination, using Theorem
+\ref{thm:skolem} one can effectively build witness terms $\tau_{i_1},
+\ldots, \tau_{i_\ell}$, where $\set{i_1,\ldots,i_\ell}=\set{i \in
+  [1,m] \mid Q_i=\forall}$ and: \begin{compactitem}
+\item $\voc{\tau_{i_j}} \subseteq \stamp{X}{\leq \xi(i_j)} \cup
+  \set{x_k \mid k < i_j, Q_k = \exists}$, for all $j \in [1,\ell]$ and
+  %
+\item $\overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+  \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable.
+\end{compactitem}
+Let $\widehat{\Phi}_0$, \ldots, $\widehat{\Phi}_n$ be the sequence of
+quantifier-free formulae, defined as follows: \begin{compactitem}
+\item $\widehat{\Phi}_0$ is the matrix of some prenex form of
+  $\stamp{\iota}{0}$,
+  %
+\item for all $i=1,\ldots,n$, let $\widehat{\Phi}_i$ be the matrix of
+  some prenex form of:
+  \[\widehat{\Phi}_i \isdef \widehat{\Phi}_{i-1} \wedge
+  \underbrace{\bigwedge_{\begin{array}{l}
+        \scriptstyle{\stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \widehat{\Phi}_{i-1}} \\
+        \scriptstyle{q(y_1,\ldots,y_{\#(q)}) \arrow{a_i(X)}{} \psi \in \Delta} 
+    \end{array}} \stamp{q}{i-1}(t_1,\ldots,t_{\#(q)}) \rightarrow 
+    \stamp{\psi}{i}[t_1/y_1, \ldots, t_{\#(q)}/y_{\#(q)}]}_{\isdef \phi_i}\]  
+\end{compactitem}
+It is easy to see that $\widehat{\Phi}$ is the matrix of some prenex
+form of:
+\[\widehat{\Phi}_n \wedge \underbrace{\bigwedge_{\begin{array}{l}
+      \scriptstyle{\stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \text{ occurs in } \widehat{\Phi}_n} \\
+      \scriptstyle{q \in Q \setminus F}
+  \end{array}} \stamp{q}{n}(t_1,\ldots,t_{\#(q)}) \rightarrow \bot}_{\isdef \psi}\]
+Applying the equivalence from Fact \ref{fact:subst} in the proof of
+Lemma \ref{lemma:subst}, we obtain a sequence of quantifier-free
+formulae $\overline{\Phi}_0, \ldots, \overline{\Phi}_n$ such that
+$\overline{\Phi}_i \equiv \widehat{\Phi}_i$, for all $i \in [n]$ and
+$\overline{\Phi}$ is obtained from $\overline{\Phi}_n$ by replacing
+each occurrence of a predicate atom $q(t_1,\ldots,t_{\#(q)})$ in
+$\overline{\Phi}_n$ by $\bot$ if $q \in Q\setminus F$ and by $\top$ if
+$q \in F$. Clearly $\overline{\Phi} \equiv \widehat{\Phi}$, thus
+$\widehat{\Phi}[\tau_{i_1}/x_{i_1}, \ldots, \tau_{i_\ell}/x_{i_\ell}]
+\equiv \overline{\Phi}[\tau_{i_1}/x_{i_1}, \ldots,
+  \tau_{i_\ell}/x_{i_\ell}] \equiv \bot$.
+
+\noindent(\ref{it2:subst-quant}) With the notation introduced at point
+(\ref{it1:subst-quant}), we have $\widehat{\Phi} = \widehat{\Phi}_0
+\wedge \bigwedge_{i=1}^n \phi_i \wedge \psi$. Consider the sequence of
+witness terms $\tau_{i_1}, \ldots, \tau_{i_\ell}$, whose existence is
+proved by point (\ref{it1:subst-quant}). Because $\voc{\tau_{i_j}}
+\subseteq \stamp{X}{\leq \xi(i_j)} \cup \set{x_k \mid k < i_j, Q_k =
+  \exists}$, for all $j \in [1,\ell]$, and moreover $\xi^{-1}$ is
+strictly monotonic, we obtain: \begin{compactitem}
+\item $\voc{\widehat{\Phi}_0[\tau_{i_1}/x_{i_1}, \ldots,
+    \tau_{i_\ell}/x_{i_\ell}]} \subseteq \stamp{Q}{0} \cup
+  \stamp{X}{0} \cup \set{x_j \mid j < \xi_{\max}^{-1}(0), Q_j = \exists}$,
+  %
+\item $\voc{\phi_i[\tau_{i_1}/x_{i_1}, \ldots,
+    \tau_{i_\ell}/x_{i_\ell}]} \subseteq \stamp{Q}{i-1} \cup
+  \stamp{Q}{i} \cup \stamp{X}{\leq i} \cup \set{x_j \mid j <
+    \xi_{\max}^{-1}(i), Q_j = \exists}$, for all $i \in [1,n]$,
+  %
+\item $\voc{\psi[\tau_{i_1}/x_{i_1}, \ldots,
+    \tau_{i_\ell}/x_{i_\ell}]} \subseteq \stamp{Q}{n} \cup
+  \stamp{X}{\leq n} \cup \set{x_j \mid j \in [1,m], Q_j = \exists}$.
+\end{compactitem}
+By repeatedly applying Lyndon's Interpolation Theorem, we obtain a
+sequence of formulae $(I_0, \ldots, I_n)$ such
+that: \begin{compactitem}
+\item $\widehat{\Phi}_0[\tau_{i_1}/x_{i_1}, \ldots,
+  \tau_{i_\ell}/x_{i_\ell}] \models I_0$ and $\voc{I_0} \subseteq
+  \stamp{Q}{0} \cup \stamp{X}{0} \cup \set{x_j \mid j <
+    \xi_{\max}^{-1}(0), Q_j = \exists}$,
+  %
+\item $I_{k-1} \wedge \phi_i[\tau_{i_1}/x_{i_1}, \ldots,
+  \tau_{i_\ell}/x_{i_\ell}] \models I_k$ and $\voc{I_k} \subseteq
+  \stamp{Q}{k} \cup \stamp{X}{\leq k} \cup \set{x_j \mid j <
+    \xi_{\max}^{-1}(k), Q_j = \exists}$, for all $k \in [1,n]$,
+  %
+\item $I_n \wedge \psi[\tau_{i_1}/x_{i_1}, \ldots,
+  \tau_{i_\ell}/x_{i_\ell}]$ is unsatisfiable.
+\end{compactitem}
+To show that $(I_0,\ldots,I_n)$ is a GLI for $a_1\ldots a_n$, it is
+sufficient to notice that \[\bigwedge_{q(\vec{y}) \arrow{a_k(X)}{}
+  \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+\stamp{q}{k}(\vec{y}) \rightarrow \stamp{\psi}{k+1} \models \phi_k\]
+for all $k \in [1,n]$. Consequently, we obtain: \begin{compactitem}
+\item $\stamp{\iota}{0} \models \widehat{\Phi}_0 \models I_0$, by
+  Theorem \ref{thm:skolem},
+  %
+\item $I_{k-1} \wedge \Big(\bigwedge_{q(\vec{y}) \arrow{a_k(X)}{}
+  \psi \in \Delta} \forall y_1 \ldots \forall y_{\#(q)} ~.~
+  \stamp{q}{k-1}(\vec{y}) \rightarrow \stamp{\psi}{k}\Big) \models
+  I_{k-1} \wedge \phi_k \models I_k$, and 
+  %
+\item $I_n \wedge \Big(\bigwedge_{q \in Q \setminus F} \forall y_1
+  \ldots \forall y_{\#(q)} ~.~ q(\vec{y}) \rightarrow \bot\Big)
+  \models I_n \wedge \psi \models \bot$,     
+\end{compactitem}
+as required by Definition
+\ref{def:generalized-lyndon-interpolant}. \qed
