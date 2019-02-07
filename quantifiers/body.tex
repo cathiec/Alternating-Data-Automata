@@ -115,8 +115,9 @@ in exactly $1$ time unit. Formally, $\lang{A} = \set{a, t_1, \ldots a,
   \real,~ 1 \leq i < n \Rightarrow t_{i+1}-t_i \neq 1}$. It is
 proved\footnote{See \cite[Theorem 1]{AlurMadhusudan04} for a proof.}
 that $\clang{B}$ cannot be recognized by a timed automaton, thus the
-inclusion cannot be proved in the framework of timed regular
-languages, as $\lang{A} \cap \clang{B} = \emptyset$.
+inclusion cannot be proved in the framework of timed automata
+\cite{AlurDill94,AlurMadhusudan04}, by showing that $\lang{A} \cap
+\clang{B} = \emptyset$.
 
 Our approach is to encode timed automata as first order alternating
 automata and use closure of the latter class under intersection and
@@ -125,18 +126,19 @@ that $\lang{A} \subseteq \lang{B}$. Consider the encoding of $A$ in
 Fig. \ref{fig:ta} (right) inspired by a translation of timed automata
 into Datalog programs \cite{Fribourg98}.  Each control state of $A$
 and $B$ is represented by a binary predicate symbol with the same
-name. The first argument of $s_1(x,z)$ tracks the last moment in time
-when the $\mathsf{x}$ clock of $A$ was reset and $z$ is the current
-time value. The time stamp of the input event $a$ is the input
-variable $t$, which must be bigger or equal to $z$, since the lapse of
-time between two consequtive events is always positive. The current
-value of the $\mathsf{x}$ clock is $z-x$, thus the guard $\mathsf{x}
-\geq 2$ on the $s_2 \arrow{}{} s_2$ transition of $A$ from becomes
-$z-x \geq 2$ in the second rule, and the reset of $x$ on the $s_1
-\arrow{}{} s_2$ transition is encoded by passing $z$ as the first
-parameter of $s_2$, in the first rule. The initial configuration of
-$A$ [$B$] is given by the atomic propositon $s_1(0,0)$ [$q_1(0,0)$]
-and $s_2$ [$q_2$] marks the final configurations.
+name. The first argument of $s_1(x,z)$ tracks the (last) time value
+time when the $\mathsf{x}$ clock of $A$ was reset (if it is reset
+more than once) and $z$ is the time value of the last event. The time
+stamp of the current event $a$ is the input variable $t$, which must
+be bigger or equal to $z$, since the lapse of time between two
+consequtive events is always positive. The current value of the
+$\mathsf{x}$ clock is thus $z-x$ and the guard $\mathsf{x} \geq 2$ on
+the $s_2 \arrow{}{} s_2$ transition of $A$ from becomes $z-x \geq 2$
+in the second rule. The reset of $x$ on the $s_1 \arrow{}{} s_2$
+transition is encoded by passing $z$ as the first parameter of $s_2$,
+in the first rule. The initial configuration of $A$ [$B$] is
+$s_1(0,0)$ [$q_1(0,0)$] and $s_2$ [$q_2$] marks the final
+configurations.
 
 \begin{figure}[htb]
 \vspace*{-2\baselineskip}
@@ -177,8 +179,7 @@ we check the emptiness of the alternating automaton consisting of the
 rules of $A$ and $\overline{B}$, started in the initial configuration
 $s_1(0,0) \wedge q_1(0,0)$. Our lazy annotation semi-algorithm proves
 emptiness of this automaton in $\sim\!0.3$ seconds, on an average
-laptop machine. The missing proofs of the technical results are given
-in Appendinx \ref{app:proofs}.
+laptop machine. 
 
 \paragraph{\em Related Work} 
 The first order alternating automata model presented in this paper
@@ -211,7 +212,11 @@ argument values. However, no semi-algorithm is given for quantified
 PA.  Dealing with quantified transition rules is one of our
 contributions.
 
-\section{Preliminaries}
+For space reasons, the proofs of the technical results are given in
+Appendinx \ref{app:proofs}.
+
+\vspace*{-.5\baselineskip}
+\subsection{Preliminaries}
 
 For two integers $0 \leq i \leq j$, we define $[i,j] \isdef
 \set{i,\ldots,j}$ and $[i] \isdef [0,i]$. We consider two disjoint
@@ -1003,7 +1008,7 @@ atom occurs.
   $\J,\nu \models \quantform{\event{w}}$ if and only if $\nu \models
   \substform{\event{w}}$. \qed}
 
-\subsection{Closure Properties}
+\subsection{Boolean Closure of First Order Alternating Automata}
 \label{sec:closure}
 
 Given a positive formula $\phi$, we define the \emph{dual} formula

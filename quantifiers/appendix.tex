@@ -554,3 +554,49 @@ for all $k \in [1,n]$. Consequently, we obtain: \begin{compactitem}
 \end{compactitem}
 as required by Definition
 \ref{def:generalized-lyndon-interpolant}. \qed
+
+\subsection{Proof of Lemma \ref{lemma:refinement}}
+
+The new set of formulae $U'(\alpha_0), \ldots, U'(\alpha_n)$ complies
+with Definition \ref{def:unfolding}, because: \begin{compactitem}
+\item $U'(\alpha_0) \equiv \iota$, since, by point
+  \ref{it2:generalized-lyndon-interpolant} of Definition
+  \ref{def:generalized-lyndon-interpolant}, we have $\stamp{\iota}{0}
+  \models I_0$, thus $\iota \models J_0$ and $U'(\alpha_0) =
+  U(\alpha_0) \wedge J_0 \equiv \iota \wedge J_0 \equiv \iota$, and
+    %
+\item by Definition \ref{def:generalized-lyndon-interpolant}
+  (\ref{it3:generalized-lyndon-interpolant}) we have, for all $k \in
+  [n-1]$:
+  \[I_k \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
+  \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{k}(\vec{y})
+  \rightarrow \stamp{\psi}{k+1} \models I_{k+1}\] We write
+  $\overstamp{I}{j}_k$ for the formula in which each predicate
+  symbol $\stamp{q}{k}$ is replaced by $\stamp{q}{j}$. Then the
+  following entailment holds:
+  \[\overstamp{I}{0}_k \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
+  \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{0}(\vec{y})
+  \rightarrow \stamp{\psi}{1} \models \overstamp{I}{1}_{k+1}\]
+  Because $J_k$ is obtained by removing the time stamps from the predicate symbols and  
+  existentially quantifying all the free variables of $I_k$, we also
+  obtain, applying Fact \ref{fact:ex-entail} below:
+  \[\stamp{J}{0}_k \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
+  \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{0}(\vec{y})
+  \rightarrow \stamp{\psi}{1} \models \stamp{J}{1}_{k+1}\] Since $U$
+  satisfies the labeling condition of Definition \ref{def:unfolding}
+  and $U'(\alpha_k) = U(\alpha_k) \wedge J_k$, we obtain, as required:
+  \[\stamp{U'(\alpha_k)}{0} \wedge \bigwedge_{\scriptscriptstyle{q(\vec{y}) \arrow{a_k(X)}{} \psi \in \Delta}} 
+  \forall y_1 \ldots \forall y_{\#(q)} ~.~ \stamp{q}{0}(\vec{y})
+  \rightarrow \stamp{\psi}{1} \models
+  \stamp{U'(\alpha_{k+1})}{1}\enspace.\]
+\end{compactitem}  
+
+\begin{fact}\label{fact:ex-entail}
+  Given formulae $\phi(\vec{x}, \vec{y})$ and $\psi(\vec{x})$ such
+  that $\phi(\vec{x}, \vec{y}) \models \psi(\vec{x})$, we also have
+  $\exists \vec{x} ~.~ \phi(\vec{x},\vec{y}) \models \exists \vec{x}
+  ~.~ \psi(\vec{x})$. 
+\end{fact}
+\paragraph{\em Proof.} For each choice of a valuation for the existentially
+quantified variables on the left-hand side, we chose the same
+valuation for the variables on the right-hand side. \qed \qed
