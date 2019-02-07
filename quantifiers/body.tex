@@ -108,15 +108,15 @@ are $a$ and the second event, if it occurs at all, it occurs after at
 least $2$ time units. On the other hand, $B$ recognizes the sequences
 in which there exists an event $a$ such that no event occurs after it
 in exactly $1$ time unit. Formally, $\lang{A} = \set{a, t_1, \ldots a,
-  t_n \mid t_1, \ldots, t_n \in \real,~ n > 1 \Rightarrow t_1 \geq 2}$
-and $\lang{B} = \set{\sigma_1, t_1 \ldots \sigma_{i-1}, t_{i-1}, a,
-  t_i, \ldots \sigma_n, t_n \mid \sigma_1, \ldots, \sigma_n \in
-  \set{a,b},~ n \geq 1,~ t_1, \ldots, t_n \in \real,~ 1 < i < n
-  \Rightarrow t_i-t_{i-1} \neq 1}$. It is proved\footnote{See
-  \cite[Theorem 1]{AlurMadhusudan04} for a proof.}  that $\clang{B}$
-cannot be recognized by a timed automaton, thus the inclusion cannot
-be proved in the framework of timed regular languages, as $\lang{A}
-\cap \clang{B} = \emptyset$.
+  t_n \mid t_1, \ldots, t_n \in \real,~ n > 1 \Rightarrow t_2-t_1 \geq
+  2}$ and $\lang{B} = \set{\sigma_1, t_1 \ldots \sigma_{i-1}, t_{i-1},
+  a, t_i, \sigma_{i+1}, t_{i+1}, \ldots \sigma_n, t_n \mid \sigma_1,
+  \ldots, \sigma_n \in \set{a,b},~ n \geq 1,~ t_1, \ldots, t_n \in
+  \real,~ 1 \leq i < n \Rightarrow t_{i+1}-t_i \neq 1}$. It is
+proved\footnote{See \cite[Theorem 1]{AlurMadhusudan04} for a proof.}
+that $\clang{B}$ cannot be recognized by a timed automaton, thus the
+inclusion cannot be proved in the framework of timed regular
+languages, as $\lang{A} \cap \clang{B} = \emptyset$.
 
 Our approach is to encode timed automata as first order alternating
 automata and use closure of the latter class under intersection and
