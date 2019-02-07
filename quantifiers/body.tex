@@ -172,7 +172,7 @@ $B$, denoted as $\overline{B}$ in Fig. \ref{fig:ta} (bottom
 right). Finally, we check the emptiness of the alternating automaton
 consisting of the rules of $A$ and $\overline{B}$, started in the
 initial configuration $s_1(0,0) \wedge q_1(0,0)$. Our lazy annotation
-semi-algorithm finds that this automaton is empty in \comment[ri]{...}
+semi-algorithm finds that this automaton is empty in 347 ms
 seconds. 
 
 \paragraph{\em Related Work} 
@@ -2220,53 +2220,53 @@ i5 - 8 GB 1867 MHz LPDDR3 machine.
 %\vspace*{-\baselineskip}
 \begin{center}
 {\fontsize{7}{8}\selectfont
-\begin{tabular}{||l|c|c|c|c|c||}
+\begin{tabular}{||l|c|c|c|c|c|c|c|c||}
 \hline
-Example & $\len{\A}$ (bytes) & $L(\A)=\emptyset$ ? & Nodes Expanded & Nodes Visited & Time (ms) \\
+Example & $\len{\A}$ (bytes) & Nb of Predicates & Nb of Variables & Nb of Transitions & $L(\A)=\emptyset$ ? & Nodes Expanded & Nodes Visited & Time (ms) \\
 \hline
-incdec.pa & 499 & no & 21 & 17 & 779 \\
+incdec.pa & 499 & 3 & 1 & 12 & no & 21 & 17 & 779 \\
 \hline
-localdec.pa & 678 & no & 49 & 35 & 1814 \\
+localdec.pa & 678 & 4 & 1 & 16 & no & 49 & 35 & 1814 \\
 \hline
-ticket.pa & 4250 & no & 229 & 91 & 9543 \\
+ticket.pa & 4250 & 13 & 1 & 73 & no & 229 & 91 & 9543 \\
 \hline
-count\_thread0.pa & 9767 & no & 154 & 128 & 8553 \\
+count\_thread0.pa & 9767 & 14 & 1 & 126 & no & 154 & 128 & 8553 \\
 \hline
-count\_thread1.pa & 10925 & no & 766 & 692 & 76771 \\
+count\_thread1.pa & 10925 & 15 & 1 & 135 & no & 766 & 692 & 76771 \\
 \hline
-local0.pa & 10595 & no & 73 & 27 & 1431 \\
+local0.pa & 10595 & 13 & 1 & 117 & no & 73 & 27 & 1431 \\
 \hline
-local1.pa & 11385 & no & 1135 & 858 & 101042 \\
+local1.pa & 11385 & 14 & 1 & 126 & no & 1135 & 858 & 101042 \\
 \hline
-array\_rotation.ada & 1834 & yes & 9 & 8 & 1543 \\
+array\_rotation.ada & 1834 & 8 & 7 & 7 & yes & 9 & 8 & 1543 \\
 \hline
-array\_simple.ada & 3440 & yes & 11 & 10 & 6787 \\
+array\_simple.ada & 3440 & 9 & 5 & 8 & yes & 11 & 10 & 6787 \\
 \hline
-array\_shift.ada & 874 & yes & 6 & 5 & 413 \\
+array\_shift.ada & 874 & 6 & 5 & 5 & yes & 6 & 5 & 413 \\
 \hline
-abp.ada & 6909 & no & 52 & 47 & 4788 \\
+abp.ada & 6909 & 16 & 14 & 28 & no & 52 & 47 & 4788 \\
 \hline
-train.ada & 1823 & yes & 68 & 67 & 7319 \\
+train.ada & 1823 & 10 & 4 & 26 & yes & 68 & 67 & 7319 \\
 \hline
-hw1.ada & 322 & Solver Error & / & / & / \\
+hw1.ada & 322 & 3 & 2 & 5 & Solver Error & / & / & / \\
 \hline
-hw2.ada & 674 & yes & 20 & 22 & 4974 \\
+hw2.ada & 674 & 7 & 2 & 8 & yes & 20 & 22 & 4974 \\
 \hline
-rr-crossing.foada & 1780 & yes & 67 & 67 & 7574 \\
+rr-crossing.foada & 1780 & 10 & 1 & 16 & yes & 67 & 67 & 7574 \\
 % \hline
 % running2.foada & 1217 & yes & 13 & 13 & 788 \\
 \hline
-train-simple1.foada & 5421 & yes & 43 & 44 & 2893 \\
+train-simple1.foada & 5421 & 13 & 1 & 61 & yes & 43 & 44 & 2893 \\
 \hline
-train-simple2.foada & 10177 & yes & 111 & 113 & 8386 \\
+train-simple2.foada & 10177 & 16 & 1 & 118 & yes & 111 & 113 & 8386 \\
 \hline
-train-simple3.foada & 15961 & yes & 196 & 200 & 15041 \\
+train-simple3.foada & 15961 & 19 & 1 & 193 & yes & 196 & 200 & 15041 \\
 % \hline
 % fischer-mutex1.foada & 1566 & no & 31 & 31 & 1552 \\
 \hline
-fischer-mutex2.foada & 3000 & yes & 23 & 23 & 808 \\
+fischer-mutex2.foada & 3000 & 11 & 2 & 23 & yes & 23 & 23 & 808 \\
 \hline
-fischer-mutex3.foada & 4452 & yes & 33 & 33 & 1154 \\
+fischer-mutex3.foada & 4452 & 16 & 2 & 34 & yes & 33 & 33 & 1154 \\
 \hline
 \end{tabular}
 }
