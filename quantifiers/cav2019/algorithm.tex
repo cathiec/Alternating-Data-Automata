@@ -1,0 +1,127 @@
+\begin{algorithm}[t!]
+{\footnotesize\begin{algorithmic}[0] \State {\bf input}: a first order
+  alternating automaton $\A = \tuple{\Sigma,X,Q,\iota,F,\Delta}$
+  
+  \State {\bf output}: $\top$ if $L(\A)=\emptyset$, or word $w \in
+  L(\A)$, otherwise
+
+  \State {\bf data structures}: $\worklist$ and unfolding tree
+  $\mathcal{U} = \tuple{N,E,\rootNode,U,\lhd}$,
+  where: \begin{compactitem}
+  \item $N$ is a set of nodes,
+  \item $E \subseteq N \times \Sigma \times N$ is a set of edges labeled by input events,
+  \item $U : N \rightarrow \posforms(Q,\emptyset)$ is a labeling of
+    nodes with positive sentences
+  \item $\lhd \subseteq N \times N$ is a coverage relation,
+  \end{compactitem}  
+
+  \State {\bf initially} $\worklist = \set{\rootNode}$ and
+  $N=E=U=\lhd=\emptyset$.
+\end{algorithmic}}
+{\footnotesize\begin{algorithmic}[1]   
+  \While{$\worklist \neq \emptyset$}
+  \label{ln:impact-while}
+
+  \State dequeue $n$ from $\worklist$ 
+  \label{ln:impact-dequeue}
+
+  \State $N \leftarrow N \cup \set{n}$
+
+  \State let $\alpha(n)$ be $a_1, \ldots, a_k$
+
+  \If{$\substform{\alpha}(\stamp{X}{1}, \ldots, \stamp{X}{k})$ is satisfiable} 
+  \Comment{counterexample is feasible}
+
+  \State get model $\nu$ of $\substform{\alpha}(\stamp{X}{1}, \ldots, \stamp{X}{k})$
+
+  \State {\bf return} $w = (a_1,\nu(\stamp{X}{1})) \ldots (a_k,\nu(\stamp{X}{k}))$
+  \label{ln:impact-nonempty}
+  \Comment{$w \in L(\A)$ by construction}
+
+  \Else \Comment{spurious counterexample}
+
+  \State let $(I_0,\ldots,I_k)$ be a GLI for $\alpha$
+  \label{ln:refine-begin}
+
+  \State $b \leftarrow \bot$
+
+  \For{$i=0,\ldots,k$}
+
+  \If{$U(n_i) \not\models I_i$}
+
+  \State $\mathit{Uncover} \leftarrow \set{ m \in N \mid (m,n_i) \in \lhd }$
+  
+  \State $\lhd \leftarrow \lhd \setminus \set{(m,n_i) \mid m \in \mathit{Uncover}}$
+  \Comment{uncover the nodes covered by $n_i$}
+
+  \For{$m \in \mathit{Uncover}$ such that $m$ is a leaf of $\mathcal{U}$}
+
+  \State enqueue $m$ into $\worklist$
+  \Comment{reactivate uncovered leaves}
+  
+  \EndFor
+  
+  \State $U(n_i) \leftarrow U(n_i) \wedge J_i$
+  \Comment{strenghten the label of $n_i$ (Lemma \ref{lemma:refinement})}
+
+  \If{$\neg b$}
+
+  \State $b \leftarrow \Call{Close}{n_i}$
+  \label{ln:refine-end}
+
+  \EndIf % $\neg b$
+
+  \EndIf % $\Lambda(n_i) \not\models I_i$
+
+  \EndFor 
+
+  \EndIf % $\mu(n)$ is satisfiable
+
+  \If{$n$ is not covered}
+
+  \For{$a \in \Sigma$} 
+  \Comment{expand $n$}
+  \label{ln:expand-begin}
+
+  \State let $s$ be a fresh node and $e = (n,a,s)$ be a new edge
+
+  \State $E \leftarrow E \cup \set{e}$
+  \label{ln:edge-insert}
+
+  \State $U \leftarrow U \cup \set{(s,\top)}$
+
+  \State enqueue $s$ into $\worklist$
+  \label{ln:expand-end}
+
+  \EndFor
+
+  \EndIf % $n$ is not covered
+
+  \EndWhile  
+
+  \State {\bf return} $\top$
+
+  \Function{Close}{$x$} {\bf returns} $\Bool$
+
+  \For{$y \in N$ such that $\alpha(y) \prec^* \alpha(x)$}
+  
+  \If{$U(x) \models U(y)$}
+  
+  \State $\lhd \leftarrow \left[\lhd \setminus \set{ (p,q) \in \lhd \mid
+      \text{$q$ is $x$ or a successor of $x$}}\right] \cup \set{(x,y)}$
+  \label{ln:close-uncover}
+  
+  \State {\bf return} $\top$ 
+  
+  \EndIf
+  
+  \EndFor
+  
+  \State {\bf return} $\bot$
+
+  \EndFunction
+
+\end{algorithmic}}
+\caption{\impact-based Semi-algorithm for First Order Alternating Automata}
+\label{alg:impact}
+\end{algorithm}
