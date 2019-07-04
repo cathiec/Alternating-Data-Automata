@@ -1,0 +1,43 @@
+\begin{picture}(0,0)%
+\includegraphics{ta.pdf}%
+\end{picture}%
+\setlength{\unitlength}{1973sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(3348,4103)(886,-3318)
+\put(2701,-2611){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a$}%
+}}}}
+\put(3901,-661){\makebox(0,0)[b]{\smash{{\SetFigFont{6}{7.2}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$s_2$}%
+}}}}
+\put(3901,614){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a$}%
+}}}}
+\put(3901,359){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\mathsf{x} >= 2$}%
+}}}}
+\put(2701,-211){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a$}%
+}}}}
+\put(1801,-661){\makebox(0,0)[b]{\smash{{\SetFigFont{6}{7.2}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$s_1$}%
+}}}}
+\put(901,-661){\makebox(0,0)[b]{\smash{{\SetFigFont{6}{7.2}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$A$}%
+}}}}
+\put(2701,-466){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\mathsf{x} := 0$}%
+}}}}
+\put(3901,-3061){\makebox(0,0)[b]{\smash{{\SetFigFont{6}{7.2}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$q_2$}%
+}}}}
+\put(1801,-2011){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a,b$}%
+}}}}
+\put(3901,-1786){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$a,b$}%
+}}}}
+\put(3901,-2041){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\mathsf{y} \neq 1$}%
+}}}}
+\put(2701,-2866){\makebox(0,0)[b]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\mathsf{y} := 0$}%
+}}}}
+\put(1801,-3061){\makebox(0,0)[b]{\smash{{\SetFigFont{6}{7.2}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$q_1$}%
+}}}}
+\put(901,-3061){\makebox(0,0)[b]{\smash{{\SetFigFont{6}{7.2}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$B$}%
+}}}}
+\end{picture}%

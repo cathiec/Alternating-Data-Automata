@@ -1,0 +1,120 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem{AlurDill94}
+Alur, R., Dill, D.L.: A theory of timed automata. Theor. Comput. Sci.  126(2),
+  183--235 (1994)
+
+\bibitem{BarringerRydeheardHavelund07}
+Barringer, H., Rydeheard, D., Havelund, K.: Rule systems for run-time
+  monitoring: From eagle to ruler. In: Sokolsky, O., Ta{\c{s}}{\i}ran, S.
+  (eds.) Runtime Verification. pp. 111--125. Springer Berlin Heidelberg,
+  Berlin, Heidelberg (2007)
+
+\bibitem{BorgerGraedelGurevich97}
+B{\"{o}}rger, E., Gr{\"{a}}del, E., Gurevich, Y.: The Classical Decision
+  Problem. Perspectives in Mathematical Logic, Springer (1997)
+
+\bibitem{ChandraKozenStockmeyer81}
+Chandra, A.K., Kozen, D.C., Stockmeyer, L.J.: Alternation. J. ACM  28(1),
+  114--133 (1981)
+
+\bibitem{DAntoniKincaidWang18}
+D'Antoni, L., Kincaid, Z., Wang, F.: A symbolic decision procedure for symbolic
+  alternating finite automata. Electronic Notes in Theoretical Computer Science
+   336,  79 -- 99 (2018), the Thirty-third Conference on the Mathematical
+  Foundations of Programming Semantics (MFPS XXXIII)
+
+\bibitem{Farzan15}
+Farzan, A., Kincaid, Z., Podelski, A.: Proof spaces for unbounded parallelism.
+  SIGPLAN Not.  50(1),  407--420 (Jan 2015)
+
+\bibitem{Farzan16}
+Farzan, A., Kincaid, Z., Podelski, A.: Proving liveness of parameterized
+  programs. In: Proceedings of the 31st Annual ACM/IEEE Symposium on Logic in
+  Computer Science. pp. 185--196. LICS '16, ACM (2016)
+
+\bibitem{foada}
+{First Order Alternating Data Automata (FOADA)}.
+  https://github.com/cathiec/FOADA
+
+\bibitem{Grebenshchikov12}
+Grebenshchikov, S., Lopes, N.P., Popeea, C., Rybalchenko, A.: Synthesizing
+  software verifiers from proof rules. SIGPLAN Not.  47(6),  405--416 (Jun
+  2012)
+
+\bibitem{Halpern91}
+Halpern, J.Y.: Presburger arithmetic with unary predicates is $\pi^1_1$
+  complete. The Journal of Symbolic Logic  56(2),  637--642 (1991)
+
+\bibitem{HojjatRuemmer18}
+Hojjat, H., R{\"{u}}mmer, P.: Deciding and interpolating algebraic data types
+  by reduction (technical report). CoRR  abs/1801.02367 (2018),
+  \url{http://arxiv.org/abs/1801.02367}
+
+\bibitem{includer}
+{Includer}. http://www.fit.vutbr.cz/research/groups/verifit/tools/includer/
+
+\bibitem{IosifRV16}
+Iosif, R., Rogalewicz, A., Vojnar, T.: Abstraction refinement and antichains
+  for trace inclusion of infinite state systems. In: Tools and Algorithms for
+  the Construction and Analysis of Systems (TACAS 2016). pp. 71--89 (2016)
+
+\bibitem{IosifXu18}
+Iosif, R., Xu, X.: Abstraction refinement for emptiness checking of alternating
+  data automata. In: Tools and Algorithms for the Construction and Analysis of
+  Systems (TACAS 2018). pp. 93--111 (2018)
+
+\bibitem{javasmt}
+{JavaSMT}. https://github.com/sosy-lab/java-smt
+
+\bibitem{KaminskiFrancez94}
+Kaminski, M., Francez, N.: Finite-memory automata. Theoretical Computer Science
+   134(2),  329 -- 363 (1994)
+
+\bibitem{KincaidPhD}
+Kincaid, Z.: Parallel Proofs for Parallel Programs. Ph.D. thesis, University of
+  Toronto (2016)
+
+\bibitem{KuncakMayerPiskacSuter12}
+Kuncak, V., Mayer, M., Piskac, R., Suter, P.: Software synthesis procedures.
+  Commun. {ACM}  55(2),  103--111 (2012)
+
+\bibitem{Lyndon59}
+Lyndon, R.C.: An interpolation theorem in the predicate calculus. Pacific J.
+  Math.  9(1),  129--142 (1959)
+
+\bibitem{McMillan06}
+McMillan, K.L.: Lazy abstraction with interpolants. In: Proc. of CAV'06. LNCS,
+  vol. 4144. Springer (2006)
+
+\bibitem{McMillan14}
+McMillan, K.L.: Lazy annotation revisited. In: CAV2014, Proceedings. pp.
+  243--259. Springer International Publishing (2014)
+
+\bibitem{NelsonOppen80}
+Nelson, G., Oppen, D.C.: Fast decision procedures based on congruence closure.
+  J. ACM  27(2),  356--364 (Apr 1980)
+
+\bibitem{pa}
+{Predicate Automata}.
+  https://github.com/zkincaid/duet/tree/ark2/regression/predicateAutomata
+
+\bibitem{Presburger29}
+Presburger, M.: {\"Uber die Vollstandigkeit eines gewissen Systems der
+  Arithmetik}. Comptes rendus du I Congr\'es des Pays Slaves  (Warsaw 1929)
+
+\bibitem{ReynoldsKK17}
+Reynolds, A., King, T., Kuncak, V.: Solving quantified linear arithmetic by
+  counterexample-guided instantiation. Formal Methods in System Design  51(3),
+  500--532 (2017)
+
+\bibitem{RybalchenkoSofronieStokkermans}
+Rybalchenko, A., Sofronie{-}Stokkermans, V.: Constraint solving for
+  interpolation. J. Symb. Comput.  45(11),  1212--1233 (2010)
+
+\bibitem{z3}
+{Z3 SMT Solver}. https://rise4fun.com/z3
+
+\end{thebibliography}
