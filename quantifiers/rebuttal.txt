@@ -8,26 +8,28 @@ Review 1:
  Symbolic (alternating) finite-state automata are an important
  extension of finite-state automata to infinite alphabets and lacking
  those references in our paper is a minus that should be
- corrected. One explanation is that we focused on infinite alphabet
- extensions that follow an idea of the seminal papers on timed (TA)
- [1] and finite-memory (register) automata (RA) [13]. Unlike symbolic
- automata that test only the current input, both TA and RA relate
- values occurring at different positions in the input, either by using
- clocks (with reset and difference guards) or registers (with
- over-writing and equality guards). The price to be paid for this
- expressivity is that language inclusion becomes undecidable (unless
- severe restrictions on the number of clocks/registers apply).
-
- Our original motivation here was not as much finding decidable
- infinite alphabet models but rather having a very general model,
- (unsurprisingly) closed under complement, union and intersection, in
+ corrected. The reason is our original interest in language
+ recognizers relating values occurring at different positions in the
+ input, by means of internal variables: clocks for timed automata (TA)
+ and registers for finite-memory automata [13]. Our motivation is not
+ as much finding decidable infinite alphabet models but rather having
+ a very general model, closed under complement, union and intersection
+ (boolean closure is merely a consequence of its expressive power), in
  which all undecidable inclusion problems can be encoded, then devise
- a practical semi-algorithm for it (that works on reasonably complex
- examples). Since, to the best of our knowledge, there are no
- published semi-algorithms for TA or RA inclusion (tools such as UPAAL
- check only for emptiness), our method could contribute to these areas
- and to program verification (we have considered several programs
- handling integer arrays in our examples).
+ a practical semi-algorithm for it.
+
+ Although the finite event alphabet \Sigma can be encoded in the input
+ data (it is introduced for technical convenience), modeling control
+ by uninterpreted predicates with internal variables as arguments is
+ key to capturing computations using hidden variables (pg 2, first
+ paragraph). Note that Definition 1 (point 2) requires synchronization
+ of all execution branches on all input events and values.
+
+ To the best of our knowledge, there are no published semi-algorithms
+ for TA or RA inclusion (tools such as UPAAL check only for
+ emptiness). Our method contributes to these areas and to program
+ verification (Section 5 considers several programs handling integer
+ arrays).
 
  1.2 Restrictions of FOAA with decidable emptiness problems. 
 
@@ -35,17 +37,15 @@ Review 1:
  for quantifier-free rules with equalities and disequalities, not
  using the input variables, when predicates have arities of two or
  more (having only equalities and monadic predicates yields a
- decidable model though). In the light of this result (mentioned on
- pg. 9, last paragraph in the paper), any reasonably interesting
- extension of monadic predicate automata seems to be undecidable for
- emptiness.
+ decidable model though). In the light of this result (pg. 9, last
+ paragraph), any reasonably interesting extension of monadic predicate
+ automata is likely to have an undecidable emptiness problem.
 
  We also compare with an alternating automaton model [11], in which
- states are propositional variables and comparisons are possible only
- between adjacent input values, without hidden variables. This model
- is intermediate between s-AFA and FOAA, nevertheless emptiness
- remains undecidable, by reduction from 2-counter machine
- reachability.
+ states are propositional variables (no uninterpreted predicates) and
+ comparisons are possible only between adjacent input values, without
+ hidden variables. This model is intermediate between s-AFA and FOAA,
+ nevertheless emptiness remains undecidable.
 
 Review 4:
 
@@ -53,52 +53,53 @@ Review 4:
 
  The main difference between the unfoldings of CHC and those of FOAA
  is that, in CHC, the different branches of the unfolding tree are
- essentially unrelated, whereas in FOAA, all branches of the
- computation tree must synchronize on the same input word. To account
- for this synchronization, a CHC encoding of FOADA must use recursive
- algebraic data types (ADT), namely lists, to ensure that, at each
- step, all incoming branches consider exactly the same list, encoding
- the continuation of the input from that point on (CHC traverse the
- input from the end to the beginning). An encoding of FOAA in CHC
- would benefit from the advantage of using off-the-shelf CHC solvers,
- but, in our opinion, would face several problems (listed in
- increasing order of difficulty):
+ unrelated (at arbitrary depths), whereas in FOAA, all branches of the
+ computation tree must synchronize on the same input word. As
+ suggested, to reflect this synchronization, a CHC encoding of FOADA
+ must use data lists to ensure that, at each step, all incoming
+ branches consider exactly the same list, encoding the continuation of
+ the input from that point on (CHC traverse the input from the end to
+ the beginning). An encoding of FOAA in CHC would benefit from the
+ advantage of using off-the-shelf CHC solvers, but, in our opinion,
+ would face several problems, listed below in increasing order of
+ difficulty:
 
 I. Checking that, in each clause, all incoming branches read the same
-input can be done using equalities between the list arguments of the
-subgoals. However, the body (left-hand side) of the clause must be
-given either as a conjunction or, if quantifiers are considered, as
-prenex DNF. This issue can be solved, but the reduction is a bit more
-complex than suggested and, moreover, writing each rule in DNF can be
-costly.
+ input can be done using equalities between the list arguments of the
+ subgoal predicates. However, the body of the clause must be given
+ either as a conjunction or, if quantifiers are considered, as prenex
+ DNF. However, turning each rule into DNF would potentially add to the
+ complexity.
 
-II. Introducing a list ADT in the encoding requires the use of an
- interpolation procedure for ADTs in the emptiness
+II. Introducing recursive algebraic data types (ADT) in the encoding
+ requires an interpolation procedure for ADTs in the emptiness
  semi-algorithm. Although satisfiability of quantifier-free ADTs is
  mature and integrated with many SMT solvers, interpolation of ADT
  theories is at its beginnings. In fact, the technical report [*]
  claims to introduce the first interpolation procedure for ADTs:
 
-* Hossein Hojjat, Philipp Ruemmer. Deciding and Interpolating
-Algebraic Data Types by Reduction. ArXiv:1801.02367. Proc. of 
-SYNASC'17.
+ * Hossein Hojjat, Philipp Ruemmer. Deciding and Interpolating
+ Algebraic Data Types by Reduction. ArXiv:1801.02367. Proc.
+ SYNASC'17.
 
-Moreover, the availability of such procedures in off-the-shelf CHC
-solvers is still an unresolved issue. For instance, the integration of
-the above procedure in ELDARICA is underway, according to
-[*]. However, when such technical problems will be solved, it would
-definitely be interesting to have an experimental comparison between,
-e.g. FOAA and ELDARICA.
+ Moreover, the availability of such procedures in off-the-shelf CHC
+ solvers is still an unresolved issue. For instance, the integration
+ of the above procedure in ELDARICA is underway, according to
+ [*]. However, when such technical problems will be solved, it would
+ definitely be interesting to have an experimental comparison between
+ FOAA and ELDARICA (running on an encoding of our examples using
+ ADTs).
 
-III. Working with quantified rules in FOADA requires a quantifier
-elimination procedure that produces witness terms. However, if
-quantified variables occur in the ADT constructors, the theory is most
-likely undecidable, thus cannot have quantifier elimination, by an
-argument similar to the one of [8].
+III. Having quantified rules in FOADA requires a quantifier
+ elimination procedure that produces witness terms. However, combining
+ quantifiers and ADTs results most likely in an undecidable theory,
+ for which no quantifier elimination exists (by an argument similar to
+ the one of [8]).
 
-Essentially, for the above reasons, we have chosen to design our
-emptiness checking semi-algorithm from scratch, trying to use as few
-assumptions as possible on the underlying first-order data theory. In
-fact, we only assume (a) Lyndon interpolation for quantifier-free
-formulae with uninterpreted predicates and (b) witness term generation
-during quantifier elimination.
+ Essentially, for the above reasons, we have chosen to design our
+ emptiness checking semi-algorithm from scratch, imposing as few
+ assumptions as possible on the underlying first-order data theory. In
+ fact, we only assume (a) Lyndon interpolation for quantifier-free
+ formulae with uninterpreted predicates (without ADTs) and (b) witness
+ term generation during quantifier elimination. Both assumptions are
+ fairly reasonable for standard SMT theories (e.g. UFLIA, UFLRA).
